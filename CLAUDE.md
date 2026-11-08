@@ -26,6 +26,9 @@ reach the site only through a release and an upgrade there.
 - `npm run lint`: ESLint, including the import allowlist
 - `npm run typecheck`: `tsc -p .`, source and tests
 - `npm test`: Vitest, `src/**/*.test.ts` (`npx vitest` watches)
+- `npm run dev`: the playground (`playground/`, Vite) on the configs in
+  `examples/`, rendering `src/` with hot reload. Its state is in the URL
+  (`/?fixture=edge-cases&theme=game&width=22`).
 - `npm run build`: `tsc -p tsconfig.build.json` to `dist/` (ESM, one `.js`
   and `.d.ts` per source file) plus the CSS
 - `npm run generate:schema`: rewrites `character-sheet.schema.json` from
@@ -45,7 +48,8 @@ that install in the site.
 - The package imports nothing but `react`, `zod` and its own files
   (`./…`, never climbing out with `..`); both are peer dependencies.
   `eslint.config.mjs` enforces it. Scripts may also import `node:` modules
-  and `../src/…`; tests may also import `vitest`. Adding a runtime
+  and `../src/…`; tests may also import `vitest`; the playground may also
+  import `react-dom/client`, Vite and `../src/…`. Adding a runtime
   dependency is a design decision for the owner, not an implementation
   detail.
 - Public API = the `exports` map in `package.json`, documented in the
@@ -85,7 +89,9 @@ that install in the site.
   gradients, rounded frames, shadows and its gold accent are allowed.
 - Tests are Vitest, beside the code as `src/*.test.ts`, for the data side
   (`parse`, `resolve`). No component or DOM tests yet; check rendering in
-  the site with a packed copy.
+  the playground (`npm run dev`), and in the site with a packed copy before
+  a release. Every `examples/*.json` must parse cleanly
+  (`src/examples.test.ts`).
 
 ## Versioning and releases
 

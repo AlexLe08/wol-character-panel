@@ -50,6 +50,8 @@ npm install @solution-nine/wol-character-panel react zod
 | `src/SlotHover.tsx` | The only client code: Escape dismisses a tooltip. Private: no entry exports it |
 | `src/character-sheet.css` | Styles and themes; everything themable is a `--cs-*` variable |
 | `character-sheet.schema.json` | Generated JSON Schema for editing a config file by hand |
+| `examples/` | Sample configs (`full`, `minimal`, `edge-cases` with every field at its limit); a test checks each one parses cleanly |
+| `playground/` | The local preview (`npm run dev`). Not published |
 | `scripts/generate-schema.mjs` | Regenerates the JSON Schema (`npm run generate:schema`) |
 | `scripts/check.sh` | Runs every check CI runs, one line per step, full logs in `.logs/` |
 | `eslint.config.mjs` | Lint rules (React, hooks, jsx-a11y, TypeScript) and the import allowlist (`npm run lint`) |
@@ -214,6 +216,21 @@ colours otherwise.
 npm ci
 scripts/check.sh    # lint, typecheck, test, schema up to date, build, pack
 ```
+
+### Preview locally
+
+```sh
+npm run dev         # http://localhost:5173
+```
+
+The playground renders the panel straight from `src/` with hot reload, on any
+config in `examples/`. Its controls (fixture, theme, labels, sockets, toolbar,
+container width, dark host tokens, drafts) are query parameters, so every state
+is a link, such as `/?fixture=edge-cases&theme=game&width=22`. Like a host, it
+reads `?job=` and the param actions' parameters from the URL and passes
+`isParamActive`; a `link` action shows where a host would go instead of
+leaving the page. It renders on the client, while hosts render the panel on
+the server, so check a release candidate in a host too (below).
 
 Relative imports name the source file (`./parse.ts`): the build rewrites them
 to `.js`, and Node can run the schema generator straight from `src/`. After
