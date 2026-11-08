@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # The checks CI's `check` job runs (.github/workflows/ci.yml): lint,
-# type-check, unit tests, the JSON Schema up to date, build, and pack.
+# type-check, tests with coverage thresholds, the JSON Schema up to date,
+# build, and pack.
 # Prints one line per step; the full output of each goes to
 # .logs/<step>.log, and a failing step also prints its last 30 lines.
 #

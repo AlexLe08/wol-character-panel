@@ -61,6 +61,16 @@ export default defineConfig([
     },
   },
   {
+    // The test runner's config.
+    files: ["vitest.config.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        { patterns: [{ regex: onlyAllowed(["vitest/config"]), message: "Only vitest/config." }] },
+      ],
+    },
+  },
+  {
     // The dev preview (`npm run dev`) runs under Vite, renders the panel
     // from ../src, and never ships.
     files: ["playground/**"],
