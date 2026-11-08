@@ -52,6 +52,7 @@
     "access": "public"
   },
   "scripts": {
+    "dev": "vite playground",
     "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json && node -e \"fs.cpSync('src/character-sheet.css', 'dist/character-sheet.css')\"",
     "typecheck": "tsc -p .",
     "lint": "eslint",
@@ -65,13 +66,17 @@
   },
   "devDependencies": {
     "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6",
     "eslint": "^9",
     "eslint-plugin-jsx-a11y": "^6",
     "eslint-plugin-react": "^7",
     "eslint-plugin-react-hooks": "^7",
     "react": "^19",
+    "react-dom": "^19",
     "typescript": "^5.9",
     "typescript-eslint": "^8",
+    "vite": "^8",
     "vitest": "^5.1.0",
     "zod": "^4"
   }

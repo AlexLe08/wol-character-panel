@@ -14,11 +14,19 @@ const IMPORT_MESSAGE =
 const ALLOWED = ["react", "react/.+", "zod", String.raw`\./(?!.*\.\.).+`];
 const SCRIPT_ALLOWED = [...ALLOWED, "node:.+", String.raw`\.\./src/(?!.*\.\.).+`];
 const TEST_ALLOWED = [...ALLOWED, "vitest"];
+const PLAYGROUND_ALLOWED = [
+  ...ALLOWED,
+  "react-dom/client",
+  "vite",
+  "@vitejs/plugin-react",
+  String.raw`\.\./src/(?!.*\.\.).+`,
+];
 const onlyAllowed = (list) => `^(?!(${list.join("|")})$)`;
 
 export default defineConfig([
-  // The build's output, checked through its source.
-  globalIgnores(["dist/"]),
+  // The build's output, checked through its source; and scratch files
+  // and logs (scripts/check.sh), which never ship or get committed.
+  globalIgnores(["dist/", ".logs/"]),
   tseslint.configs.recommended,
   react.configs.flat.recommended,
   react.configs.flat["jsx-runtime"],
@@ -46,6 +54,24 @@ export default defineConfig([
             {
               regex: onlyAllowed(SCRIPT_ALLOWED),
               message: "Scripts may also import node: modules and ../src/….",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // The dev preview (`npm run dev`) runs under Vite, renders the panel
+    // from ../src, and never ships.
+    files: ["playground/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex: onlyAllowed(PLAYGROUND_ALLOWED),
+              message: "The playground may also import react-dom/client, Vite and ../src/….",
             },
           ],
         },

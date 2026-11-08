@@ -1,0 +1,145 @@
+{
+  "$schema": "../character-sheet.schema.json",
+  "title": "Character profile",
+  "defaultJobId": "frontend",
+  "slots": [
+    { "id": "stack", "label": "Core stack", "position": "header-start", "icon": "◆" },
+    { "id": "focus", "label": "Current focus", "position": "header-end", "icon": "◇" },
+    { "id": "skills", "label": "Skills", "position": "left", "icon": "Sk" },
+    { "id": "projects", "label": "Projects", "position": "left", "icon": "Pr" },
+    { "id": "experience", "label": "Experience", "position": "left", "icon": "Ex" },
+    { "id": "education", "label": "Education", "position": "left", "icon": "Ed" },
+    { "id": "tools", "label": "Tools", "position": "left", "icon": "To" },
+    { "id": "writing", "label": "Writing", "position": "left", "icon": "Wr" },
+    { "id": "react", "label": "React", "position": "right", "icon": "Re" },
+    { "id": "typescript", "label": "TypeScript", "position": "right", "icon": "Ts" },
+    { "id": "testing", "label": "Testing", "position": "right", "icon": "Te" },
+    { "id": "a11y", "label": "Accessibility", "position": "right", "icon": "A11" },
+    { "id": "github", "label": "GitHub", "position": "right", "icon": "Gh" },
+    { "id": "contact", "label": "Contact", "position": "right", "icon": "@" }
+  ],
+  "jobs": [
+    {
+      "id": "frontend",
+      "name": "Front end",
+      "title": "Front-end developer",
+      "icon": "Fe",
+      "level": { "label": "Lv.", "value": "4" },
+      "portrait": { "src": "/portrait.svg", "alt": "Illustrated portrait", "framing": "face" },
+      "badge": { "label": "Projects", "value": "6" },
+      "slots": {
+        "stack": {
+          "tooltip": {
+            "title": "React and TypeScript",
+            "tags": ["Daily"],
+            "stat": { "label": "Years", "value": "4" },
+            "items": [
+              { "label": "UI", "value": "React, Next.js" },
+              { "label": "Language", "value": "TypeScript" },
+              { "label": "Styling", "value": "CSS, container queries" }
+            ]
+          },
+          "action": { "kind": "anchor", "target": "skills" }
+        },
+        "focus": {
+          "tooltip": {
+            "title": "Publishing libraries",
+            "subtitle": "What I'm learning now",
+            "items": ["Semver and public API design", "ESM builds", "npm provenance"]
+          },
+          "action": { "kind": "none" }
+        },
+        "skills": {
+          "tooltip": {
+            "title": "Skills",
+            "tags": ["Most relevant first"],
+            "items": [
+              { "label": "Front end", "value": "React, TypeScript" },
+              "Accessibility",
+              "Design systems"
+            ],
+            "note": "Each one links to the projects that use it."
+          },
+          "action": { "kind": "anchor", "target": "skills" }
+        },
+        "projects": {
+          "tooltip": { "title": "Projects", "stat": { "label": "Shipped", "value": "6" } },
+          "action": { "kind": "link", "href": "/projects" }
+        },
+        "experience": {
+          "tooltip": { "title": "Experience", "items": ["Four years of production React"] },
+          "action": { "kind": "anchor", "target": "experience" }
+        },
+        "tools": {
+          "tooltip": { "title": "Tools", "items": ["Vite", "Vitest", "Playwright", "ESLint"] },
+          "action": { "kind": "none" }
+        },
+        "react": {
+          "tooltip": { "title": "React projects", "tags": ["Filter"] },
+          "action": { "kind": "param", "name": "stack", "value": "react", "target": "projects" }
+        },
+        "typescript": {
+          "tooltip": { "title": "TypeScript projects", "tags": ["Filter"] },
+          "action": { "kind": "param", "name": "stack", "value": "typescript", "target": "projects" }
+        },
+        "a11y": {
+          "tooltip": { "title": "Accessibility projects", "tags": ["Filter"] },
+          "action": { "kind": "param", "name": "stack", "value": "a11y", "target": "projects" }
+        },
+        "github": {
+          "tooltip": { "title": "GitHub", "subtitle": "Opens in a new tab" },
+          "action": { "kind": "external", "href": "https://github.com/AlexLe08", "newTab": true }
+        },
+        "contact": {
+          "tooltip": { "title": "Contact", "items": ["Email and links"] },
+          "action": { "kind": "anchor", "target": "contact" }
+        }
+      },
+      "sections": {
+        "skills": "React, TypeScript, accessibility and design systems.",
+        "experience": "Four years building production React and Next.js apps.",
+        "projects": "The project list a host page would filter with ?stack=.",
+        "contact": "How to get in touch."
+      }
+    },
+    {
+      "id": "healthcare",
+      "name": "Healthcare",
+      "title": "Developer in healthcare",
+      "icon": "Hc",
+      "level": { "label": "Lv.", "value": "3" },
+      "portrait": { "src": "/portrait.svg", "alt": "Illustrated portrait", "framing": "full" },
+      "slots": {
+        "stack": {
+          "tooltip": { "title": "Clinical tooling", "items": ["Forms", "Scheduling", "Audit trails"] },
+          "action": { "kind": "anchor", "target": "skills" }
+        },
+        "skills": {
+          "tooltip": {
+            "title": "Skills",
+            "items": [{ "label": "Domain", "value": "Patient-facing apps" }, "Accessibility"]
+          },
+          "action": { "kind": "anchor", "target": "skills" }
+        },
+        "a11y": {
+          "tooltip": { "title": "Accessibility", "stat": { "label": "Standard", "value": "WCAG 2.2 AA" } },
+          "action": { "kind": "none" }
+        }
+      },
+      "sections": { "skills": "Accessible, patient-facing interfaces." }
+    },
+    {
+      "id": "backend",
+      "name": "Back end",
+      "title": "Back-end developer",
+      "status": "draft",
+      "level": { "label": "Lv.", "value": "1" },
+      "slots": {
+        "skills": {
+          "tooltip": { "title": "Skills", "items": ["Python", "PostgreSQL"] },
+          "action": { "kind": "none" }
+        }
+      }
+    }
+  ]
+}

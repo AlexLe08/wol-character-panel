@@ -1,0 +1,75 @@
+/* The playground's own chrome, kept plain so the panel is what you look at. */
+body {
+  margin: 0;
+  background: #ecebe7;
+  color: #1c1e22;
+  font: 0.9rem/1.4 system-ui, sans-serif;
+}
+
+.pg {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.pg-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid #c9cdd3;
+  background: #fff;
+}
+
+.pg-controls :focus-visible {
+  outline: 2px solid #2f5fa3;
+  outline-offset: 2px;
+}
+
+.pg-report {
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid #b3261e;
+  background: #fff;
+}
+
+.pg-report p,
+.pg-report ul,
+.pg-status {
+  margin: 0;
+}
+
+.pg-status {
+  min-height: 1.4em;
+  color: #5b616b;
+}
+
+/* The panel's container: the width control sets this, and the panel's
+   container query follows it. */
+.pg-stage {
+  justify-self: center;
+  width: 100%;
+  max-width: 100%;
+  padding: 1.5rem 0;
+}
+
+.pg-stage[data-tokens="dark"] {
+  padding-inline: 1rem;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.pg-sections {
+  max-width: 30rem;
+  margin: 2rem auto 0;
+}
+
+.pg-section {
+  /* Room to scroll each section to the top, as an anchor action would. */
+  min-height: 40vh;
+  scroll-margin-top: 1rem;
+}
+
+.pg-section:target h2 {
+  text-decoration: underline;
+}
