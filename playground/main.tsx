@@ -70,12 +70,12 @@ function useLocation() {
 function App() {
   const { href, navigate } = useLocation();
   const [notice, setNotice] = useState<string | null>(null);
-  const query = new URLSearchParams(href.split(/[?#]/)[1] ?? "");
+  const query = new URL(href, location.origin).searchParams;
   const control = (name: Control) => query.get(name) ?? CONTROLS[name];
   const setControl = (name: Control, value: string) =>
     navigate(withQuery(href, { [name]: value === CONTROLS[name] ? null : value }, location.hash.slice(1)), true);
 
-  const fixtureName = control("fixture") in fixtures ? control("fixture") : CONTROLS.fixture;
+  const fixtureName = Object.hasOwn(fixtures, control("fixture")) ? control("fixture") : CONTROLS.fixture;
   const raw = fixtures[fixtureName];
   const { config: parsed, errors } = parseConfig(raw);
   const unknownKeys = parsed && errors.length === 0 ? findUnknownKeys(raw, parsed) : [];
@@ -140,7 +140,7 @@ function App() {
   }
 
   const width = control("width");
-  const hostParams = [...query].filter(([name]) => !(name in CONTROLS) && name !== "job");
+  const hostParams = [...query].filter(([name]) => !Object.hasOwn(CONTROLS, name) && name !== "job");
 
   return (
     <div className="pg">
