@@ -1,35 +1,78 @@
 {
   "name": "@solution-nine/wol-character-panel",
   "version": "1.0.0",
+  "description": "A React panel modelled on an RPG character screen, driven by one JSON config with a published JSON Schema.",
+  "keywords": [
+    "react",
+    "component",
+    "character-sheet",
+    "portfolio",
+    "json-schema",
+    "zod"
+  ],
+  "author": "Alexander Le",
   "license": "MIT",
-  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexLe08/wol-character-panel.git"
+  },
+  "homepage": "https://github.com/AlexLe08/wol-character-panel#readme",
+  "bugs": "https://github.com/AlexLe08/wol-character-panel/issues",
   "type": "module",
   "sideEffects": [
     "*.css"
   ],
   "exports": {
-    ".": "./src/index.ts",
-    "./react": "./src/CharacterSheet.tsx",
-    "./schema": "./src/schema-entry.ts",
-    "./character-sheet.css": "./src/character-sheet.css",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/CharacterSheet.d.ts",
+      "default": "./dist/CharacterSheet.js"
+    },
+    "./schema": {
+      "types": "./dist/schema-entry.d.ts",
+      "default": "./dist/schema-entry.js"
+    },
+    "./character-sheet.css": "./dist/character-sheet.css",
     "./character-sheet.schema.json": "./character-sheet.schema.json",
     "./package.json": "./package.json"
   },
+  "files": [
+    "dist",
+    "src",
+    "!src/**/*.test.*",
+    "character-sheet.schema.json"
+  ],
+  "engines": {
+    "node": ">=22.12"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
+    "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json && node -e \"fs.cpSync('src/character-sheet.css', 'dist/character-sheet.css')\"",
+    "typecheck": "tsc -p .",
     "lint": "eslint",
     "test": "vitest run",
-    "generate:schema": "node scripts/generate-schema.mjs"
+    "generate:schema": "node scripts/generate-schema.mjs",
+    "prepack": "npm run build"
   },
   "peerDependencies": {
     "react": "^19",
     "zod": "^4"
   },
   "devDependencies": {
+    "@types/react": "^19",
     "eslint": "^9",
     "eslint-plugin-jsx-a11y": "^6",
     "eslint-plugin-react": "^7",
     "eslint-plugin-react-hooks": "^7",
+    "react": "^19",
+    "typescript": "^5.9",
     "typescript-eslint": "^8",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "zod": "^4"
   }
 }
