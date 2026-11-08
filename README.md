@@ -240,3 +240,14 @@ git tag v1.0.1 && git push origin v1.0.1
 `.github/workflows/release.yml` checks the tag matches `package.json`, runs the
 checks, and publishes with npm trusted publishing (no npm token; provenance
 added by npm).
+
+The trusted publisher is set on npmjs.com under the package's Settings →
+Trusted publishing → GitHub Actions: user `AlexLe08`, repository
+`wol-character-panel`, workflow `release.yml` (filename only), no environment,
+and `npm publish` ticked under Allowed actions (new configurations allow only
+`npm stage publish` otherwise). Every field is case-sensitive, and npm checks
+none of them until a publish. A new configuration expires unless a publish
+through it succeeds within 2 days, so create it when a tagged release will
+follow. Once a release has gone through it, set Settings → Publishing access
+to "Require two-factor authentication and disallow tokens", which leaves
+trusted publishing working.
