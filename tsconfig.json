@@ -1,9 +1,7 @@
 {
-  // For editors opening the package on its own, and `npx tsc -p .`. The
-  // host type-checks these files with its own tsconfig when it builds, so
-  // keep the options in step with frontend/tsconfig.json (minus the
-  // Next-only ones). Standalone rather than `extends`, so it moves with the
-  // package.
+  // For editors and `npm run typecheck` (`tsc -p .`), which checks the
+  // tests too. `npm run build` emits from tsconfig.build.json, which extends
+  // this one.
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -15,7 +13,11 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    // Relative imports name the source file (`./parse.ts`), so Node's type
+    // stripping can run them (scripts/generate-schema.mjs imports
+    // src/schema.ts); the build rewrites them to `.js`.
+    "rewriteRelativeImportExtensions": true
   },
   "include": ["src"]
 }

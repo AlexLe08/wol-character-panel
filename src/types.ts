@@ -7,7 +7,7 @@ import type {
   slotContentSchema,
   slotDefSchema,
   tooltipSchema,
-} from "./schema";
+} from "./schema.ts";
 
 export type CharacterSheetConfig = z.output<typeof characterSheetConfigSchema>;
 export type Job = z.output<typeof jobSchema>;

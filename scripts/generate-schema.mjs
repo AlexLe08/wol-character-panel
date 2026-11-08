@@ -1,7 +1,7 @@
 // Writes character-sheet.schema.json from src/schema.ts, so a plain JSON
 // config gets autocomplete and validation in editors. Run after changing
-// schema.ts (from frontend/, which also copies it to the backend):
-//   npm run generate:character-schema
+// schema.ts (CI fails while the committed file is out of date):
+//   npm run generate:schema
 import { readFileSync, writeFileSync } from "node:fs";
 import { z } from "zod";
 import { characterSheetConfigSchema } from "../src/schema.ts";

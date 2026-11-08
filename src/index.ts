@@ -10,9 +10,9 @@ export {
   type LoadIssue,
   type LoadResult,
   type ParseResult,
-} from "./parse";
-export { ID_PATTERN, LIMITS, PARAM_NAME_PATTERN } from "./schema";
-export { actionHref, jobHref, publicConfig, resolveJob, withQuery } from "./resolve";
+} from "./parse.ts";
+export { ID_PATTERN, LIMITS, PARAM_NAME_PATTERN } from "./schema.ts";
+export { actionHref, jobHref, publicConfig, resolveJob, withQuery } from "./resolve.ts";
 export type {
   CharacterSheetConfig,
   Job,
@@ -25,4 +25,4 @@ export type {
   Theme,
   Tooltip,
   TooltipItem,
-} from "./types";
+} from "./types.ts";

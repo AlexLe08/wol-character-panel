@@ -1,13 +1,12 @@
-import { defineConfig } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import tseslint from "typescript-eslint";
 
-// The package's boundary: it imports nothing but react and zod, so it can
-// move to its own repository unchanged. A tsconfig can't enforce this (a
-// host's `paths` apply to the package when the host compiles it), so lint
-// does. The host runs this config through its own lint script.
+// The package's boundary: it imports nothing but react and zod, its only
+// dependencies (both peers). A tsconfig can't enforce this (it would resolve
+// anything installed in node_modules), so lint does.
 const IMPORT_MESSAGE =
   "The character sheet package imports only react, zod and its own files (./…).";
 // Each entry must match the whole specifier. "./" paths may not climb out
@@ -18,6 +17,8 @@ const TEST_ALLOWED = [...ALLOWED, "vitest"];
 const onlyAllowed = (list) => `^(?!(${list.join("|")})$)`;
 
 export default defineConfig([
+  // The build's output, checked through its source.
+  globalIgnores(["dist/"]),
   tseslint.configs.recommended,
   react.configs.flat.recommended,
   react.configs.flat["jsx-runtime"],

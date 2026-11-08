@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { characterSheetConfigSchema, jobSchema } from "./schema";
-import type { CharacterSheetConfig, Job } from "./types";
+import { characterSheetConfigSchema, jobSchema } from "./schema.ts";
+import type { CharacterSheetConfig, Job } from "./types.ts";
 
 export type ParseResult = {
   // null only when nothing usable is left: the top-level shape is wrong or

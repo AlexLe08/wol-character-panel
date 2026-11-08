@@ -14,10 +14,15 @@ compact item-card tooltip on hover or keyboard focus. Clicking it goes to a page
 section, another page, or an external site. Changing the job (`?job=<id>`) swaps the slots, tooltips, and
 portrait, and the host page can swap its own content too.
 
-An in-repo workspace package, used by the site as an installed dependency.
-It imports nothing but React and zod, enforced by `eslint.config.mjs` (the
-host's `lint` script runs it). It ships TypeScript source with no build step;
-the host's bundler compiles it.
+It imports nothing but React and zod, enforced by `eslint.config.mjs`. It
+ships as ES modules with type declarations (no CommonJS build), so it needs a
+bundler or Node 22.12+. It runs the home page of
+[the-portfolio-site](https://github.com/AlexLe08/the-portfolio-site), where it
+started.
+
+```sh
+npm install @solution-nine/wol-character-panel react zod
+```
 
 ## Entries
 
@@ -47,7 +52,10 @@ the host's bundler compiles it.
 | `character-sheet.schema.json` | Generated JSON Schema for editing a config file by hand |
 | `scripts/generate-schema.mjs` | Regenerates the JSON Schema (`npm run generate:schema`) |
 | `eslint.config.mjs` | Lint rules (React, hooks, jsx-a11y, TypeScript) and the import allowlist (`npm run lint`) |
-| `tsconfig.json` | Compiler options for editors and `npx tsc -p .`; the host builds with its own |
+| `tsconfig.json` | Compiler options for editors and `npm run typecheck` (tests included) |
+| `tsconfig.build.json` | `npm run build`: one `.js` and `.d.ts` per source file in `dist/`, so `SlotHover.js` keeps its `"use client"` |
+| `.github/workflows/ci.yml` | Lint, type-check, tests, the schema up to date, build, and pack, on every pull request |
+| `.github/workflows/release.yml` | Publishes to npm when a `v*` tag is pushed |
 
 ## Config
 
@@ -198,3 +206,37 @@ Override any `--cs-*` variable on `.cs`, or add a theme block like
 `.cs[data-cs-theme="game"]`. The `document` theme reads the host's
 `--paper`/`--ink`/`--signal`/… tokens when they exist and falls back to neutral
 colours otherwise.
+
+## Development
+
+```sh
+npm ci
+npm run lint && npm run typecheck && npm test && npm run build
+```
+
+Relative imports name the source file (`./parse.ts`): the build rewrites them
+to `.js`, and Node can run the schema generator straight from `src/`. After
+changing `src/schema.ts`, run `npm run generate:schema` and commit the JSON
+Schema with it. A host that keeps its own copy (like the portfolio site's
+backend) copies it from the installed package.
+
+To try a change in a host before releasing it, install a packed copy rather
+than linking (`npm link` can load two copies of React):
+
+```sh
+npm pack                                # writes solution-nine-wol-character-panel-<version>.tgz
+npm install ../wol-character-panel/solution-nine-wol-character-panel-<version>.tgz   # in the host
+```
+
+## Releasing
+
+Bump `version` in `package.json` (a major bump changes the schema's `$id`, so
+regenerate it), merge, then tag the merge commit:
+
+```sh
+git tag v1.0.1 && git push origin v1.0.1
+```
+
+`.github/workflows/release.yml` checks the tag matches `package.json`, runs the
+checks, and publishes with npm trusted publishing (no npm token; provenance
+added by npm).
