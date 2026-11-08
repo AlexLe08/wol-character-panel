@@ -11,5 +11,7 @@
     "declarationMap": true,
     "sourceMap": true
   },
+  // Only the package: tsconfig.json also includes the playground.
+  "include": ["src"],
   "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"]
 }

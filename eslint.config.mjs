@@ -14,6 +14,13 @@ const IMPORT_MESSAGE =
 const ALLOWED = ["react", "react/.+", "zod", String.raw`\./(?!.*\.\.).+`];
 const SCRIPT_ALLOWED = [...ALLOWED, "node:.+", String.raw`\.\./src/(?!.*\.\.).+`];
 const TEST_ALLOWED = [...ALLOWED, "vitest"];
+const PLAYGROUND_ALLOWED = [
+  ...ALLOWED,
+  "react-dom/client",
+  "vite",
+  "@vitejs/plugin-react",
+  String.raw`\.\./src/(?!.*\.\.).+`,
+];
 const onlyAllowed = (list) => `^(?!(${list.join("|")})$)`;
 
 export default defineConfig([
@@ -47,6 +54,24 @@ export default defineConfig([
             {
               regex: onlyAllowed(SCRIPT_ALLOWED),
               message: "Scripts may also import node: modules and ../src/….",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // The dev preview (`npm run dev`) runs under Vite, renders the panel
+    // from ../src, and never ships.
+    files: ["playground/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex: onlyAllowed(PLAYGROUND_ALLOWED),
+              message: "The playground may also import react-dom/client, Vite and ../src/….",
             },
           ],
         },
