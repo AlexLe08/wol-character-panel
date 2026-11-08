@@ -1,7 +1,7 @@
 {
   // For editors and `npm run typecheck` (`tsc -p .`), which checks the
-  // tests and the playground too. `npm run build` emits from tsconfig.build.json, which extends
-  // this one.
+  // tests and the playground too. `npm run build` emits from
+  // tsconfig.build.json, which extends this one.
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],

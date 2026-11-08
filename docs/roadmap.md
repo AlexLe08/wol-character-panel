@@ -67,6 +67,7 @@ mid-label, and "Change job" wraps onto two lines.
   A Python validator package (`find_issues` and its `oneOf` explanation)
   only if someone asks, and then in this repository, so it ships with the
   schema version it checks.
-- The import allowlist doesn't see dynamic `import()` or `require()`. Add
-  a `no-restricted-syntax` rule if the package ever uses them (it doesn't
-  today).
+- The import allowlist doesn't see dynamic `import()`, `require()` or
+  Vite's `import.meta.glob()`. Add a `no-restricted-syntax` rule if the
+  package ever uses them (it doesn't today; `src/examples.test.ts` globs
+  `../examples/`, which is fine for a test that never ships).

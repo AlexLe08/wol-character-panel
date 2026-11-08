@@ -55,7 +55,7 @@ npm install @solution-nine/wol-character-panel react zod
 | `scripts/generate-schema.mjs` | Regenerates the JSON Schema (`npm run generate:schema`) |
 | `scripts/check.sh` | Runs every check CI runs, one line per step, full logs in `.logs/` |
 | `eslint.config.mjs` | Lint rules (React, hooks, jsx-a11y, TypeScript) and the import allowlist (`npm run lint`) |
-| `tsconfig.json` | Compiler options for editors and `npm run typecheck` (tests included) |
+| `tsconfig.json` | Compiler options for editors and `npm run typecheck` (tests and the playground included) |
 | `tsconfig.build.json` | `npm run build`: one `.js` and `.d.ts` per source file in `dist/`, so `SlotHover.js` keeps its `"use client"` |
 | `.github/workflows/ci.yml` | Lint, type-check, tests, the schema up to date, build, and pack, on every pull request |
 | `.github/workflows/release.yml` | Publishes to npm when a `v*` tag is pushed |
