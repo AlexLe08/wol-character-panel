@@ -19,8 +19,9 @@
   `@types/react-dom` (dev only). First phase of the tooling plan below.
 - Tests and coverage, first PR of the tooling plan's step 1:
   server-render tests of `CharacterSheet` with `renderToStaticMarkup` (Node,
-  no DOM; assertions on attributes, not whole-markup snapshots, so a class
-  rename doesn't churn them), an inline snapshot of each entry's runtime
+  no DOM; targeted assertions on elements and attributes rather than
+  whole-render snapshots, so unrelated markup changes don't churn them;
+  class names are pinned, since hosts restyle them), an inline snapshot of each entry's runtime
   export names, and `@vitest/coverage-v8` with thresholds at 92/96/86/93
   (statements, branches, functions, lines), enforced by `npm test` in CI.
   Gaps left: removing an exported *type* isn't caught (types vanish at

@@ -56,7 +56,7 @@ npm install @solution-nine/wol-character-panel react zod
 | `scripts/check.sh` | Runs every check CI runs, one line per step, full logs in `.logs/` |
 | `eslint.config.mjs` | Lint rules (React, hooks, jsx-a11y, TypeScript) and the import allowlist (`npm run lint`) |
 | `tsconfig.json` | Compiler options for editors and `npm run typecheck` (tests, the playground and `vitest.config.ts` included) |
-| `vitest.config.ts` | Which tests run (`src/**/*.test.{ts,tsx}`), and coverage: every file in `src/`, its thresholds, the report in `.logs/coverage/` |
+| `vitest.config.ts` | Which tests run (`src/**/*.test.{ts,tsx}`), and coverage: every source file in `src/` (not the tests or CSS), its thresholds, the report in `.logs/coverage/` |
 | `tsconfig.build.json` | `npm run build`: one `.js` and `.d.ts` per source file in `dist/`, so `SlotHover.js` keeps its `"use client"` |
 | `.github/workflows/ci.yml` | Lint, type-check, tests with coverage thresholds, the schema up to date, build, and pack, on every pull request |
 | `.github/workflows/release.yml` | Publishes to npm when a `v*` tag is pushed |

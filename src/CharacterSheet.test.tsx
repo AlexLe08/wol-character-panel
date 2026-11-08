@@ -210,7 +210,7 @@ describe("CharacterSheet (server render)", () => {
 
     it("renders a link action through the host's renderer with the page intent", () => {
       const seen: string[] = [];
-      render({
+      const html = render({
         renderLink: ({ intent, href, children, ...rest }) => {
           seen.push(`${intent} ${href}`);
           return (
@@ -221,6 +221,8 @@ describe("CharacterSheet (server render)", () => {
         },
       });
       expect(seen).toContain("page /projects");
+      // The renderer gets the face's class and tooltip link through its props.
+      expect(face(html, "projects")).toMatchObject({ name: "a", attrs: { href: "/projects" } });
     });
 
     it("renders a param action on the job's own URL, with its target as the hash", () => {
@@ -232,7 +234,7 @@ describe("CharacterSheet (server render)", () => {
       expect(face(render({ job }), "react").attrs.href).toBe("/?job=data&stack=react#projects");
     });
 
-    it("marks a param action current only when the host says its value is applied", () => {
+    it("marks a param action current only when the host says so, never asking about the job parameter", () => {
       const asked: string[] = [];
       const html = render({
         isParamActive: (name, value) => {
@@ -281,7 +283,8 @@ describe("CharacterSheet (server render)", () => {
     it("renders a slot the job doesn't fill as an empty square with no tooltip", () => {
       const html = render();
       expect(withClass(html, "cs-slot--empty")).toHaveLength(1);
-      expect(html).toContain('<span class="cs-slot__label" id="');
+      const empty = withClass(html, "cs-slot__face").filter((tag) => !tag.attrs["aria-describedby"]);
+      expect(empty).toEqual([{ name: "span", attrs: { class: "cs-slot__face" } }]);
       expect(html).toMatch(/Unused<\/span><span class="cs-visually-hidden"> \(empty\)<\/span>/);
       expect(tooltipIds(html).some((id) => id.endsWith("tip-unused"))).toBe(false);
     });
@@ -370,11 +373,12 @@ describe("CharacterSheet (server render)", () => {
 describe("the example configs", () => {
   const examples = import.meta.glob<unknown>("../examples/*.json", { eager: true, import: "default" });
 
+  // A smoke test: every job of every example renders without throwing.
   it.each(Object.entries(examples))("%s renders every job", (_, raw) => {
     const { config: parsed } = parseConfig(raw);
     expect(parsed).not.toBeNull();
     for (const job of parsed!.jobs) {
-      expect(render({ config: parsed!, job })).toContain(`<p class="cs__job-title">`);
+      expect(section(render({ config: parsed!, job }))?.attrs.class).toBe("cs");
     }
   });
 });
