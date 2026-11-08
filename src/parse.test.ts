@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { findUnknownKeys, loadConfig, parseConfig, type ConfigSource } from "./parse";
-import type { CharacterSheetConfig } from "./types";
+import { findUnknownKeys, loadConfig, parseConfig, type ConfigSource } from "./parse.ts";
+import type { CharacterSheetConfig } from "./types.ts";
 
 // Raw input, as a JSON file or the API would give it: plain objects, so a
 // test can break any field. zod's own messages aren't asserted, only the

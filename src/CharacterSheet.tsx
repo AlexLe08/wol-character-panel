@@ -1,6 +1,6 @@
 import { useId, type AnchorHTMLAttributes, type ReactNode } from "react";
-import { actionHref, isActionActive, jobHref } from "./resolve";
-import { SlotHover } from "./SlotHover";
+import { actionHref, isActionActive, jobHref } from "./resolve.ts";
+import { SlotHover } from "./SlotHover.tsx";
 import type {
   CharacterSheetConfig,
   Job,
@@ -10,7 +10,7 @@ import type {
   SlotPosition,
   Theme,
   Tooltip,
-} from "./types";
+} from "./types.ts";
 import "./character-sheet.css";
 
 // An equipment-screen style panel:

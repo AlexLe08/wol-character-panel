@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { actionHref, isActionActive, jobHref, publicConfig, resolveJob, withQuery } from "./resolve";
-import type { CharacterSheetConfig, Job } from "./types";
+import { actionHref, isActionActive, jobHref, publicConfig, resolveJob, withQuery } from "./resolve.ts";
+import type { CharacterSheetConfig, Job } from "./types.ts";
 
 function job(id: string, status: Job["status"] = "published"): Job {
   return { id, name: id, title: id, status, level: { label: "Lv.", value: "1" }, slots: {} };

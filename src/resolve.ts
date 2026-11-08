@@ -1,4 +1,4 @@
-import type { CharacterSheetConfig, Job, SlotAction } from "./types";
+import type { CharacterSheetConfig, Job, SlotAction } from "./types.ts";
 
 // The config as visitors see it: only published jobs, so drafts and hidden
 // jobs are left out of the job menu and a ?job= link to one falls back to
