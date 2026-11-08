@@ -1,0 +1,16 @@
+{
+  "$schema": "../character-sheet.schema.json",
+  "defaultJobId": "developer",
+  "slots": [{ "id": "skills", "label": "Skills", "position": "left" }],
+  "jobs": [
+    {
+      "id": "developer",
+      "name": "Developer",
+      "title": "Developer",
+      "level": { "label": "Lv.", "value": "1" },
+      "slots": {
+        "skills": { "tooltip": { "title": "Skills" }, "action": { "kind": "none" } }
+      }
+    }
+  ]
+}
