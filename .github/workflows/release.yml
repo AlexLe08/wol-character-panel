@@ -1,0 +1,58 @@
+name: Release
+
+# Publishes to npm when a version tag is pushed (`git tag v1.0.1 && git push
+# origin v1.0.1`), through npm trusted publishing: npm checks this workflow's
+# OIDC token against the package's trusted publisher settings, so no npm
+# token is stored anywhere, and adds a provenance attestation itself.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Tag matches package.json
+        run: |
+          version="$(node -p 'require("./package.json").version')"
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "tag $GITHUB_REF_NAME does not match package.json version $version"
+            exit 1
+          fi
+
+      - name: npm supports trusted publishing (11.5.1+)
+        run: |
+          node -e '
+            const [a, b, c] = process.argv[1].split(".").map(Number);
+            if (a < 11 || (a === 11 && (b < 5 || (b === 5 && c < 1)))) {
+              console.error(`npm ${process.argv[1]} is too old for trusted publishing`);
+              process.exit(1);
+            }
+          ' "$(npm --version)"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Checks
+        run: |
+          npm run lint
+          npm run typecheck
+          npm test
+          npm run generate:schema
+          git diff --exit-code character-sheet.schema.json
+
+      # prepack runs the build.
+      - name: Publish
+        run: npm publish
