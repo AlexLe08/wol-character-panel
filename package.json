@@ -1,6 +1,6 @@
 {
   "name": "@solution-nine/wol-character-panel",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A React panel modelled on an RPG character screen, driven by one JSON config with a published JSON Schema.",
   "keywords": [
     "react",
