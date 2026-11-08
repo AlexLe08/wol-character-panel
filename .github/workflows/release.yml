@@ -16,12 +16,14 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      # No dependency cache in the job that can publish: a poisoned cache
+      # entry would end up in the release (as in npm's own example).
+      - uses: actions/setup-node@v6
         with:
           node-version: "24"
-          cache: "npm"
+          package-manager-cache: false
           registry-url: "https://registry.npmjs.org"
 
       - name: Tag matches package.json
