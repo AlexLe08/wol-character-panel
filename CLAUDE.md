@@ -1,0 +1,145 @@
+# CLAUDE.md
+
+Project instructions for Claude Code. Personal working-style preferences
+live in `CLAUDE.local.md` (gitignored). Current status and next steps live
+in `docs/roadmap.md`. `README.md` is the user-facing reference (entries,
+config format, behaviour, theming, releasing); read it before changing any
+of those, and update it in the same PR when they change.
+
+## What this is
+
+`@solution-nine/wol-character-panel`: a React panel modelled on an RPG
+character screen, driven by one JSON config with a published JSON Schema.
+Published to npm (public, MIT) from this repository; `solution-nine` is a
+free npm organization owned by the npm user `alexle08`.
+
+It started inside
+[the-portfolio-site](https://github.com/AlexLe08/the-portfolio-site)
+(`../the-portfolio-site` locally), which is still its main host: the home
+page renders it, the admin editor writes configs, and the site's backend
+validates saves against a copy of this package's JSON Schema. Changes here
+reach the site only through a release and an upgrade there.
+
+## Commands
+
+- Install: `npm ci`
+- `npm run lint`: ESLint, including the import allowlist
+- `npm run typecheck`: `tsc -p .`, source and tests
+- `npm test`: Vitest, `src/**/*.test.ts` (`npx vitest` watches)
+- `npm run build`: `tsc -p tsconfig.build.json` to `dist/` (ESM, one `.js`
+  and `.d.ts` per source file) plus the CSS
+- `npm run generate:schema`: rewrites `character-sheet.schema.json` from
+  `src/schema.ts`. Run it after any change to `schema.ts` and commit the
+  result; CI fails while the committed file is out of date.
+- `npm pack --dry-run`: lists what would be published (`prepack` builds)
+- `scripts/check.sh`: everything CI's `check` job runs, one line per step,
+  full logs in `.logs/`. Done means it passes.
+
+To try a change in the site before releasing it, install a packed copy
+there (`npm pack` here, then `npm install <path>/<tarball>.tgz` in the
+site's `frontend/`), never `npm link` (two copies of React). Don't commit
+that install in the site.
+
+## Architecture rules
+
+- The package imports nothing but `react`, `zod` and its own files
+  (`./…`, never climbing out with `..`); both are peer dependencies.
+  `eslint.config.mjs` enforces it. Scripts may also import `node:` modules
+  and `../src/…`; tests may also import `vitest`. Adding a runtime
+  dependency is a design decision for the owner, not an implementation
+  detail.
+- Public API = the `exports` map in `package.json`, documented in the
+  README's Entries table:
+  - `.` (`src/index.ts`): data only (parse, resolve, limits, types). No
+    React and no CSS, so server code and plain Node can import it.
+  - `/react` (`src/CharacterSheet.tsx`): the component, which imports its
+    own CSS.
+  - `/schema` (`src/schema-entry.ts`): `characterSheetConfigSchema` only;
+    the sub-schemas stay internal so their shape can change.
+  - The CSS file and `character-sheet.schema.json`.
+  Entry files only re-export. Anything not reachable from an entry is
+  private and can change freely.
+- `src/schema.ts` is the config contract: `LIMITS`, `ID_PATTERN`,
+  `PARAM_NAME_PATTERN` and the zod schemas built from them, so each limit
+  is written once. Hosts read limits from `LIMITS` and patterns from the
+  exported constants, never from zod internals.
+- Relative imports name the source file (`./parse.ts`); the build rewrites
+  them to `.js`, and Node runs `scripts/generate-schema.mjs` straight from
+  `src/`. Keep `LIMITS` in `schema.ts` for that reason.
+- The JSON Schema closes every plain `z.object` (`additionalProperties:
+  false`), so writers reject unknown keys while `parseConfig` strips them.
+  An object meant to stay open uses `z.looseObject`.
+- `CharacterSheet` is a Server Component. `src/SlotHover.tsx` is the only
+  `"use client"` file and no entry exports it; the build keeps its
+  directive because `tsc` emits one file per source file (don't add a
+  bundler).
+- Behaviour that works without JavaScript stays that way: tooltips show on
+  hover and focus through CSS, the job menu is a `<details>` of links,
+  the layout is a container query. Escape dismisses a tooltip (WCAG
+  1.4.13). Keep `jsx-a11y` passing and every interactive element
+  focusable with a visible `:focus-visible` ring.
+- Theming is `--cs-*` variables on `.cs`. The `document` theme (the one
+  the site uses) reads the host's `--paper`/`--ink`/`--signal` tokens and
+  follows the site's design rules: no gradients, rounded-and-shadowed
+  cards, or new accent colors. Inside `.cs[data-cs-theme="game"]` only,
+  gradients, rounded frames, shadows and its gold accent are allowed.
+- Tests are Vitest, beside the code as `src/*.test.ts`, for the data side
+  (`parse`, `resolve`). No component or DOM tests yet; check rendering in
+  the site with a packed copy.
+
+## Versioning and releases
+
+- Semver, keyed to the config contract. The schema `$id` is
+  `https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@<major>/character-sheet.schema.json`,
+  built from `name` and the major part of `version`.
+  - Compatible (new optional field, looser limit, new export): minor or
+    patch; the `$id` keeps its major.
+  - Breaking (new required field, tighter limit, removed key or export,
+    changed behaviour a host relies on): major bump, then
+    `npm run generate:schema` so the `$id` follows. The site depends on
+    `^1`, so a major reaches it only through an upgrade PR there that
+    handles the break. Say what breaks in the PR.
+- A release is a version-bump PR (`release: X.Y.Z`), merged, then the
+  owner tags the merge commit (`git tag vX.Y.Z && git push origin vX.Y.Z`).
+  `.github/workflows/release.yml` checks the tag against `package.json`,
+  runs the checks, and publishes with npm trusted publishing (no token,
+  provenance from npm). Never publish from a local machine.
+- After a release, the site upgrades in its own repository and session:
+  bump the dependency in its `frontend/`, run
+  `npm run generate:character-schema` there, and commit both.
+
+## Hard constraints
+
+- Free tiers only (npm, GitHub Actions, jsDelivr). Never configure or
+  suggest anything that needs a payment method.
+- CI's job id is `check` (`.github/workflows/ci.yml`). Don't add `paths:`
+  filters to its `pull_request` trigger.
+- Node: `engines` says `>=22.12`, for hosts that load the ESM output
+  without a bundler (Vitest 5 needs it here too); CI runs Node 24, like
+  the site and Vercel. Output is ESM only, no CommonJS build.
+- Dependency ranges are open upward. When something breaks after a fresh
+  install, check the library's changelog first.
+- No "Eorzea" or other Square Enix trademarks in names or published text.
+
+## Workflow
+
+- `main` has no ruleset or branch protection (owner's choice), so the rule
+  is by convention: branch, PR, CI green, owner merges. Never push to
+  `main`. GitHub doesn't delete branches on merge here.
+- Work in a worktree under `.claude/worktrees/` (gitignored), from
+  `origin/main` with no upstream:
+  `git worktree add --no-track -b <branch> .claude/worktrees/<name> origin/main`,
+  then `npm ci` in it. With no upstream, a bare `git push` can't hit
+  `main`; push with `git push -u origin <branch>`.
+- Scratch files (probe scripts, logs) go in the worktree's `.logs/`
+  (gitignored).
+- Tests: never delete, skip, or loosen a test, or change its expected
+  values, to make a check pass. If a test looks wrong, stop and report
+  why. New behaviour gets new tests.
+- Stay inside the task: no drive-by refactors, renames, or new
+  dependencies; list what you noticed instead.
+- Commit in small logical steps; Claude may commit and push its task
+  branch (never `--force`). The `reviewer` subagent (`.claude/agents/`)
+  reviews the branch before the PR is opened; only the owner approves,
+  merges, and pushes release tags.
+- The roadmap's Done entry goes in the feature's own PR.

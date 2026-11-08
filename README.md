@@ -51,6 +51,7 @@ npm install @solution-nine/wol-character-panel react zod
 | `src/character-sheet.css` | Styles and themes; everything themable is a `--cs-*` variable |
 | `character-sheet.schema.json` | Generated JSON Schema for editing a config file by hand |
 | `scripts/generate-schema.mjs` | Regenerates the JSON Schema (`npm run generate:schema`) |
+| `scripts/check.sh` | Runs every check CI runs, one line per step, full logs in `.logs/` |
 | `eslint.config.mjs` | Lint rules (React, hooks, jsx-a11y, TypeScript) and the import allowlist (`npm run lint`) |
 | `tsconfig.json` | Compiler options for editors and `npm run typecheck` (tests included) |
 | `tsconfig.build.json` | `npm run build`: one `.js` and `.d.ts` per source file in `dist/`, so `SlotHover.js` keeps its `"use client"` |
@@ -211,7 +212,7 @@ colours otherwise.
 
 ```sh
 npm ci
-npm run lint && npm run typecheck && npm test && npm run build
+scripts/check.sh    # lint, typecheck, test, schema up to date, build, pack
 ```
 
 Relative imports name the source file (`./parse.ts`): the build rewrites them
