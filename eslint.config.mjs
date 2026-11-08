@@ -13,7 +13,7 @@ const IMPORT_MESSAGE =
 // with "..".
 const ALLOWED = ["react", "react/.+", "zod", String.raw`\./(?!.*\.\.).+`];
 const SCRIPT_ALLOWED = [...ALLOWED, "node:.+", String.raw`\.\./src/(?!.*\.\.).+`];
-const TEST_ALLOWED = [...ALLOWED, "vitest"];
+const TEST_ALLOWED = [...ALLOWED, "vitest", "react-dom/server"];
 const PLAYGROUND_ALLOWED = [
   ...ALLOWED,
   "react-dom/client",
@@ -79,12 +79,17 @@ export default defineConfig([
     },
   },
   {
-    // Tests run under vitest and never ship.
+    // Tests run under vitest and never ship; the render tests use
+    // react-dom/server.
     files: ["**/*.test.{ts,tsx}"],
     rules: {
       "no-restricted-imports": [
         "error",
-        { patterns: [{ regex: onlyAllowed(TEST_ALLOWED), message: "Tests may also import vitest." }] },
+        {
+          patterns: [
+            { regex: onlyAllowed(TEST_ALLOWED), message: "Tests may also import vitest and react-dom/server." },
+          ],
+        },
       ],
     },
   },
