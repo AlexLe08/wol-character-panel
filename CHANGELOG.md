@@ -16,7 +16,9 @@ A PR that changes what's published adds its line under Unreleased; the
 ### Fixed
 
 - "Change job" stays on one line beside a long title; the title wraps
-  instead (`.cs__jobs` no longer shrinks, `.cs__jobs-toggle` doesn't wrap).
+  instead (`.cs__jobs` no longer shrinks, `.cs__jobs-toggle` doesn't wrap),
+  breaking inside a word with no break in it, such as a URL
+  (`overflow-wrap: anywhere` on `.cs__bar-title`).
 
 ## [1.0.2] - 2026-11-09
 

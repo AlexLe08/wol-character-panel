@@ -96,8 +96,11 @@
   background: var(--cs-bar-bg);
 }
 
+/* Breaks even a word with no break in it (a URL, a handle) rather than
+   running under the toggle. */
 .cs__bar-title {
   min-width: 0;
+  overflow-wrap: anywhere;
   font-size: 0.9375rem;
   font-weight: 600;
 }
