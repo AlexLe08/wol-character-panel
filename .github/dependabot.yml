@@ -1,0 +1,52 @@
+# Version updates for the dev tooling and the workflows' actions. Every PR
+# runs CI like any other and waits for the owner to merge.
+version: 2
+updates:
+  # Dev dependencies only: the published peer ranges (react ^19, zod ^4) are
+  # API, changed by hand in a release. react and zod also sit in
+  # devDependencies, so their majors are ignored: moving the dev range to
+  # react 20 or zod 5 would test against peers the ranges don't allow.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    allow:
+      - dependency-type: "development"
+    ignore:
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "zod"
+        update-types: ["version-update:semver-major"]
+    # Ranges stay open upward: a minor or patch moves only the lockfile, a
+    # major raises the range (^9 to ^10).
+    versioning-strategy: "increase-if-necessary"
+    # A release has to be a week old before a PR proposes it, so a
+    # compromised version is usually caught and pulled first.
+    cooldown:
+      default-days: 7
+    # Minors and patches in one PR; each major in its own, since that's
+    # where things break.
+    groups:
+      dev-dependencies:
+        dependency-type: "development"
+        update-types: ["minor", "patch"]
+    commit-message:
+      prefix: "deps"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "ci"

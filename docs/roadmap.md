@@ -57,6 +57,22 @@
   browser tests. The fix ships in the patch 1.0.2 (its `release:` PR, tag
   `v1.0.2` on the merge commit); the site picks it up with an upgrade in
   its own repository.
+- Repository hygiene, step 3 of the tooling plan: a hand-written
+  `CHANGELOG.md` (Keep a Changelog, back to 1.0.0, an Unreleased section
+  each host-visible PR adds to); chosen over changesets (a dependency and
+  a bot workflow) and release-please (its bot PRs would replace the
+  `release:` PRs), which don't pay off for one maintainer releasing now
+  and then. Dependabot, weekly: dev dependencies only (the peer ranges are
+  API), `increase-if-necessary` so ranges stay open and only majors touch
+  `package.json`, majors of react, zod and their types ignored (they'd
+  move the dev range past the peer range), minors and patches grouped, a
+  7-day cooldown; and the
+  actions, grouped. `release.yml`'s actions pinned by commit SHA (the
+  latest v6 of each, what the `v6` tags pointed at); `ci.yml` keeps tags.
+  A PR template with a semver line, bug and feature issue forms,
+  `CONTRIBUTING.md`, `SECURITY.md` (GitHub's private vulnerability
+  reporting, which the owner turns on in the repository settings), and
+  `.nvmrc` (24).
 - Claude Code setup: `CLAUDE.md`, `.claude/settings.json` (no force push,
   merge, or npm publishing commands; tag pushes ask), the `reviewer`
   subagent, `scripts/check.sh`, and this roadmap.
@@ -72,11 +88,7 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 
 1. Tests and coverage: done (both PRs, above).
 2. Packaging checks: done (above), released as 1.0.2 for the `.d.ts` fix.
-3. Repository hygiene: `CHANGELOG.md`, Dependabot (npm dev dependencies and
-   Actions), actions pinned by SHA in `release.yml`, a PR template with a
-   semver line, issue templates, `CONTRIBUTING.md`, `SECURITY.md`,
-   `.nvmrc`. Drop the README's "The URL opens once the package is
-   published" line (it is).
+3. Repository hygiene: done (above).
 4. Claude Code: a `preview` skill (start `npm run dev`, screenshot both
    themes wide and narrow, report console errors), a `release-prep` skill
    (semver call from the API and schema diff, version bump, CHANGELOG, the

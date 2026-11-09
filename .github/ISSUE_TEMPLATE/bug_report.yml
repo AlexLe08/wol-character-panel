@@ -1,0 +1,46 @@
+name: Bug report
+description: Something renders wrong, a valid config is rejected, or types fail to resolve.
+labels: ["bug"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: "1.0.2"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: React, zod, TypeScript and Node versions, and the framework or bundler.
+      placeholder: "React 19.2, zod 4.1, TypeScript 5.9, Node 24, Next.js 16"
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened, and what you expected
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: The smallest config (JSON) and code that shows it. The playground (`npm run dev`) can help narrow it down.
+    validations:
+      required: true
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Theme
+      options:
+        - document
+        - game
+        - Not theme-related
+  - type: textarea
+    id: output
+    attributes:
+      label: Errors or output
+      description: Console errors, `parseConfig` issues, or the type error, as text.
+      render: text
