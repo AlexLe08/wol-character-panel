@@ -58,7 +58,8 @@
     "lint": "eslint",
     "test": "vitest run --coverage",
     "generate:schema": "node scripts/generate-schema.mjs",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "test:browser": "playwright test"
   },
   "peerDependencies": {
     "react": "^19",
