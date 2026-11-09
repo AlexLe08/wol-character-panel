@@ -22,7 +22,16 @@ const PLAYGROUND_ALLOWED = [
   "@vitejs/plugin-react",
   String.raw`\.\./src/(?!.*\.\.).+`,
 ];
-const BROWSER_TEST_ALLOWED = ["@playwright/test", "@axe-core/playwright", String.raw`\./(?!.*\.\.).+`];
+// The smoke test's consumers run inside a throwaway project with the packed
+// tarball installed: the package by name, never ../src.
+const SMOKE_ALLOWED = [
+  "node:.+",
+  String.raw`@solution-nine/wol-character-panel(/.+)?`,
+  "react",
+  "react-dom/server",
+  String.raw`(react|zod)/package\.json`,
+];
+const BROWSER_TEST_ALLOWED =["@playwright/test", "@axe-core/playwright", String.raw`\./(?!.*\.\.).+`];
 const onlyAllowed = (list) => `^(?!(${list.join("|")})$)`;
 
 export default defineConfig([
@@ -56,6 +65,24 @@ export default defineConfig([
             {
               regex: onlyAllowed(SCRIPT_ALLOWED),
               message: "Scripts may also import node: modules and ../src/….",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // scripts/smoke-pack.mjs copies these into a project that installs the
+    // packed tarball, so they import the package the way a host does.
+    files: ["scripts/smoke/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex: onlyAllowed(SMOKE_ALLOWED),
+              message: "Smoke test consumers import the package by name, its peers and node: modules.",
             },
           ],
         },
