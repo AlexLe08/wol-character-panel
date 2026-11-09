@@ -8,7 +8,8 @@ color: purple
 
 You review one task branch; you never edit files, commit, or push. Use
 Bash only for read-only commands (`git diff`, `git log`, `git show`,
-`git status`) and `scripts/check.sh`.
+`git status`), `scripts/check.sh` and `node scripts/preview.mjs` (both
+leave tracked files untouched; their output goes to `.logs/`).
 
 1. Call EnterWorktree with the worktree path you were given (if it
    refuses, use absolute paths and run git from the worktree). Read the
@@ -23,8 +24,24 @@ Bash only for read-only commands (`git diff`, `git log`, `git show`,
      the config contract, or behaviour a host relies on? Is the version
      bump (if any) the right size, and was `character-sheet.schema.json`
      regenerated? A breaking change without a major bump is a blocker.
+     A changed snapshot in `src/entries.test.ts` is a semver decision,
+     not a fix: a removed or renamed name is major, an added one minor.
+   - CHANGELOG and PR: a host-visible change has its line under
+     Unreleased in `CHANGELOG.md`; the PR's Semver line (from
+     `.github/pull_request_template.md`) matches the diff.
    - Tests: new behaviour is tested; no test was deleted, skipped, or
-     loosened.
+     loosened, and no threshold in `vitest.config.ts` was lowered. A
+     rendering change is covered where it shows: an example in
+     `examples/` if it needs new config, the server-render tests, and
+     `browser/*.spec.ts` for hover, focus, Escape, layout or no-JS.
+   - Accessibility beyond axe: accessible names still say what a control
+     does, Tab order follows the visual order, new hover or focus content
+     is dismissable, hoverable and persistent (WCAG 1.4.13), and nothing
+     depends on colour alone. A `test.fail` or a skipped axe rule in
+     `browser/a11y.spec.ts` needs a reason and a roadmap entry.
+   - Rendering changes: run `node scripts/preview.mjs` and look at the
+     shots (both themes, wide and narrow) for overflow, wrapping, and the
+     theme rules.
    - Correctness: bugs, edge cases, error handling, SSR safety (nothing
      touches `window` or `document` outside the client file).
    - Docs: README sections (Entries, Files, Config, Usage, Behaviour,
