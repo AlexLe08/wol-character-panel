@@ -29,6 +29,9 @@ editor, a CMS). In scope:
   from what the release workflow built, or a provenance attestation that
   doesn't match this repository.
 
+By design, image URLs (`portrait.src`, `iconSrc`) can point anywhere, and
+a job's `sections` markdown is the host's to render; the panel never does.
+
 Out of scope: problems in a host's own code, and vulnerabilities in
 `react` or `zod` themselves (report those upstream). Dev dependencies
 don't ship in the package; Dependabot keeps them current.

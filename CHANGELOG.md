@@ -1,8 +1,9 @@
 # Changelog
 
 What changed for hosts in each release: the entries, the config contract
-(the JSON Schema and `LIMITS`), rendering, and the CSS. Repository-only
-changes (tests, CI, tooling) aren't listed. The format follows
+(the JSON Schema and `LIMITS`), rendering, the CSS, and the README (it
+ships, and shows on npm). Repository-only changes (tests, CI, tooling)
+aren't listed. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [semver](https://semver.org/) keyed to the config contract (see the README's
 Config section).
@@ -41,7 +42,8 @@ First release, extracted from
   `findUnknownKeys`, `publicConfig`, `resolveJob`, `jobHref`,
   `actionHref`, `withQuery`, the config types, `LIMITS`, `ID_PATTERN` and
   `PARAM_NAME_PATTERN`.
-- `@solution-nine/wol-character-panel/react`: `CharacterSheet`, with the
+- `@solution-nine/wol-character-panel/react`: `CharacterSheet` (with the
+  `CharacterSheetProps` and `LinkRendererProps` types), with the
   `document` and `game` themes.
 - `@solution-nine/wol-character-panel/schema`: `characterSheetConfigSchema`.
 - `character-sheet.css` and `character-sheet.schema.json`, its `$id` on

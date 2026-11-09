@@ -64,7 +64,9 @@
   `release:` PRs), which don't pay off for one maintainer releasing now
   and then. Dependabot, weekly: dev dependencies only (the peer ranges are
   API), `increase-if-necessary` so ranges stay open and only majors touch
-  `package.json`, minors and patches grouped, a 7-day cooldown; and the
+  `package.json`, majors of react, zod and their types ignored (they'd
+  move the dev range past the peer range), minors and patches grouped, a
+  7-day cooldown; and the
   actions, grouped. `release.yml`'s actions pinned by commit SHA (the
   latest v6 of each, what the `v6` tags pointed at); `ci.yml` keeps tags.
   A PR template with a semver line, bug and feature issue forms,

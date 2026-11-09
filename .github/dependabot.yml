@@ -4,13 +4,25 @@ version: 2
 updates:
   # Dev dependencies only: the published peer ranges (react ^19, zod ^4) are
   # API, changed by hand in a release. react and zod also sit in
-  # devDependencies; their PRs move the lockfile, not the peer ranges.
+  # devDependencies, so their majors are ignored: moving the dev range to
+  # react 20 or zod 5 would test against peers the ranges don't allow.
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
     allow:
       - dependency-type: "development"
+    ignore:
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "zod"
+        update-types: ["version-update:semver-major"]
     # Ranges stay open upward: a minor or patch moves only the lockfile, a
     # major raises the range (^9 to ^10).
     versioning-strategy: "increase-if-necessary"
