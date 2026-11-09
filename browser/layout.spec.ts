@@ -14,7 +14,9 @@ for (const theme of ["document", "game"]) {
 
     const seen: string[] = [];
     let entered = false;
-    for (let i = 0; i < 60; i++) {
+    let left = false;
+    // The playground's controls come first; this bound only stops a runaway.
+    for (let i = 0; i < 100 && !left; i++) {
       await page.keyboard.press("Tab");
       const focused = await page.evaluate(() => {
         const el = document.activeElement as HTMLElement | null;
@@ -27,7 +29,7 @@ for (const theme of ["document", "game"]) {
         };
       });
       if (!focused) {
-        if (entered) break; // left the panel
+        left = entered;
         continue;
       }
       entered = true;
@@ -35,7 +37,9 @@ for (const theme of ["document", "game"]) {
       expect(focused.outline, `${focused.name} has an outline`).not.toBe("none");
       expect(focused.width, `${focused.name} outline width`).toBeGreaterThanOrEqual(2);
     }
-    // Tab reached every link, the menu toggle, and every tooltip-only slot.
+    // Tab walked through the whole panel and out, reaching every link, the
+    // menu toggle, and every tooltip-only slot.
+    expect(left, "Tab left the panel").toBe(true);
     expect(focusable).toBeGreaterThan(0);
     expect(seen).toHaveLength(focusable);
   });

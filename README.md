@@ -245,13 +245,14 @@ npx playwright show-report .logs/playwright-report
 ```
 
 What needs a real browser is in `browser/`, run by Playwright against the
-playground (it starts one on port 5199, or reuses one already there):
+playground (it starts its own on port 5199, and fails if the port is busy):
 tooltips on hover and keyboard focus, Escape hiding them, a focus ring on
 everything Tab reaches, the wide and narrow layouts, and axe (WCAG 2.2 A and
 AA) on every example in both themes and both layouts. The no-JavaScript
 tests load `/static`, the panel server-rendered with no script, with
-JavaScript off. axe leaves out empty slots' squares: their dimmed glyph is
-an inactive component's, which WCAG 1.4.3 exempts from contrast.
+JavaScript off. One known failure is recorded as such (`test.fail`): in the
+document theme an empty slot's dimmed glyph is below 4.5:1 contrast, so the
+other axe runs skip that one rule on those squares only.
 
 ### Preview locally
 

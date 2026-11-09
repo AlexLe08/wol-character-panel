@@ -51,4 +51,8 @@ test("the narrow layout needs no script", async ({ page }) => {
   const portrait = (await page.locator(".cs__portrait").boundingBox())!;
   const left = (await page.locator(".cs__slots--left").boundingBox())!;
   expect(portrait.y + portrait.height).toBeLessThanOrEqual(left.y);
+
+  const label = page.locator(".cs__slots--left .cs-slot__label").first();
+  await expect(label).toBeVisible();
+  expect((await label.boundingBox())!.width).toBeGreaterThan(1);
 });

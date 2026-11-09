@@ -30,7 +30,9 @@ export default defineConfig({
   webServer: {
     command: `npm run dev -- --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,
-    // Locally, reuse a playground already running on that port.
-    reuseExistingServer: !CI,
+    // Never reuse a server already on the port: it could be another
+    // worktree's, serving another branch's src/. A busy port fails
+    // (--strictPort) instead.
+    reuseExistingServer: false,
   },
 });

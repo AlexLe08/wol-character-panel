@@ -38,10 +38,9 @@
   server-rendered by the playground's dev server (`static.tsx` through
   `ssrLoadModule`), loaded with JavaScript off. No `@types/node`, so
   `src/` can't lean on Node globals; the two config files declare what
-  they use. axe found one thing: empty slots' glyphs are below 4.5:1 in
-  the document theme. Left out of axe as an inactive component (WCAG
-  1.4.3), pending the owner's call on raising them to `--cs-muted`.
-  Chromium only; Firefox and WebKit are a project line each.
+  they use. Chromium only; Firefox and WebKit are a project line each.
+  `release.yml` doesn't rerun the browser tests: the tag sits on a merge
+  commit CI already ran them on.
 - Claude Code setup: `CLAUDE.md`, `.claude/settings.json` (no force push,
   merge, or npm publishing commands; tag pushes ask), the `reviewer`
   subagent, `scripts/check.sh`, and this roadmap.
@@ -74,6 +73,13 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 Found with the playground's `edge-cases` example, for a component PR: at
 the limits, the tooltip runs far below the panel, the level line wraps
 mid-label, and "Change job" wraps onto two lines.
+
+Found by axe, for a component PR (a patch release): in the document theme
+an empty slot's glyph (`--cs-rule-strong`) is below 4.5:1, and at full
+width it's the only visible text naming the slot. Raising it to
+`--cs-muted` (the empty label's colour) passes axe. Recorded as a known
+failure in `browser/a11y.spec.ts`; the other axe runs skip only that rule
+on those squares, so remove the skip and the `test.fail` with the fix.
 
 ## Later (candidates, unordered)
 
