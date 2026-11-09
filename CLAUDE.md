@@ -156,8 +156,10 @@ that install in the site.
 - Once the PR has merged and its remote branch is deleted, run
   `scripts/cleanup-merged.sh` (a dry run), then `--apply`: it removes each
   worktree and local branch that is merged into `origin/main` with its
-  remote branch gone, and nothing else (no `--force`). It skips the
-  worktree it runs from, so a session cleans up its own worktree after
+  remote branch gone, and nothing else. A dirty worktree is refused (no
+  `git worktree remove --force`); a branch goes with `git branch -D` only
+  after that check. It skips the worktree it is called from and the one
+  the script lives in, so a session cleans up its own worktree after
   creating the next one and switching to it.
 - Scratch files (probe scripts, logs) go in the worktree's `.logs/`
   (gitignored).

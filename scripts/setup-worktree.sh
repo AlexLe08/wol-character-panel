@@ -9,6 +9,6 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd -P)"
 
 echo "npm ci"
-(cd "$root" && npm ci --silent --no-audit --no-fund)
+(cd "$root" && npm ci --loglevel=error --no-audit --no-fund)
 
 echo "ready"

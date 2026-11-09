@@ -7,6 +7,9 @@
 # would otherwise track main, and a bare `git push` would push to it. The
 # first push sets the right one: git push -u origin <branch>.
 #
+# If setup fails, fix it and rerun scripts/setup-worktree.sh inside the new
+# worktree (rerunning this one fails: the branch exists).
+#
 # Usage: scripts/new-worktree.sh <branch>   e.g. test/browser-and-a11y
 set -euo pipefail
 
