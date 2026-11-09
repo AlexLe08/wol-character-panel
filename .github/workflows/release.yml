@@ -16,11 +16,14 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      # Actions pinned by commit SHA, not tag: this job can publish, and a
+      # tag can be moved to other code. Dependabot bumps the SHA and the
+      # version comment together.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
       # No dependency cache in the job that can publish: a poisoned cache
       # entry would end up in the release (as in npm's own example).
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
           node-version: "24"
           package-manager-cache: false
