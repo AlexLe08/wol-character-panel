@@ -38,7 +38,10 @@ merge commit and `release.yml` publishes.
      scripts/strip-dts-css-imports.mjs` and `package.json`'s `build`
      script change what ships in `dist/` (1.0.2 was such a fix). Compare
      `npm pack --dry-run` file lists if unsure.
-   - `README.md` ships and shows on npm: a correction there is a patch.
+   - `README.md` ships and shows on npm: a correction to a host-facing
+     section (Entries, Files, Config, Usage, Behaviour, Theming) is a
+     patch; Development and Releasing are repository notes and count as
+     none, like other tooling (the CHANGELOG doesn't list them).
    - The Unreleased section of `CHANGELOG.md`.
 3. If nothing a host can see changed, say a release isn't needed and stop.
 
@@ -59,7 +62,8 @@ you'll use.
    `package-lock.json`, no commit, no tag).
 3. Major only: `npm run generate:schema`, so the `$id` moves to
    `@<major>`; then update the README and examples wherever they name the
-   old major (`grep -rn "@<old major>"`, outside `node_modules/`).
+   old major (`grep -rn "@<old major>" README.md examples/`). Leave the
+   CHANGELOG's history and `package-lock.json` alone.
 4. `CHANGELOG.md`: the Unreleased entries become `## [X.Y.Z] - <today,
    YYYY-MM-DD>` under a new empty `## [Unreleased]`, with any missing lines
    from step 2. At the bottom, `[Unreleased]` compares from `vX.Y.Z`, and a

@@ -54,7 +54,9 @@ reach the site only through a release and an upgrade there.
 - `node scripts/preview.mjs [--fixture=a,b] [--theme=document|game]`:
   screenshots of the panel per example, theme and layout (wide, and
   narrow at 22rem) in `.logs/preview/`, from its own dev server on port
-  5198, plus console errors; exit 1 on any. The `preview` skill runs it.
+  5198 (a busy port fails), plus console errors and warnings, page
+  errors and parseConfig reports; exit 1 on any. The `preview` skill
+  runs it.
 - `scripts/new-worktree.sh <branch>`: the next task's worktree (see
   Workflow); `scripts/setup-worktree.sh` (`npm ci`) runs inside it.
 - `scripts/cleanup-merged.sh [--apply]`: after a merge, lists (or with

@@ -39,7 +39,16 @@ const fixtures = option(
 const themes = option("theme", ["document", "game"]);
 const layouts = { wide: "", narrow: "22" };
 
-// Its own process group, so stopping it stops Vite under npm too.
+// Something already answering on the port would pass the readiness check
+// below before Vite's --strictPort fails, so refuse it up front.
+const busy = await fetch(base).then(
+  () => true,
+  () => false,
+);
+if (busy) throw new Error(`port ${PORT} is busy (another preview, or a dev server left running)`);
+
+// Its own process group, so stopping it stops Vite under npm too. That also
+// keeps a terminal's Ctrl-C from reaching it, hence the signal handlers.
 const server = spawn("npm", ["run", "dev", "--", "--port", String(PORT), "--strictPort"], {
   cwd: root,
   detached: true,
@@ -54,6 +63,12 @@ const stopServer = () => {
     // Already gone.
   }
 };
+for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
+  process.on(signal, () => {
+    stopServer();
+    process.exit(130);
+  });
+}
 
 async function waitForServer() {
   for (let i = 0; i < 60; i++) {

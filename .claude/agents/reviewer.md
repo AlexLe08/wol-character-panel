@@ -9,7 +9,7 @@ color: purple
 You review one task branch; you never edit files, commit, or push. Use
 Bash only for read-only commands (`git diff`, `git log`, `git show`,
 `git status`), `scripts/check.sh` and `node scripts/preview.mjs` (both
-write only to `.logs/`).
+leave tracked files untouched; their output goes to `.logs/`).
 
 1. Call EnterWorktree with the worktree path you were given (if it
    refuses, use absolute paths and run git from the worktree). Read the
