@@ -51,16 +51,18 @@ npm install @solution-nine/wol-character-panel react zod
 | `src/character-sheet.css` | Styles and themes; everything themable is a `--cs-*` variable |
 | `character-sheet.schema.json` | Generated JSON Schema for editing a config file by hand |
 | `examples/` | Sample configs (`full`, `minimal`, `edge-cases` with every field at its limit); tests check each one parses cleanly and renders |
-| `playground/` | The local preview (`npm run dev`). Not published |
+| `playground/` | The local preview (`npm run dev`), and `/static`, the panel server-rendered with no script (`static.tsx`). Not published |
+| `browser/` | Browser tests (`npm run test:browser`): Playwright and axe against the playground |
 | `scripts/generate-schema.mjs` | Regenerates the JSON Schema (`npm run generate:schema`) |
 | `scripts/check.sh` | Runs every check CI runs, one line per step, full logs in `.logs/` |
 | `scripts/new-worktree.sh` | A new branch from `origin/main` in its own worktree under `.claude/worktrees/`, set up by `scripts/setup-worktree.sh` (`npm ci`) |
 | `scripts/cleanup-merged.sh` | After a merge: removes worktrees and local branches merged into `origin/main` whose remote branch is gone (dry run unless `--apply`) |
 | `eslint.config.mjs` | Lint rules (React, hooks, jsx-a11y, TypeScript) and the import allowlist (`npm run lint`) |
-| `tsconfig.json` | Compiler options for editors and `npm run typecheck` (tests, the playground and `vitest.config.ts` included) |
+| `tsconfig.json` | Compiler options for editors and `npm run typecheck` (tests, the playground, the browser tests and both test configs included) |
 | `vitest.config.ts` | Which tests run (`src/**/*.test.{ts,tsx}`), and coverage: every source file in `src/` (not the tests or CSS), its thresholds, the report in `.logs/coverage/` |
+| `playwright.config.ts` | The browser tests: Chromium, the playground started on port 5199, the report in `.logs/playwright-report/` |
 | `tsconfig.build.json` | `npm run build`: one `.js` and `.d.ts` per source file in `dist/`, so `SlotHover.js` keeps its `"use client"` |
-| `.github/workflows/ci.yml` | Lint, type-check, tests with coverage thresholds, the schema up to date, build, and pack, on every pull request |
+| `.github/workflows/ci.yml` | On every pull request: `check` (lint, type-check, tests with coverage thresholds, the schema up to date, build, and pack) and `browser` (the Playwright tests) |
 | `.github/workflows/release.yml` | Publishes to npm when a `v*` tag is pushed |
 
 ## Config
@@ -217,7 +219,8 @@ colours otherwise.
 
 ```sh
 npm ci
-scripts/check.sh    # lint, typecheck, test, schema up to date, build, pack
+npx playwright install chromium   # once, for the browser tests
+scripts/check.sh    # lint, typecheck, test, schema up to date, build, pack, browser
 ```
 
 ### Tests
@@ -235,6 +238,22 @@ runtime exports, so removing one fails a test (it would be a major release).
 `npm test` fails when coverage drops below the thresholds in
 `vitest.config.ts`; the report is in `.logs/coverage/index.html`.
 
+```sh
+npm run test:browser                        # Playwright, in Chromium
+npx playwright test --ui                    # the same, step by step
+npx playwright show-report .logs/playwright-report
+```
+
+What needs a real browser is in `browser/`, run by Playwright against the
+playground (it starts its own on port 5199, and fails if the port is busy):
+tooltips on hover and keyboard focus, Escape hiding them, a focus ring on
+everything Tab reaches, the wide and narrow layouts, and axe (WCAG 2.2 A and
+AA) on every example in both themes and both layouts. The no-JavaScript
+tests load `/static`, the panel server-rendered with no script, with
+JavaScript off. One known failure is recorded as such (`test.fail`): in the
+document theme an empty slot's dimmed glyph is below 4.5:1 contrast, so the
+other axe runs skip that one rule on those squares only.
+
 ### Preview locally
 
 ```sh
@@ -248,7 +267,9 @@ is a link, such as `/?fixture=edge-cases&theme=game&width=22`. Like a host, it
 reads `?job=` and the param actions' parameters from the URL and passes
 `isParamActive`; a `link` action shows where a host would go instead of
 leaving the page. It renders on the client, while hosts render the panel on
-the server, so check a release candidate in a host too (below).
+the server; `/static?fixture=full&width=22` shows the server-rendered panel
+with no script (fixture, theme, labels, width and `job` from the query).
+Check a release candidate in a host too (below).
 
 Relative imports name the source file (`./parse.ts`): the build rewrites them
 to `.js`, and Node can run the schema generator straight from `src/`. After

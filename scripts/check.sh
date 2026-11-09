@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# The checks CI's `check` job runs (.github/workflows/ci.yml): lint,
+# The checks CI runs (.github/workflows/ci.yml): the `check` job's lint,
 # type-check, tests with coverage thresholds, the JSON Schema up to date,
-# build, and pack.
+# build, and pack; then the `browser` job's Playwright tests (Chromium
+# installed once with `npx playwright install chromium`).
 # Prints one line per step; the full output of each goes to
 # .logs/<step>.log, and a failing step also prints its last 30 lines.
 #
@@ -40,5 +41,6 @@ run test npm test
 run schema schema_up_to_date
 run build npm run build
 run pack npm pack --dry-run
+run browser npm run test:browser
 
 exit "$failed"

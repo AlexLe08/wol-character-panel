@@ -17,10 +17,12 @@ const TEST_ALLOWED = [...ALLOWED, "vitest", "react-dom/server"];
 const PLAYGROUND_ALLOWED = [
   ...ALLOWED,
   "react-dom/client",
+  "react-dom/server",
   "vite",
   "@vitejs/plugin-react",
   String.raw`\.\./src/(?!.*\.\.).+`,
 ];
+const BROWSER_TEST_ALLOWED = ["@playwright/test", "@axe-core/playwright", String.raw`\./(?!.*\.\.).+`];
 const onlyAllowed = (list) => `^(?!(${list.join("|")})$)`;
 
 export default defineConfig([
@@ -81,7 +83,25 @@ export default defineConfig([
           patterns: [
             {
               regex: onlyAllowed(PLAYGROUND_ALLOWED),
-              message: "The playground may also import react-dom/client, Vite and ../src/….",
+              message: "The playground may also import react-dom/client, react-dom/server, Vite and ../src/….",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // The browser tests (`npm run test:browser`) drive the playground in
+    // Playwright: they reach the panel through the page, never ../src.
+    files: ["browser/**", "playwright.config.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex: onlyAllowed(BROWSER_TEST_ALLOWED),
+              message: "Browser tests import only @playwright/test, @axe-core/playwright and each other.",
             },
           ],
         },

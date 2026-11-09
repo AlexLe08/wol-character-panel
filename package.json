@@ -58,13 +58,16 @@
     "lint": "eslint",
     "test": "vitest run --coverage",
     "generate:schema": "node scripts/generate-schema.mjs",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "test:browser": "playwright test"
   },
   "peerDependencies": {
     "react": "^19",
     "zod": "^4"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6",

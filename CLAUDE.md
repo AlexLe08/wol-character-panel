@@ -28,17 +28,21 @@ reach the site only through a release and an upgrade there.
 - `npm test`: Vitest with coverage, `src/**/*.test.{ts,tsx}`; fails below
   the thresholds in `vitest.config.ts`, report in `.logs/coverage/`
   (`npx vitest` watches, without coverage)
+- `npm run test:browser`: Playwright and axe in Chromium (`browser/`)
+  against the playground, which it starts; report in
+  `.logs/playwright-report/`. Needs `npx playwright install chromium` once.
 - `npm run dev`: the playground (`playground/`, Vite) on the configs in
   `examples/`, rendering `src/` with hot reload. Its state is in the URL
-  (`/?fixture=edge-cases&theme=game&width=22`).
+  (`/?fixture=edge-cases&theme=game&width=22`). `/static` is the panel
+  server-rendered with no script (`playground/static.tsx`).
 - `npm run build`: `tsc -p tsconfig.build.json` to `dist/` (ESM, one `.js`
   and `.d.ts` per source file) plus the CSS
 - `npm run generate:schema`: rewrites `character-sheet.schema.json` from
   `src/schema.ts`. Run it after any change to `schema.ts` and commit the
   result; CI fails while the committed file is out of date.
 - `npm pack --dry-run`: lists what would be published (`prepack` builds)
-- `scripts/check.sh`: everything CI's `check` job runs, one line per step,
-  full logs in `.logs/`. Done means it passes.
+- `scripts/check.sh`: everything CI's `check` and `browser` jobs run, one
+  line per step, full logs in `.logs/`. Done means it passes.
 - `scripts/new-worktree.sh <branch>`: the next task's worktree (see
   Workflow); `scripts/setup-worktree.sh` (`npm ci`) runs inside it.
 - `scripts/cleanup-merged.sh [--apply]`: after a merge, lists (or with
@@ -56,7 +60,10 @@ that install in the site.
   `eslint.config.mjs` enforces it. Scripts may also import `node:` modules
   and `../src/…`; tests may also import `vitest` and `react-dom/server`;
   `vitest.config.ts` only `vitest/config`; the playground may also
-  import `react-dom/client`, Vite and `../src/…`. Adding a runtime
+  import `react-dom/client`, `react-dom/server`, Vite and `../src/…`;
+  the browser tests and `playwright.config.ts` only `@playwright/test`,
+  `@axe-core/playwright` and each other (they reach the panel through
+  the page). Adding a runtime
   dependency is a design decision for the owner, not an implementation
   detail.
 - Public API = the `exports` map in `package.json`, documented in the
@@ -101,10 +108,15 @@ that install in the site.
   changing that snapshot is a semver decision (removal is major), not a
   fix. Coverage thresholds in `vitest.config.ts` sit just under the
   current numbers; raise them when coverage rises, never lower them to
-  pass. Hover, focus and Escape need a browser: check them in the
-  playground (`npm run dev`), and in the site with a packed copy before
-  a release. Every `examples/*.json` must parse cleanly
+  pass. Every `examples/*.json` must parse cleanly
   (`src/examples.test.ts`) and render (`src/CharacterSheet.test.tsx`).
+- What needs a browser is Playwright, in `browser/*.spec.ts`, against the
+  playground: tooltips on hover and focus, Escape, focus rings, the
+  container query, axe (WCAG 2.2 A/AA) on every example in both themes and
+  layouts, and `/static` with JavaScript off. Coverage doesn't see these
+  (`SlotHover.tsx` stays low in Vitest's numbers). Still check a release
+  candidate in the site with a packed copy, since it renders on the server
+  with its own CSS around the panel.
 
 ## Versioning and releases
 

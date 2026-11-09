@@ -27,6 +27,20 @@
   Gaps left: removing an exported *type* isn't caught (types vanish at
   runtime), and `SlotHover.tsx` sits at about 26% because its handlers only
   run in a browser.
+- Browser tests, second PR of the tooling plan's step 1: Playwright and
+  `@axe-core/playwright` (dev only) against the playground, in Chromium,
+  as `npm run test:browser`, a `browser` CI job beside `check` (report
+  uploaded on failure) and a step in `scripts/check.sh`. Tooltips on
+  hover (and hoverable) and keyboard focus, Escape focused and hovered,
+  focus rings on everything Tab reaches in both themes, wide and narrow
+  layouts (following the container), axe WCAG 2.2 A/AA across examples,
+  themes and layouts, and a no-JavaScript page: `/static`, the panel
+  server-rendered by the playground's dev server (`static.tsx` through
+  `ssrLoadModule`), loaded with JavaScript off. No `@types/node`, so
+  `src/` can't lean on Node globals; the two config files declare what
+  they use. Chromium only; Firefox and WebKit are a project line each.
+  `release.yml` doesn't rerun the browser tests: the tag sits on a merge
+  commit CI already ran them on.
 - Claude Code setup: `CLAUDE.md`, `.claude/settings.json` (no force push,
   merge, or npm publishing commands; tag pushes ask), the `reviewer`
   subagent, `scripts/check.sh`, and this roadmap.
@@ -40,12 +54,7 @@
 
 Agreed 2026-11-08 after a review of the repository as extracted.
 
-1. Tests and coverage (render tests, export snapshot and coverage done,
-   above). Next, in a second PR, Playwright and `@axe-core/playwright`
-   against the playground: tooltip on
-   hover and focus, Escape, focus rings, the narrow layout, no axe
-   violations in either theme, and a no-JavaScript page; a `browser` CI job
-   beside `check`.
+1. Tests and coverage: done (both PRs, above).
 2. Packaging checks: `publint` and `@arethetypeswrong/cli`; a smoke test
    that installs the packed tarball and imports each entry in plain Node
    (and checks `"use client"` in `dist/SlotHover.js`); CI on Node 22.12
@@ -64,6 +73,13 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 Found with the playground's `edge-cases` example, for a component PR: at
 the limits, the tooltip runs far below the panel, the level line wraps
 mid-label, and "Change job" wraps onto two lines.
+
+Found by axe, for a component PR (a patch release): in the document theme
+an empty slot's glyph (`--cs-rule-strong`) is below 4.5:1, and at full
+width it's the only visible text naming the slot. Raising it to
+`--cs-muted` (the empty label's colour) passes axe. Recorded as a known
+failure in `browser/a11y.spec.ts`; the other axe runs skip only that rule
+on those squares, so remove the skip and the `test.fail` with the fix.
 
 ## Later (candidates, unordered)
 
