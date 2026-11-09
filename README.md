@@ -54,6 +54,8 @@ npm install @solution-nine/wol-character-panel react zod
 | `playground/` | The local preview (`npm run dev`). Not published |
 | `scripts/generate-schema.mjs` | Regenerates the JSON Schema (`npm run generate:schema`) |
 | `scripts/check.sh` | Runs every check CI runs, one line per step, full logs in `.logs/` |
+| `scripts/new-worktree.sh` | A new branch from `origin/main` in its own worktree under `.claude/worktrees/`, set up by `scripts/setup-worktree.sh` (`npm ci`) |
+| `scripts/cleanup-merged.sh` | After a merge: removes worktrees and local branches merged into `origin/main` whose remote branch is gone (dry run unless `--apply`) |
 | `eslint.config.mjs` | Lint rules (React, hooks, jsx-a11y, TypeScript) and the import allowlist (`npm run lint`) |
 | `tsconfig.json` | Compiler options for editors and `npm run typecheck` (tests, the playground and `vitest.config.ts` included) |
 | `vitest.config.ts` | Which tests run (`src/**/*.test.{ts,tsx}`), and coverage: every source file in `src/` (not the tests or CSS), its thresholds, the report in `.logs/coverage/` |
