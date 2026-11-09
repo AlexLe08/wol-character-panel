@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # The checks CI runs (.github/workflows/ci.yml): the `check` job's lint,
 # type-check, tests with coverage thresholds, the JSON Schema up to date,
-# build, and pack; then the `browser` job's Playwright tests (Chromium
-# installed once with `npx playwright install chromium`).
+# build, pack, package lint and the tarball smoke test; the `compat` job's
+# smoke test with the oldest peers (its Node 22.12 run is CI only); then
+# the `browser` job's Playwright tests (Chromium installed once with
+# `npx playwright install chromium`).
 # Prints one line per step; the full output of each goes to
 # .logs/<step>.log, and a failing step also prints its last 30 lines.
 #
@@ -41,6 +43,9 @@ run test npm test
 run schema schema_up_to_date
 run build npm run build
 run pack npm pack --dry-run
+run package-lint npm run lint:package
+run smoke npm run test:pack
+run smoke-oldest-peers node scripts/smoke-pack.mjs --oldest-peers
 run browser npm run test:browser
 
 exit "$failed"
