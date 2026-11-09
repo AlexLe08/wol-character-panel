@@ -30,6 +30,11 @@
 - Claude Code setup: `CLAUDE.md`, `.claude/settings.json` (no force push,
   merge, or npm publishing commands; tag pushes ask), the `reviewer`
   subagent, `scripts/check.sh`, and this roadmap.
+- Worktree scripts, ported from the-portfolio-site: `new-worktree.sh`,
+  `setup-worktree.sh` (here only `npm ci`) and `cleanup-merged.sh`. The
+  cleanup now resolves symlinked paths (`pwd -P`), so it always recognises
+  the worktree it runs from; tested against a local bare origin (merged,
+  open, never-pushed, and merged-but-remote-kept branches).
 
 ## Next up: tooling plan (in order, one PR and session each)
 

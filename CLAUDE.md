@@ -39,6 +39,10 @@ reach the site only through a release and an upgrade there.
 - `npm pack --dry-run`: lists what would be published (`prepack` builds)
 - `scripts/check.sh`: everything CI's `check` job runs, one line per step,
   full logs in `.logs/`. Done means it passes.
+- `scripts/new-worktree.sh <branch>`: the next task's worktree (see
+  Workflow); `scripts/setup-worktree.sh` (`npm ci`) runs inside it.
+- `scripts/cleanup-merged.sh [--apply]`: after a merge, lists (or with
+  `--apply` removes) worktrees and local branches whose PR merged.
 
 To try a change in the site before releasing it, install a packed copy
 there (`npm pack` here, then `npm install <path>/<tarball>.tgz` in the
@@ -140,12 +144,23 @@ that install in the site.
 
 - `main` has no ruleset or branch protection (owner's choice), so the rule
   is by convention: branch, PR, CI green, owner merges. Never push to
-  `main`. GitHub doesn't delete branches on merge here.
-- Work in a worktree under `.claude/worktrees/` (gitignored), from
-  `origin/main` with no upstream:
-  `git worktree add --no-track -b <branch> .claude/worktrees/<name> origin/main`,
-  then `npm ci` in it. With no upstream, a bare `git push` can't hit
-  `main`; push with `git push -u origin <branch>`.
+  `main`. GitHub doesn't delete branches on merge here unless the owner
+  turns on "Automatically delete head branches"; otherwise the owner
+  presses "Delete branch" on the merged PR.
+- Each task starts in a new worktree under `.claude/worktrees/`
+  (gitignored): `scripts/new-worktree.sh <branch>` branches from the latest
+  `origin/main` with no upstream, into `.claude/worktrees/<branch, / as ->`,
+  and runs `npm ci` there; then switch the session into it. With no
+  upstream, a bare `git push` can't hit `main`; push with
+  `git push -u origin <branch>`.
+- Once the PR has merged and its remote branch is deleted, run
+  `scripts/cleanup-merged.sh` (a dry run), then `--apply`: it removes each
+  worktree and local branch that is merged into `origin/main` with its
+  remote branch gone, and nothing else. A dirty worktree is refused (no
+  `git worktree remove --force`); a branch goes with `git branch -D` only
+  after that check. It skips the worktree it is called from and the one
+  the script lives in, so a session cleans up its own worktree after
+  creating the next one and switching to it.
 - Scratch files (probe scripts, logs) go in the worktree's `.logs/`
   (gitignored).
 - Tests: never delete, skip, or loosen a test, or change its expected
