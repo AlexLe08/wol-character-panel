@@ -81,6 +81,23 @@
   cleanup now resolves symlinked paths (`pwd -P`), so it always recognises
   the worktree it runs from; tested against a local bare origin (merged,
   open, never-pushed, and merged-but-remote-kept branches).
+- Claude Code skills, step 4 of the tooling plan: `scripts/preview.mjs`
+  (Playwright's Chromium, already a dev dependency) screenshots each
+  example in both themes, wide and narrow, from its own dev server on
+  port 5198, and reports console errors; the `preview` skill runs it and
+  reads the shots. A script rather than the Playwright MCP plugin, so it
+  works for any contributor and without Claude; the allowlist lets only
+  that script import `@playwright/test`. `release-prep`, invoked only by
+  the owner (`/release-prep`), reads the diff since the last tag (export
+  snapshot, schema, types, CSS, `package.json`, build inputs, Unreleased),
+  proposes the bump and waits, then bumps with `npm version
+  --no-git-tag-version`, rolls the CHANGELOG, runs the checks and opens
+  the `release:` PR; it never tags. Instructions only: the export
+  snapshot and schema diff already are the API diff. `reviewer.md` now
+  checks the export snapshot as a semver call, the CHANGELOG line and PR
+  semver line, browser coverage of rendering changes, accessibility
+  beyond axe, and may run the preview. No `a11y-auditor` agent (see
+  Later).
 
 ## Next up: tooling plan (in order, one PR and session each)
 
@@ -89,11 +106,7 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 1. Tests and coverage: done (both PRs, above).
 2. Packaging checks: done (above), released as 1.0.2 for the `.d.ts` fix.
 3. Repository hygiene: done (above).
-4. Claude Code: a `preview` skill (start `npm run dev`, screenshot both
-   themes wide and narrow, report console errors), a `release-prep` skill
-   (semver call from the API and schema diff, version bump, CHANGELOG, the
-   `release:` PR; never tags), maybe an `a11y-auditor` agent, and
-   `reviewer.md` updated for the playground and the export snapshot.
+4. Claude Code: done (above).
 
 Found with the playground's `edge-cases` example, for a component PR: at
 the limits, the tooltip runs far below the panel, the level line wraps
@@ -116,6 +129,10 @@ on those squares, so remove the skip and the `test.fail` with the fix.
   both themes: build the playground with Vite and deploy it to GitHub
   Pages.
 - A custom-element wrapper, only if someone asks for one.
+- An `a11y-auditor` agent (screen-reader names, keyboard walk-throughs,
+  WCAG 1.4.13 on new hover content), if component work grows past what
+  axe, the browser specs and the reviewer's accessibility checks catch.
+  Left out of step 4: an agent called now and then goes stale.
 - Backend code stays out (decided with the site's PR #54): the JSON
   Schema is the contract, which any backend validates in its own language.
   A Python validator package (`find_issues` and its `oneOf` explanation)

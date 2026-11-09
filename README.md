@@ -300,6 +300,12 @@ the server; `/static?fixture=full&width=22` shows the server-rendered panel
 with no script (fixture, theme, labels, width and `job` from the query).
 Check a release candidate in a host too (below).
 
+`node scripts/preview.mjs` screenshots the panel for every example, in both
+themes, wide and narrow (22rem), into `.logs/preview/`, and lists any console
+error or warning (exit 1 if there is one). `--fixture=full` and
+`--theme=game` narrow it down. It starts its own dev server on port 5198 and
+needs Chromium (`npx playwright install chromium`).
+
 Relative imports name the source file (`./parse.ts`): the build rewrites them
 to `.js`, and Node can run the schema generator straight from `src/`. After
 changing `src/schema.ts`, run `npm run generate:schema` and commit the JSON

@@ -51,6 +51,10 @@ reach the site only through a release and an upgrade there.
 - `scripts/check.sh`: everything CI's `check` and `browser` jobs run, and
   `compat`'s oldest-peers smoke test (its Node 22.12 run is CI only), one
   line per step, full logs in `.logs/`. Done means it passes.
+- `node scripts/preview.mjs [--fixture=a,b] [--theme=document|game]`:
+  screenshots of the panel per example, theme and layout (wide, and
+  narrow at 22rem) in `.logs/preview/`, from its own dev server on port
+  5198, plus console errors; exit 1 on any. The `preview` skill runs it.
 - `scripts/new-worktree.sh <branch>`: the next task's worktree (see
   Workflow); `scripts/setup-worktree.sh` (`npm ci`) runs inside it.
 - `scripts/cleanup-merged.sh [--apply]`: after a merge, lists (or with
@@ -67,8 +71,9 @@ that install in the site.
   (`./…`, never climbing out with `..`); both are peer dependencies.
   `eslint.config.mjs` enforces it. Scripts may also import `node:` modules
   and `../src/…`, except `scripts/smoke/`, which imports the package by
-  name, its peers and `node:` modules (it runs against the tarball);
-  tests may also import `vitest` and `react-dom/server`;
+  name, its peers and `node:` modules (it runs against the tarball),
+  and `scripts/preview.mjs`, which imports only `node:` modules and
+  `@playwright/test`; tests may also import `vitest` and `react-dom/server`;
   `vitest.config.ts` only `vitest/config`; the playground may also
   import `react-dom/client`, `react-dom/server`, Vite and `../src/…`;
   the browser tests and `playwright.config.ts` only `@playwright/test`,
@@ -146,7 +151,9 @@ that install in the site.
   the merge commit (`git tag vX.Y.Z && git push origin vX.Y.Z`).
   `.github/workflows/release.yml` checks the tag against `package.json`,
   runs the checks, and publishes with npm trusted publishing (no token,
-  provenance from npm). Never publish from a local machine.
+  provenance from npm). Never publish from a local machine. The owner
+  starts that PR with `/release-prep` (`.claude/skills/`), which proposes
+  the bump and waits for a yes; it never tags.
 - After a release, the site upgrades in its own repository and session:
   bump the dependency in its `frontend/`, run
   `npm run generate:character-schema` there, and commit both.
