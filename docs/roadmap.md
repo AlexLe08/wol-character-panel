@@ -53,7 +53,8 @@
   status check keeps its name. attw found a real bug, fixed here: the
   emitted `CharacterSheet.d.ts` kept `import "./character-sheet.css"`,
   which fails a host on TypeScript 6 or 7 with `skipLibCheck` off (TS2882);
-  the build now blanks it. Needs a patch release (1.0.2) to reach hosts.
+  the build now blanks it. Released as the patch 1.0.2 (tag `v1.0.2`); the
+  site picks it up with an upgrade in its own repository.
   `release.yml` doesn't rerun these, like the browser tests.
 - Claude Code setup: `CLAUDE.md`, `.claude/settings.json` (no force push,
   merge, or npm publishing commands; tag pushes ask), the `reviewer`
@@ -69,7 +70,7 @@
 Agreed 2026-11-08 after a review of the repository as extracted.
 
 1. Tests and coverage: done (both PRs, above).
-2. Packaging checks: done (above). Release 1.0.2 for the `.d.ts` fix.
+2. Packaging checks: done (above), released as 1.0.2 for the `.d.ts` fix.
 3. Repository hygiene: `CHANGELOG.md`, Dependabot (npm dev dependencies and
    Actions), actions pinned by SHA in `release.yml`, a PR template with a
    semver line, issue templates, `CONTRIBUTING.md`, `SECURITY.md`,
