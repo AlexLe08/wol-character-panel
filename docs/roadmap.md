@@ -98,6 +98,25 @@
   semver line, browser coverage of rendering changes, accessibility
   beyond axe, and may run the preview. No `a11y-auditor` agent (see
   Later).
+- The `edge-cases` findings (a patch). "Change job" wrapped onto two
+  lines beside a long title: the menu no longer shrinks and the toggle
+  doesn't wrap, with a browser test in both themes and layouts. The other
+  two are accepted, measured in Chromium:
+  - The tooltip at the limits is about 985px tall (some 1,600 characters
+    in a 17rem card) against a 598px panel, so a bottom-row slot's runs
+    about 900px below it. It stays usable: it's hoverable and the page
+    scrolls. Widening it to 22rem across the portrait cut that only to
+    805px and left realistic cards (`full`) as tall, only wider, so it
+    was dropped. A height cap with scrolling would need a tab stop in
+    long cards for keyboard users, and tighter `LIMITS` is a major.
+    `full`'s bottom-row cards (`tools`, `contact`) also run 31px below
+    the panel, wide; opening the lower rows upward would fix that, at the
+    cost of at-limit cards running off the top instead.
+  - The level label (20 characters) only breaks when the job column is
+    narrower than the label: panels under about 20rem in the document
+    theme, 22rem in the game theme (the job column is 117px at 18rem; the
+    label needs 144px, 164px uppercase). Fixing it means moving the
+    header slots on very small panels.
 
 ## Next up: tooling plan (in order, one PR and session each)
 
@@ -107,10 +126,6 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 2. Packaging checks: done (above), released as 1.0.2 for the `.d.ts` fix.
 3. Repository hygiene: done (above).
 4. Claude Code: done (above).
-
-Found with the playground's `edge-cases` example, for a component PR: at
-the limits, the tooltip runs far below the panel, the level line wraps
-mid-label, and "Change job" wraps onto two lines.
 
 Found by axe, for a component PR (a patch release): in the document theme
 an empty slot's glyph (`--cs-rule-strong`) is below 4.5:1, and at full
