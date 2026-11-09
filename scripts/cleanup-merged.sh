@@ -1,25 +1,27 @@
 #!/usr/bin/env bash
 # After a PR merges: lists the local branches and worktrees it left behind,
 # and with --apply removes them. A branch qualifies only when its upstream
-# is gone (GitHub deletes the remote branch on merge) AND it is merged into
-# origin/main. "Merged" alone isn't enough: a new branch with no commits
-# yet counts as merged too.
+# is gone (the remote branch was deleted: press "Delete branch" on the
+# merged PR, or let GitHub do it with "Automatically delete head branches")
+# AND it is merged into origin/main. "Merged" alone isn't enough: a new
+# branch with no commits yet counts as merged too, and one never pushed has
+# no upstream, so neither is touched.
 #
 # Deletes only safely: `git worktree remove` without --force (refuses
-# uncommitted or untracked files; ignored ones like .venv and .logs go with
-# the worktree) and `git branch -D` only after the check above has proved
-# the branch is in origin/main. Plain -d would compare against HEAD instead
-# (the upstream is gone), so a main checkout that hasn't been pulled yet
-# made it refuse branches that were already merged. Never
-# touches main, the main checkout, or the worktree it runs from; to clean
-# up the current one, run scripts/new-worktree.sh and rerun from there.
+# uncommitted or untracked files; ignored ones like node_modules, dist and
+# .logs go with the worktree) and `git branch -D` only after the check
+# above has proved the branch is in origin/main. Plain -d would compare
+# against HEAD instead (the upstream is gone), so a main checkout that
+# hasn't been pulled yet made it refuse branches that were already merged.
+# Never touches main, the main checkout, or the worktree it runs from; to
+# clean up the current one, run scripts/new-worktree.sh and rerun from there.
 # Detects merge commits, which is how PRs merge here; a squash-merged
 # branch looks unmerged and is kept.
 #
 # Usage: scripts/cleanup-merged.sh [--apply]   (default: dry run)
 set -euo pipefail
 
-root="$(cd "$(dirname "$0")/.." && pwd)"
+root="$(cd "$(dirname "$0")/.." && pwd -P)"
 cd "$root"
 apply=0
 [[ "${1:-}" == "--apply" ]] && apply=1

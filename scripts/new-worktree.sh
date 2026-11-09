@@ -7,11 +7,11 @@
 # would otherwise track main, and a bare `git push` would push to it. The
 # first push sets the right one: git push -u origin <branch>.
 #
-# Usage: scripts/new-worktree.sh <branch>   e.g. feat/media-library
+# Usage: scripts/new-worktree.sh <branch>   e.g. test/browser-and-a11y
 set -euo pipefail
 
 branch="${1:?usage: scripts/new-worktree.sh <branch>}"
-root="$(cd "$(dirname "$0")/.." && pwd)"
+root="$(cd "$(dirname "$0")/.." && pwd -P)"
 # The first entry of `git worktree list` is always the main checkout.
 main_checkout="$(git -C "$root" worktree list --porcelain | head -n 1 | sed 's/^worktree //')"
 dir="$main_checkout/.claude/worktrees/${branch//\//-}"

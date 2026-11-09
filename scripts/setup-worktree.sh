@@ -1,35 +1,14 @@
 #!/usr/bin/env bash
 # Prepares a fresh checkout (usually a git worktree under .claude/worktrees/)
-# to run: backend venv with test extras, node_modules (npm workspaces, at the
-# repo root), and copies of the gitignored env files from the main checkout.
-# Safe to re-run: existing venvs and env files are kept.
+# to run: node_modules from the lockfile. The package has no env files or
+# other gitignored setup to copy from the main checkout. Safe to re-run.
 #
 # Usage: scripts/setup-worktree.sh
 set -euo pipefail
 
-root="$(cd "$(dirname "$0")/.." && pwd)"
-# The first entry of `git worktree list` is always the main checkout.
-main="$(git -C "$root" worktree list --porcelain | head -n 1 | sed 's/^worktree //')"
+root="$(cd "$(dirname "$0")/.." && pwd -P)"
 
-if [[ ! -x "$root/backend/.venv/bin/python" ]]; then
-  echo "backend: creating .venv"
-  python3 -m venv "$root/backend/.venv"
-fi
-echo "backend: installing dependencies"
-(cd "$root/backend" && PIP_DISABLE_PIP_VERSION_CHECK=1 ./.venv/bin/pip install -q -e ".[test]")
-
-# One lockfile at the repo root (npm workspaces, currently frontend/ only).
-echo "npm ci (workspaces)"
+echo "npm ci"
 (cd "$root" && npm ci --silent --no-audit --no-fund)
-
-# Each worktree needs its own copies: .env files are gitignored.
-if [[ "$main" != "$root" ]]; then
-  for file in backend/.env frontend/.env.local; do
-    if [[ -f "$main/$file" && ! -f "$root/$file" ]]; then
-      cp "$main/$file" "$root/$file"
-      echo "copied $file from the main checkout"
-    fi
-  done
-fi
 
 echo "ready"
