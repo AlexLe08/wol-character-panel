@@ -56,6 +56,7 @@
     "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json && node -e \"fs.cpSync('src/character-sheet.css', 'dist/character-sheet.css')\" && node scripts/strip-dts-css-imports.mjs",
     "typecheck": "tsc -p .",
     "lint": "eslint",
+    "lint:package": "attw --pack . --profile esm-only --exclude-entrypoints ./character-sheet.css && publint --strict",
     "test": "vitest run --coverage",
     "generate:schema": "node scripts/generate-schema.mjs",
     "prepack": "npm run build",
@@ -66,6 +67,7 @@
     "zod": "^4"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.65.0",
     "@types/react": "^19",
@@ -76,6 +78,7 @@
     "eslint-plugin-jsx-a11y": "^6",
     "eslint-plugin-react": "^7",
     "eslint-plugin-react-hooks": "^7",
+    "publint": "^0.3.25",
     "react": "^19",
     "react-dom": "^19",
     "typescript": "^5.9",
