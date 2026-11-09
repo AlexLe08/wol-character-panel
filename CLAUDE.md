@@ -25,7 +25,9 @@ reach the site only through a release and an upgrade there.
 - Install: `npm ci`
 - `npm run lint`: ESLint, including the import allowlist
 - `npm run typecheck`: `tsc -p .`, source and tests
-- `npm test`: Vitest, `src/**/*.test.ts` (`npx vitest` watches)
+- `npm test`: Vitest with coverage, `src/**/*.test.{ts,tsx}`; fails below
+  the thresholds in `vitest.config.ts`, report in `.logs/coverage/`
+  (`npx vitest` watches, without coverage)
 - `npm run dev`: the playground (`playground/`, Vite) on the configs in
   `examples/`, rendering `src/` with hot reload. Its state is in the URL
   (`/?fixture=edge-cases&theme=game&width=22`).
@@ -48,7 +50,8 @@ that install in the site.
 - The package imports nothing but `react`, `zod` and its own files
   (`./…`, never climbing out with `..`); both are peer dependencies.
   `eslint.config.mjs` enforces it. Scripts may also import `node:` modules
-  and `../src/…`; tests may also import `vitest`; the playground may also
+  and `../src/…`; tests may also import `vitest` and `react-dom/server`;
+  `vitest.config.ts` only `vitest/config`; the playground may also
   import `react-dom/client`, Vite and `../src/…`. Adding a runtime
   dependency is a design decision for the owner, not an implementation
   detail.
@@ -87,11 +90,17 @@ that install in the site.
   follows the site's design rules: no gradients, rounded-and-shadowed
   cards, or new accent colors. Inside `.cs[data-cs-theme="game"]` only,
   gradients, rounded frames, shadows and its gold accent are allowed.
-- Tests are Vitest, beside the code as `src/*.test.ts`, for the data side
-  (`parse`, `resolve`). No component or DOM tests yet; check rendering in
-  the playground (`npm run dev`), and in the site with a packed copy before
+- Tests are Vitest, beside the code as `src/*.test.ts(x)`: unit tests for
+  the data side (`parse`, `resolve`), and the panel server-rendered with
+  `react-dom/server` in Node (`src/CharacterSheet.test.tsx`; no DOM).
+  `src/entries.test.ts` snapshots each entry's runtime export names:
+  changing that snapshot is a semver decision (removal is major), not a
+  fix. Coverage thresholds in `vitest.config.ts` sit just under the
+  current numbers; raise them when coverage rises, never lower them to
+  pass. Hover, focus and Escape need a browser: check them in the
+  playground (`npm run dev`), and in the site with a packed copy before
   a release. Every `examples/*.json` must parse cleanly
-  (`src/examples.test.ts`).
+  (`src/examples.test.ts`) and render (`src/CharacterSheet.test.tsx`).
 
 ## Versioning and releases
 

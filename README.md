@@ -50,14 +50,15 @@ npm install @solution-nine/wol-character-panel react zod
 | `src/SlotHover.tsx` | The only client code: Escape dismisses a tooltip. Private: no entry exports it |
 | `src/character-sheet.css` | Styles and themes; everything themable is a `--cs-*` variable |
 | `character-sheet.schema.json` | Generated JSON Schema for editing a config file by hand |
-| `examples/` | Sample configs (`full`, `minimal`, `edge-cases` with every field at its limit); a test checks each one parses cleanly |
+| `examples/` | Sample configs (`full`, `minimal`, `edge-cases` with every field at its limit); tests check each one parses cleanly and renders |
 | `playground/` | The local preview (`npm run dev`). Not published |
 | `scripts/generate-schema.mjs` | Regenerates the JSON Schema (`npm run generate:schema`) |
 | `scripts/check.sh` | Runs every check CI runs, one line per step, full logs in `.logs/` |
 | `eslint.config.mjs` | Lint rules (React, hooks, jsx-a11y, TypeScript) and the import allowlist (`npm run lint`) |
-| `tsconfig.json` | Compiler options for editors and `npm run typecheck` (tests and the playground included) |
+| `tsconfig.json` | Compiler options for editors and `npm run typecheck` (tests, the playground and `vitest.config.ts` included) |
+| `vitest.config.ts` | Which tests run (`src/**/*.test.{ts,tsx}`), and coverage: every source file in `src/` (not the tests or CSS), its thresholds, the report in `.logs/coverage/` |
 | `tsconfig.build.json` | `npm run build`: one `.js` and `.d.ts` per source file in `dist/`, so `SlotHover.js` keeps its `"use client"` |
-| `.github/workflows/ci.yml` | Lint, type-check, tests, the schema up to date, build, and pack, on every pull request |
+| `.github/workflows/ci.yml` | Lint, type-check, tests with coverage thresholds, the schema up to date, build, and pack, on every pull request |
 | `.github/workflows/release.yml` | Publishes to npm when a `v*` tag is pushed |
 
 ## Config
@@ -216,6 +217,21 @@ colours otherwise.
 npm ci
 scripts/check.sh    # lint, typecheck, test, schema up to date, build, pack
 ```
+
+### Tests
+
+```sh
+npm test            # once, with coverage
+npx vitest          # watch, without coverage
+```
+
+Vitest, beside the code as `src/*.test.ts(x)`. The data side (`parse`,
+`resolve`) has unit tests; the panel is rendered to HTML with
+`react-dom/server` in Node (`src/CharacterSheet.test.tsx`), which is what a
+host serves before hydration. `src/entries.test.ts` lists each entry's
+runtime exports, so removing one fails a test (it would be a major release).
+`npm test` fails when coverage drops below the thresholds in
+`vitest.config.ts`; the report is in `.logs/coverage/index.html`.
 
 ### Preview locally
 

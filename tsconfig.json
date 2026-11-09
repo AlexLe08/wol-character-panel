@@ -1,6 +1,6 @@
 {
   // For editors and `npm run typecheck` (`tsc -p .`), which checks the
-  // tests and the playground too. `npm run build` emits from
+  // tests, the playground and the Vitest config too. `npm run build` emits from
   // tsconfig.build.json, which extends this one.
   "compilerOptions": {
     "target": "ES2017",
@@ -19,5 +19,5 @@
     // src/schema.ts); the build rewrites them to `.js`.
     "rewriteRelativeImportExtensions": true
   },
-  "include": ["src", "playground"]
+  "include": ["src", "playground", "vitest.config.ts"]
 }

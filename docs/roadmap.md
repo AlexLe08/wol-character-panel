@@ -17,6 +17,16 @@
   over Storybook and Ladle: Vite was already in the tree through Vitest, so
   it added only `vite`, `@vitejs/plugin-react`, `react-dom` and
   `@types/react-dom` (dev only). First phase of the tooling plan below.
+- Tests and coverage, first PR of the tooling plan's step 1:
+  server-render tests of `CharacterSheet` with `renderToStaticMarkup` (Node,
+  no DOM; targeted assertions on elements and attributes rather than
+  whole-render snapshots, so unrelated markup changes don't churn them;
+  class names are pinned, since hosts restyle them), an inline snapshot of each entry's runtime
+  export names, and `@vitest/coverage-v8` with thresholds at 92/96/86/93
+  (statements, branches, functions, lines), enforced by `npm test` in CI.
+  Gaps left: removing an exported *type* isn't caught (types vanish at
+  runtime), and `SlotHover.tsx` sits at about 26% because its handlers only
+  run in a browser.
 - Claude Code setup: `CLAUDE.md`, `.claude/settings.json` (no force push,
   merge, or npm publishing commands; tag pushes ask), the `reviewer`
   subagent, `scripts/check.sh`, and this roadmap.
@@ -25,11 +35,9 @@
 
 Agreed 2026-11-08 after a review of the repository as extracted.
 
-1. Tests and coverage: server-render tests of `CharacterSheet` with
-   `renderToStaticMarkup` (Node, no DOM); a snapshot of each entry's export
-   names, so removing one fails a test; `@vitest/coverage-v8` with
-   thresholds just under the current numbers. Then, in a second PR,
-   Playwright and `@axe-core/playwright` against the playground: tooltip on
+1. Tests and coverage (render tests, export snapshot and coverage done,
+   above). Next, in a second PR, Playwright and `@axe-core/playwright`
+   against the playground: tooltip on
    hover and focus, Escape, focus rings, the narrow layout, no axe
    violations in either theme, and a no-JavaScript page; a `browser` CI job
    beside `check`.
