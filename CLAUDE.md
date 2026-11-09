@@ -67,7 +67,8 @@ that install in the site.
   (`./…`, never climbing out with `..`); both are peer dependencies.
   `eslint.config.mjs` enforces it. Scripts may also import `node:` modules
   and `../src/…`, except `scripts/smoke/`, which imports the package by
-  name, its peers and `node:` modules (it runs against the tarball); tests may also import `vitest` and `react-dom/server`;
+  name, its peers and `node:` modules (it runs against the tarball);
+  tests may also import `vitest` and `react-dom/server`;
   `vitest.config.ts` only `vitest/config`; the playground may also
   import `react-dom/client`, `react-dom/server`, Vite and `../src/…`;
   the browser tests and `playwright.config.ts` only `@playwright/test`,

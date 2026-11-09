@@ -23,7 +23,9 @@ const PLAYGROUND_ALLOWED = [
   String.raw`\.\./src/(?!.*\.\.).+`,
 ];
 // The smoke test's consumers run inside a throwaway project with the packed
-// tarball installed: the package by name, never ../src.
+// tarball installed: the package by name, never ../src. react.mjs loads
+// its imports with import() (after registering a CSS hook), which this rule
+// doesn't see; they're listed for when they're static.
 const SMOKE_ALLOWED = [
   "node:.+",
   String.raw`@solution-nine/wol-character-panel(/.+)?`,
@@ -31,7 +33,7 @@ const SMOKE_ALLOWED = [
   "react-dom/server",
   String.raw`(react|zod)/package\.json`,
 ];
-const BROWSER_TEST_ALLOWED =["@playwright/test", "@axe-core/playwright", String.raw`\./(?!.*\.\.).+`];
+const BROWSER_TEST_ALLOWED = ["@playwright/test", "@axe-core/playwright", String.raw`\./(?!.*\.\.).+`];
 const onlyAllowed = (list) => `^(?!(${list.join("|")})$)`;
 
 export default defineConfig([
