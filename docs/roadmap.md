@@ -27,6 +27,21 @@
   Gaps left: removing an exported *type* isn't caught (types vanish at
   runtime), and `SlotHover.tsx` sits at about 26% because its handlers only
   run in a browser.
+- Browser tests, second PR of the tooling plan's step 1: Playwright and
+  `@axe-core/playwright` (dev only) against the playground, in Chromium,
+  as `npm run test:browser`, a `browser` CI job beside `check` (report
+  uploaded on failure) and a step in `scripts/check.sh`. Tooltips on
+  hover (and hoverable) and keyboard focus, Escape focused and hovered,
+  focus rings on everything Tab reaches in both themes, wide and narrow
+  layouts (following the container), axe WCAG 2.2 A/AA across examples,
+  themes and layouts, and a no-JavaScript page: `/static`, the panel
+  server-rendered by the playground's dev server (`static.tsx` through
+  `ssrLoadModule`), loaded with JavaScript off. No `@types/node`, so
+  `src/` can't lean on Node globals; the two config files declare what
+  they use. axe found one thing: empty slots' glyphs are below 4.5:1 in
+  the document theme. Left out of axe as an inactive component (WCAG
+  1.4.3), pending the owner's call on raising them to `--cs-muted`.
+  Chromium only; Firefox and WebKit are a project line each.
 - Claude Code setup: `CLAUDE.md`, `.claude/settings.json` (no force push,
   merge, or npm publishing commands; tag pushes ask), the `reviewer`
   subagent, `scripts/check.sh`, and this roadmap.
@@ -40,12 +55,7 @@
 
 Agreed 2026-11-08 after a review of the repository as extracted.
 
-1. Tests and coverage (render tests, export snapshot and coverage done,
-   above). Next, in a second PR, Playwright and `@axe-core/playwright`
-   against the playground: tooltip on
-   hover and focus, Escape, focus rings, the narrow layout, no axe
-   violations in either theme, and a no-JavaScript page; a `browser` CI job
-   beside `check`.
+1. Tests and coverage: done (both PRs, above).
 2. Packaging checks: `publint` and `@arethetypeswrong/cli`; a smoke test
    that installs the packed tarball and imports each entry in plain Node
    (and checks `"use client"` in `dist/SlotHover.js`); CI on Node 22.12
