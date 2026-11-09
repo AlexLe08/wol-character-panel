@@ -42,6 +42,57 @@ jobs:
       - name: Pack
         run: npm pack --dry-run
 
+      # attw (types resolve for each entry) and publint (package.json
+      # matches what's packed).
+      - name: Package lint
+        run: npm run lint:package
+
+      # The tarball installed in a throwaway project, each entry imported
+      # in plain Node, with the latest peers.
+      - name: Smoke test of the tarball
+        run: npm run test:pack
+
+  # The floors: Node 22.12 (`engines`) with the latest peers, and the
+  # oldest peers the ranges allow on Node 24. `check` covers Node 24 with
+  # the latest peers; lint and the schema don't vary with either.
+  compat:
+    name: compat (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Node 22.12
+            node: "22.12"
+          - name: oldest peers
+            node: "24"
+            oldest-peers: true
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The lower bounds of peerDependencies in package.json; keep them in
+      # step. The smoke test reads its own from package.json.
+      - name: Install the oldest peers
+        if: matrix.oldest-peers
+        run: npm install --no-save react@19.0.0 react-dom@19.0.0 zod@4.0.0
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Tests and coverage
+        run: npm test
+
+      - name: Smoke test of the tarball
+        run: node scripts/smoke-pack.mjs ${{ matrix.oldest-peers && '--oldest-peers' || '' }}
+
   # Playwright against the playground (playwright.config.ts starts it):
   # hover, focus, Escape, focus rings, layout, axe, and the no-JS page.
   browser:

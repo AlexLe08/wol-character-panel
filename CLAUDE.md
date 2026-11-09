@@ -36,12 +36,20 @@ reach the site only through a release and an upgrade there.
   (`/?fixture=edge-cases&theme=game&width=22`). `/static` is the panel
   server-rendered with no script (`playground/static.tsx`).
 - `npm run build`: `tsc -p tsconfig.build.json` to `dist/` (ESM, one `.js`
-  and `.d.ts` per source file) plus the CSS
+  and `.d.ts` per source file) plus the CSS; then
+  `scripts/strip-dts-css-imports.mjs` blanks the CSS import in the
+  `.d.ts` files (TypeScript 6+ fails hosts on it, TS2882)
 - `npm run generate:schema`: rewrites `character-sheet.schema.json` from
   `src/schema.ts`. Run it after any change to `schema.ts` and commit the
   result; CI fails while the committed file is out of date.
 - `npm pack --dry-run`: lists what would be published (`prepack` builds)
-- `scripts/check.sh`: everything CI's `check` and `browser` jobs run, one
+- `npm run lint:package`: attw (types resolve for each entry, ESM only)
+  then publint, on a fresh pack
+- `npm run test:pack`: installs the packed tarball in a temp project and
+  imports each entry in plain Node (`scripts/smoke-pack.mjs`;
+  `--oldest-peers` for the lowest peers in range). Needs the registry.
+- `scripts/check.sh`: everything CI's `check` and `browser` jobs run, and
+  `compat`'s oldest-peers smoke test (its Node 22.12 run is CI only), one
   line per step, full logs in `.logs/`. Done means it passes.
 - `scripts/new-worktree.sh <branch>`: the next task's worktree (see
   Workflow); `scripts/setup-worktree.sh` (`npm ci`) runs inside it.
@@ -58,7 +66,9 @@ that install in the site.
 - The package imports nothing but `react`, `zod` and its own files
   (`./…`, never climbing out with `..`); both are peer dependencies.
   `eslint.config.mjs` enforces it. Scripts may also import `node:` modules
-  and `../src/…`; tests may also import `vitest` and `react-dom/server`;
+  and `../src/…`, except `scripts/smoke/`, which imports the package by
+  name, its peers and `node:` modules (it runs against the tarball);
+  tests may also import `vitest` and `react-dom/server`;
   `vitest.config.ts` only `vitest/config`; the playground may also
   import `react-dom/client`, `react-dom/server`, Vite and `../src/…`;
   the browser tests and `playwright.config.ts` only `@playwright/test`,

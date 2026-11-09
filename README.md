@@ -54,6 +54,8 @@ npm install @solution-nine/wol-character-panel react zod
 | `playground/` | The local preview (`npm run dev`), and `/static`, the panel server-rendered with no script (`static.tsx`). Not published |
 | `browser/` | Browser tests (`npm run test:browser`): Playwright and axe against the playground |
 | `scripts/generate-schema.mjs` | Regenerates the JSON Schema (`npm run generate:schema`) |
+| `scripts/strip-dts-css-imports.mjs` | The build's last step: blanks the CSS import in the emitted `.d.ts` files, which TypeScript 6+ would reject in a host |
+| `scripts/smoke-pack.mjs` | Installs the packed tarball in a throwaway project and runs `scripts/smoke/` there (`npm run test:pack`) |
 | `scripts/check.sh` | Runs every check CI runs, one line per step, full logs in `.logs/` |
 | `scripts/new-worktree.sh` | A new branch from `origin/main` in its own worktree under `.claude/worktrees/`, set up by `scripts/setup-worktree.sh` (`npm ci`) |
 | `scripts/cleanup-merged.sh` | After a merge: removes worktrees and local branches merged into `origin/main` whose remote branch is gone (dry run unless `--apply`) |
@@ -62,7 +64,7 @@ npm install @solution-nine/wol-character-panel react zod
 | `vitest.config.ts` | Which tests run (`src/**/*.test.{ts,tsx}`), and coverage: every source file in `src/` (not the tests or CSS), its thresholds, the report in `.logs/coverage/` |
 | `playwright.config.ts` | The browser tests: Chromium, the playground started on port 5199, the report in `.logs/playwright-report/` |
 | `tsconfig.build.json` | `npm run build`: one `.js` and `.d.ts` per source file in `dist/`, so `SlotHover.js` keeps its `"use client"` |
-| `.github/workflows/ci.yml` | On every pull request: `check` (lint, type-check, tests with coverage thresholds, the schema up to date, build, and pack) and `browser` (the Playwright tests) |
+| `.github/workflows/ci.yml` | On every pull request: `check` (lint, type-check, tests with coverage thresholds, the schema up to date, build, pack, package lint and the tarball smoke test), `compat` (type-check, tests and the smoke test on Node 22.12, and with the oldest peers) and `browser` (the Playwright tests) |
 | `.github/workflows/release.yml` | Publishes to npm when a `v*` tag is pushed |
 
 ## Config
@@ -220,7 +222,7 @@ colours otherwise.
 ```sh
 npm ci
 npx playwright install chromium   # once, for the browser tests
-scripts/check.sh    # lint, typecheck, test, schema up to date, build, pack, browser
+scripts/check.sh    # lint, typecheck, test, schema up to date, build, pack, package checks, browser
 ```
 
 ### Tests
@@ -253,6 +255,31 @@ tests load `/static`, the panel server-rendered with no script, with
 JavaScript off. One known failure is recorded as such (`test.fail`): in the
 document theme an empty slot's dimmed glyph is below 4.5:1 contrast, so the
 other axe runs skip that one rule on those squares only.
+
+### Package checks
+
+```sh
+npm run lint:package                        # attw, then publint
+npm run test:pack                           # the tarball in plain Node
+node scripts/smoke-pack.mjs --oldest-peers  # the same, react 19.0.0 and zod 4.0.0
+```
+
+These check what gets published rather than the source. `lint:package` runs
+[attw](https://github.com/arethetypeswrong/arethetypeswrong.github.io), which
+packs the package and checks each entry's types resolve under Node's and
+bundlers' module resolution (CommonJS is skipped: the package is ESM only; so
+is the CSS export, which has no types), then
+[publint](https://publint.dev), which checks `package.json` against the
+packed files. `test:pack` installs the tarball in a throwaway project and
+imports each entry by name: `.` and `/schema` with zod but no React
+installed, then `/react` server-rendered once React is added (its CSS import
+stubbed, as a bundler would handle it). It also checks `dist/SlotHover.js`
+still starts with `"use client"`. It needs the npm registry (or npm's cache)
+for the peers.
+
+CI runs these in `check` (Node 24, latest peers), and in `compat`, with the
+tests, on Node 22.12 (the `engines` floor) and with the oldest peers the
+ranges allow.
 
 ### Preview locally
 
