@@ -41,6 +41,20 @@
   they use. Chromium only; Firefox and WebKit are a project line each.
   `release.yml` doesn't rerun the browser tests: the tag sits on a merge
   commit CI already ran them on.
+- Packaging checks, step 2 of the tooling plan: `publint` and
+  `@arethetypeswrong/cli` (dev only) as `npm run lint:package` (attw with
+  `--profile esm-only`, the CSS export excluded), and `npm run test:pack`,
+  which installs the packed tarball in a throwaway project and imports each
+  entry by name in plain Node: `.` and `/schema` with React absent, `/react`
+  server-rendered with its CSS import stubbed, and `"use client"` checked
+  in `dist/SlotHover.js`. CI: both in `check`, plus a `compat` job (type-check,
+  tests, smoke test) on Node 22.12 with the latest peers and on Node 24
+  with the oldest (react 19.0.0, zod 4.0.0); `check` stays one job so its
+  status check keeps its name. attw found a real bug, fixed here: the
+  emitted `CharacterSheet.d.ts` kept `import "./character-sheet.css"`,
+  which fails a host on TypeScript 6 or 7 with `skipLibCheck` off (TS2882);
+  the build now blanks it. Needs a patch release (1.0.2) to reach hosts.
+  `release.yml` doesn't rerun these, like the browser tests.
 - Claude Code setup: `CLAUDE.md`, `.claude/settings.json` (no force push,
   merge, or npm publishing commands; tag pushes ask), the `reviewer`
   subagent, `scripts/check.sh`, and this roadmap.
@@ -55,10 +69,7 @@
 Agreed 2026-11-08 after a review of the repository as extracted.
 
 1. Tests and coverage: done (both PRs, above).
-2. Packaging checks: `publint` and `@arethetypeswrong/cli`; a smoke test
-   that installs the packed tarball and imports each entry in plain Node
-   (and checks `"use client"` in `dist/SlotHover.js`); CI on Node 22.12
-   (the `engines` floor) and 24, and a job on the oldest peer versions.
+2. Packaging checks: done (above). Release 1.0.2 for the `.d.ts` fix.
 3. Repository hygiene: `CHANGELOG.md`, Dependabot (npm dev dependencies and
    Actions), actions pinned by SHA in `release.yml`, a PR template with a
    semver line, issue templates, `CONTRIBUTING.md`, `SECURITY.md`,
