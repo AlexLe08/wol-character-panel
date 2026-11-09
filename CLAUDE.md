@@ -140,8 +140,9 @@ that install in the site.
     `npm run generate:schema` so the `$id` follows. The site depends on
     `^1`, so a major reaches it only through an upgrade PR there that
     handles the break. Say what breaks in the PR.
-- A release is a version-bump PR (`release: X.Y.Z`), merged, then the
-  owner tags the merge commit (`git tag vX.Y.Z && git push origin vX.Y.Z`).
+- A PR that changes anything a host can see adds a line under Unreleased
+  in `CHANGELOG.md`. A release is a version-bump PR (`release: X.Y.Z`)
+  that turns Unreleased into the new version, merged, then the owner tags the merge commit (`git tag vX.Y.Z && git push origin vX.Y.Z`).
   `.github/workflows/release.yml` checks the tag against `package.json`,
   runs the checks, and publishes with npm trusted publishing (no token,
   provenance from npm). Never publish from a local machine.

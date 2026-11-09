@@ -65,7 +65,12 @@ npm install @solution-nine/wol-character-panel react zod
 | `playwright.config.ts` | The browser tests: Chromium, the playground started on port 5199, the report in `.logs/playwright-report/` |
 | `tsconfig.build.json` | `npm run build`: one `.js` and `.d.ts` per source file in `dist/`, so `SlotHover.js` keeps its `"use client"` |
 | `.github/workflows/ci.yml` | On every pull request: `check` (lint, type-check, tests with coverage thresholds, the schema up to date, build, pack, package lint and the tarball smoke test), `compat` (type-check, tests and the smoke test on Node 22.12, and with the oldest peers) and `browser` (the Playwright tests) |
-| `.github/workflows/release.yml` | Publishes to npm when a `v*` tag is pushed |
+| `.github/workflows/release.yml` | Publishes to npm when a `v*` tag is pushed (its actions pinned by commit SHA) |
+| `.github/dependabot.yml` | Weekly update PRs for dev dependencies and the workflows' actions (not the peer ranges), each release a week old first |
+| `.github/pull_request_template.md`, `.github/ISSUE_TEMPLATE/` | The PR checklist with its semver line; bug and feature forms |
+| `CHANGELOG.md` | What changed for hosts in each release |
+| `CONTRIBUTING.md`, `SECURITY.md` | How to send a change; how to report a vulnerability privately |
+| `.nvmrc` | Node 24 for development, as CI (the package supports 22.12+) |
 
 ## Config
 
@@ -84,9 +89,6 @@ The schema's `$id` is
   `@1`.
 - A breaking change (a new required field, a tighter limit, a removed key)
   bumps the major version in `package.json`, which changes the `$id` to `@2`.
-
-The URL opens once the package is published to npm; until then it is only an
-identifier.
 
 ```json
 {
@@ -315,7 +317,8 @@ npm install ../wol-character-panel/solution-nine-wol-character-panel-<version>.t
 ## Releasing
 
 Bump `version` in `package.json` (a major bump changes the schema's `$id`, so
-regenerate it), merge, then tag the merge commit:
+regenerate it) and turn `CHANGELOG.md`'s Unreleased section into the new
+version, merge, then tag the merge commit:
 
 ```sh
 git tag v1.0.1 && git push origin v1.0.1
