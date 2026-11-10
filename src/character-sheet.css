@@ -433,7 +433,7 @@ a.cs-slot__face:hover .cs-slot__square,
   border-style: dashed;
   border-color: var(--cs-rule);
   background: transparent;
-  color: var(--cs-rule-strong);
+  color: var(--cs-muted);
 }
 
 .cs-slot--empty .cs-slot__label {
@@ -786,7 +786,7 @@ a.cs-slot__face:hover .cs-slot__square,
 .cs[data-cs-theme="game"] .cs-slot--empty .cs-slot__square {
   border: 1px solid var(--cs-rule-strong);
   background: rgb(0 0 0 / 0.25);
-  color: var(--cs-rule-strong);
+  color: var(--cs-muted);
   box-shadow: inset 0 1px 4px rgb(0 0 0 / 0.6);
 }
 
