@@ -76,7 +76,7 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6",
     "@vitest/coverage-v8": "^5.1.0",
-    "eslint": "^9",
+    "eslint": "^10",
     "eslint-plugin-jsx-a11y": "^6",
     "eslint-plugin-react": "^7",
     "eslint-plugin-react-hooks": "^7",
