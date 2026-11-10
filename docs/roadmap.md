@@ -124,6 +124,23 @@
   (it reports text over a gradient as incomplete); it gets `--cs-muted`
   too (6.3 to 7.1:1, measured by hand), and a browser test pins the glyph
   to its label's colour in both themes.
+- Demo site: the playground, as is, built by Vite (`npm run build:demo`)
+  and deployed to GitHub Pages at
+  `https://alexle08.github.io/wol-character-panel/` by
+  `.github/workflows/pages.yml`, through GitHub's own Pages actions
+  (upload an artifact, then deploy with an OIDC token; actions pinned by
+  SHA, as in `release.yml`). Chosen over a `gh-pages` branch (a
+  third-party action pushing build output with a write token) and over
+  Vercel or Netlify (another account for a static page). It deploys on
+  `v*` tags, so the demo shows what npm has rather than unreleased `main`,
+  and by hand to redeploy. CI's `check` builds it on every PR. Under the
+  base path, the playground builds links from `BASE_URL` and prefixes the
+  examples' root-relative image paths; the examples keep those, as a
+  host's config would. The page gained a heading and a short intro, with
+  GitHub and npm links in a footer after the panel (links above it would
+  add Tab stops before the panel, which the browser tests reach by Tab).
+  `/static` stays dev only. Needs the owner once: Pages source "GitHub
+  Actions", and `v*` tags allowed in the `github-pages` environment.
 
 ## Next up: tooling plan (in order, one PR and session each)
 
@@ -140,9 +157,6 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 - CMS adapters, Contentful first (on its free plan), as `loadConfig`
   sources. The core never imports a CMS SDK: an adapter is its own entry
   or package, so the allowlist and peer dependencies stay as they are.
-- A demo site (free hosting) showing the panel with a sample config and
-  both themes: build the playground with Vite and deploy it to GitHub
-  Pages.
 - A custom-element wrapper, only if someone asks for one.
 - An `a11y-auditor` agent (screen-reader names, keyboard walk-throughs,
   WCAG 1.4.13 on new hover content), if component work grows past what
