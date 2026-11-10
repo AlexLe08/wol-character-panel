@@ -744,6 +744,9 @@ a.cs-slot__face:hover .cs-slot__square,
   --cs-panel: #1d1e25;
   --cs-inset: #15161b;
   --cs-ink: #ece6d6;
+  /* Also an empty slot's glyph: keep it at 4.5:1 or more over the panel
+     gradient under the square's rgb(0 0 0 / 0.25) (6.3:1 at its lightest).
+     axe can't measure text over a gradient, so no test checks this. */
   --cs-muted: #a8a191;
   --cs-rule: #393a45;
   --cs-rule-strong: #5b5e6c;

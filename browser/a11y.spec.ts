@@ -45,11 +45,11 @@ test("no axe violations on dark host tokens (document theme)", async ({ page }) 
 });
 
 // At full width an empty slot's glyph is the only visible text naming it,
-// and it was once dimmed below 4.5:1 (--cs-rule-strong); the runs above
-// cover it, this one names it.
+// and it was once dimmed below 4.5:1 (--cs-rule-strong); the document-theme
+// runs above cover it, this one names it.
 for (const tokens of ["", "dark"]) {
   test(`empty slots' glyphs meet contrast (document${tokens ? ", dark host tokens" : ""})`, async ({ page }) => {
-    await page.goto(`/?fixture=full&tokens=${tokens}`);
+    await page.goto(`/?fixture=full${tokens ? `&tokens=${tokens}` : ""}`);
     const squares = page.locator(".cs .cs-slot--empty .cs-slot__square");
     expect(await squares.count()).toBeGreaterThan(0);
     const { violations: found } = await new AxeBuilder({ page })
