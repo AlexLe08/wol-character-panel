@@ -96,18 +96,25 @@
   background: var(--cs-bar-bg);
 }
 
+/* Breaks even a word with no break in it (a URL, a handle) rather than
+   running under the toggle. */
 .cs__bar-title {
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: 0.9375rem;
   font-weight: 600;
 }
 
+/* A long title wraps; the toggle keeps its size. */
 .cs__jobs {
   position: relative;
+  flex: none;
 }
 
 .cs__jobs-toggle {
   display: inline-block;
   padding: 0.25rem 0.7rem;
+  white-space: nowrap;
   border: 1px solid var(--cs-rule-strong);
   border-radius: var(--cs-radius);
   background: var(--cs-panel);
@@ -426,7 +433,7 @@ a.cs-slot__face:hover .cs-slot__square,
   border-style: dashed;
   border-color: var(--cs-rule);
   background: transparent;
-  color: var(--cs-rule-strong);
+  color: var(--cs-muted);
 }
 
 .cs-slot--empty .cs-slot__label {
@@ -737,6 +744,9 @@ a.cs-slot__face:hover .cs-slot__square,
   --cs-panel: #1d1e25;
   --cs-inset: #15161b;
   --cs-ink: #ece6d6;
+  /* Also an empty slot's glyph: keep it at 4.5:1 or more over the panel
+     gradient under the square's rgb(0 0 0 / 0.25) (6.3:1 at its lightest).
+     axe can't measure text over a gradient, so no test checks this. */
   --cs-muted: #a8a191;
   --cs-rule: #393a45;
   --cs-rule-strong: #5b5e6c;
@@ -779,7 +789,7 @@ a.cs-slot__face:hover .cs-slot__square,
 .cs[data-cs-theme="game"] .cs-slot--empty .cs-slot__square {
   border: 1px solid var(--cs-rule-strong);
   background: rgb(0 0 0 / 0.25);
-  color: var(--cs-rule-strong);
+  color: var(--cs-muted);
   box-shadow: inset 0 1px 4px rgb(0 0 0 / 0.6);
 }
 

@@ -254,9 +254,9 @@ tooltips on hover and keyboard focus, Escape hiding them, a focus ring on
 everything Tab reaches, the wide and narrow layouts, and axe (WCAG 2.2 A and
 AA) on every example in both themes and both layouts. The no-JavaScript
 tests load `/static`, the panel server-rendered with no script, with
-JavaScript off. One known failure is recorded as such (`test.fail`): in the
-document theme an empty slot's dimmed glyph is below 4.5:1 contrast, so the
-other axe runs skip that one rule on those squares only.
+JavaScript off. axe can't measure text over the game theme's gradients
+(it reports it incomplete, not passed), so a test pins an empty slot's
+glyph to its label's colour, which clears 4.5:1 in both themes.
 
 ### Package checks
 
@@ -299,6 +299,12 @@ leaving the page. It renders on the client, while hosts render the panel on
 the server; `/static?fixture=full&width=22` shows the server-rendered panel
 with no script (fixture, theme, labels, width and `job` from the query).
 Check a release candidate in a host too (below).
+
+`node scripts/preview.mjs` screenshots the panel for every example, in both
+themes, wide and narrow (22rem), into `.logs/preview/`, and lists any console
+error or warning (exit 1 if there is one). `--fixture=full` and
+`--theme=game` narrow it down. It starts its own dev server on port 5198 and
+needs Chromium (`npx playwright install chromium`).
 
 Relative imports name the source file (`./parse.ts`): the build rewrites them
 to `.js`, and Node can run the schema generator straight from `src/`. After

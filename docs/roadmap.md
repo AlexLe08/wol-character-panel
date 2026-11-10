@@ -81,6 +81,49 @@
   cleanup now resolves symlinked paths (`pwd -P`), so it always recognises
   the worktree it runs from; tested against a local bare origin (merged,
   open, never-pushed, and merged-but-remote-kept branches).
+- Claude Code skills, step 4 of the tooling plan: `scripts/preview.mjs`
+  (Playwright's Chromium, already a dev dependency) screenshots each
+  example in both themes, wide and narrow, from its own dev server on
+  port 5198, and reports console errors; the `preview` skill runs it and
+  reads the shots. A script rather than the Playwright MCP plugin, so it
+  works for any contributor and without Claude; the allowlist lets only
+  that script import `@playwright/test`. `release-prep`, invoked only by
+  the owner (`/release-prep`), reads the diff since the last tag (export
+  snapshot, schema, types, CSS, `package.json`, build inputs, Unreleased),
+  proposes the bump and waits, then bumps with `npm version
+  --no-git-tag-version`, rolls the CHANGELOG, runs the checks and opens
+  the `release:` PR; it never tags. Instructions only: the export
+  snapshot and schema diff already are the API diff. `reviewer.md` now
+  checks the export snapshot as a semver call, the CHANGELOG line and PR
+  semver line, browser coverage of rendering changes, accessibility
+  beyond axe, and may run the preview. No `a11y-auditor` agent (see
+  Later).
+- The `edge-cases` findings (a patch). "Change job" wrapped onto two
+  lines beside a long title: the menu no longer shrinks and the toggle
+  doesn't wrap, with a browser test in both themes and layouts. The other
+  two are accepted, measured in Chromium:
+  - The tooltip at the limits is about 985px tall (some 1,600 characters
+    in a 17rem card) against a 598px panel, so a bottom-row slot's runs
+    about 900px below it. It stays usable: it's hoverable and the page
+    scrolls. Widening it to 22rem across the portrait cut that only to
+    805px and left realistic cards (`full`) as tall, only wider, so it
+    was dropped. A height cap with scrolling would need a tab stop in
+    long cards for keyboard users, and tighter `LIMITS` is a major.
+    `full`'s bottom-row cards (`tools`, `contact`) also run 31px below
+    the panel, wide; opening the lower rows upward would fix that, at the
+    cost of at-limit cards running off the top instead.
+  - The level label (20 characters) only breaks when the job column is
+    narrower than the label: panels under about 20rem in the document
+    theme, 22rem in the game theme (the job column is 117px at 18rem; the
+    label needs 144px, 164px uppercase). Fixing it means moving the
+    header slots on very small panels.
+- Empty slots' glyphs meet contrast (a patch). axe found the document
+  theme's `--cs-rule-strong` glyph at 2.64:1 on white; it now takes its
+  label's `--cs-muted` (6.24:1), and the axe skip and `test.fail` are gone.
+  The game theme had the same glyph at 2.5 to 2.8:1, which axe can't see
+  (it reports text over a gradient as incomplete); it gets `--cs-muted`
+  too (6.3 to 7.1:1, measured by hand), and a browser test pins the glyph
+  to its label's colour in both themes.
 
 ## Next up: tooling plan (in order, one PR and session each)
 
@@ -89,22 +132,7 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 1. Tests and coverage: done (both PRs, above).
 2. Packaging checks: done (above), released as 1.0.2 for the `.d.ts` fix.
 3. Repository hygiene: done (above).
-4. Claude Code: a `preview` skill (start `npm run dev`, screenshot both
-   themes wide and narrow, report console errors), a `release-prep` skill
-   (semver call from the API and schema diff, version bump, CHANGELOG, the
-   `release:` PR; never tags), maybe an `a11y-auditor` agent, and
-   `reviewer.md` updated for the playground and the export snapshot.
-
-Found with the playground's `edge-cases` example, for a component PR: at
-the limits, the tooltip runs far below the panel, the level line wraps
-mid-label, and "Change job" wraps onto two lines.
-
-Found by axe, for a component PR (a patch release): in the document theme
-an empty slot's glyph (`--cs-rule-strong`) is below 4.5:1, and at full
-width it's the only visible text naming the slot. Raising it to
-`--cs-muted` (the empty label's colour) passes axe. Recorded as a known
-failure in `browser/a11y.spec.ts`; the other axe runs skip only that rule
-on those squares, so remove the skip and the `test.fail` with the fix.
+4. Claude Code: done (above).
 
 ## Later (candidates, unordered)
 
@@ -116,6 +144,10 @@ on those squares, so remove the skip and the `test.fail` with the fix.
   both themes: build the playground with Vite and deploy it to GitHub
   Pages.
 - A custom-element wrapper, only if someone asks for one.
+- An `a11y-auditor` agent (screen-reader names, keyboard walk-throughs,
+  WCAG 1.4.13 on new hover content), if component work grows past what
+  axe, the browser specs and the reviewer's accessibility checks catch.
+  Left out of step 4: an agent called now and then goes stale.
 - Backend code stays out (decided with the site's PR #54): the JSON
   Schema is the contract, which any backend validates in its own language.
   A Python validator package (`find_issues` and its `oneOf` explanation)

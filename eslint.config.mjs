@@ -74,6 +74,24 @@ export default defineConfig([
     },
   },
   {
+    // The playground's screenshots (the `preview` skill) drive Chromium
+    // through Playwright; the other scripts stay plain Node.
+    files: ["scripts/preview.mjs"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex: onlyAllowed(["node:.+", "@playwright/test"]),
+              message: "The preview script imports only node: modules and @playwright/test.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     // scripts/smoke-pack.mjs copies these into a project that installs the
     // packed tarball, so they import the package the way a host does.
     files: ["scripts/smoke/**"],

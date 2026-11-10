@@ -89,3 +89,46 @@ test("the layout follows the container, not the viewport", async ({ page }) => {
   const left = await box(page, ".cs__slots--left");
   expect(portrait.y + portrait.height).toBeLessThanOrEqual(left.y);
 });
+
+// One line: its height is under one and a half line heights. Needs a
+// numeric line-height on the element (`normal` would give NaN and fail).
+async function oneLine(page: Page, selector: string): Promise<boolean> {
+  return page.locator(selector).evaluate((el) => {
+    const lineHeight = parseFloat(getComputedStyle(el).lineHeight);
+    return el.getBoundingClientRect().height < lineHeight * 1.5;
+  });
+}
+
+// At the limits (edge-cases), the long title wraps beside the job menu's
+// toggle rather than squeezing it onto two lines.
+for (const theme of ["document", "game"]) {
+  for (const [layout, width] of [
+    ["wide", ""],
+    ["narrow", "&width=22"],
+  ]) {
+    test(`at the limits, "Change job" stays on one line (${theme}, ${layout})`, async ({ page }) => {
+      await page.goto(`/?fixture=edge-cases&theme=${theme}${width}`);
+      expect(await oneLine(page, ".cs__jobs-toggle"), "the toggle").toBe(true);
+      expect(await page.locator(".cs").evaluate((el) => el.scrollWidth <= el.clientWidth), "no sideways overflow").toBe(
+        true,
+      );
+    });
+  }
+
+  test(`a title with no break in it wraps before the toggle (${theme})`, async ({ page }) => {
+    await page.goto(`/?fixture=full&theme=${theme}&width=22`);
+    // The longest title the schema allows, as one word (a URL, a handle).
+    const { textRight, toggleLeft } = await page.locator(".cs__bar").evaluate((bar) => {
+      const title = bar.querySelector(".cs__bar-title")!;
+      title.textContent = "x".repeat(60);
+      const text = document.createRange();
+      text.selectNodeContents(title);
+      return {
+        textRight: text.getBoundingClientRect().right,
+        toggleLeft: bar.querySelector(".cs__jobs-toggle")!.getBoundingClientRect().left,
+      };
+    });
+    expect(textRight).toBeLessThanOrEqual(toggleLeft);
+    expect(await oneLine(page, ".cs__jobs-toggle"), "the toggle").toBe(true);
+  });
+}
