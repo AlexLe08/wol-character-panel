@@ -37,9 +37,10 @@ const BROWSER_TEST_ALLOWED = ["@playwright/test", "@axe-core/playwright", String
 const onlyAllowed = (list) => `^(?!(${list.join("|")})$)`;
 
 export default defineConfig([
-  // The build's output, checked through its source; and scratch files
-  // and logs (scripts/check.sh), which never ship or get committed.
-  globalIgnores(["dist/", ".logs/"]),
+  // The build outputs (the package, and `npm run build:demo`), checked
+  // through their source; and scratch files and logs (scripts/check.sh),
+  // which never ship or get committed.
+  globalIgnores(["dist/", "playground/dist/", ".logs/"]),
   tseslint.configs.recommended,
   react.configs.flat.recommended,
   react.configs.flat["jsx-runtime"],
