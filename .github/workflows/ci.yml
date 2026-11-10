@@ -38,6 +38,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      # The playground as pages.yml deploys it, so a change that breaks the
+      # demo fails here rather than at release.
+      - name: Build the demo
+        run: npm run build:demo
+
       # Lists what would be published; prepack builds again.
       - name: Pack
         run: npm pack --dry-run

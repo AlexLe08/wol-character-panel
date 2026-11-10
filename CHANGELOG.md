@@ -13,6 +13,12 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ## [Unreleased]
 
+### Changed
+
+- README: links the demo site on GitHub Pages
+  (<https://alexle08.github.io/wol-character-panel/>), the playground on the
+  example configs, deployed from each release.
+
 ## [1.0.3] - 2026-11-10
 
 ### Changed

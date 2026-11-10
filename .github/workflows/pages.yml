@@ -1,0 +1,72 @@
+name: Demo
+
+# Deploys the playground to GitHub Pages
+# (https://alexle08.github.io/wol-character-panel/) once the Release
+# workflow has published a version, built from that release's commit, so
+# the demo shows what npm has: never unreleased work on main, nor a tag
+# whose release failed. To deploy a release again, run it by hand (Actions >
+# Demo > Run workflow) with the tag; only tags can be built. Both triggers
+# run with main as their ref, which the github-pages environment allows.
+# Needs Settings > Pages > Source set to "GitHub Actions".
+on:
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to deploy, such as v1.0.3"
+        required: true
+
+permissions:
+  contents: read
+
+# One deployment at a time; a queued one waits rather than cancelling the
+# one in progress (GitHub's starter workflow).
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      # Actions pinned by commit SHA, as in release.yml: the deploy job can
+      # write to the site. Dependabot bumps the SHA and the comment together.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The commit Release published, or the tag asked for (refs/tags/
+          # so a branch name can't be given).
+          ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', inputs.tag) || github.event.workflow_run.head_sha }}
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The playground built with the repository's name as its base path.
+      - name: Build the demo
+        run: npm run build:demo
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: playground/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # Only this job gets to write to Pages, with an OIDC token deploy-pages
+    # exchanges for the deployment.
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

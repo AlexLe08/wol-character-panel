@@ -24,6 +24,9 @@ started.
 npm install @solution-nine/wol-character-panel react zod
 ```
 
+Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
+(below) on the example configs, as of the latest release.
+
 ## Entries
 
 | Import | What it holds |
@@ -51,7 +54,7 @@ npm install @solution-nine/wol-character-panel react zod
 | `src/character-sheet.css` | Styles and themes; everything themable is a `--cs-*` variable |
 | `character-sheet.schema.json` | Generated JSON Schema for editing a config file by hand |
 | `examples/` | Sample configs (`full`, `minimal`, `edge-cases` with every field at its limit); tests check each one parses cleanly and renders |
-| `playground/` | The local preview (`npm run dev`), and `/static`, the panel server-rendered with no script (`static.tsx`). Not published |
+| `playground/` | The local preview (`npm run dev`), and `/static`, the panel server-rendered with no script (`static.tsx`). Built for the demo site by `npm run build:demo`. Not published |
 | `browser/` | Browser tests (`npm run test:browser`): Playwright and axe against the playground |
 | `scripts/generate-schema.mjs` | Regenerates the JSON Schema (`npm run generate:schema`) |
 | `scripts/strip-dts-css-imports.mjs` | The build's last step: blanks the CSS import in the emitted `.d.ts` files, which TypeScript 6+ would reject in a host |
@@ -62,10 +65,11 @@ npm install @solution-nine/wol-character-panel react zod
 | `eslint.config.mjs` | Lint rules (React, hooks, jsx-a11y, TypeScript) and the import allowlist (`npm run lint`) |
 | `tsconfig.json` | Compiler options for editors and `npm run typecheck` (tests, the playground, the browser tests and both test configs included) |
 | `vitest.config.ts` | Which tests run (`src/**/*.test.{ts,tsx}`), and coverage: every source file in `src/` (not the tests or CSS), its thresholds, the report in `.logs/coverage/` |
-| `playwright.config.ts` | The browser tests: Chromium, the playground started on port 5199, the report in `.logs/playwright-report/` |
+| `playwright.config.ts` | The browser tests: Chromium, the playground started on port 5199 and the demo build on 5200, the report in `.logs/playwright-report/` |
 | `tsconfig.build.json` | `npm run build`: one `.js` and `.d.ts` per source file in `dist/`, so `SlotHover.js` keeps its `"use client"` |
-| `.github/workflows/ci.yml` | On every pull request: `check` (lint, type-check, tests with coverage thresholds, the schema up to date, build, pack, package lint and the tarball smoke test), `compat` (type-check, tests and the smoke test on Node 22.12, and with the oldest peers) and `browser` (the Playwright tests) |
+| `.github/workflows/ci.yml` | On every pull request: `check` (lint, type-check, tests with coverage thresholds, the schema up to date, build, demo build, pack, package lint and the tarball smoke test), `compat` (type-check, tests and the smoke test on Node 22.12, and with the oldest peers) and `browser` (the Playwright tests) |
 | `.github/workflows/release.yml` | Publishes to npm when a `v*` tag is pushed (its actions pinned by commit SHA) |
+| `.github/workflows/pages.yml` | Deploys the demo (the built playground) to GitHub Pages after each successful release, or by hand for a given tag (its actions pinned by commit SHA) |
 | `.github/dependabot.yml` | Weekly update PRs for dev dependencies and the workflows' actions (not the peer ranges), each release a week old first |
 | `.github/pull_request_template.md`, `.github/ISSUE_TEMPLATE/` | The PR checklist with its semver line; bug and feature forms |
 | `CHANGELOG.md` | What changed for hosts in each release |
@@ -224,7 +228,7 @@ colours otherwise.
 ```sh
 npm ci
 npx playwright install chromium   # once, for the browser tests
-scripts/check.sh    # lint, typecheck, test, schema up to date, build, pack, package checks, browser
+scripts/check.sh    # lint, typecheck, test, schema up to date, build, demo build, pack, package checks, browser
 ```
 
 ### Tests
@@ -256,7 +260,9 @@ AA) on every example in both themes and both layouts. The no-JavaScript
 tests load `/static`, the panel server-rendered with no script, with
 JavaScript off. axe can't measure text over the game theme's gradients
 (it reports it incomplete, not passed), so a test pins an empty slot's
-glyph to its label's colour, which clears 4.5:1 in both themes.
+glyph to its label's colour, which clears 4.5:1 in both themes. The demo
+tests build the demo site and serve it under `/wol-character-panel/` on
+port 5200, and check its images and links take that base path.
 
 ### Package checks
 
@@ -300,6 +306,16 @@ the server; `/static?fixture=full&width=22` shows the server-rendered panel
 with no script (fixture, theme, labels, width and `job` from the query).
 Check a release candidate in a host too (below).
 
+The demo site is this page built with Vite (`npm run build:demo`, into
+`playground/dist/`), served from `/wol-character-panel/`: the panel's links
+take that base path, and the examples' root-relative image paths
+(`/portrait.svg`) are prefixed with it. `/static` is dev-server only, so the
+demo doesn't have it. To look at the build locally:
+
+```sh
+npm run build:demo && npx vite preview playground --base /wol-character-panel/
+```
+
 `node scripts/preview.mjs` screenshots the panel for every example, in both
 themes, wide and narrow (22rem), into `.logs/preview/`, and lists any console
 error or warning (exit 1 if there is one). `--fixture=full` and
@@ -332,7 +348,16 @@ git tag v1.0.1 && git push origin v1.0.1
 
 `.github/workflows/release.yml` checks the tag matches `package.json`, runs the
 checks, and publishes with npm trusted publishing (no npm token; provenance
-added by npm).
+added by npm). Once it succeeds, `.github/workflows/pages.yml` builds the
+demo site from the same commit and deploys it, so the demo never runs ahead
+of npm.
+
+GitHub Pages is set once in the repository's Settings → Pages: Source
+"GitHub Actions". To redeploy a release, run the Demo workflow by hand with
+its tag (from 1.0.4 on: older tags have no `build:demo`). Both ways run with
+`main` as their ref, which the `github-pages` environment allows; if a run
+is refused there, check Settings → Environments → `github-pages` allows
+`main`.
 
 The trusted publisher is set on npmjs.com under the package's Settings →
 Trusted publishing → GitHub Actions: user `AlexLe08`, repository

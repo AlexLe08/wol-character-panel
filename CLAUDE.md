@@ -35,6 +35,12 @@ reach the site only through a release and an upgrade there.
   `examples/`, rendering `src/` with hot reload. Its state is in the URL
   (`/?fixture=edge-cases&theme=game&width=22`). `/static` is the panel
   server-rendered with no script (`playground/static.tsx`).
+- `npm run build:demo`: the playground built for GitHub Pages into
+  `playground/dist/`, under the base path `/wol-character-panel/`;
+  `.github/workflows/pages.yml` deploys it after each successful release.
+  In the playground, build links and image paths from
+  `import.meta.env.BASE_URL`, never a bare `/`; `browser/demo.spec.ts`
+  checks the build under that base.
 - `npm run build`: `tsc -p tsconfig.build.json` to `dist/` (ESM, one `.js`
   and `.d.ts` per source file) plus the CSS; then
   `scripts/strip-dts-css-imports.mjs` blanks the CSS import in the

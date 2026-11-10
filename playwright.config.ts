@@ -9,6 +9,7 @@ import { defineConfig, devices } from "@playwright/test";
 declare const process: { env: Record<string, string | undefined> };
 
 const PORT = 5199;
+const DEMO_PORT = 5200;
 const CI = Boolean(process.env.CI);
 
 export default defineConfig({
@@ -27,12 +28,20 @@ export default defineConfig({
   // Chromium only for now; Firefox and WebKit are one line each here and an
   // install step in CI.
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
-  webServer: {
-    command: `npm run dev -- --port ${PORT} --strictPort`,
-    url: `http://localhost:${PORT}`,
-    // Never reuse a server already on the port: it could be another
-    // worktree's, serving another branch's src/. A busy port fails
-    // (--strictPort) instead.
-    reuseExistingServer: false,
-  },
+  // Never reuse a server already on a port: it could be another worktree's,
+  // serving another branch's src/. A busy port fails (--strictPort) instead.
+  webServer: [
+    {
+      command: `npm run dev -- --port ${PORT} --strictPort`,
+      url: `http://localhost:${PORT}`,
+      reuseExistingServer: false,
+    },
+    // The demo site as GitHub Pages serves it: built, under its base path
+    // (browser/demo.spec.ts).
+    {
+      command: `npm run build:demo && vite preview playground --base /wol-character-panel/ --port ${DEMO_PORT} --strictPort`,
+      url: `http://localhost:${DEMO_PORT}/wol-character-panel/`,
+      reuseExistingServer: false,
+    },
+  ],
 });

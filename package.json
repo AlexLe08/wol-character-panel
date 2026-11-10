@@ -53,6 +53,7 @@
   },
   "scripts": {
     "dev": "vite playground",
+    "build:demo": "vite build playground --base /wol-character-panel/",
     "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json && node -e \"fs.cpSync('src/character-sheet.css', 'dist/character-sheet.css')\" && node scripts/strip-dts-css-imports.mjs",
     "typecheck": "tsc -p .",
     "lint": "eslint",
