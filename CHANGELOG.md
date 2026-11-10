@@ -13,6 +13,13 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-11-10
+
+### Changed
+
+- README: dropped the note that the schema's `$id` URL only opens once the
+  package is published; it resolves on jsDelivr.
+
 ### Fixed
 
 - "Change job" stays on one line beside a long title; the title wraps
@@ -60,7 +67,8 @@ First release, extracted from
 - `character-sheet.css` and `character-sheet.schema.json`, its `$id` on
   `@1`.
 
-[Unreleased]: https://github.com/AlexLe08/wol-character-panel/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/AlexLe08/wol-character-panel/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/AlexLe08/wol-character-panel/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/AlexLe08/wol-character-panel/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/AlexLe08/wol-character-panel/tree/v1.0.1
 [1.0.0]: https://www.npmjs.com/package/@solution-nine/wol-character-panel/v/1.0.0
