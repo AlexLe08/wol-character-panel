@@ -117,6 +117,13 @@
     theme, 22rem in the game theme (the job column is 117px at 18rem; the
     label needs 144px, 164px uppercase). Fixing it means moving the
     header slots on very small panels.
+- Empty slots' glyphs meet contrast (a patch). axe found the document
+  theme's `--cs-rule-strong` glyph at 2.64:1 on white; it now takes its
+  label's `--cs-muted` (6.24:1), and the axe skip and `test.fail` are gone.
+  The game theme had the same glyph at 2.5 to 2.8:1, which axe can't see
+  (it reports text over a gradient as incomplete); it gets `--cs-muted`
+  too (6.3 to 7.1:1, measured by hand), and a browser test pins the glyph
+  to its label's colour in both themes.
 
 ## Next up: tooling plan (in order, one PR and session each)
 
@@ -126,13 +133,6 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 2. Packaging checks: done (above), released as 1.0.2 for the `.d.ts` fix.
 3. Repository hygiene: done (above).
 4. Claude Code: done (above).
-
-Found by axe, for a component PR (a patch release): in the document theme
-an empty slot's glyph (`--cs-rule-strong`) is below 4.5:1, and at full
-width it's the only visible text naming the slot. Raising it to
-`--cs-muted` (the empty label's colour) passes axe. Recorded as a known
-failure in `browser/a11y.spec.ts`; the other axe runs skip only that rule
-on those squares, so remove the skip and the `test.fail` with the fix.
 
 ## Later (candidates, unordered)
 

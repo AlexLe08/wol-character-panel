@@ -9,29 +9,8 @@ import { slot, tabTo } from "./helpers.ts";
 
 const WCAG = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
-// Known failure, pending the owner's call: in the document theme an empty
-// slot's glyph (--cs-rule-strong) is below 4.5:1, and at full width it's
-// the only visible text naming the slot. Only color-contrast, only on those
-// squares, only in that theme, is set aside here; the test at the bottom
-// expects it to fail, and starts passing (so failing) once it's fixed.
-const EMPTY_SQUARE = ".cs-slot--empty .cs-slot__square";
-
-async function violations(page: Page, theme: string, { skipKnown = true } = {}) {
-  const panel = () => new AxeBuilder({ page }).include(".cs").withTags(WCAG);
-  const empty = await page.locator(`.cs ${EMPTY_SQUARE}`).count();
-  let found;
-  if (theme === "document" && skipKnown && empty > 0) {
-    // Everything but the empty squares, then those with every rule but contrast.
-    const rest = await panel().exclude(EMPTY_SQUARE).analyze();
-    const squares = await new AxeBuilder({ page })
-      .include(`.cs ${EMPTY_SQUARE}`)
-      .withTags(WCAG)
-      .disableRules(["color-contrast"])
-      .analyze();
-    found = [...rest.violations, ...squares.violations];
-  } else {
-    found = (await panel().analyze()).violations;
-  }
+async function violations(page: Page) {
+  const found = (await new AxeBuilder({ page }).include(".cs").withTags(WCAG).analyze()).violations;
   // Rule id, help text and the offending elements, for a readable failure.
   return found.map((v) => ({ rule: v.id, help: v.help, nodes: v.nodes.map((n) => n.target) }));
 }
@@ -43,7 +22,7 @@ for (const fixture of ["full", "minimal", "edge-cases"]) {
       test(`no axe violations: ${fixture}, ${theme}, ${layout}`, async ({ page }) => {
         await page.goto(`/?fixture=${fixture}&theme=${theme}&width=${width}`);
         await expect(page.locator(".cs")).toBeVisible();
-        expect(await violations(page, theme)).toEqual([]);
+        expect(await violations(page)).toEqual([]);
       });
     }
   }
@@ -54,7 +33,7 @@ for (const theme of ["document", "game"]) {
     await page.goto(`/?fixture=full&theme=${theme}`);
     await page.locator(".cs__jobs-toggle").click();
     await tabTo(page, slot(page, "Skills"));
-    expect(await violations(page, theme)).toEqual([]);
+    expect(await violations(page)).toEqual([]);
   });
 }
 
@@ -62,11 +41,34 @@ test("no axe violations on dark host tokens (document theme)", async ({ page }) 
   await page.goto("/?fixture=full&tokens=dark");
   await page.locator(".cs__jobs-toggle").click();
   await tabTo(page, slot(page, "Skills"));
-  expect(await violations(page, "document")).toEqual([]);
+  expect(await violations(page)).toEqual([]);
 });
 
-test("empty slots' glyphs meet contrast in the document theme", async ({ page }) => {
-  test.fail(true, "Known: --cs-rule-strong glyphs are below 4.5:1; see EMPTY_SQUARE above");
-  await page.goto("/?fixture=full");
-  expect(await violations(page, "document", { skipKnown: false })).toEqual([]);
-});
+// At full width an empty slot's glyph is the only visible text naming it,
+// and it was once dimmed below 4.5:1 (--cs-rule-strong); the document-theme
+// runs above cover it, this one names it.
+for (const tokens of ["", "dark"]) {
+  test(`empty slots' glyphs meet contrast (document${tokens ? ", dark host tokens" : ""})`, async ({ page }) => {
+    await page.goto(`/?fixture=full${tokens ? `&tokens=${tokens}` : ""}`);
+    const squares = page.locator(".cs .cs-slot--empty .cs-slot__square");
+    expect(await squares.count()).toBeGreaterThan(0);
+    const { violations: found } = await new AxeBuilder({ page })
+      .include(".cs .cs-slot--empty .cs-slot__square")
+      .withRules(["color-contrast"])
+      .analyze();
+    expect(found.map((v) => v.nodes.map((n) => n.target))).toEqual([]);
+  });
+}
+
+// axe can't measure text over the game theme's gradient (it reports those
+// squares incomplete, not passed), so pin the glyph to its label's colour,
+// --cs-muted, which clears 4.5:1 in both themes.
+for (const theme of ["document", "game"]) {
+  test(`an empty slot's glyph has its label's colour (${theme})`, async ({ page }) => {
+    await page.goto(`/?fixture=full&theme=${theme}`);
+    const empty = page.locator(".cs .cs-slot--empty").first();
+    const color = (selector: string) =>
+      empty.locator(selector).evaluate((el) => getComputedStyle(el).color);
+    expect(await color(".cs-slot__square")).toBe(await color(".cs-slot__label"));
+  });
+}
