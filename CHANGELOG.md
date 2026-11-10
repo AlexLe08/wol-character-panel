@@ -19,6 +19,10 @@ A PR that changes what's published adds its line under Unreleased; the
   instead (`.cs__jobs` no longer shrinks, `.cs__jobs-toggle` doesn't wrap),
   breaking inside a word with no break in it, such as a URL
   (`overflow-wrap: anywhere` on `.cs__bar-title`).
+- An empty slot's glyph meets WCAG AA contrast (4.5:1) in both themes: it
+  takes its label's colour, `--cs-muted`, instead of `--cs-rule-strong`
+  (about 2.6:1 on the document theme's white, 2.5 to 2.8:1 in the game
+  theme). At full width it's the only visible text naming the slot.
 
 ## [1.0.2] - 2026-11-09
 
