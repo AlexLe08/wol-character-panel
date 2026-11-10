@@ -13,11 +13,32 @@ import "./playground.css";
 // host reads ?job=. The controls are query parameters too, so any state is
 // a link (for a bug report or a browser test), and they ride along in
 // basePath, whose query jobHref and actionHref keep.
+//
+// `npm run build:demo` builds the same page for GitHub Pages
+// (.github/workflows/pages.yml), served from /wol-character-panel/ rather
+// than the site root; BASE_URL is that path there and "/" in dev.
+
+const BASE = import.meta.env.BASE_URL;
 
 const examples = import.meta.glob<unknown>("../examples/*.json", { eager: true, import: "default" });
 const fixtures = Object.fromEntries(
-  Object.entries(examples).map(([path, raw]) => [path.replace(/^.*\/(.+)\.json$/, "$1"), raw]),
+  Object.entries(examples).map(([path, raw]) => [path.replace(/^.*\/(.+)\.json$/, "$1"), underBase(raw)]),
 );
+
+// The examples point at images from the site root (/portrait.svg), as a
+// host's config would; under a base path those are prefixed with it. Only
+// image fields: a link's href stays as the host would give it.
+function underBase(value: unknown, key?: string): unknown {
+  if (typeof value === "string") {
+    const image = key === "src" || key === "iconSrc";
+    return image && value.startsWith("/") && !value.startsWith("//") ? BASE + value.slice(1) : value;
+  }
+  if (Array.isArray(value)) return value.map((item) => underBase(item));
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([name, item]) => [name, underBase(item, name)]));
+  }
+  return value;
+}
 
 // The controls' query parameters, with their defaults. A fixture's param
 // action naming one of these would clash; none do.
@@ -86,7 +107,7 @@ function App() {
       .filter((name) => query.has(name))
       .map((name) => [name, query.get(name)]),
   );
-  const basePath = withQuery("/", controlQuery);
+  const basePath = withQuery(BASE, controlQuery);
 
   const renderLink = ({ intent, href: to, ...props }: LinkRendererProps) => (
     // eslint-disable-next-line jsx-a11y/anchor-has-content -- children come in through props
@@ -144,6 +165,16 @@ function App() {
 
   return (
     <div className="pg">
+      {/* Text only: links here would come before the panel in the tab
+          order, and the browser tests walk to it with Tab. */}
+      <header className="pg-header">
+        <h1>wol-character-panel</h1>
+        <p>
+          A React panel modelled on an RPG character screen, driven by one JSON config. Below are the
+          package&apos;s example configs; the controls set the panel&apos;s props.
+        </p>
+      </header>
+
       <form className="pg-controls" aria-label="Preview controls" onSubmit={(event) => event.preventDefault()}>
         <label>
           Fixture{" "}
@@ -206,6 +237,11 @@ function App() {
       >
         {panel}
       </div>
+
+      <footer className="pg-footer">
+        <a href="https://github.com/AlexLe08/wol-character-panel">Source on GitHub</a>
+        <a href="https://www.npmjs.com/package/@solution-nine/wol-character-panel">Package on npm</a>
+      </footer>
     </div>
   );
 }

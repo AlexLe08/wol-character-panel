@@ -12,6 +12,27 @@ body {
   padding: 1rem;
 }
 
+.pg-header h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.pg-header p {
+  margin: 0.25rem 0 0;
+  color: #5b616b;
+}
+
+.pg-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  justify-content: center;
+}
+
+.pg-footer a {
+  color: #2f5fa3;
+}
+
 .pg-controls {
   display: flex;
   flex-wrap: wrap;
@@ -22,7 +43,8 @@ body {
   background: #fff;
 }
 
-.pg-controls :focus-visible {
+.pg-controls :focus-visible,
+.pg-footer :focus-visible {
   outline: 2px solid #2f5fa3;
   outline-offset: 2px;
 }
