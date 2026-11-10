@@ -131,16 +131,21 @@
   (upload an artifact, then deploy with an OIDC token; actions pinned by
   SHA, as in `release.yml`). Chosen over a `gh-pages` branch (a
   third-party action pushing build output with a write token) and over
-  Vercel or Netlify (another account for a static page). It deploys on
-  `v*` tags, so the demo shows what npm has rather than unreleased `main`,
-  and by hand to redeploy. CI's `check` builds it on every PR. Under the
-  base path, the playground builds links from `BASE_URL` and prefixes the
-  examples' root-relative image paths; the examples keep those, as a
-  host's config would. The page gained a heading and a short intro, with
-  GitHub and npm links in a footer after the panel (links above it would
-  add Tab stops before the panel, which the browser tests reach by Tab).
-  `/static` stays dev only. Needs the owner once: Pages source "GitHub
-  Actions", and `v*` tags allowed in the `github-pages` environment.
+  Vercel or Netlify (another account for a static page). It runs on
+  `workflow_run` after Release succeeds, building the released commit, so
+  the demo shows what npm has: not unreleased `main`, nor a tag whose
+  publish failed. By hand it takes a tag and builds only `refs/tags/…`.
+  Both run with `main` as their ref, so the `github-pages` environment
+  needs no tag rule. CI's `check` builds it on every PR, and
+  `browser/demo.spec.ts` loads the build under `/wol-character-panel/`
+  (images load, links keep the base). Under the base path, the playground
+  builds links from `BASE_URL` and prefixes the examples' root-relative
+  image paths; the examples keep those, as a host's config would. The page
+  gained a heading and a short intro, with GitHub and npm links in a footer
+  after the panel (links above it would add Tab stops before the panel,
+  which the browser tests reach by Tab). `/static` stays dev only. Needs
+  the owner once: Pages source "GitHub Actions". The first deploy is the
+  next release (1.0.4): older tags have no `build:demo`.
 
 ## Next up: tooling plan (in order, one PR and session each)
 
