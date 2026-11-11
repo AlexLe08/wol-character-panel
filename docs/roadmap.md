@@ -146,6 +146,16 @@
   which the browser tests reach by Tab). `/static` stays dev only. Needs
   the owner once: Pages source "GitHub Actions". The first deploy is the
   next release (1.0.4): older tags have no `build:demo`.
+- Dependency majors (dev only, no release). Dependabot's ESLint 10 (#14)
+  and TypeScript 7 (#15) PRs failed `npm ci` on peer ranges:
+  `eslint-plugin-jsx-a11y` 6.10.2 allows ESLint up to 9, `typescript-eslint`
+  8.72 TypeScript below 6.1. Both closed, and `dependabot.yml` ignores those
+  two majors. TypeScript moved to `^6.0` instead (6.0.3), the newest that
+  `typescript-eslint` allows; a 6.1 will fail the grouped minor PR the same
+  way until it catches up. TS 6 checks side-effect imports by default, so
+  the build (which sees only `src/`, not the playground's Vite types) needed
+  `src/css.d.ts` for the CSS import; it isn't emitted, so `dist/` is
+  unchanged.
 
 ## Next up: tooling plan (in order, one PR and session each)
 
@@ -157,6 +167,10 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 4. Claude Code: done (above).
 
 ## Later (candidates, unordered)
+
+- Lift the Dependabot ignores for ESLint and TypeScript majors once
+  `eslint-plugin-jsx-a11y` allows ESLint 10 and `typescript-eslint` allows
+  TypeScript 7 (check their `peerDependencies`).
 
 - Themes beyond `document` and `game`.
 - CMS adapters, Contentful first (on its free plan), as `loadConfig`
