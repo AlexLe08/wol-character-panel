@@ -149,10 +149,10 @@
 - Dependency majors (dev only, no release). Dependabot's ESLint 10 (#14)
   and TypeScript 7 (#15) PRs failed `npm ci` on peer ranges:
   `eslint-plugin-jsx-a11y` 6.10.2 allows ESLint up to 9, `typescript-eslint`
-  8.72 TypeScript below 6.1. Both closed, and `dependabot.yml` ignores those
-  two majors. TypeScript moved to `^6.0` instead (6.0.3), the newest that
-  `typescript-eslint` allows; a 6.1 will fail the grouped minor PR the same
-  way until it catches up. TS 6 checks side-effect imports by default, so
+  8.72 TypeScript below 6.1. Both closed. TypeScript moved to `^6.0.3`
+  instead, the newest that `typescript-eslint` allows. `dependabot.yml`
+  ignores ESLint majors and TypeScript `>=6.1.0`: a 6.1 in the grouped
+  minor PR would otherwise fail every dev update with it. TS 6 checks side-effect imports by default, so
   the build (which sees only `src/`, not the playground's Vite types) needed
   `src/css.d.ts` for the CSS import; it isn't emitted, so `dist/` is
   unchanged.
@@ -168,10 +168,10 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 
 ## Later (candidates, unordered)
 
-- Lift the Dependabot ignores for ESLint and TypeScript majors once
-  `eslint-plugin-jsx-a11y` allows ESLint 10 and `typescript-eslint` allows
-  TypeScript 7 (check their `peerDependencies`).
-
+- Lift the Dependabot ignores once the plugins allow the versions (check
+  their `peerDependencies`): ESLint majors when `eslint-plugin-jsx-a11y`
+  allows ESLint 10; TypeScript `>=6.1.0` as `typescript-eslint` widens its
+  range (narrow it to the next blocked version, or drop it).
 - Themes beyond `document` and `game`.
 - CMS adapters, Contentful first (on its free plan), as `loadConfig`
   sources. The core never imports a CMS SDK: an adapter is its own entry
