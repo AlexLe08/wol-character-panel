@@ -172,6 +172,13 @@ Agreed 2026-11-08 after a review of the repository as extracted.
   their `peerDependencies`): ESLint majors when `eslint-plugin-jsx-a11y`
   allows ESLint 10; TypeScript `>=6.1.0` as `typescript-eslint` widens its
   range (narrow it to the next blocked version, or drop it).
+- If the `browser` job's "Install Chromium" keeps failing on Ubuntu's apt
+  archive (it did four times on 2026-11-11, PR #22: `security.ubuntu.com`
+  and `azure.archive.ubuntu.com` unreachable from the runner, while
+  `packages.microsoft.com` answered), run that job in Playwright's image
+  (`mcr.microsoft.com/playwright:v<version>`) instead of
+  `install --with-deps`, with a check that the tag matches
+  `@playwright/test`. apt retries wouldn't cover a minutes-long outage.
 - Themes beyond `document` and `game`.
 - CMS adapters, Contentful first (on its free plan), as `loadConfig`
   sources. The core never imports a CMS SDK: an adapter is its own entry
