@@ -1,6 +1,6 @@
 import type { z } from "zod";
 import type {
-  characterSheetConfigSchema,
+  characterPanelConfigSchema,
   ICON_NAMES,
   portraitSchema,
   slotActionSchema,
@@ -13,19 +13,19 @@ import type {
 // than from their own schemas, which schema.ts doesn't export: each
 // exported schema's inferred type is written out in full in the emitted
 // .d.ts, so exporting the nested ones repeated them many times over.
-export type CharacterSheetConfig = z.output<typeof characterSheetConfigSchema>;
-export type Job = CharacterSheetConfig["jobs"][number];
+export type CharacterPanelConfig = z.output<typeof characterPanelConfigSchema>;
+export type Job = CharacterPanelConfig["jobs"][number];
 export type SlotDef = z.output<typeof slotDefSchema>;
 export type SlotContent = z.output<typeof slotContentSchema>;
 export type SlotAction = z.output<typeof slotActionSchema>;
 export type Tooltip = z.output<typeof tooltipSchema>;
 export type Portrait = z.output<typeof portraitSchema>;
-export type Tab = NonNullable<CharacterSheetConfig["tabs"]>[number];
+export type Tab = NonNullable<CharacterPanelConfig["tabs"]>[number];
 export type TabPage = NonNullable<Tab["pages"]>[number];
 export type Block = TabPage["blocks"][number];
 // A block as a job gives it in job.blocks: the same shapes, without id or hidden.
 export type JobBlock = NonNullable<Job["blocks"]>[string];
-export type GearSet = NonNullable<CharacterSheetConfig["gearSet"]>;
+export type GearSet = NonNullable<CharacterPanelConfig["gearSet"]>;
 
 export type Theme = "document" | "game";
 export type SlotPosition = SlotDef["position"];

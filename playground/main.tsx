@@ -2,7 +2,7 @@
 import { StrictMode, useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { findUnknownKeys, parseConfig, publicConfig, resolveJob, withQuery } from "../src/index.ts";
-import { CharacterSheet, type LinkRendererProps } from "../src/react-entry.ts";
+import { EquipmentPanel, type LinkRendererProps } from "../src/react-entry.ts";
 import "./playground.css";
 
 // `npm run dev`: the panel straight from src/, with hot reload, on the
@@ -135,7 +135,7 @@ function App() {
     const job = resolveJob(config, query.get("job") ?? undefined);
     panel = (
       <>
-        <CharacterSheet
+        <EquipmentPanel
           config={config}
           job={job}
           basePath={basePath}

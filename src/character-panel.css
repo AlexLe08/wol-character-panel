@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------
-   Character sheet panel
+   Character panel: the equipment pane
    Every color and size is a --cs-* property, so a host restyles it by
    overriding variables rather than selectors. The "document" theme reads
    the host's tokens when they exist (--paper, --ink, --signal...) and has

@@ -1,8 +1,8 @@
 import { useId, type ReactNode } from "react";
 import { defaultLink, defaultPortrait, EquipmentBody, glyph, type LinkRendererProps } from "./EquipmentBody.tsx";
 import { jobHref } from "./resolve.ts";
-import type { CharacterSheetConfig, Job, Portrait, Theme } from "./types.ts";
-import "./character-sheet.css";
+import type { CharacterPanelConfig, Job, Portrait, Theme } from "./types.ts";
+import "./character-panel.css";
 
 // An equipment-screen style panel:
 //   top bar      title, and the job menu
@@ -16,8 +16,8 @@ import "./character-sheet.css";
 // portrait goes through next/image; anywhere else the defaults are plain
 // <a> and <img>.
 
-export type CharacterSheetProps = {
-  config: CharacterSheetConfig;
+export type EquipmentPanelProps = {
+  config: CharacterPanelConfig;
   job: Job;
   // The page the panel is on, for job links (?job=<id>).
   basePath?: string;
@@ -45,7 +45,7 @@ export type CharacterSheetProps = {
   isParamActive?: (name: string, value: string) => boolean;
 };
 
-export function CharacterSheet({
+export function EquipmentPanel({
   config,
   job,
   basePath = "/",
@@ -54,11 +54,11 @@ export function CharacterSheet({
   labels = "narrow",
   showSockets = false,
   showToolbar = false,
-  label = "Character sheet",
+  label = "Character panel",
   renderLink = defaultLink,
   renderPortrait = defaultPortrait,
   isParamActive,
-}: CharacterSheetProps) {
+}: EquipmentPanelProps) {
   // Tooltip ids must be unique even with two panels on one page.
   const idPrefix = useId();
   // This job's own URL, which a param action adds its parameter to.

@@ -1,4 +1,4 @@
-import type { Block, CharacterSheetConfig, Job, SlotAction, Tab, TabPage } from "./types.ts";
+import type { Block, CharacterPanelConfig, Job, SlotAction, Tab, TabPage } from "./types.ts";
 
 // The config as visitors see it: only published jobs, so drafts and hidden
 // jobs are left out of the job menu and a ?job= link to one falls back to
@@ -8,7 +8,7 @@ import type { Block, CharacterSheetConfig, Job, SlotAction, Tab, TabPage } from 
 // page left with nothing to show, and a job's replacement for a block
 // that's gone, so a host that sends the public config to the browser
 // doesn't send hidden data. Editors use the whole config instead.
-export function publicConfig(config: CharacterSheetConfig): CharacterSheetConfig {
+export function publicConfig(config: CharacterPanelConfig): CharacterPanelConfig {
   const { gearSet, tabs, ...rest } = config;
   const publicTabs = tabs?.flatMap(publicTab);
   const blockIds = new Set(publicTabs?.flatMap(tabBlocks).flatMap((block) => block.id ?? []));
@@ -54,7 +54,7 @@ function visiblePages(tab: Tab): TabPage[] {
 }
 
 // The tabs that can be shown, in order: the first one is the default.
-function visibleTabs(config: CharacterSheetConfig): Tab[] {
+function visibleTabs(config: CharacterPanelConfig): Tab[] {
   return (config.tabs ?? []).filter(
     (tab) => !tab.hidden && (tab.pages ? visiblePages(tab).length > 0 : visibleBlocks(tab.blocks ?? []).length > 0),
   );
@@ -73,7 +73,7 @@ export type ResolvedTab = {
 // host leaves out in one place, pass a config without them, here and to
 // tabHref, so both agree on which tab comes first.
 export function resolveTab(
-  config: CharacterSheetConfig,
+  config: CharacterPanelConfig,
   tabParam: string | string[] | undefined,
   pageParam?: string | string[],
 ): ResolvedTab | null {
@@ -101,7 +101,7 @@ export type TabHrefOptions = {
 // tab's first page get no parameter, so each view has one URL, as the
 // default job does.
 export function tabHref(
-  config: CharacterSheetConfig,
+  config: CharacterPanelConfig,
   tabId: string,
   currentHref = "/",
   { page, tabParam = "tab", pageParam = "page" }: TabHrefOptions = {},
@@ -133,7 +133,7 @@ export function resolveBlocks(blocks: Block[], job: Job): Block[] {
 // The job named in the URL, or the default one. An unknown or repeated
 // ?job= value falls back instead of failing, so an old shared link still
 // opens the page.
-export function resolveJob(config: CharacterSheetConfig, param: string | string[] | undefined): Job {
+export function resolveJob(config: CharacterPanelConfig, param: string | string[] | undefined): Job {
   const wanted = Array.isArray(param) ? param[0] : param;
   return (
     config.jobs.find((job) => job.id === wanted) ??
@@ -166,13 +166,13 @@ export function withQuery(href: string, params: Record<string, string | null>, h
 
 // The default job gets the bare path, so the page has one canonical URL. A
 // query basePath already has is kept (its hash isn't).
-export function jobHref(config: CharacterSheetConfig, jobId: string, basePath = "/", param = "job"): string {
+export function jobHref(config: CharacterPanelConfig, jobId: string, basePath = "/", param = "job"): string {
   return withQuery(basePath, { [param]: jobId === config.defaultJobId ? null : jobId });
 }
 
 // currentHref is the page the panel is on, with its ?job= (from jobHref);
 // only a param action uses it, setting its one parameter on that URL. The
-// query currentHref already has is kept; from CharacterSheet that's only
+// query currentHref already has is kept; from EquipmentPanel that's only
 // ?job=, so another parameter in the browser's URL is replaced, not added to.
 export function actionHref(action: SlotAction, currentHref = "/"): string | null {
   switch (action.kind) {

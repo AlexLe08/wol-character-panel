@@ -34,7 +34,7 @@ describe("public entries", () => {
   it('"/react" exports the component', () => {
     expect(names(react)).toMatchInlineSnapshot(`
       [
-        "CharacterSheet",
+        "EquipmentPanel",
       ]
     `);
   });
@@ -42,7 +42,7 @@ describe("public entries", () => {
   it('"/schema" exports the config schema only', () => {
     expect(names(schema)).toMatchInlineSnapshot(`
       [
-        "characterSheetConfigSchema",
+        "characterPanelConfigSchema",
       ]
     `);
   });

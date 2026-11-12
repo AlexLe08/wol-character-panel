@@ -5,8 +5,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { LIMITS, parseConfig } from "@solution-nine/wol-character-panel";
 import pkg from "@solution-nine/wol-character-panel/package.json" with { type: "json" };
-import { characterSheetConfigSchema } from "@solution-nine/wol-character-panel/schema";
-import schema from "@solution-nine/wol-character-panel/character-sheet.schema.json" with { type: "json" };
+import { characterPanelConfigSchema } from "@solution-nine/wol-character-panel/schema";
+import schema from "@solution-nine/wol-character-panel/character-panel.schema.json" with { type: "json" };
 
 // Without this, the "no React" half proves nothing.
 assert.throws(() => import.meta.resolve("react"), "react should not be installed here");
@@ -29,12 +29,12 @@ const parsed = parseConfig(config);
 assert.deepEqual(parsed.errors, []);
 assert.equal(parsed.config?.jobs[0].id, "developer");
 assert.equal(typeof LIMITS, "object");
-assert.equal(characterSheetConfigSchema.safeParse(config).success, true);
+assert.equal(characterPanelConfigSchema.safeParse(config).success, true);
 
 const major = pkg.version.split(".")[0];
-assert.ok(schema.$id.endsWith(`${pkg.name}@${major}/character-sheet.schema.json`), schema.$id);
+assert.ok(schema.$id.endsWith(`${pkg.name}@${major}/character-panel.schema.json`), schema.$id);
 
-const css = readFileSync(new URL(import.meta.resolve("@solution-nine/wol-character-panel/character-sheet.css")), "utf8");
+const css = readFileSync(new URL(import.meta.resolve("@solution-nine/wol-character-panel/character-panel.css")), "utf8");
 assert.match(css, /\.cs\b/);
 
 // The panel's only client file must keep its directive in the published

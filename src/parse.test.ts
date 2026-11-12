@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { findUnknownKeys, loadConfig, parseConfig, type ConfigSource } from "./parse.ts";
 import { LIMITS } from "./schema.ts";
-import type { CharacterSheetConfig } from "./types.ts";
+import type { CharacterPanelConfig } from "./types.ts";
 
 // Raw input, as a JSON file or the API would give it: plain objects, so a
 // test can break any field. zod's own messages aren't asserted, only the
@@ -32,7 +32,7 @@ function rawConfig(extra: Raw = {}): Raw {
   };
 }
 
-const jobIds = (config: CharacterSheetConfig | null) => config?.jobs.map((job) => job.id);
+const jobIds = (config: CharacterPanelConfig | null) => config?.jobs.map((job) => job.id);
 
 describe("parseConfig", () => {
   it("accepts a valid config without errors", () => {
@@ -177,7 +177,7 @@ describe("parseConfig: tabs, blocks and the gear-set row", () => {
   const tab = (id: string, extra: Raw = {}): Raw =>
     Object.fromEntries(Object.entries({ id, label: id, blocks: [stats()], ...extra }).filter(([, value]) => value !== undefined));
   const page = (id: string, extra: Raw = {}): Raw => ({ id, label: id, blocks: [stats()], ...extra });
-  const tabIds = (config: CharacterSheetConfig | null) => config?.tabs?.map((t) => t.id);
+  const tabIds = (config: CharacterPanelConfig | null) => config?.tabs?.map((t) => t.id);
 
   it("accepts every new field without errors", () => {
     const raw = rawConfig({

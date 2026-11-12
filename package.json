@@ -5,7 +5,7 @@
   "keywords": [
     "react",
     "component",
-    "character-sheet",
+    "character-panel",
     "portfolio",
     "json-schema",
     "zod"
@@ -35,15 +35,15 @@
       "types": "./dist/schema-entry.d.ts",
       "default": "./dist/schema-entry.js"
     },
-    "./character-sheet.css": "./dist/character-sheet.css",
-    "./character-sheet.schema.json": "./character-sheet.schema.json",
+    "./character-panel.css": "./dist/character-panel.css",
+    "./character-panel.schema.json": "./character-panel.schema.json",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
     "src",
     "!src/**/*.test.*",
-    "character-sheet.schema.json"
+    "character-panel.schema.json"
   ],
   "engines": {
     "node": ">=22.12"
@@ -54,10 +54,10 @@
   "scripts": {
     "dev": "vite playground",
     "build:demo": "vite build playground --base /wol-character-panel/",
-    "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json && node -e \"fs.cpSync('src/character-sheet.css', 'dist/character-sheet.css')\" && node scripts/strip-dts-css-imports.mjs",
+    "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json && node -e \"fs.cpSync('src/character-panel.css', 'dist/character-panel.css')\" && node scripts/strip-dts-css-imports.mjs",
     "typecheck": "tsc -p .",
     "lint": "eslint",
-    "lint:package": "attw --pack . --profile esm-only --exclude-entrypoints ./character-sheet.css && publint --strict",
+    "lint:package": "attw --pack . --profile esm-only --exclude-entrypoints ./character-panel.css && publint --strict",
     "test": "vitest run --coverage",
     "generate:schema": "node scripts/generate-schema.mjs",
     "prepack": "npm run build",

@@ -1,4 +1,4 @@
-# Character sheet (`@solution-nine/wol-character-panel`)
+# Character panel (`@solution-nine/wol-character-panel`)
 
 A panel modelled on an RPG character/equipment screen:
 
@@ -32,10 +32,10 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 | Import | What it holds |
 | --- | --- |
 | `@solution-nine/wol-character-panel` | `parseConfig`, `loadConfig`, `findUnknownKeys`, `publicConfig`, `resolveJob`, `jobHref`, `resolveTab`, `tabHref`, `actionHref`, `withQuery` (sets or removes query parameters on an href, keeping the rest; `jobHref`, `tabHref` and `actionHref` are built on it), the config types, and the limits as plain values: `LIMITS` (max lengths and counts, grouped like the config), `ID_PATTERN` and `PARAM_NAME_PATTERN`. No React or CSS, so server code and plain Node can use it |
-| `@solution-nine/wol-character-panel/react` | `CharacterSheet`, `CharacterSheetProps`, `LinkRendererProps`. The component imports its own CSS |
-| `@solution-nine/wol-character-panel/schema` | `characterSheetConfigSchema`, the whole config's zod schema. Its parts are internal |
-| `@solution-nine/wol-character-panel/character-sheet.css` | The styles, for hosts that want to control CSS order |
-| `@solution-nine/wol-character-panel/character-sheet.schema.json` | The JSON Schema other backends validate against |
+| `@solution-nine/wol-character-panel/react` | `EquipmentPanel`, `EquipmentPanelProps`, `LinkRendererProps`. The component imports its own CSS |
+| `@solution-nine/wol-character-panel/schema` | `characterPanelConfigSchema`, the whole config's zod schema. Its parts are internal |
+| `@solution-nine/wol-character-panel/character-panel.css` | The styles, for hosts that want to control CSS order |
+| `@solution-nine/wol-character-panel/character-panel.schema.json` | The JSON Schema other backends validate against |
 
 `react` and `zod` are peer dependencies: the host provides them.
 
@@ -50,11 +50,11 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 | `src/parse.ts` | `parseConfig` (drops invalid jobs, tabs and blocks, reports errors) and `loadConfig` (fallback chain of sources) |
 | `src/resolve.ts` | `publicConfig`, `resolveJob`, `resolveTab`, `withQuery`, and the links built on it: `jobHref`, `tabHref`, `actionHref` |
 | `src/react-entry.ts` | The `/react` entry (re-exports only) |
-| `src/CharacterSheet.tsx` | The panel (a Server Component): the section and the bar around `EquipmentBody` |
+| `src/EquipmentPanel.tsx` | The panel (a Server Component): the section and the bar around `EquipmentBody` |
 | `src/EquipmentBody.tsx` | The panel's header and body: slots, tooltips, portrait. Private: no entry exports it |
 | `src/SlotHover.tsx` | The only client code: Escape dismisses a tooltip. Private: no entry exports it |
-| `src/character-sheet.css` | Styles and themes; everything themable is a `--cs-*` variable |
-| `character-sheet.schema.json` | Generated JSON Schema for editing a config file by hand |
+| `src/character-panel.css` | Styles and themes; everything themable is a `--cs-*` variable |
+| `character-panel.schema.json` | Generated JSON Schema for editing a config file by hand |
 | `examples/` | Sample configs (`full`, `minimal`, `edge-cases` with every field at its limit); tests check each one parses cleanly and renders |
 | `playground/` | The local preview (`npm run dev`), and `/static`, the panel server-rendered with no script (`static.tsx`). Built for the demo site by `npm run build:demo`. Not published |
 | `browser/` | Browser tests (`npm run test:browser`): Playwright and axe against the playground |
@@ -83,13 +83,13 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 ## Config
 
 A config is plain JSON. Add `"$schema"` pointing at
-`character-sheet.schema.json` to get autocomplete and validation in your editor.
+`character-panel.schema.json` to get autocomplete and validation in your editor.
 The JSON Schema rejects unknown keys, so a typo like `subtitel` is an error
 when writing a config, while `parseConfig` strips unknown keys when reading one
 (`findUnknownKeys` lists them).
 
 The schema's `$id` is
-`https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@1/character-sheet.schema.json`.
+`https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@1/character-panel.schema.json`.
 `scripts/generate-schema.mjs` builds it from `name` and the major part of
 `version` in `package.json`, so it names the contract, not a release:
 
@@ -172,7 +172,7 @@ The schema's `$id` is
 ### Tabs, blocks and the gear-set row
 
 These optional fields describe the rest of a character window: a name in the
-bar, a row above the job header, and a content pane of tabs. `CharacterSheet`
+bar, a row above the job header, and a content pane of tabs. `EquipmentPanel`
 doesn't draw them yet; the component that does is in progress. A config
 without them stays valid, and `parseConfig`, `publicConfig`, `resolveTab` and
 `tabHref` handle them already, so an editor can start writing them.
@@ -279,12 +279,12 @@ without them stays valid, and `parseConfig`, `publicConfig`, `resolveTab` and
 
 ```tsx
 import { parseConfig, resolveJob } from "@solution-nine/wol-character-panel";
-import { CharacterSheet } from "@solution-nine/wol-character-panel/react";
+import { EquipmentPanel } from "@solution-nine/wol-character-panel/react";
 
 const { config, errors } = parseConfig(json);   // or: const { config } = await loadConfig(sources, fallback)
 const job = resolveJob(config, searchParams.job);
 
-<CharacterSheet
+<EquipmentPanel
   config={config}
   job={job}
   theme="document"          // or "game"
@@ -350,7 +350,7 @@ npx vitest          # watch, without coverage
 
 Vitest, beside the code as `src/*.test.ts(x)`. The data side (`parse`,
 `resolve`) has unit tests; the panel is rendered to HTML with
-`react-dom/server` in Node (`src/CharacterSheet.test.tsx`), which is what a
+`react-dom/server` in Node (`src/EquipmentPanel.test.tsx`), which is what a
 host serves before hydration. `src/entries.test.ts` lists each entry's
 runtime exports, so removing one fails a test (it would be a major release).
 `npm test` fails when coverage drops below the thresholds in

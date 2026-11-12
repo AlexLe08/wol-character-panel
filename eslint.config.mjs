@@ -8,7 +8,7 @@ import tseslint from "typescript-eslint";
 // dependencies (both peers). A tsconfig can't enforce this (it would resolve
 // anything installed in node_modules), so lint does.
 const IMPORT_MESSAGE =
-  "The character sheet package imports only react, zod and its own files (./…).";
+  "The character panel package imports only react, zod and its own files (./…).";
 // Each entry must match the whole specifier. "./" paths may not climb out
 // with "..".
 const ALLOWED = ["react", "react/.+", "zod", String.raw`\./(?!.*\.\.).+`];

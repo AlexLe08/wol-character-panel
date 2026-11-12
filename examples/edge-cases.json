@@ -1,5 +1,5 @@
 {
-  "$schema": "../character-sheet.schema.json",
+  "$schema": "../character-panel.schema.json",
   "title": "Title Long text that fills the field to its limit so overflo",
   "characterName": "Character name Long text that fills the.",
   "defaultJobId": "limits",

@@ -8,7 +8,7 @@ import { z } from "zod";
 // Imports nothing but zod, so plain Node (scripts/generate-schema.mjs) can
 // run it: Node only resolves relative imports with a .ts extension, which
 // the host's tsconfig doesn't allow, so LIMITS lives here too. Public: LIMITS
-// and ID_PATTERN (from "."), characterSheetConfigSchema (from "/schema", see
+// and ID_PATTERN (from "."), characterPanelConfigSchema (from "/schema", see
 // schema-entry.ts). The parts are internal.
 //
 // Unknown keys: these zod objects strip them, so a reader keeps a config
@@ -471,7 +471,7 @@ const jobSchema = z.object({
   gearSet: gearSetSchema.optional().describe("Replaces the config's gearSet for this job."),
 });
 
-export const characterSheetConfigSchema = z.object({
+export const characterPanelConfigSchema = z.object({
   $schema: z.string().optional(),
   title: text(LIMITS.config.title).optional().describe("Text in the panel's top bar."),
   characterName: text(LIMITS.config.characterName).optional().describe("Text at the right of the top bar."),

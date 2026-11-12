@@ -1,9 +1,9 @@
 /// <reference types="vite/client" />
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { CharacterSheet, type CharacterSheetProps } from "./CharacterSheet.tsx";
+import { EquipmentPanel, type EquipmentPanelProps } from "./EquipmentPanel.tsx";
 import { parseConfig } from "./parse.ts";
-import type { CharacterSheetConfig, Job, SlotContent } from "./types.ts";
+import type { CharacterPanelConfig, Job, SlotContent } from "./types.ts";
 
 // The panel as a server renders it: HTML from react-dom/server in plain
 // Node, no DOM and no JavaScript in a browser. That is what a host's page
@@ -14,7 +14,7 @@ import type { CharacterSheetConfig, Job, SlotContent } from "./types.ts";
 
 const tip = (title: string): SlotContent["tooltip"] => ({ title });
 
-const slots: CharacterSheetConfig["slots"] = [
+const slots: CharacterPanelConfig["slots"] = [
   { id: "stack", label: "Core stack", position: "header-start", icon: "◆" },
   { id: "extra", label: "Extra", position: "header-start" },
   { id: "focus", label: "Focus", position: "header-end" },
@@ -66,10 +66,10 @@ const data: Job = {
   slots: {},
 };
 
-const config: CharacterSheetConfig = { title: "Profile", defaultJobId: "web", slots, jobs: [web, data] };
+const config: CharacterPanelConfig = { title: "Profile", defaultJobId: "web", slots, jobs: [web, data] };
 
-function render(props: Partial<CharacterSheetProps> = {}): string {
-  return renderToStaticMarkup(<CharacterSheet config={config} job={web} {...props} />);
+function render(props: Partial<EquipmentPanelProps> = {}): string {
+  return renderToStaticMarkup(<EquipmentPanel config={config} job={web} {...props} />);
 }
 
 // The opening tags of server-rendered HTML, with their attributes, which is
@@ -110,7 +110,7 @@ const section = (html: string) => tags(html).find((tag) => tag.name === "section
 
 const tooltipIds = (html: string) => tags(html).filter((tag) => tag.attrs.role === "tooltip").map((tag) => tag.attrs.id);
 
-describe("CharacterSheet (server render)", () => {
+describe("EquipmentPanel (server render)", () => {
   it("is a labelled landmark carrying its theme and label mode", () => {
     expect(section(render({ theme: "game", labels: "always", label: "Profile panel" }))).toEqual({
       name: "section",
@@ -123,9 +123,9 @@ describe("CharacterSheet (server render)", () => {
     expect(section(html)?.attrs).toMatchObject({
       "data-cs-theme": "document",
       "data-cs-labels": "narrow",
-      "aria-label": "Character sheet",
+      "aria-label": "Character panel",
     });
-    expect(html).toContain('<p class="cs__bar-title">Character sheet</p>');
+    expect(html).toContain('<p class="cs__bar-title">Character panel</p>');
   });
 
   it("shows the config's title in the top bar", () => {
@@ -193,8 +193,8 @@ describe("CharacterSheet (server render)", () => {
     it("gives two panels on one page different ids", () => {
       const html = renderToStaticMarkup(
         <>
-          <CharacterSheet config={config} job={web} />
-          <CharacterSheet config={config} job={web} />
+          <EquipmentPanel config={config} job={web} />
+          <EquipmentPanel config={config} job={web} />
         </>,
       );
       const ids = tags(html)

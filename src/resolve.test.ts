@@ -10,13 +10,13 @@ import {
   tabHref,
   withQuery,
 } from "./resolve.ts";
-import type { Block, CharacterSheetConfig, Job, JobBlock, Tab, TabPage } from "./types.ts";
+import type { Block, CharacterPanelConfig, Job, JobBlock, Tab, TabPage } from "./types.ts";
 
 function job(id: string, status: Job["status"] = "published"): Job {
   return { id, name: id, title: id, status, level: { label: "Lv.", value: "1" }, slots: {} };
 }
 
-const config: CharacterSheetConfig = {
+const config: CharacterPanelConfig = {
   defaultJobId: "web",
   slots: [{ id: "skills", label: "Skills", position: "left" }],
   jobs: [job("web"), job("data"), job("next", "draft"), job("old", "hidden")],
@@ -42,7 +42,7 @@ describe("publicConfig: hidden parts", () => {
   });
   const tab = (id: string, extra: Partial<Tab> = {}): Tab => ({ id, label: id, blocks: [stats()], ...extra });
   const page = (id: string, extra: Partial<TabPage> = {}): TabPage => ({ id, label: id, blocks: [stats()], ...extra });
-  const withTabs = (extra: Partial<CharacterSheetConfig>): CharacterSheetConfig => ({ ...config, ...extra });
+  const withTabs = (extra: Partial<CharacterPanelConfig>): CharacterPanelConfig => ({ ...config, ...extra });
 
   it("leaves out hidden tabs, pages and blocks", () => {
     const result = publicConfig(
@@ -110,7 +110,7 @@ describe("resolveTab", () => {
   const block: Block = { type: "stats", groups: [{ rows: [{ label: "A", value: "1" }] }] };
   const tab = (id: string, extra: Partial<Tab> = {}): Tab => ({ id, label: id, blocks: [block], ...extra });
   const page = (id: string, extra: Partial<TabPage> = {}): TabPage => ({ id, label: id, blocks: [block], ...extra });
-  const withTabs: CharacterSheetConfig = {
+  const withTabs: CharacterPanelConfig = {
     ...config,
     tabs: [
       tab("hidden", { hidden: true }),
@@ -155,7 +155,7 @@ describe("resolveTab", () => {
 
 describe("tabHref", () => {
   const block: Block = { type: "stats", groups: [{ rows: [{ label: "A", value: "1" }] }] };
-  const withTabs: CharacterSheetConfig = {
+  const withTabs: CharacterPanelConfig = {
     ...config,
     tabs: [
       { id: "hidden", label: "Hidden", hidden: true, blocks: [block] },
