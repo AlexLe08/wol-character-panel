@@ -16,6 +16,10 @@ compact item-card tooltip on hover or keyboard focus. Clicking it goes to a page
 section, another page, or an external site. Changing the job (`?job=<id>`) swaps the slots, tooltips, and
 portrait, and the host page can swap its own content too.
 
+`CharacterWindow` draws the whole character window around that panel: a tab
+strip, and a content pane of the active tab's blocks (gauges, stats, fields)
+beside the equipment pane.
+
 It imports nothing but React and zod, enforced by `eslint.config.mjs`. It
 ships as ES modules with type declarations (no CommonJS build), so it needs a
 bundler or Node 22.12+. It runs the home page of
@@ -34,7 +38,7 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 | Import | What it holds |
 | --- | --- |
 | `@solution-nine/wol-character-panel` | `parseConfig`, `loadConfig`, `findUnknownKeys`, `publicConfig`, `resolveJob`, `jobHref`, `resolveTab`, `tabHref`, `actionHref`, `withQuery` (sets or removes query parameters on an href, keeping the rest; `jobHref`, `tabHref` and `actionHref` are built on it), the config types, and the limits as plain values: `LIMITS` (max lengths and counts, grouped like the config), `ID_PATTERN` and `PARAM_NAME_PATTERN`. No React or CSS, so server code and plain Node can use it |
-| `@solution-nine/wol-character-panel/react` | `EquipmentPanel`, `EquipmentPanelProps`, `EquipmentPanelParts`, `LinkRendererProps`. The component imports its own CSS |
+| `@solution-nine/wol-character-panel/react` | `EquipmentPanel`, `EquipmentPanelProps`, `EquipmentPanelParts`, `CharacterWindow`, `CharacterWindowProps`, `CharacterWindowParts`, `LinkRendererProps`. The components import their own CSS |
 | `@solution-nine/wol-character-panel/schema` | `characterPanelConfigSchema`, the whole config's zod schema. Its parts are internal |
 | `@solution-nine/wol-character-panel/character-panel.css` | The styles, for hosts that want to control CSS order |
 | `@solution-nine/wol-character-panel/character-panel.schema.json` | The JSON Schema other backends validate against |
@@ -53,6 +57,9 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 | `src/resolve.ts` | `publicConfig`, `resolveJob`, `resolveTab`, `withQuery`, and the links built on it: `jobHref`, `tabHref`, `actionHref` |
 | `src/react-entry.ts` | The `/react` entry (re-exports only) |
 | `src/EquipmentPanel.tsx` | The panel (a Server Component): the section and the bar around `EquipmentBody` |
+| `src/CharacterWindow.tsx` | The window (a Server Component): the section, the bar, the tab strip and sub-tabs, the content pane, and `EquipmentBody` as the equipment pane |
+| `src/Blocks.tsx` | The content pane's blocks and their rows. Private |
+| `src/Tooltip.tsx` | The tooltip card slots and rows share. Private |
 | `src/EquipmentBody.tsx` | The equipment pane's inside: the gear-set row, header and body (slots, tooltips, portrait). Private: no entry exports it |
 | `src/GearSet.tsx` | The gear-set row and the links its actions make. Private |
 | `src/icons.tsx` | The built-in drawings (`iconName`, the job menu's, the toolbar's) and the icon precedence. Private |
@@ -179,10 +186,10 @@ The schema's `$id` is
 
 These optional fields describe the rest of a character window: a name in the
 bar, a row above the job header, and a content pane of tabs. `EquipmentPanel`
-draws the name and the row; the tabs are for the window component, which is
-in progress. A config without them stays valid, and `parseConfig`,
-`publicConfig`, `resolveTab` and `tabHref` handle them already, so an editor
-can start writing them.
+draws the name and the row; `CharacterWindow` draws all three. It doesn't yet
+draw `levels` and `progress` blocks, two-column runs, collapsible groups or
+detail windows, which a config can already hold. A config without these
+fields stays valid.
 
 ```json
 {
@@ -310,6 +317,26 @@ const job = resolveJob(config, searchParams.job);
 />
 ```
 
+The window takes every `EquipmentPanel` prop, plus the tab and page from the
+URL:
+
+```tsx
+import { CharacterWindow } from "@solution-nine/wol-character-panel/react";
+
+<CharacterWindow
+  config={config}
+  job={job}
+  tab={searchParams.tab}    // the raw ?tab= value; unknown or missing: the first visible tab
+  page={searchParams.page}  // the raw ?page= value, for a tab with pages
+  tabParam="tab"            // optional: the parameters' names, as jobParam
+  pageParam="page"
+  hiddenTabs={["notes"]}    // optional: tab ids to leave out here
+  parts={{ equipment: false }} // optional: also tabs and equipment (below)
+  // …and theme, labels, basePath, jobParam, gearSetEnd, label,
+  // renderLink, renderPortrait, isParamActive, as above
+/>
+```
+
 `loadConfig(sources, fallback)` tries each `{ name, load }` source in order,
 such as an admin API, a CMS adapter, or a remote JSON file. It uses the first
 one that yields a usable config. A source whose `load` resolves to `undefined`
@@ -336,11 +363,34 @@ because something failed, which a host can tell visitors about.
   screens get no tooltip. This is a container query, so it follows the
   panel's width, not the viewport.
 
+- **Tabs (`CharacterWindow`):** a navigation list of links (`?tab=<id>`),
+  the current one `aria-current="page"`; a tab with pages gets a second list
+  of sub-tab links (`?page=<id>`), named by its tab. The first visible tab
+  and a tab's first page have no parameter, so each view has one URL. Only
+  the active tab is in the HTML. With one visible tab (or page) there is no
+  strip. Changing job keeps the tab and page; changing tab keeps the job and
+  drops the page; a param action keeps all three, and one naming the
+  window's own parameters (`tabParam`, `pageParam`, `jobParam`) is drawn
+  without a link.
+- **Rows:** a row with a tooltip shows it as a slot does (hover, keyboard
+  focus, Escape), and is a focusable group named by its label and value. On
+  a touch screen a tap shows it and a tap elsewhere hides it. Rows with
+  neither a tooltip nor an action take no Tab stop. Bars are
+  `role="meter"` (0 to 100) named by their row's label, beside the value as
+  text.
+- **Window layout:** the content pane beside the 30rem equipment pane, up to
+  58rem; below a 46rem container width the panes stack in DOM order (tab
+  strip, content, equipment), and below 26rem the tab strip is two per row.
+  The equipment pane's own layout follows its own width. With one pane (no
+  tabs, or a part turned off) the window is as wide as the panel.
+
 `parts` says which parts are drawn, `true` to draw one: `bar`,
 `characterName`, `gearSet` and `jobMenu` default to `true`; `toolbar` (round
 buttons under the portrait) and `sockets` (two dots on each filled slot)
 default to `false`. `gearSet: false` removes the whole row, with the job menu
-and `gearSetEnd`; `jobMenu: false` removes only that button. The toolbar and
+and `gearSetEnd`; `jobMenu: false` removes only that button. In
+`CharacterWindow`, `tabs` (the strip and the content pane) and `equipment`
+(the equipment pane) default to `true` as well. The toolbar and
 sockets are visual only for now. They're hidden from assistive tech and
 aren't focusable. When either one gets a real function, make it a real
 control (`<button>`, with a label) instead.
@@ -355,6 +405,12 @@ Override any `--cs-*` variable on `.cs`, or add a theme block like
 `.cs[data-cs-theme="game"]`. The `document` theme reads the host's
 `--paper`/`--ink`/`--signal`/… tokens when they exist and falls back to neutral
 colours otherwise.
+
+The window adds `--cs-tab-bg` and `--cs-tab-active-bg` (tabs),
+`--cs-bar-track` and `--cs-bar-fill` (bars), `--cs-gauge-primary` and
+`--cs-gauge-secondary` (a gauge's two tones) and `--cs-stat-highlight` (a
+`highlight` stat). In the `document` theme they come from the existing
+colours; the `game` theme gives them gradients.
 
 ## Development
 
@@ -429,14 +485,17 @@ npm run dev         # http://localhost:5173
 ```
 
 The playground renders the panel straight from `src/` with hot reload, on any
-config in `examples/`. Its controls (fixture, theme, labels, sockets, toolbar,
-container width, dark host tokens, drafts) are query parameters, so every state
-is a link, such as `/?fixture=edge-cases&theme=game&width=22`. Like a host, it
-reads `?job=` and the param actions' parameters from the URL and passes
+config in `examples/`. Its controls (view, fixture, theme, labels, sockets,
+toolbar, end control, container width, dark host tokens, drafts) are query
+parameters, so every state is a link, such as
+`/?fixture=edge-cases&theme=game&width=22`. `view=window` shows
+`CharacterWindow` instead of `EquipmentPanel`. Like a host, it reads `?job=`,
+`?tab=`, `?page=` and the param actions' parameters from the URL and passes
 `isParamActive`; a `link` action shows where a host would go instead of
 leaving the page. It renders on the client, while hosts render the panel on
 the server; `/static?fixture=full&width=22` shows the server-rendered panel
-with no script (fixture, theme, labels, width and `job` from the query).
+with no script (view, fixture, theme, labels, width, `job`, `tab` and `page`
+from the query).
 Check a release candidate in a host too (below).
 
 The demo site is this page built with Vite (`npm run build:demo`, into
@@ -449,10 +508,10 @@ demo doesn't have it. To look at the build locally:
 npm run build:demo && npx vite preview playground --base /wol-character-panel/
 ```
 
-`node scripts/preview.mjs` screenshots the panel for every example, in both
-themes, wide and narrow (22rem), into `.logs/preview/`, and lists any console
-error or warning (exit 1 if there is one). `--fixture=full` and
-`--theme=game` narrow it down. It starts its own dev server on port 5198 and
+`node scripts/preview.mjs` screenshots the panel and the window (once per
+tab) for every example, in both themes, wide and narrow (22rem), into
+`.logs/preview/`, and lists any console error or warning (exit 1 if there is
+one). `--fixture=full`, `--view=window` and `--theme=game` narrow it down. It starts its own dev server on port 5198 and
 needs Chromium (`npx playwright install chromium`).
 
 Relative imports name the source file (`./parse.ts`): the build rewrites them

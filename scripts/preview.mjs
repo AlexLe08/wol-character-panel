@@ -1,10 +1,13 @@
 // Screenshots the playground in Chromium, for a look at a change without
 // opening a browser (the `preview` skill runs it):
 //   node scripts/preview.mjs                          # every example
-//   node scripts/preview.mjs --fixture=full --theme=game
-// Each example in examples/, in each theme, wide (as wide as the page
-// allows) and narrow (22rem, below the 26rem container query): the panel
-// alone, to .logs/preview/<fixture>-<theme>-<layout>.png. Prints one line
+//   node scripts/preview.mjs --fixture=full --theme=game --view=window
+// Each example in examples/, in each view (equipment: EquipmentPanel;
+// window: CharacterWindow), each theme, wide (as wide as the page allows)
+// and narrow (22rem, below the 26rem container query): the component
+// alone, to .logs/preview/<fixture>-<view>-<theme>-<layout>.png. The window
+// gets one shot per tab, <fixture>-window-<tab>-<theme>-<layout>.png,
+// following its own tab links. Prints one line
 // per shot with any console error or warning, uncaught page error, or
 // parseConfig report, and exits 1 if there was one.
 // Starts its own dev server on port 5198 (the browser tests use 5199), so a
@@ -36,6 +39,7 @@ const fixtures = option(
     .filter((file) => file.endsWith(".json"))
     .map((file) => file.slice(0, -".json".length)),
 );
+const views = option("view", ["equipment", "window"]);
 const themes = option("theme", ["document", "game"]);
 const layouts = { wide: "", narrow: "22" };
 
@@ -96,7 +100,7 @@ const browser = await (async () => {
 try {
   rmSync(out, { recursive: true, force: true });
   mkdirSync(out, { recursive: true });
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   let messages = [];
   page.on("console", (message) => {
     if (message.type() === "error" || message.type() === "warning") {
@@ -105,25 +109,47 @@ try {
   });
   page.on("pageerror", (error) => messages.push(`page error: ${error.message}`));
 
+  // One shot of the page at `query`, named `name`, and its report line.
+  async function shoot(name, query) {
+    messages = [];
+    await page.goto(`${base}/?${query}`, { waitUntil: "networkidle" });
+    await page.evaluate(() => document.fonts.ready);
+    const report = page.locator(".pg-report");
+    if (await report.count()) messages.push(`parseConfig: ${(await report.innerText()).replace(/\s+/g, " ")}`);
+    const file = `${out}/${name}.png`;
+    const panel = page.locator(".cs");
+    if (await panel.count()) await panel.first().screenshot({ path: file });
+    else {
+      messages.push("no panel rendered (.cs missing); full page shot instead");
+      await page.screenshot({ path: file, fullPage: true });
+    }
+    problems += messages.length;
+    console.log(`${messages.length ? "FAIL" : "ok  "}  .logs/preview/${name}.png  /?${query}`);
+    for (const line of messages) console.log(`      ${line}`);
+  }
+
   for (const fixture of fixtures) {
-    for (const theme of themes) {
-      for (const [layout, width] of Object.entries(layouts)) {
-        messages = [];
-        const query = new URLSearchParams({ fixture, theme, ...(width && { width }) });
-        await page.goto(`${base}/?${query}`, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready);
-        const report = page.locator(".pg-report");
-        if (await report.count()) messages.push(`parseConfig: ${(await report.innerText()).replace(/\s+/g, " ")}`);
-        const file = `${out}/${fixture}-${theme}-${layout}.png`;
-        const panel = page.locator(".cs");
-        if (await panel.count()) await panel.first().screenshot({ path: file });
-        else {
-          messages.push("no panel rendered (.cs missing); full page shot instead");
-          await page.screenshot({ path: file, fullPage: true });
+    for (const view of views) {
+      for (const theme of themes) {
+        for (const [layout, width] of Object.entries(layouts)) {
+          const query = new URLSearchParams({ fixture, view, theme, ...(width && { width }) });
+          if (view === "equipment") {
+            await shoot(`${fixture}-${view}-${theme}-${layout}`, query);
+            continue;
+          }
+          // The window's tabs, as its own links name them (none when it
+          // has one tab or none): each is shot from its link's ?tab=.
+          await page.goto(`${base}/?${query}`, { waitUntil: "networkidle" });
+          const tabs = await page
+            .locator(".cs__tab")
+            .evaluateAll((links) => links.map((link) => new URL(link.href).searchParams.get("tab")));
+          if (tabs.length === 0) await shoot(`${fixture}-${view}-${theme}-${layout}`, query);
+          for (const [index, tab] of tabs.entries()) {
+            const tabQuery = new URLSearchParams(query);
+            if (tab) tabQuery.set("tab", tab);
+            await shoot(`${fixture}-${view}-${tab ?? `tab${index + 1}`}-${theme}-${layout}`, tabQuery);
+          }
         }
-        problems += messages.length;
-        console.log(`${messages.length ? "FAIL" : "ok  "}  .logs/preview/${fixture}-${theme}-${layout}.png  /?${query}`);
-        for (const line of messages) console.log(`      ${line}`);
       }
     }
   }

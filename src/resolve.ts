@@ -49,12 +49,13 @@ const tabBlocks = (tab: Tab): Block[] => (tab.pages ? tab.pages.flatMap((page) =
 
 // A tab's pages that can be shown: not hidden, with a block that isn't.
 // Pages win over blocks in a tab that has both, as parseConfig keeps them.
-function visiblePages(tab: Tab): TabPage[] {
+// This and visibleTabs aren't re-exported by an entry: the window uses them.
+export function visiblePages(tab: Tab): TabPage[] {
   return (tab.pages ?? []).filter((page) => !page.hidden && visibleBlocks(page.blocks).length > 0);
 }
 
 // The tabs that can be shown, in order: the first one is the default.
-function visibleTabs(config: CharacterPanelConfig): Tab[] {
+export function visibleTabs(config: CharacterPanelConfig): Tab[] {
   return (config.tabs ?? []).filter(
     (tab) => !tab.hidden && (tab.pages ? visiblePages(tab).length > 0 : visibleBlocks(tab.blocks ?? []).length > 0),
   );
@@ -192,12 +193,14 @@ export function actionHref(action: SlotAction, currentHref = "/"): string | null
 // panel can mark it. Only a param action can be: the host says which
 // parameter values its page applies (isParamActive), since only it knows
 // how it reads them (a case-insensitive filter, say). A param action
-// naming the job parameter renders tooltip-only, so it's never active.
+// naming one of the component's own parameters (ownParams: the job
+// parameter, and the window's tab and page ones) renders tooltip-only, so
+// it's never active.
 export function isActionActive(
   action: SlotAction,
   isParamActive?: (name: string, value: string) => boolean,
-  jobParam = "job",
+  ownParams: string | readonly string[] = "job",
 ): boolean {
-  if (action.kind !== "param" || action.name === jobParam || !isParamActive) return false;
+  if (action.kind !== "param" || [ownParams].flat().includes(action.name) || !isParamActive) return false;
   return isParamActive(action.name, action.value);
 }

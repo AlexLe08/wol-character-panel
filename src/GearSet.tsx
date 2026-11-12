@@ -28,6 +28,7 @@ export function GearSetRow({
   end,
   basePath,
   jobParam,
+  ownParams,
   currentHref,
   renderLink,
   isParamActive,
@@ -41,6 +42,7 @@ export function GearSetRow({
   end?: ReactNode;
   basePath: string;
   jobParam: string;
+  ownParams: readonly string[];
   currentHref: string;
   renderLink: RenderLink;
   isParamActive?: (name: string, value: string) => boolean;
@@ -48,7 +50,7 @@ export function GearSetRow({
   const links = gearSet?.links ?? [];
   const startLinks = links.filter((link) => link.position !== "end").slice(0, LIMITS.gearSet.startLinks);
   const endLink = links.find((link) => link.position === "end");
-  const action = { config, job, jobParam, currentHref, renderLink, isParamActive };
+  const action = { config, job, jobParam, ownParams, currentHref, renderLink, isParamActive };
   const menuLabel = gearSet?.jobMenu?.label ?? "Change job";
 
   return (
@@ -116,6 +118,7 @@ function GearLink({
   config: CharacterPanelConfig;
   job: Job;
   jobParam: string;
+  ownParams: readonly string[];
   currentHref: string;
   renderLink: RenderLink;
   isParamActive?: (name: string, value: string) => boolean;
@@ -140,6 +143,7 @@ export function ActionLink({
   config,
   job,
   jobParam,
+  ownParams,
   currentHref,
   renderLink,
   isParamActive,
@@ -150,6 +154,8 @@ export function ActionLink({
   config: CharacterPanelConfig;
   job: Job;
   jobParam: string;
+  // The component's own query parameters (see EquipmentBody).
+  ownParams: readonly string[];
   currentHref: string;
   renderLink: RenderLink;
   isParamActive?: (name: string, value: string) => boolean;
@@ -166,9 +172,10 @@ export function ActionLink({
       children: face,
     });
   }
-  // A param action naming the job parameter renders without a link, as on
-  // a slot (the schema refuses "job", but a host can name its own).
-  const href = action.kind === "param" && action.name === jobParam ? null : actionHref(action, currentHref);
+  // A param action naming one of the component's own parameters renders
+  // without a link, as on a slot (the schema refuses "job", "tab" and
+  // "page", but a host can rename them).
+  const href = action.kind === "param" && ownParams.includes(action.name) ? null : actionHref(action, currentHref);
   if (href === null) return <span className={className}>{face}</span>;
   if (action.kind === "link") return renderLink({ className, href, intent: "page", children: face });
   if (action.kind === "param") {
@@ -176,7 +183,7 @@ export function ActionLink({
       className,
       href,
       intent: "param",
-      "aria-current": isActionActive(action, isParamActive, jobParam) ? "true" : undefined,
+      "aria-current": isActionActive(action, isParamActive, ownParams) ? "true" : undefined,
       children: face,
     });
   }

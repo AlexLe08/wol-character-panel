@@ -22,8 +22,8 @@ A PR that changes what's published adds its line under Unreleased; the
   `fields` rows), `iconName` (16 built-in drawings) beside `icon`/`iconSrc`,
   `hidden` on tabs, pages, blocks and `gearSet`, and per job `job.blocks`
   (replace a block by id) and `job.gearSet`. `EquipmentPanel` draws
-  `characterName` and `gearSet` (see Changed); the tabs await the window
-  component. `LIMITS` gains `config.characterName`, `config.tabs`, `tab`,
+  `characterName` and `gearSet` (see Changed); `CharacterWindow` draws the
+  tabs. `LIMITS` gains `config.characterName`, `config.tabs`, `tab`,
   `block`, `row`, `gearSet` and `detail`. The JSON Schema now defines its
   shared parts (the tooltip among them) once under `$defs`; what it accepts
   for existing fields is unchanged.
@@ -40,6 +40,18 @@ A PR that changes what's published adds its line under Unreleased; the
   prop or the config's end link. Drawn whenever it has something to hold.
   Hosts can give their own control the row's look with `cs__gear-button`.
 - `config.characterName` at the right of the top bar.
+- `CharacterWindow` (from `/react`, with `CharacterWindowProps` and
+  `CharacterWindowParts`): the bar, a tab strip and sub-tabs as links
+  (`?tab=`, `?page=`, `aria-current="page"`, `renderLink` intent `"tab"`),
+  the active tab's blocks, and the equipment pane beside them, stacked below
+  a 46rem container. Props `tab`, `page`, `tabParam`, `pageParam`,
+  `hiddenTabs`, and `parts.tabs` and `parts.equipment`. Job links keep the
+  tab and page; switching tab keeps the job. It draws `gauges`, `stats` and
+  `fields` blocks, with row tooltips (on touch screens a tap shows one); not
+  yet `levels`, `progress`, two-column runs, collapsible groups or detail
+  windows. New CSS variables: `--cs-tab-bg`, `--cs-tab-active-bg`,
+  `--cs-bar-track`, `--cs-bar-fill`, `--cs-gauge-primary`,
+  `--cs-gauge-secondary` and `--cs-stat-highlight`.
 - `LIMITS.slot.column` (6) and the `EquipmentPanelParts` type.
 
 ### Changed (breaking)
@@ -67,8 +79,9 @@ A PR that changes what's published adds its line under Unreleased; the
   A job over any of them fails to parse and is dropped.
 - A seventh `left` or `right` slot is reported by `parseConfig` and not
   drawn.
-- `LinkRendererProps["intent"]` gains `"tab"`. Nothing emits it yet, but a
-  host `switch` over `intent` without a default needs a case for it.
+- `LinkRendererProps["intent"]` gains `"tab"`, emitted by
+  `CharacterWindow`'s tab and sub-tab links; a host `switch` over `intent`
+  without a default needs a case for it.
 
 ## [1.0.4] - 2026-11-10
 

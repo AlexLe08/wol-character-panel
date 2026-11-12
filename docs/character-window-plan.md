@@ -477,7 +477,9 @@ needs it.
 - The tab strip is navigation, not an ARIA tablist: a `<nav aria-label>`
   holding a list of links, the active one `aria-current="page"`. A
   tablist promises arrow-key behaviour that needs JavaScript. Sub-tabs
-  are a second, nested `<nav>` with its own label.
+  are a second `<nav>` at the top of the content pane, named by their
+  tab; on a later page the tab's own link is `aria-current="true"` (its
+  link goes to the first page), the page's link `"page"`.
 - No heading elements, as in the current panel (they would land in the
   host page's outline at an unknown level). Block and group labels are
   `<p>`s that name their group through `aria-labelledby`.
@@ -667,6 +669,24 @@ uses 16, so a lower limit would have dropped its job. Browser tests pin
 both. The fixed controls' drawings not used yet (detail, close,
 collapsible marker, active-tab marker) come with those controls in PRs 4
 and 5.
+
+Settled by PR 4 (Chromium): axe passes `role="meter"` bars (named by
+`aria-labelledby`, with `aria-valuenow`/`min`/`max`) on every tab of every
+example in both themes and layouts, so no `role="img"` fallback. A
+tooltip-only row could not be reached on a touch screen (in touch emulation a tap
+focuses it without `:focus-visible`, and there is no hover), so under
+`(hover: none)` a focused content-pane row shows its tooltip: a tap opens
+it, a tap elsewhere closes it; slots keep showing their names instead. A
+right-column slot's tooltip (17rem) stays inside the 30rem pane, so it
+never reaches the content pane; the crossing that happens is a row's
+tooltip dropping over the stacked equipment pane, which works because the
+hovered or focused pane comes forward (each pane is a container, so its
+own stacking context). The playground keeps `view=equipment` as its
+default, so the existing browser tests' URLs keep meaning the panel; the
+demo's default view is the owner's call for PR 6. Left for PR 6: the tab
+strip's name ("Tabs") is fixed English, with no config or prop to change
+it; and at 22rem `edge-cases`' gauges, two per line, break long labels
+every few characters (no overflow), where one per line would read better.
 
 ## Ideas for what the parts can hold
 

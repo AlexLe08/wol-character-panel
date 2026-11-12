@@ -1,6 +1,6 @@
 // Run by scripts/smoke-pack.mjs once react and react-dom are installed:
 // server-renders "/react" from the packed tarball, loading every file the
-// component needs from dist/.
+// components need from dist/.
 import assert from "node:assert/strict";
 import { register } from "node:module";
 
@@ -14,12 +14,19 @@ register(`data:text/javascript,${encodeURIComponent(cssHook)}`);
 
 const { createElement } = await import("react");
 const { renderToStaticMarkup } = await import("react-dom/server");
-const { EquipmentPanel } = await import("@solution-nine/wol-character-panel/react");
+const { CharacterWindow, EquipmentPanel } = await import("@solution-nine/wol-character-panel/react");
 const { parseConfig, resolveJob } = await import("@solution-nine/wol-character-panel");
 
 const { config } = parseConfig({
   defaultJobId: "developer",
   slots: [{ id: "skills", label: "Skills", position: "left" }],
+  tabs: [
+    {
+      id: "stats",
+      label: "Stats",
+      blocks: [{ type: "stats", groups: [{ rows: [{ label: "Years", value: "6", tooltip: { title: "Years" } }] }] }],
+    },
+  ],
   jobs: [
     {
       id: "developer",
@@ -35,6 +42,11 @@ assert.ok(config);
 const html = renderToStaticMarkup(createElement(EquipmentPanel, { config, job: resolveJob(config, undefined) }));
 assert.match(html, /class="cs\b/);
 assert.match(html, /Developer/);
+
+const window = renderToStaticMarkup(createElement(CharacterWindow, { config, job: resolveJob(config, undefined) }));
+assert.match(window, /class="cs cs--window\b/);
+assert.match(window, /class="cs-stat__face" role="group"/);
+assert.match(window, /class="cs__equipment"/);
 
 const react = await import("react/package.json", { with: { type: "json" } });
 console.log(`react entry ok (react ${react.default.version})`);

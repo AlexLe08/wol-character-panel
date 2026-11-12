@@ -31,9 +31,10 @@ describe("public entries", () => {
     `);
   });
 
-  it('"/react" exports the component', () => {
+  it('"/react" exports the components', () => {
     expect(names(react)).toMatchInlineSnapshot(`
       [
+        "CharacterWindow",
         "EquipmentPanel",
       ]
     `);

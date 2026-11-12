@@ -55,11 +55,11 @@
   line-height: 1.45;
 }
 
-/* In a window (a second component, to come) the equipment pane answers to
-   its own width: the root's container is renamed, and the pane's wrapper
-   is the cs container, so the "Narrow" rules below and their cqi units
-   follow the pane there, and the panel here. Neither class is in the
-   panel's markup, so the panel is unchanged. */
+/* In a window (CharacterWindow) the equipment pane answers to its own
+   width: the root's container is renamed, and the pane's wrapper is the cs
+   container, so the "Narrow" rules below and their cqi units follow the
+   pane there, and the panel here. Neither class is in the panel's markup,
+   so the panel is unchanged. */
 .cs.cs--window {
   container-name: cs-window;
 }
@@ -841,6 +841,436 @@ a.cs-slot__face:hover .cs-slot__square,
 }
 
 /* ---------------------------------------------------------------------
+   Character window: tab strip, content pane, equipment pane
+     bar      title ........................... character name
+     tabs     [ tab ] [ tab ] [ tab ]
+     panes    content (the active tab's blocks) | equipment (30rem)
+   Below a 46rem window the panes stack in DOM order: tabs, content,
+   equipment. With one pane (no tabs, or parts turned off) the window is
+   as wide as the panel.
+   ------------------------------------------------------------------ */
+.cs {
+  --cs-tab-bg: transparent;
+  --cs-tab-active-bg: var(--cs-accent-soft);
+  --cs-bar-track: var(--cs-inset);
+  --cs-bar-fill: var(--cs-accent);
+  --cs-gauge-primary: var(--cs-accent);
+  --cs-gauge-secondary: var(--cs-ink);
+  --cs-stat-highlight: var(--cs-accent);
+}
+
+.cs.cs--window {
+  max-width: 58rem;
+}
+
+.cs.cs--window.cs--single {
+  max-width: 30rem;
+}
+
+.cs__panes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 30rem;
+  grid-template-areas:
+    "tabs tabs"
+    "content equipment";
+  align-items: start;
+}
+
+.cs--single .cs__panes {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "tabs"
+    "content"
+    "equipment";
+}
+
+.cs__tabs {
+  grid-area: tabs;
+}
+
+/* Each pane is a container, so each is a stacking context: the one under
+   the pointer or holding focus comes forward, so its tooltips (a right
+   column slot's opens over the content pane) aren't drawn under the
+   other pane. */
+.cs__content,
+.cs__panes > .cs__equipment {
+  position: relative;
+  z-index: 1;
+}
+
+.cs__content:is(:hover, :focus-within),
+.cs__panes > .cs__equipment:is(:hover, :focus-within) {
+  z-index: 2;
+}
+
+.cs__content {
+  container: cs-content / inline-size;
+  grid-area: content;
+  display: grid;
+  gap: 1rem;
+  padding: 0.85rem 1rem 1rem;
+}
+
+.cs__panes > .cs__equipment {
+  grid-area: equipment;
+  border-left: 1px solid var(--cs-rule-strong);
+}
+
+.cs--single .cs__panes > .cs__equipment {
+  border-left: 0;
+}
+
+@container cs-window (max-width: 46rem) {
+  .cs__panes {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "tabs"
+      "content"
+      "equipment";
+  }
+
+  /* The pane keeps the panel's 30rem at most, centred: the padding is
+     outside its container, so the slot layout follows the 30rem. */
+  .cs__panes > .cs__equipment {
+    padding-inline: max(0px, (100% - 30rem) / 2);
+    border-top: 1px solid var(--cs-rule-strong);
+    border-left: 0;
+  }
+
+  .cs--single .cs__panes > .cs__equipment {
+    border-top: 0;
+  }
+}
+
+/* Tab strip and sub-tabs: links, the current one aria-current="page" ---- */
+.cs__tabs {
+  border-bottom: 1px solid var(--cs-rule-strong);
+}
+
+.cs__tab-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.25rem;
+  padding-inline: 0.75rem;
+}
+
+.cs__tab,
+.cs__page {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--cs-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  text-decoration: none;
+}
+
+.cs__tab {
+  margin-bottom: -1px;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 2px solid transparent;
+  background: var(--cs-tab-bg);
+}
+
+.cs__tab:hover,
+.cs__page:hover {
+  color: var(--cs-ink);
+}
+
+.cs__tab[aria-current="page"] {
+  border-bottom-color: var(--cs-accent);
+  background: var(--cs-tab-active-bg);
+  color: var(--cs-ink);
+  font-weight: 600;
+}
+
+/* The pointer at the current tab's left: the game theme's. */
+.cs__tab-marker {
+  display: none;
+}
+
+.cs__tab-icon,
+.cs__page-icon {
+  color: var(--cs-accent);
+  font-family: var(--cs-font-technical);
+  font-size: 0.75rem;
+}
+
+/* Below 26rem the strip is a grid of two per row. */
+@container cs-window (max-width: 26rem) {
+  .cs__tab-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.cs__page-list {
+  display: flex;
+  flex-wrap: wrap;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid var(--cs-rule-strong);
+  border-radius: var(--cs-radius);
+}
+
+.cs__page-list li + li {
+  border-left: 1px solid var(--cs-rule-strong);
+}
+
+.cs__page {
+  padding: 0.3rem 0.75rem;
+  border-bottom: 2px solid transparent;
+  font-size: 0.8125rem;
+}
+
+.cs__page[aria-current="page"] {
+  border-bottom-color: var(--cs-accent);
+  background: var(--cs-tab-active-bg);
+  color: var(--cs-ink);
+  font-weight: 600;
+}
+
+/* Blocks: a heading with a rule, then the rows ------------------------- */
+.cs-block,
+.cs-group {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.cs-block {
+  gap: 0.75rem;
+}
+
+.cs-block__label,
+.cs-group__label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--cs-rule);
+  color: var(--cs-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.cs-block__label {
+  border-bottom-color: var(--cs-rule-strong);
+  font-size: 0.8125rem;
+}
+
+.cs-block__icon,
+.cs-group__icon {
+  color: var(--cs-accent);
+  font-family: var(--cs-font-technical);
+}
+
+/* A bar from 0 to 100: role="meter", its fill a width. */
+.cs-meter {
+  display: block;
+  height: 0.45rem;
+  overflow: hidden;
+  border: 1px solid var(--cs-rule-strong);
+  border-radius: var(--cs-radius);
+  background: var(--cs-bar-track);
+}
+
+.cs-meter__fill {
+  display: block;
+  height: 100%;
+  background: var(--cs-bar-fill);
+}
+
+/* Gauges: two per line. */
+.cs-gauges {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1.25rem;
+}
+
+.cs-gauge__face {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.cs-gauge__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.cs-gauge__label {
+  color: var(--cs-muted);
+  font-size: 0.8125rem;
+}
+
+.cs-gauge__value {
+  font-family: var(--cs-font-technical);
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  text-align: right;
+}
+
+.cs-gauge__secondary {
+  color: var(--cs-muted);
+  font-size: 0.75rem;
+  text-align: right;
+}
+
+.cs-gauge--primary .cs-meter__fill {
+  background: var(--cs-gauge-primary);
+}
+
+.cs-gauge--secondary .cs-meter__fill {
+  background: var(--cs-gauge-secondary);
+}
+
+/* Stats: label left, value right, a <dl> per group. */
+.cs-stats {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.cs-stat {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.cs-stat__label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.cs-stat__value {
+  flex: none;
+  max-width: 60%;
+  font-family: var(--cs-font-technical);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.cs-stat--muted {
+  color: var(--cs-muted);
+}
+
+.cs-stat--highlight {
+  color: var(--cs-stat-highlight);
+  font-weight: 600;
+}
+
+/* A stat row's tooltip trigger: the label, marked as having more. */
+span.cs-stat__face[tabindex] {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+}
+
+/* Fields: a small ruled heading over a value line. */
+.cs-fields {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.cs-field__label {
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid var(--cs-rule);
+  color: var(--cs-muted);
+  font-size: 0.75rem;
+}
+
+.cs-field__line {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.35rem;
+  color: var(--cs-ink);
+  text-decoration: none;
+}
+
+.cs-field__icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--cs-rule-strong);
+  border-radius: var(--cs-radius);
+  background: var(--cs-square-bg);
+  color: var(--cs-accent);
+  font-family: var(--cs-font-technical);
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.cs-field__text {
+  display: grid;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.3;
+}
+
+.cs-field__overline {
+  color: var(--cs-muted);
+  font-size: 0.75rem;
+}
+
+.cs-field__value {
+  font-weight: 500;
+}
+
+a.cs-field__line .cs-field__value {
+  color: var(--cs-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+a.cs-field__line[aria-current="true"] .cs-field__value {
+  font-weight: 700;
+}
+
+.cs-field__caption {
+  color: var(--cs-accent);
+  font-size: 0.75rem;
+}
+
+/* Row tooltips open below the row, inside the content pane. */
+.cs__content .cs-tip {
+  top: calc(100% + 0.4rem);
+  left: 0;
+  width: min(17rem, calc(100cqi - 2rem));
+}
+
+.cs__content .cs-tip::before {
+  inset: auto 0 100% 0;
+  width: auto;
+  height: 0.5rem;
+}
+
+.cs-gauge:nth-child(2n) .cs-tip {
+  left: auto;
+  right: 0;
+}
+
+/* Touch screens have no hover, and a tap focuses a row without
+   :focus-visible, so a row's tooltip (whose text is nowhere else, unlike a
+   slot's name) shows while the row has any focus: a tap opens it, a tap
+   elsewhere closes it. */
+@media (hover: none) {
+  .cs__content .cs-slot__hover:not([data-dismissed]):has(> [tabindex="0"]:focus) .cs-tip {
+    display: block;
+  }
+}
+
+/* ---------------------------------------------------------------------
    Game theme
    A darker, framed look in the spirit of an RPG equipment screen. Mostly
    variables; the layout is shared.
@@ -975,6 +1405,77 @@ a.cs-slot__face:hover .cs-slot__square,
 
 .cs[data-cs-theme="game"] .cs-tip__title {
   color: #7fb2ff;
+}
+
+/* The window: bevelled tab buttons with a gold pointer at the current
+   one, green and pink gauges, a green highlight. */
+.cs[data-cs-theme="game"] {
+  --cs-tab-bg: linear-gradient(180deg, #34353f, #22232a);
+  --cs-tab-active-bg: linear-gradient(180deg, #4a4b57, #2c2d35);
+  --cs-bar-track: rgb(0 0 0 / 0.45);
+  --cs-bar-fill: linear-gradient(90deg, #a8873f, #e2c27f);
+  --cs-gauge-primary: linear-gradient(90deg, #2f8f4e, #74d68c);
+  --cs-gauge-secondary: linear-gradient(90deg, #a8487a, #ec92bf);
+  --cs-stat-highlight: #86e09a;
+}
+
+.cs[data-cs-theme="game"] .cs__tab-list {
+  gap: 0.35rem;
+  padding-block: 0.4rem;
+}
+
+.cs[data-cs-theme="game"] .cs__tab {
+  margin-bottom: 0;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #5b5e6c;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), inset 0 -1px 2px rgb(0 0 0 / 0.5);
+  color: #cfc8b6;
+}
+
+.cs[data-cs-theme="game"] .cs__tab:hover,
+.cs[data-cs-theme="game"] .cs__tab[aria-current="page"] {
+  border-color: var(--cs-accent);
+  color: #f1e9d4;
+}
+
+.cs[data-cs-theme="game"] .cs__tab[aria-current="page"] {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 0 8px rgb(226 194 127 / 0.35);
+}
+
+.cs[data-cs-theme="game"] .cs__tab-marker {
+  display: block;
+  color: var(--cs-accent);
+}
+
+.cs[data-cs-theme="game"] .cs__page-list {
+  border-color: #5b5e6c;
+  background: linear-gradient(180deg, #2c2d36, #1f2027);
+}
+
+.cs[data-cs-theme="game"] .cs__page[aria-current="page"] {
+  color: var(--cs-accent);
+}
+
+.cs[data-cs-theme="game"] .cs-block__label,
+.cs[data-cs-theme="game"] .cs-group__label {
+  color: var(--cs-accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cs[data-cs-theme="game"] .cs-meter {
+  border-color: #4a4c58;
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.6);
+}
+
+.cs[data-cs-theme="game"] .cs-field__icon {
+  border-color: #6f8fb8;
+  color: #f1e9d4;
+}
+
+.cs[data-cs-theme="game"] .cs-field__caption {
+  color: #86e09a;
 }
 
 @media (prefers-reduced-motion: reduce) {

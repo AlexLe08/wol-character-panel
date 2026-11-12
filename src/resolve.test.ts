@@ -411,6 +411,13 @@ describe("isActionActive", () => {
     expect(isActionActive({ ...stack, name: "j" }, always)).toBe(true);
   });
 
+  it("is never active for a param naming any of the component's own parameters", () => {
+    const always = () => true;
+    const own = ["j", "t", "p"];
+    for (const name of own) expect(isActionActive({ ...stack, name }, always, own)).toBe(false);
+    expect(isActionActive(stack, always, own)).toBe(true);
+  });
+
   it("is never active for other kinds", () => {
     const always = () => true;
     expect(isActionActive({ kind: "anchor", target: "projects" }, always)).toBe(false);
