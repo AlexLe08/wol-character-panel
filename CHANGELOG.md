@@ -79,8 +79,9 @@ A PR that changes what's published adds its line under Unreleased; the
   A job over any of them fails to parse and is dropped.
 - A seventh `left` or `right` slot is reported by `parseConfig` and not
   drawn.
-- `LinkRendererProps["intent"]` gains `"tab"`. Nothing emits it yet, but a
-  host `switch` over `intent` without a default needs a case for it.
+- `LinkRendererProps["intent"]` gains `"tab"`, emitted by
+  `CharacterWindow`'s tab and sub-tab links; a host `switch` over `intent`
+  without a default needs a case for it.
 
 ## [1.0.4] - 2026-11-10
 

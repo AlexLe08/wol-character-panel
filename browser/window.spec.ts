@@ -43,6 +43,9 @@ test.describe("tabs", () => {
     await pages.getByRole("link", { name: "Run" }).click();
     await expect(page).toHaveURL(/[?&]page=run/);
     await expect(pages.getByRole("link", { name: "Run" })).toHaveAttribute("aria-current", "page");
+    // The tab's own link goes to its first page: current as the tab, not the page.
+    const skills = page.getByRole("navigation", { name: "Tabs" }).getByRole("link", { name: "Skills" });
+    await expect(skills).toHaveAttribute("aria-current", "true");
 
     await page.getByRole("navigation", { name: "Tabs" }).getByRole("link", { name: "Profile" }).click();
     await expect(page).toHaveURL(/[?&]tab=profile/);

@@ -191,6 +191,12 @@ describe("CharacterWindow (server render)", () => {
       expect(withClass(html, "cs__tab-icon")).toHaveLength(1);
     });
 
+    it("marks the tab holding a later page current, but not as the page", () => {
+      expect(tabLinks(render({ tab: "skills", page: "run" }))[2]["aria-current"]).toBe("true");
+      expect(tabLinks(render({ tab: "skills" }))[2]["aria-current"]).toBe("page");
+      expect(tabLinks(render({ tab: "skills", page: "build" }))[2]["aria-current"]).toBe("page");
+    });
+
     it("keeps the job and drops the page when switching tab", () => {
       const html = render({ job: data, tab: "skills", page: "run" });
       expect(tabLinks(html).map((link) => link.href)).toEqual(["/?job=data", "/?job=data&tab=profile", "/?job=data&tab=skills"]);

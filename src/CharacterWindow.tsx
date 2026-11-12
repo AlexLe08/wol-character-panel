@@ -87,6 +87,9 @@ export function CharacterWindow({
   const tabList = active ? visibleTabs(shown) : [];
   const pageList = active?.page ? visiblePages(active.tab) : [];
   const both = active !== null && equipment;
+  // On a later page the active tab's link (to its first page) isn't this
+  // view, only the tab it is in.
+  const activeTabCurrent = active?.page && active.page !== pageList[0] ? "true" : "page";
 
   return (
     <section
@@ -111,7 +114,7 @@ export function CharacterWindow({
                   <TabLink
                     item={tab}
                     href={tabHref(shown, tab.id, currentHref, names)}
-                    current={tab.id === active.tab.id}
+                    current={tab.id === active.tab.id && activeTabCurrent}
                     className="cs__tab"
                     marker
                     renderLink={renderLink}
@@ -132,7 +135,7 @@ export function CharacterWindow({
                       <TabLink
                         item={page}
                         href={tabHref(shown, active.tab.id, currentHref, { ...names, page: page.id })}
-                        current={page.id === active.page?.id}
+                        current={page.id === active.page?.id && "page"}
                         className="cs__page"
                         renderLink={renderLink}
                       />
@@ -183,7 +186,9 @@ function TabLink({
 }: {
   item: Tab | TabPage;
   href: string;
-  current: boolean;
+  // Its aria-current: "page" when its link is this view, "true" for the
+  // tab holding a later page, false otherwise.
+  current: "page" | "true" | false;
   className: string;
   // Draw the pointer beside the current one (top-level tabs).
   marker?: boolean;
@@ -193,7 +198,7 @@ function TabLink({
     href,
     intent: "tab",
     className,
-    "aria-current": current ? "page" : undefined,
+    "aria-current": current || undefined,
     children: (
       <>
         {marker && current && (

@@ -477,7 +477,9 @@ needs it.
 - The tab strip is navigation, not an ARIA tablist: a `<nav aria-label>`
   holding a list of links, the active one `aria-current="page"`. A
   tablist promises arrow-key behaviour that needs JavaScript. Sub-tabs
-  are a second, nested `<nav>` with its own label.
+  are a second `<nav>` at the top of the content pane, named by their
+  tab; on a later page the tab's own link is `aria-current="true"` (its
+  link goes to the first page), the page's link `"page"`.
 - No heading elements, as in the current panel (they would land in the
   host page's outline at an unknown level). Block and group labels are
   `<p>`s that name their group through `aria-labelledby`.
@@ -681,7 +683,10 @@ tooltip dropping over the stacked equipment pane, which works because the
 hovered or focused pane comes forward (each pane is a container, so its
 own stacking context). The playground keeps `view=equipment` as its
 default, so the existing browser tests' URLs keep meaning the panel; the
-demo's default view is the owner's call for PR 6.
+demo's default view is the owner's call for PR 6. Left for PR 6: the tab
+strip's name ("Tabs") is fixed English, with no config or prop to change
+it; and at 22rem `edge-cases`' gauges, two per line, break long labels
+every few characters (no overflow), where one per line would read better.
 
 ## Ideas for what the parts can hold
 
