@@ -62,6 +62,8 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 | `scripts/strip-dts-css-imports.mjs` | The build's last step: blanks the CSS import in the emitted `.d.ts` files, which TypeScript 6+ would reject in a host |
 | `scripts/smoke-pack.mjs` | Installs the packed tarball in a throwaway project and runs `scripts/smoke/` there (`npm run test:pack`) |
 | `scripts/check.sh` | Runs every check CI runs, one line per step, full logs in `.logs/` |
+| `scripts/fill-edge-cases.mjs` | Rewrites the window's fields in `examples/edge-cases.json` at the current `LIMITS` |
+| `scripts/check-edge-cases.mjs` | Checks that `examples/edge-cases.json` reaches every window limit (exit 1 if not) |
 | `scripts/new-worktree.sh` | A new branch from `origin/main` in its own worktree under `.claude/worktrees/`, set up by `scripts/setup-worktree.sh` (`npm ci`) |
 | `scripts/cleanup-merged.sh` | After a merge: removes worktrees and local branches merged into `origin/main` whose remote branch is gone (dry run unless `--apply`) |
 | `eslint.config.mjs` | Lint rules (React, hooks, jsx-a11y, TypeScript) and the import allowlist (`npm run lint`) |
