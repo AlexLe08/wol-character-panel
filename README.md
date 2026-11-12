@@ -302,7 +302,9 @@ const job = resolveJob(config, searchParams.job);
   parts={{ toolbar: true }} // optional: which parts are drawn (below)
   gearSetEnd={<SaveButton />} // optional: your own control at the gear-set row's right end
   basePath="/"              // where the job links point
-  renderLink={(p) => …}     // optional: your router's link (default <a>)
+  renderLink={(p) => …}     // optional: your router's link (default <a>); p.intent says what it does:
+                            // "job" (switch job), "tab" (switch tab or page, the window only),
+                            // "param" (set a query parameter), "page" (another page of the site)
   renderPortrait={(p) => …} // optional: your image component (default <img>)
   isParamActive={(name, value) => …} // optional: true for the param value the page applies
 />

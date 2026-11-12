@@ -434,6 +434,10 @@ describe("EquipmentPanel (server render)", () => {
       );
     });
 
+    it("counts a false host control as none, as {editing && <Save />} gives", () => {
+      expect(render({ config: { ...config, jobs: [web] }, gearSetEnd: false })).not.toContain("cs__gear");
+    });
+
     it("is left out, menu and host control too, with parts.gearSet false", () => {
       const html = render({ config: withGearSet({ links }), parts: { gearSet: false }, gearSetEnd: <b>end</b> });
       expect(html).not.toContain("cs__gear");

@@ -98,7 +98,9 @@
   semver line, browser coverage of rendering changes, accessibility
   beyond axe, and may run the preview. No `a11y-auditor` agent (see
   Later).
-- The `edge-cases` findings (a patch). "Change job" wrapped onto two
+- The `edge-cases` findings (a patch; superseded for 2.0.0, where the job
+  menu moved to the gear-set row and both accepted limits were tightened:
+  see `docs/character-window-plan.md`). "Change job" wrapped onto two
   lines beside a long title: the menu no longer shrinks and the toggle
   doesn't wrap, with a browser test in both themes and layouts. The other
   two are accepted, measured in Chromium:

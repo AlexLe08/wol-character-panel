@@ -84,7 +84,9 @@ export function EquipmentBody({
   const gearSet = gearSetFor(config, job);
   const jobMenu = parts.jobMenu && config.jobs.length > 1;
   // The row is drawn whenever it has something to hold.
-  const gearSetRow = parts.gearSet && (jobMenu || gearSet !== undefined || gearSetEnd != null);
+  // false, as in {editing && <Save />}, is no control, like null.
+  const end = gearSetEnd === false || gearSetEnd == null ? undefined : gearSetEnd;
+  const gearSetRow = parts.gearSet && (jobMenu || gearSet !== undefined || end !== undefined);
 
   return (
     <>
@@ -94,7 +96,7 @@ export function EquipmentBody({
           job={job}
           gearSet={gearSet}
           jobMenu={jobMenu}
-          end={gearSetEnd}
+          end={end}
           basePath={basePath}
           jobParam={jobParam}
           currentHref={currentHref}

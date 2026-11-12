@@ -223,9 +223,15 @@ button.cs__gear-button:hover,
   margin-left: auto;
 }
 
-/* The job menu: a toggle in the row, its list opening below it. */
-.cs__jobs {
+/* The job menu: a toggle in the row, its list opening below the row. The
+   list is placed against the row (.cs__gear), not the toggle, so it starts
+   at the row's left padding and never runs past the panel, however far in
+   the toggle sits. */
+.cs__gear {
   position: relative;
+}
+
+.cs__jobs {
   flex: none;
 }
 
@@ -233,10 +239,10 @@ button.cs__gear-button:hover,
   position: absolute;
   z-index: 3;
   top: calc(100% + 0.35rem);
-  left: 0;
+  left: 0.75rem;
   width: max-content;
-  min-width: 15rem;
-  max-width: min(22rem, 90vw);
+  min-width: min(15rem, calc(100% - 1.5rem));
+  max-width: min(22rem, calc(100% - 1.5rem));
   border: 1px solid var(--cs-rule-strong);
   border-radius: var(--cs-radius);
   background: var(--cs-tip-bg);

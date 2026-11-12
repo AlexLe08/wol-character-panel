@@ -205,3 +205,18 @@ for (const theme of ["document", "game"]) {
     if (theme === "document") expect(await oneLine(page, ".cs__level-label")).toBe(true);
   });
 }
+
+// The open job menu's list stays inside the panel, even at the limits on a
+// narrow one, where it opens from a toggle two buttons into the row.
+for (const theme of ["document", "game"]) {
+  for (const width of ["", "22", "18"]) {
+    test(`the open job menu stays inside the panel (${theme}, ${width || "wide"})`, async ({ page }) => {
+      await page.goto(`/?fixture=edge-cases&theme=${theme}${width && `&width=${width}`}`);
+      await page.locator(".cs__jobs-toggle").click();
+      const list = await box(page, ".cs__jobs-list");
+      const panel = await box(page, ".cs");
+      expect(list.x).toBeGreaterThanOrEqual(panel.x);
+      expect(list.x + list.width).toBeLessThanOrEqual(panel.x + panel.width);
+    });
+  }
+}
