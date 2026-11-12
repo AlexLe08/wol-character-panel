@@ -54,6 +54,19 @@
   line-height: 1.45;
 }
 
+/* In a window (a second component, to come) the equipment pane answers to
+   its own width: the root's container is renamed, and the pane's wrapper
+   is the cs container, so the "Narrow" rules below and their cqi units
+   follow the pane there, and the panel here. Neither class is in the
+   panel's markup, so the panel is unchanged. */
+.cs.cs--window {
+  container-name: cs-window;
+}
+
+.cs__equipment {
+  container: cs / inline-size;
+}
+
 .cs *,
 .cs *::before,
 .cs *::after {

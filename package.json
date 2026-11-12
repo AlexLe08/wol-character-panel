@@ -28,8 +28,8 @@
       "default": "./dist/index.js"
     },
     "./react": {
-      "types": "./dist/CharacterSheet.d.ts",
-      "default": "./dist/CharacterSheet.js"
+      "types": "./dist/react-entry.d.ts",
+      "default": "./dist/react-entry.js"
     },
     "./schema": {
       "types": "./dist/schema-entry.d.ts",

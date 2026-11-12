@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as root from "./index.ts";
-import * as react from "./CharacterSheet.tsx";
+import * as react from "./react-entry.ts";
 import * as schema from "./schema-entry.ts";
 
 // The runtime names each entry in package.json's exports map gives hosts.

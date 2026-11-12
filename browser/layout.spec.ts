@@ -90,6 +90,44 @@ test("the layout follows the container, not the viewport", async ({ page }) => {
   expect(portrait.y + portrait.height).toBeLessThanOrEqual(left.y);
 });
 
+test("in a window, the slot layout follows the equipment pane, not the window", async ({ page }) => {
+  // No component draws the window yet, so build its shape around the
+  // panel: the root gets cs--window (its container renamed cs-window) and
+  // the header and body go into a .cs__equipment wrapper (the cs container).
+  await page.setViewportSize({ width: 1400, height: 900 });
+  await page.goto("/?fixture=full");
+  await page.locator(".cs").evaluate((root: HTMLElement) => {
+    root.classList.add("cs--window");
+    root.style.maxWidth = "60rem";
+    const pane = document.createElement("div");
+    pane.className = "cs__equipment";
+    pane.style.width = "22rem";
+    pane.append(root.querySelector(".cs__header")!, root.querySelector(".cs__body")!);
+    root.append(pane);
+  });
+  // A 60rem window with a 22rem pane: the pane's narrow layout.
+  expect((await box(page, ".cs")).width).toBeGreaterThan(26 * 16);
+  let portrait = await box(page, ".cs__portrait");
+  let left = await box(page, ".cs__slots--left");
+  expect(portrait.y + portrait.height).toBeLessThanOrEqual(left.y);
+
+  // The pane at 30rem: the wide layout again.
+  await page.locator(".cs__equipment").evaluate((pane: HTMLElement) => (pane.style.width = "30rem"));
+  left = await box(page, ".cs__slots--left");
+  portrait = await box(page, ".cs__portrait");
+  expect(left.x + left.width).toBeLessThanOrEqual(portrait.x);
+});
+
+test("a cs--window root is not the cs container", async ({ page }) => {
+  // At 22rem the root alone would get the narrow layout; renamed cs-window,
+  // with no pane wrapper, the narrow rules don't apply.
+  await page.goto("/?fixture=full&width=22");
+  await page.locator(".cs").evaluate((root: HTMLElement) => root.classList.add("cs--window"));
+  const left = await box(page, ".cs__slots--left");
+  const portrait = await box(page, ".cs__portrait");
+  expect(left.x + left.width).toBeLessThanOrEqual(portrait.x);
+});
+
 // One line: its height is under one and a half line heights. Needs a
 // numeric line-height on the element (`normal` would give NaN and fail).
 async function oneLine(page: Page, selector: string): Promise<boolean> {

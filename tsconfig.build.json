@@ -1,7 +1,7 @@
 {
   // `npm run build`: one .js and one .d.ts per source file in dist/, ESM
   // only. tsc keeps each file's directives, so SlotHover.js still starts
-  // with "use client"; a bundler would merge it into CharacterSheet.js.
+  // with "use client"; a bundler would merge it into EquipmentBody.js.
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "noEmit": false,

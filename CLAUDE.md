@@ -93,8 +93,8 @@ that install in the site.
   README's Entries table:
   - `.` (`src/index.ts`): data only (parse, resolve, limits, types). No
     React and no CSS, so server code and plain Node can import it.
-  - `/react` (`src/CharacterSheet.tsx`): the component, which imports its
-    own CSS.
+  - `/react` (`src/react-entry.ts`): the component (`src/CharacterSheet.tsx`,
+    which imports its own CSS) and its prop types.
   - `/schema` (`src/schema-entry.ts`): `characterSheetConfigSchema` only;
     the sub-schemas stay internal so their shape can change.
   - The CSS file and `character-sheet.schema.json`.
