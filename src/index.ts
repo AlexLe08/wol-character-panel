@@ -26,7 +26,7 @@ export {
 export type {
   Block,
   BlockType,
-  CharacterSheetConfig,
+  CharacterPanelConfig,
   Detail,
   FieldsBlock,
   GaugesBlock,

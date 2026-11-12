@@ -34,7 +34,7 @@ run() {
 # Regenerates the schema and fails if that changed the committed file.
 # Like CI, it leaves the regenerated file in place: commit it if it's right.
 schema_up_to_date() {
-  npm run generate:schema && git diff --exit-code character-sheet.schema.json
+  npm run generate:schema && git diff --exit-code character-panel.schema.json
 }
 
 run lint npm run lint

@@ -45,7 +45,7 @@ reach the site only through a release and an upgrade there.
   and `.d.ts` per source file) plus the CSS; then
   `scripts/strip-dts-css-imports.mjs` blanks the CSS import in the
   `.d.ts` files (TypeScript 6+ fails hosts on it, TS2882)
-- `npm run generate:schema`: rewrites `character-sheet.schema.json` from
+- `npm run generate:schema`: rewrites `character-panel.schema.json` from
   `src/schema.ts`. Run it after any change to `schema.ts` and commit the
   result; CI fails while the committed file is out of date.
 - `npm pack --dry-run`: lists what would be published (`prepack` builds)
@@ -98,11 +98,11 @@ that install in the site.
   README's Entries table:
   - `.` (`src/index.ts`): data only (parse, resolve, limits, types). No
     React and no CSS, so server code and plain Node can import it.
-  - `/react` (`src/react-entry.ts`): the component (`src/CharacterSheet.tsx`,
+  - `/react` (`src/react-entry.ts`): the component (`src/EquipmentPanel.tsx`,
     which imports its own CSS) and its prop types.
-  - `/schema` (`src/schema-entry.ts`): `characterSheetConfigSchema` only;
+  - `/schema` (`src/schema-entry.ts`): `characterPanelConfigSchema` only;
     the sub-schemas stay internal so their shape can change.
-  - The CSS file and `character-sheet.schema.json`.
+  - The CSS file and `character-panel.schema.json`.
   Entry files only re-export. Anything not reachable from an entry is
   private and can change freely.
 - `src/schema.ts` is the config contract: `LIMITS`, `ID_PATTERN`,
@@ -115,7 +115,7 @@ that install in the site.
 - The JSON Schema closes every plain `z.object` (`additionalProperties:
   false`), so writers reject unknown keys while `parseConfig` strips them.
   An object meant to stay open uses `z.looseObject`.
-- `CharacterSheet` is a Server Component. `src/SlotHover.tsx` is the only
+- `EquipmentPanel` is a Server Component. `src/SlotHover.tsx` is the only
   `"use client"` file and no entry exports it; the build keeps its
   directive because `tsc` emits one file per source file (don't add a
   bundler).
@@ -131,13 +131,13 @@ that install in the site.
   gradients, rounded frames, shadows and its gold accent are allowed.
 - Tests are Vitest, beside the code as `src/*.test.ts(x)`: unit tests for
   the data side (`parse`, `resolve`), and the panel server-rendered with
-  `react-dom/server` in Node (`src/CharacterSheet.test.tsx`; no DOM).
+  `react-dom/server` in Node (`src/EquipmentPanel.test.tsx`; no DOM).
   `src/entries.test.ts` snapshots each entry's runtime export names:
   changing that snapshot is a semver decision (removal is major), not a
   fix. Coverage thresholds in `vitest.config.ts` sit just under the
   current numbers; raise them when coverage rises, never lower them to
   pass. Every `examples/*.json` must parse cleanly
-  (`src/examples.test.ts`) and render (`src/CharacterSheet.test.tsx`).
+  (`src/examples.test.ts`) and render (`src/EquipmentPanel.test.tsx`).
 - What needs a browser is Playwright, in `browser/*.spec.ts`, against the
   playground: tooltips on hover and focus, Escape, focus rings, the
   container query, axe (WCAG 2.2 A/AA) on every example in both themes and
@@ -149,7 +149,7 @@ that install in the site.
 ## Versioning and releases
 
 - Semver, keyed to the config contract. The schema `$id` is
-  `https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@<major>/character-sheet.schema.json`,
+  `https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@<major>/character-panel.schema.json`,
   built from `name` and the major part of `version`.
   - Compatible (new optional field, looser limit, new export): minor or
     patch; the `$id` keeps its major.

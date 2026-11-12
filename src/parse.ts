@@ -1,18 +1,18 @@
 import { z } from "zod";
-import { characterSheetConfigSchema, LIMITS } from "./schema.ts";
-import type { Block, BlockType, CharacterSheetConfig, GearSet, Job, JobBlock, Tab, TabPage } from "./types.ts";
+import { characterPanelConfigSchema, LIMITS } from "./schema.ts";
+import type { Block, BlockType, CharacterPanelConfig, GearSet, Job, JobBlock, Tab, TabPage } from "./types.ts";
 
 export type ParseResult = {
   // null only when nothing usable is left: the top-level shape is wrong or
   // no job is valid. Otherwise invalid jobs are dropped and listed in errors.
-  config: CharacterSheetConfig | null;
+  config: CharacterPanelConfig | null;
   errors: string[];
 };
 
 // The parts checked one at a time, reached through the whole config's
 // schema: schema.ts doesn't export them, since each exported schema's type
 // is written out in full in the emitted .d.ts (see types.ts).
-const configShape = characterSheetConfigSchema.shape;
+const configShape = characterPanelConfigSchema.shape;
 const jobSchema = configShape.jobs.element;
 const jobBlockSchema = jobSchema.shape.blocks.unwrap().valueType;
 const gearSetSchema = configShape.gearSet.unwrap();
@@ -26,7 +26,7 @@ const blockSchema = tabPageSchema.shape.blocks.element;
 // not the whole panel; tabs too, and inside a tab or page each block, and
 // the gear-set row on its own. The loosened schemas below are only for
 // that: the exported schema and the JSON Schema stay exact.
-const shellSchema = characterSheetConfigSchema.extend({
+const shellSchema = characterPanelConfigSchema.extend({
   jobs: z.array(z.unknown()).min(1),
   gearSet: z.unknown().optional(),
   tabs: z.array(z.unknown()).optional(),
@@ -69,6 +69,12 @@ export function parseConfig(input: unknown): ParseResult {
   for (const position of ["header-start", "header-end"] as const) {
     const extra = shell.data.slots.filter((slot) => slot.position === position).slice(1);
     for (const slot of extra) errors.push(`slots: "${slot.id}" is a second ${position} slot, not shown`);
+  }
+  for (const position of ["left", "right"] as const) {
+    const extra = shell.data.slots.filter((slot) => slot.position === position).slice(LIMITS.slot.column);
+    for (const slot of extra) {
+      errors.push(`slots: "${slot.id}" is over the limit of ${LIMITS.slot.column} ${position} slots, not shown`);
+    }
   }
 
   // Each job with its index in the input, for the paths of later reports;
@@ -345,7 +351,7 @@ export type ConfigSource = {
 export type LoadIssue = { source: string; errors: string[]; error?: unknown };
 
 export type LoadResult = {
-  config: CharacterSheetConfig;
+  config: CharacterPanelConfig;
   // The name of the source used, or null for `fallback`.
   source: string | null;
   // Every problem met on the way, including in a source that was still
@@ -361,7 +367,7 @@ export type LoadResult = {
 // notice that the page shows the fallback).
 export async function loadConfig(
   sources: ConfigSource[],
-  fallback: CharacterSheetConfig,
+  fallback: CharacterPanelConfig,
 ): Promise<LoadResult> {
   const issues: LoadIssue[] = [];
   for (const source of sources) {

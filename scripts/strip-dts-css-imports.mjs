@@ -1,5 +1,5 @@
 // The last step of `npm run build`: blanks CSS side-effect imports
-// (`import "./character-sheet.css";`) in dist/*.d.ts. tsc copies them from
+// (`import "./character-panel.css";`) in dist/*.d.ts. tsc copies them from
 // the source, but a .css file has no types, so TypeScript 6+ (where
 // noUncheckedSideEffectImports is on by default) fails a host that imports
 // "/react" with skipLibCheck off (TS2882). The .js files keep the import,

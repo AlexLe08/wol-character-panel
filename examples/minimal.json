@@ -1,5 +1,5 @@
 {
-  "$schema": "../character-sheet.schema.json",
+  "$schema": "../character-panel.schema.json",
   "defaultJobId": "developer",
   "slots": [{ "id": "skills", "label": "Skills", "position": "left" }],
   "jobs": [

@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------
-   Character sheet panel
+   Character panel: the equipment pane
    Every color and size is a --cs-* property, so a host restyles it by
    overriding variables rather than selectors. The "document" theme reads
    the host's tokens when they exist (--paper, --ink, --signal...) and has
@@ -9,7 +9,8 @@
    own selector.
 
    Layout, wide:
-     bar      title ............................ [Change job]
+     bar      title ........................... character name
+     gear set [a] [b] [job menu]  caption                    [end]
      header   [slot]  level / emblem + job title          [slot]
      body     [col]   portrait (badge in the corner)       [col]
    Narrow (container under 26rem): the portrait moves above the slots,
@@ -97,10 +98,10 @@
   white-space: nowrap;
 }
 
-/* Top bar: title and job menu ------------------------------------------ */
+/* Top bar: title and character name ------------------------------------ */
 .cs__bar {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
   padding: 0.5rem 0.75rem 0.5rem 1rem;
@@ -109,52 +110,139 @@
   background: var(--cs-bar-bg);
 }
 
-/* Breaks even a word with no break in it (a URL, a handle) rather than
-   running under the toggle. */
-.cs__bar-title {
+/* Both break even a word with no break in it (a URL, a handle) rather
+   than running into the other. */
+.cs__bar-title,
+.cs__bar-name {
   min-width: 0;
   overflow-wrap: anywhere;
+}
+
+.cs__bar-title {
   font-size: 0.9375rem;
   font-weight: 600;
 }
 
-/* A long title wraps; the toggle keeps its size. */
-.cs__jobs {
-  position: relative;
-  flex: none;
+.cs__bar-name {
+  color: var(--cs-muted);
+  font-size: 0.875rem;
+  text-align: right;
 }
 
-.cs__jobs-toggle {
-  display: inline-block;
-  padding: 0.25rem 0.7rem;
-  white-space: nowrap;
+/* Icons: the package's drawings and config images, sized to the text. */
+.cs-icon {
+  display: block;
+  width: 1em;
+  height: 1em;
+}
+
+.cs-icon--img {
+  object-fit: contain;
+}
+
+/* Gear-set row: icon buttons, the job menu, a caption, the end control -- */
+.cs__gear {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--cs-rule);
+}
+
+.cs__gear-start {
+  display: flex;
+  flex: none;
+  gap: 0.35rem;
+}
+
+/* The row's square buttons, links and the job menu's toggle alike. Hosts
+   put the class on their own gearSetEnd control to match. */
+.cs__gear-button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
   border: 1px solid var(--cs-rule-strong);
   border-radius: var(--cs-radius);
   background: var(--cs-panel);
   color: var(--cs-accent);
-  font-size: 0.875rem;
-  font-weight: 500;
+  font: 500 0.6875rem/1 var(--cs-font-technical);
+  text-decoration: none;
   cursor: pointer;
   list-style: none;
 }
 
-.cs__jobs-toggle::-webkit-details-marker {
+span.cs__gear-button {
+  color: var(--cs-muted);
+  cursor: default;
+}
+
+.cs__gear-button::-webkit-details-marker {
   display: none;
 }
 
+.cs__gear-button .cs-icon {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+a.cs__gear-button:hover,
+button.cs__gear-button:hover,
 .cs__jobs-toggle:hover,
 .cs__jobs[open] .cs__jobs-toggle {
   border-color: var(--cs-accent);
+}
+
+.cs__gear-button[aria-current="true"] {
+  border-color: var(--cs-accent);
+  background: var(--cs-accent-soft);
+}
+
+.cs__gear-caption {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+}
+
+.cs__gear-label {
+  color: var(--cs-muted);
+  font-size: 0.75rem;
+}
+
+.cs__gear-value {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.cs__gear-end {
+  flex: none;
+  margin-left: auto;
+}
+
+/* The job menu: a toggle in the row, its list opening below the row. The
+   list is placed against the row (.cs__gear), not the toggle, so it starts
+   at the row's left padding and never runs past the panel, however far in
+   the toggle sits. */
+.cs__gear {
+  position: relative;
+}
+
+.cs__jobs {
+  flex: none;
 }
 
 .cs__jobs-list {
   position: absolute;
   z-index: 3;
   top: calc(100% + 0.35rem);
-  right: 0;
+  left: 0.75rem;
   width: max-content;
-  min-width: 15rem;
-  max-width: min(22rem, 90vw);
+  min-width: min(15rem, calc(100% - 1.5rem));
+  max-width: min(22rem, calc(100% - 1.5rem));
   border: 1px solid var(--cs-rule-strong);
   border-radius: var(--cs-radius);
   background: var(--cs-tip-bg);
@@ -222,9 +310,13 @@
   line-height: 1.3;
 }
 
+/* At its limit (LIMITS.job.levelLabel) it fits one line at 18rem in the
+   document theme; the game theme's wider capitals wrap there instead of
+   running out of the job column. */
 .cs__level-label {
   font-family: var(--cs-font-technical);
   font-size: 0.75rem;
+  overflow-wrap: anywhere;
 }
 
 .cs__level-value {
@@ -828,6 +920,33 @@ a.cs-slot__face:hover .cs-slot__square,
 
 .cs[data-cs-theme="game"] .cs__header {
   background: linear-gradient(180deg, rgb(255 255 255 / 0.04), transparent);
+}
+
+/* The gear-set row's square bevelled buttons. */
+.cs[data-cs-theme="game"] .cs__gear-button {
+  border-color: #5b5e6c;
+  background: linear-gradient(180deg, #3a3b46, #22232a);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), inset 0 -1px 2px rgb(0 0 0 / 0.5);
+  color: #f1e9d4;
+}
+
+.cs[data-cs-theme="game"] a.cs__gear-button:hover,
+.cs[data-cs-theme="game"] button.cs__gear-button:hover,
+.cs[data-cs-theme="game"] .cs__jobs-toggle:hover,
+.cs[data-cs-theme="game"] .cs__jobs[open] .cs__jobs-toggle,
+.cs[data-cs-theme="game"] .cs__gear-button[aria-current="true"] {
+  border-color: var(--cs-accent);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 0 8px rgb(226 194 127 / 0.4);
+}
+
+.cs[data-cs-theme="game"] span.cs__gear-button {
+  color: var(--cs-muted);
+}
+
+.cs[data-cs-theme="game"] .cs__gear-value {
+  color: var(--cs-accent);
+  font-family: var(--cs-font-display);
+  font-weight: 500;
 }
 
 .cs[data-cs-theme="game"] .cs-slot__socket {

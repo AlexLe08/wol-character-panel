@@ -1,8 +1,8 @@
 /// <reference types="vite/client" />
 import { renderToStaticMarkup } from "react-dom/server";
 import { parseConfig, publicConfig, resolveJob } from "../src/index.ts";
-import { CharacterSheet } from "../src/react-entry.ts";
-import panelCss from "../src/character-sheet.css?raw";
+import { EquipmentPanel } from "../src/react-entry.ts";
+import panelCss from "../src/character-panel.css?raw";
 import playgroundCss from "./playground.css?raw";
 
 // /static: the panel rendered on the server, as a host serves it before
@@ -28,7 +28,7 @@ export function render(url: URL): string {
     // Job links keep the page's own query, as the main page's basePath does.
     const basePath = `/static${url.search}`;
     panel = renderToStaticMarkup(
-      <CharacterSheet
+      <EquipmentPanel
         config={visible}
         job={resolveJob(visible, query.get("job") ?? undefined)}
         basePath={basePath}

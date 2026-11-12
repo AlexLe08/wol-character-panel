@@ -1,7 +1,7 @@
 {
-  "title": "Character sheet config",
+  "title": "Character panel config",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@1/character-sheet.schema.json",
+  "$id": "https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@1/character-panel.schema.json",
   "type": "object",
   "properties": {
     "$schema": {
@@ -167,7 +167,7 @@
               "right",
               "header-end"
             ],
-            "description": "left/right: the columns beside the portrait (6 each fills them). header-start/header-end: one slot each, either side of the job name."
+            "description": "left/right: the columns beside the portrait (up to 6 each). header-start/header-end: one slot each, either side of the job name."
           },
           "icon": {
             "description": "Up to 4 characters drawn in the square. Defaults to the label's first two letters.",
@@ -231,7 +231,7 @@
               "label": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 20,
+                "maxLength": 16,
                 "description": "e.g. \"Lv.\" or \"Experience\"."
               },
               "value": {
@@ -394,8 +394,8 @@
                         "name": {
                           "type": "string",
                           "maxLength": 40,
-                          "pattern": "^(?!job$)[a-z][a-z0-9_\\-]*$",
-                          "description": "A query parameter to set on the current page (keeping ?job=), e.g. \"stack\". Not \"job\", which picks the job."
+                          "pattern": "^(?!(?:job|tab|page)$)[a-z][a-z0-9_\\-]*$",
+                          "description": "A query parameter to set on the current page (keeping ?job=), e.g. \"stack\". Not \"job\", \"tab\" or \"page\", which the panel uses."
                         },
                         "value": {
                           "type": "string",
@@ -693,8 +693,8 @@
             "name": {
               "type": "string",
               "maxLength": 40,
-              "pattern": "^(?!job$)[a-z][a-z0-9_\\-]*$",
-              "description": "A query parameter to set on the current page (keeping ?job=), e.g. \"stack\". Not \"job\", which picks the job."
+              "pattern": "^(?!(?:job|tab|page)$)[a-z][a-z0-9_\\-]*$",
+              "description": "A query parameter to set on the current page (keeping ?job=), e.g. \"stack\". Not \"job\", \"tab\" or \"page\", which the panel uses."
             },
             "value": {
               "type": "string",
@@ -1126,7 +1126,7 @@
         "subtitle": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 120
+          "maxLength": 60
         },
         "stat": {
           "description": "One headline figure, on its own ruled line.",
@@ -1151,7 +1151,7 @@
         },
         "items": {
           "description": "Listed in order, most relevant first. Label/value pairs render as a two-column table.",
-          "maxItems": 10,
+          "maxItems": 5,
           "type": "array",
           "items": {
             "anyOf": [
@@ -1186,7 +1186,7 @@
         "note": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 240
+          "maxLength": 120
         }
       },
       "required": [

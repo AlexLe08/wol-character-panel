@@ -85,3 +85,17 @@ test("Escape hides a hovered slot's tooltip without moving the pointer", async (
   await skills.hover();
   await expect(tip).toBeVisible();
 });
+
+// LIMITS.tooltip was tightened for 2.0.0 until a card at every limit (the
+// edge-cases fixture's first left slot) fit a 1280x800 laptop's viewport,
+// about 720px; it was 985px before.
+for (const theme of ["document", "game"]) {
+  test(`a tooltip at the limits is at most 720px tall (${theme})`, async ({ page }) => {
+    await page.goto(`/?fixture=edge-cases&theme=${theme}`);
+    const face = page.locator(".cs__slots--left .cs-slot__face").first();
+    await face.hover();
+    const tip = await tooltipOf(face);
+    await expect(tip).toBeVisible();
+    expect((await tip.boundingBox())!.height).toBeLessThanOrEqual(720);
+  });
+}

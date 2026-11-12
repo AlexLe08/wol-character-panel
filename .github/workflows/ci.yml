@@ -33,7 +33,7 @@ jobs:
       - name: JSON Schema is up to date
         run: |
           npm run generate:schema
-          git diff --exit-code character-sheet.schema.json
+          git diff --exit-code character-panel.schema.json
 
       - name: Build
         run: npm run build

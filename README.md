@@ -1,15 +1,17 @@
-# Character sheet (`@solution-nine/wol-character-panel`)
+# Character panel (`@solution-nine/wol-character-panel`)
 
 A panel modelled on an RPG character/equipment screen:
 
 ```
-title bar                                  [Change job]
+title bar ............................ character name
+[a] [b] [job menu]  caption                     [end]
 [slot]  level / emblem + job title               [slot]
 [col]   portrait (optional corner badge)          [col]
 ```
 
 The two header slots sit either side of the job title (think main weapon and
-job stone), and the left and right columns hold 6 slots each. Each slot shows a
+job stone), and the left and right columns hold up to 6 slots each. Above them, a
+gear-set row holds icon links, the job menu and a caption. Each slot shows a
 compact item-card tooltip on hover or keyboard focus. Clicking it goes to a page
 section, another page, or an external site. Changing the job (`?job=<id>`) swaps the slots, tooltips, and
 portrait, and the host page can swap its own content too.
@@ -32,10 +34,10 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 | Import | What it holds |
 | --- | --- |
 | `@solution-nine/wol-character-panel` | `parseConfig`, `loadConfig`, `findUnknownKeys`, `publicConfig`, `resolveJob`, `jobHref`, `resolveTab`, `tabHref`, `actionHref`, `withQuery` (sets or removes query parameters on an href, keeping the rest; `jobHref`, `tabHref` and `actionHref` are built on it), the config types, and the limits as plain values: `LIMITS` (max lengths and counts, grouped like the config), `ID_PATTERN` and `PARAM_NAME_PATTERN`. No React or CSS, so server code and plain Node can use it |
-| `@solution-nine/wol-character-panel/react` | `CharacterSheet`, `CharacterSheetProps`, `LinkRendererProps`. The component imports its own CSS |
-| `@solution-nine/wol-character-panel/schema` | `characterSheetConfigSchema`, the whole config's zod schema. Its parts are internal |
-| `@solution-nine/wol-character-panel/character-sheet.css` | The styles, for hosts that want to control CSS order |
-| `@solution-nine/wol-character-panel/character-sheet.schema.json` | The JSON Schema other backends validate against |
+| `@solution-nine/wol-character-panel/react` | `EquipmentPanel`, `EquipmentPanelProps`, `EquipmentPanelParts`, `LinkRendererProps`. The component imports its own CSS |
+| `@solution-nine/wol-character-panel/schema` | `characterPanelConfigSchema`, the whole config's zod schema. Its parts are internal |
+| `@solution-nine/wol-character-panel/character-panel.css` | The styles, for hosts that want to control CSS order |
+| `@solution-nine/wol-character-panel/character-panel.schema.json` | The JSON Schema other backends validate against |
 
 `react` and `zod` are peer dependencies: the host provides them.
 
@@ -50,11 +52,13 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 | `src/parse.ts` | `parseConfig` (drops invalid jobs, tabs and blocks, reports errors) and `loadConfig` (fallback chain of sources) |
 | `src/resolve.ts` | `publicConfig`, `resolveJob`, `resolveTab`, `withQuery`, and the links built on it: `jobHref`, `tabHref`, `actionHref` |
 | `src/react-entry.ts` | The `/react` entry (re-exports only) |
-| `src/CharacterSheet.tsx` | The panel (a Server Component): the section and the bar around `EquipmentBody` |
-| `src/EquipmentBody.tsx` | The panel's header and body: slots, tooltips, portrait. Private: no entry exports it |
+| `src/EquipmentPanel.tsx` | The panel (a Server Component): the section and the bar around `EquipmentBody` |
+| `src/EquipmentBody.tsx` | The equipment pane's inside: the gear-set row, header and body (slots, tooltips, portrait). Private: no entry exports it |
+| `src/GearSet.tsx` | The gear-set row and the links its actions make. Private |
+| `src/icons.tsx` | The built-in drawings (`iconName`, the job menu's, the toolbar's) and the icon precedence. Private |
 | `src/SlotHover.tsx` | The only client code: Escape dismisses a tooltip. Private: no entry exports it |
-| `src/character-sheet.css` | Styles and themes; everything themable is a `--cs-*` variable |
-| `character-sheet.schema.json` | Generated JSON Schema for editing a config file by hand |
+| `src/character-panel.css` | Styles and themes; everything themable is a `--cs-*` variable |
+| `character-panel.schema.json` | Generated JSON Schema for editing a config file by hand |
 | `examples/` | Sample configs (`full`, `minimal`, `edge-cases` with every field at its limit); tests check each one parses cleanly and renders |
 | `playground/` | The local preview (`npm run dev`), and `/static`, the panel server-rendered with no script (`static.tsx`). Built for the demo site by `npm run build:demo`. Not published |
 | `browser/` | Browser tests (`npm run test:browser`): Playwright and axe against the playground |
@@ -83,20 +87,21 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 ## Config
 
 A config is plain JSON. Add `"$schema"` pointing at
-`character-sheet.schema.json` to get autocomplete and validation in your editor.
+`character-panel.schema.json` to get autocomplete and validation in your editor.
 The JSON Schema rejects unknown keys, so a typo like `subtitel` is an error
 when writing a config, while `parseConfig` strips unknown keys when reading one
 (`findUnknownKeys` lists them).
 
 The schema's `$id` is
-`https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@1/character-sheet.schema.json`.
+`https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@2/character-panel.schema.json`
+(1.x published it as `@1/character-sheet.schema.json`).
 `scripts/generate-schema.mjs` builds it from `name` and the major part of
 `version` in `package.json`, so it names the contract, not a release:
 
 - A compatible schema change (a new optional field, a looser limit) keeps
-  `@1`.
+  `@2`.
 - A breaking change (a new required field, a tighter limit, a removed key)
-  bumps the major version in `package.json`, which changes the `$id` to `@2`.
+  bumps the major version in `package.json`, which changes the `$id` to `@3`.
 
 ```json
 {
@@ -146,8 +151,9 @@ The schema's `$id` is
   - `param`: the current page (keeping `?job=`) with one query parameter
     set, e.g. `{ "kind": "param", "name": "stack", "value": "React", "target": "projects" }`
     links to `/?stack=React#projects`. `target` is optional. The host page
-    reads the parameter; the panel doesn't. `name` can't be `job`, and one
-    matching the host's `jobParam` renders tooltip-only. Links go through
+    reads the parameter; the panel doesn't. `name` can't be `job`, `tab` or
+    `page`, which the panel uses, and one matching the host's `jobParam`
+    renders tooltip-only. Links go through
     `renderLink` with `intent: "param"`. To mark the slot whose value the
     page is applying (a filter that's on), pass `isParamActive(name, value)`:
     the panel can't read the page's parameters or know how the host matches
@@ -172,10 +178,11 @@ The schema's `$id` is
 ### Tabs, blocks and the gear-set row
 
 These optional fields describe the rest of a character window: a name in the
-bar, a row above the job header, and a content pane of tabs. `CharacterSheet`
-doesn't draw them yet; the component that does is in progress. A config
-without them stays valid, and `parseConfig`, `publicConfig`, `resolveTab` and
-`tabHref` handle them already, so an editor can start writing them.
+bar, a row above the job header, and a content pane of tabs. `EquipmentPanel`
+draws the name and the row; the tabs are for the window component, which is
+in progress. A config without them stays valid, and `parseConfig`,
+`publicConfig`, `resolveTab` and `tabHref` handle them already, so an editor
+can start writing them.
 
 ```json
 {
@@ -245,9 +252,12 @@ without them stays valid, and `parseConfig`, `publicConfig`, `resolveTab` and
   `hammer`, `leaf`, `crest`, `flag`. `iconSrc` wins over `icon`, which wins
   over `iconName`. Icons are decorative: the label names the thing.
 - **`gearSet`:** a caption (`label`, `value`), `jobMenu` (the job menu
-  button's `label` and icon), and up to 3 `links`, each with a `label` (its
-  accessible name), an icon, an `action` and `position`: up to 2 at the
-  `start` (the default), 1 at the `end`.
+  button's `label`, default "Change job", and icon, default a note), and up
+  to 3 `links`, each with a `label` (its accessible name), an icon, an
+  `action` and `position`: up to 2 at the `start` (the default), before the
+  job menu, and 1 at the `end`. The row is drawn whenever it has something
+  to hold: a `gearSet`, more than one job (for the job menu) or a host's
+  `gearSetEnd`, which takes the end link's place.
 - **`hidden: true`** on a tab, page, block or `gearSet` keeps it in the
   config but out of the panel. `publicConfig()` leaves hidden parts out (and
   a tab or page with nothing left to show), so they aren't sent to visitors.
@@ -279,20 +289,22 @@ without them stays valid, and `parseConfig`, `publicConfig`, `resolveTab` and
 
 ```tsx
 import { parseConfig, resolveJob } from "@solution-nine/wol-character-panel";
-import { CharacterSheet } from "@solution-nine/wol-character-panel/react";
+import { EquipmentPanel } from "@solution-nine/wol-character-panel/react";
 
 const { config, errors } = parseConfig(json);   // or: const { config } = await loadConfig(sources, fallback)
 const job = resolveJob(config, searchParams.job);
 
-<CharacterSheet
+<EquipmentPanel
   config={config}
   job={job}
   theme="document"          // or "game"
   labels="narrow"           // slot names under squares: "narrow" (default) or "always"
-  showSockets               // optional: two decorative socket dots on each filled slot
-  showToolbar               // optional: a decorative row of round buttons under the portrait
+  parts={{ toolbar: true }} // optional: which parts are drawn (below)
+  gearSetEnd={<SaveButton />} // optional: your own control at the gear-set row's right end
   basePath="/"              // where the job links point
-  renderLink={(p) => …}     // optional: your router's link (default <a>)
+  renderLink={(p) => …}     // optional: your router's link (default <a>); p.intent says what it does:
+                            // "job" (switch job), "tab" (switch tab or page, the window only),
+                            // "param" (set a query parameter), "page" (another page of the site)
   renderPortrait={(p) => …} // optional: your image component (default <img>)
   isParamActive={(name, value) => …} // optional: true for the param value the page applies
 />
@@ -315,16 +327,27 @@ because something failed, which a host can tell visitors about.
     so they work before hydration and without JavaScript.
   - Escape hides them (WCAG 1.4.13).
   - On touch screens, a tap simply follows the slot's link.
-- **Job menu:** a `<details>` element listing job links. It needs no
-  JavaScript, works with the back button, and makes every job shareable.
+- **Job menu:** an icon button in the gear-set row (its name from
+  `gearSet.jobMenu.label`), opening a `<details>` list of job links. It needs
+  no JavaScript, works with the back button, and makes every job shareable.
+  It isn't drawn for a config with one job.
 - **Layout:** below a 26rem container width, the portrait moves on top. The
   columns become 3-column grids with the slot names showing, since touch
   screens get no tooltip. This is a container query, so it follows the
   panel's width, not the viewport.
 
-`showSockets` and `showToolbar` are visual only for now. They're hidden from
-assistive tech and aren't focusable. When either one gets a real function, make
-it a real control (`<button>`, with a label) instead.
+`parts` says which parts are drawn, `true` to draw one: `bar`,
+`characterName`, `gearSet` and `jobMenu` default to `true`; `toolbar` (round
+buttons under the portrait) and `sockets` (two dots on each filled slot)
+default to `false`. `gearSet: false` removes the whole row, with the job menu
+and `gearSetEnd`; `jobMenu: false` removes only that button. The toolbar and
+sockets are visual only for now. They're hidden from assistive tech and
+aren't focusable. When either one gets a real function, make it a real
+control (`<button>`, with a label) instead.
+
+A `gearSetEnd` control takes the row's square button look from the
+`cs__gear-button` class; name it with visually hidden text (`cs-visually-hidden`)
+or an `aria-label`.
 
 ## Theming
 
@@ -350,7 +373,7 @@ npx vitest          # watch, without coverage
 
 Vitest, beside the code as `src/*.test.ts(x)`. The data side (`parse`,
 `resolve`) has unit tests; the panel is rendered to HTML with
-`react-dom/server` in Node (`src/CharacterSheet.test.tsx`), which is what a
+`react-dom/server` in Node (`src/EquipmentPanel.test.tsx`), which is what a
 host serves before hydration. `src/entries.test.ts` lists each entry's
 runtime exports, so removing one fails a test (it would be a major release).
 `npm test` fails when coverage drops below the thresholds in

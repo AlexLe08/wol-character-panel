@@ -137,36 +137,86 @@ async function oneLine(page: Page, selector: string): Promise<boolean> {
   });
 }
 
-// At the limits (edge-cases), the long title wraps beside the job menu's
-// toggle rather than squeezing it onto two lines.
+// At the limits (edge-cases), the gear-set row's buttons keep their square
+// size beside a long caption, and nothing pushes the panel sideways. (In
+// 1.x the job menu was a text toggle in the bar, which this replaced.)
 for (const theme of ["document", "game"]) {
   for (const [layout, width] of [
     ["wide", ""],
     ["narrow", "&width=22"],
   ]) {
-    test(`at the limits, "Change job" stays on one line (${theme}, ${layout})`, async ({ page }) => {
+    test(`at the limits, the gear-set buttons stay square (${theme}, ${layout})`, async ({ page }) => {
       await page.goto(`/?fixture=edge-cases&theme=${theme}${width}`);
-      expect(await oneLine(page, ".cs__jobs-toggle"), "the toggle").toBe(true);
+      const sizes = await page
+        .locator(".cs__gear-button")
+        .evaluateAll((buttons) => buttons.map((button) => button.getBoundingClientRect().toJSON()));
+      expect(sizes.length).toBeGreaterThan(1);
+      for (const size of sizes) {
+        expect(size.width).toBeCloseTo(32, 0);
+        expect(size.height).toBeCloseTo(32, 0);
+      }
       expect(await page.locator(".cs").evaluate((el) => el.scrollWidth <= el.clientWidth), "no sideways overflow").toBe(
         true,
       );
     });
   }
 
-  test(`a title with no break in it wraps before the toggle (${theme})`, async ({ page }) => {
-    await page.goto(`/?fixture=full&theme=${theme}&width=22`);
+  test(`a title with no break in it wraps before the character name (${theme})`, async ({ page }) => {
+    await page.goto(`/?fixture=edge-cases&theme=${theme}&width=22`);
     // The longest title the schema allows, as one word (a URL, a handle).
-    const { textRight, toggleLeft } = await page.locator(".cs__bar").evaluate((bar) => {
+    const { textRight, nameLeft } = await page.locator(".cs__bar").evaluate((bar) => {
       const title = bar.querySelector(".cs__bar-title")!;
       title.textContent = "x".repeat(60);
       const text = document.createRange();
       text.selectNodeContents(title);
       return {
         textRight: text.getBoundingClientRect().right,
-        toggleLeft: bar.querySelector(".cs__jobs-toggle")!.getBoundingClientRect().left,
+        nameLeft: bar.querySelector(".cs__bar-name")!.getBoundingClientRect().left,
       };
     });
-    expect(textRight).toBeLessThanOrEqual(toggleLeft);
-    expect(await oneLine(page, ".cs__jobs-toggle"), "the toggle").toBe(true);
+    expect(textRight).toBeLessThanOrEqual(nameLeft);
   });
+}
+
+// The job menu sits in the gear-set row, above the job header, in both
+// layouts; the bar has none.
+test("the job menu is in the gear-set row, not the bar", async ({ page }) => {
+  await page.goto("/?fixture=full");
+  await expect(page.locator(".cs__bar .cs__jobs")).toHaveCount(0);
+  const toggle = page.locator(".cs__gear .cs__jobs-toggle");
+  await expect(toggle).toHaveAccessibleName("Change job");
+  const menu = await box(page, ".cs__gear");
+  const header = await box(page, ".cs__header");
+  expect(menu.y + menu.height).toBeLessThanOrEqual(header.y);
+});
+
+// LIMITS.job.levelLabel was tightened for 2.0.0 to what fits at 18rem (a
+// 320px phone less its gutters): one line in the document theme, and inside
+// the job column, wrapping, in the game theme's wider capitals.
+for (const theme of ["document", "game"]) {
+  test(`at 18rem, a level label at the limit stays inside the job column (${theme})`, async ({ page }) => {
+    await page.goto(`/?fixture=edge-cases&theme=${theme}&width=18`);
+    const { label, column } = await page.locator(".cs__job").evaluate((job) => {
+      const text = document.createRange();
+      text.selectNodeContents(job.querySelector(".cs__level-label")!);
+      return { label: text.getBoundingClientRect().toJSON(), column: job.getBoundingClientRect().toJSON() };
+    });
+    expect(label.right).toBeLessThanOrEqual(column.right + 0.5);
+    if (theme === "document") expect(await oneLine(page, ".cs__level-label")).toBe(true);
+  });
+}
+
+// The open job menu's list stays inside the panel, even at the limits on a
+// narrow one, where it opens from a toggle two buttons into the row.
+for (const theme of ["document", "game"]) {
+  for (const width of ["", "22", "18"]) {
+    test(`the open job menu stays inside the panel (${theme}, ${width || "wide"})`, async ({ page }) => {
+      await page.goto(`/?fixture=edge-cases&theme=${theme}${width && `&width=${width}`}`);
+      await page.locator(".cs__jobs-toggle").click();
+      const list = await box(page, ".cs__jobs-list");
+      const panel = await box(page, ".cs");
+      expect(list.x).toBeGreaterThanOrEqual(panel.x);
+      expect(list.x + list.width).toBeLessThanOrEqual(panel.x + panel.width);
+    });
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "$schema": "../character-sheet.schema.json",
+  "$schema": "../character-panel.schema.json",
   "title": "Character profile",
   "characterName": "Alex Le",
   "defaultJobId": "frontend",

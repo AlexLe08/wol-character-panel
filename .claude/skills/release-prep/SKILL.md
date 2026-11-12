@@ -22,14 +22,14 @@ merge commit and `release.yml` publishes.
    - `git diff vL origin/main -- src/entries.test.ts`: the runtime export
      names of each entry. A removed or renamed name is major; an added one
      is minor.
-   - `git diff vL origin/main -- src/schema.ts character-sheet.schema.json`:
+   - `git diff vL origin/main -- src/schema.ts character-panel.schema.json`:
      the config contract. A new required field, a tighter limit, a removed
      key or a stricter pattern is major; a new optional field or a looser
      limit is minor.
    - `git diff vL origin/main -- 'src/*.ts' 'src/*.tsx' ':!src/*.test.*'`
      for exported types and props (types vanish at runtime, so the snapshot
      above misses them) and for changed behaviour a host relies on.
-   - `git diff vL origin/main -- src/character-sheet.css`: class names and
+   - `git diff vL origin/main -- src/character-panel.css`: class names and
      `--cs-*` variables are public (hosts restyle them).
    - `git diff vL origin/main -- package.json`: `exports`,
      `peerDependencies`, `engines`, `files`. A narrower peer or engines

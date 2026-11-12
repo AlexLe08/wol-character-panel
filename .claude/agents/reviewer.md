@@ -22,7 +22,7 @@ leave tracked files untouched; their output goes to `.logs/`).
      without JavaScript, accessibility, the theme rules.
    - Public API and versioning: does the diff change an export, a type,
      the config contract, or behaviour a host relies on? Is the version
-     bump (if any) the right size, and was `character-sheet.schema.json`
+     bump (if any) the right size, and was `character-panel.schema.json`
      regenerated? A breaking change without a major bump is a blocker.
      A changed snapshot in `src/entries.test.ts` is a semver decision,
      not a fix: a removed or renamed name is major, an added one minor.

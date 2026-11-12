@@ -14,7 +14,7 @@ register(`data:text/javascript,${encodeURIComponent(cssHook)}`);
 
 const { createElement } = await import("react");
 const { renderToStaticMarkup } = await import("react-dom/server");
-const { CharacterSheet } = await import("@solution-nine/wol-character-panel/react");
+const { EquipmentPanel } = await import("@solution-nine/wol-character-panel/react");
 const { parseConfig, resolveJob } = await import("@solution-nine/wol-character-panel");
 
 const { config } = parseConfig({
@@ -32,7 +32,7 @@ const { config } = parseConfig({
 });
 assert.ok(config);
 
-const html = renderToStaticMarkup(createElement(CharacterSheet, { config, job: resolveJob(config, undefined) }));
+const html = renderToStaticMarkup(createElement(EquipmentPanel, { config, job: resolveJob(config, undefined) }));
 assert.match(html, /class="cs\b/);
 assert.match(html, /Developer/);
 

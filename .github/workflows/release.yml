@@ -56,7 +56,7 @@ jobs:
           npm run typecheck
           npm test
           npm run generate:schema
-          git diff --exit-code character-sheet.schema.json
+          git diff --exit-code character-panel.schema.json
 
       # prepack runs the build.
       - name: Publish

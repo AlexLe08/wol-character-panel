@@ -21,8 +21,9 @@ A PR that changes what's published adds its line under Unreleased; the
   tooltips, row actions including `{ "kind": "job" }`, and detail windows on
   `fields` rows), `iconName` (16 built-in drawings) beside `icon`/`iconSrc`,
   `hidden` on tabs, pages, blocks and `gearSet`, and per job `job.blocks`
-  (replace a block by id) and `job.gearSet`. `CharacterSheet` doesn't draw
-  them yet. `LIMITS` gains `config.characterName`, `config.tabs`, `tab`,
+  (replace a block by id) and `job.gearSet`. `EquipmentPanel` draws
+  `characterName` and `gearSet` (see Changed); the tabs await the window
+  component. `LIMITS` gains `config.characterName`, `config.tabs`, `tab`,
   `block`, `row`, `gearSet` and `detail`. The JSON Schema now defines its
   shared parts (the tooltip among them) once under `$defs`; what it accepts
   for existing fields is unchanged.
@@ -34,6 +35,40 @@ A PR that changes what's published adds its line under Unreleased; the
   `publicConfig` leaves out hidden tabs, pages, blocks and gear-set rows.
 - `resolveTab` and `tabHref` (from `.`): the tab and page in the URL, and
   links to them (`?tab=`, `?page=`). New types for the config's new parts.
+- The gear-set row, above the job header: up to two start links, the job
+  menu, the `gearSet` caption, and at the right end the host's `gearSetEnd`
+  prop or the config's end link. Drawn whenever it has something to hold.
+  Hosts can give their own control the row's look with `cs__gear-button`.
+- `config.characterName` at the right of the top bar.
+- `LIMITS.slot.column` (6) and the `EquipmentPanelParts` type.
+
+### Changed (breaking)
+
+- Renamed, with no aliases: `CharacterSheet` → `EquipmentPanel`,
+  `CharacterSheetProps` → `EquipmentPanelProps`, the type
+  `CharacterSheetConfig` → `CharacterPanelConfig`,
+  `characterSheetConfigSchema` (`/schema`) → `characterPanelConfigSchema`,
+  `/character-sheet.css` → `/character-panel.css`, and
+  `/character-sheet.schema.json` → `/character-panel.schema.json` (its
+  `$id` too). The default `label` is "Character panel".
+- The job menu moved from the top bar to the gear-set row, and its toggle
+  is an icon (a note by default) named "Change job" (`gearSet.jobMenu`
+  changes both). Its `cs__jobs*` class names stay; styles or tests that
+  look for `.cs__bar .cs__jobs` or the toggle's text need updating.
+- `showSockets` and `showToolbar` are replaced by
+  `parts={{ sockets, toolbar }}`, which also takes `bar`, `characterName`,
+  `gearSet` and `jobMenu` (those default to `true`). The toolbar's buttons
+  are drawings instead of text glyphs.
+- `PARAM_NAME_PATTERN` also refuses `tab` and `page`. A job with a param
+  action named either fails to parse and is dropped, as any invalid job is.
+- Tighter limits: `LIMITS.tooltip.items` 10 → 5, `tooltip.note` 240 → 120,
+  `tooltip.subtitle` 120 → 60 (an at-limit tooltip was 985px tall; now
+  699px), and `LIMITS.job.levelLabel` 20 → 16 (fits one line at 18rem).
+  A job over any of them fails to parse and is dropped.
+- A seventh `left` or `right` slot is reported by `parseConfig` and not
+  drawn.
+- `LinkRendererProps["intent"]` gains `"tab"`. Nothing emits it yet, but a
+  host `switch` over `intent` without a default needs a case for it.
 
 ## [1.0.4] - 2026-11-10
 

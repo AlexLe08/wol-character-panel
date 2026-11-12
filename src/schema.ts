@@ -8,7 +8,7 @@ import { z } from "zod";
 // Imports nothing but zod, so plain Node (scripts/generate-schema.mjs) can
 // run it: Node only resolves relative imports with a .ts extension, which
 // the host's tsconfig doesn't allow, so LIMITS lives here too. Public: LIMITS
-// and ID_PATTERN (from "."), characterSheetConfigSchema (from "/schema", see
+// and ID_PATTERN (from "."), characterPanelConfigSchema (from "/schema", see
 // schema-entry.ts). The parts are internal.
 //
 // Unknown keys: these zod objects strip them, so a reader keeps a config
@@ -23,10 +23,10 @@ import { z } from "zod";
 export const ID_PATTERN = /^[a-z0-9][a-z0-9\-]*$/;
 
 // A param action's query parameter name: lowercase, starts with a letter,
-// and not "job", which the panel already owns (see jobParam). Exported for
-// a form's pattern attribute, like ID_PATTERN; the hyphen is escaped for
-// the same reason.
-export const PARAM_NAME_PATTERN = /^(?!job$)[a-z][a-z0-9_\-]*$/;
+// and not "job", "tab" or "page", which the panel owns (see jobParam,
+// tabParam, pageParam). Exported for a form's pattern attribute, like
+// ID_PATTERN; the hyphen is escaped for the same reason.
+export const PARAM_NAME_PATTERN = /^(?!(?:job|tab|page)$)[a-z][a-z0-9_\-]*$/;
 
 // The config's limits as plain values, so a form, a CMS adapter or any
 // other consumer can read them without zod. The checks below are built
@@ -38,13 +38,14 @@ export const LIMITS = {
   config: { title: 60, characterName: 40, slots: 20, jobs: 20, tabs: 6 },
   // A slot's icon is also the limit for every other icon glyph (tabs,
   // headings, rows, gear-set links); slotContent.iconSrc for every image.
-  slot: { label: 40, icon: 4 },
-  job: { name: 40, title: 80, icon: 4, levelLabel: 20, levelValue: 40, section: 10_000 },
+  // column: slots drawn per side column (left, right); parseConfig reports more.
+  slot: { label: 40, icon: 4, column: 6 },
+  job: { name: 40, title: 80, icon: 4, levelLabel: 16, levelValue: 40, section: 10_000 },
   portrait: { src: 500, alt: 300 },
   // A label/value pair: a job's badge, a tooltip's stat or item.
   pair: { label: 40, value: 80 },
   // tags and items are counts; item is a plain line item's length.
-  tooltip: { title: 80, tag: 24, tags: 3, subtitle: 120, item: 80, items: 10, note: 240 },
+  tooltip: { title: 80, tag: 24, tags: 3, subtitle: 60, item: 80, items: 5, note: 120 },
   slotContent: { iconSrc: 500 },
   // A link's path or an external URL; a param action's query name and value.
   action: { href: 300, paramName: 40, paramValue: 80 },
@@ -80,7 +81,7 @@ export const slotDefSchema = z.object({
   position: z
     .enum(SLOT_POSITIONS)
     .describe(
-      "left/right: the columns beside the portrait (6 each fills them). header-start/header-end: one slot each, either side of the job name.",
+      "left/right: the columns beside the portrait (up to 6 each). header-start/header-end: one slot each, either side of the job name.",
     ),
   icon: text(LIMITS.slot.icon)
     .optional()
@@ -133,10 +134,10 @@ export const slotActionSchema = z.discriminatedUnion("kind", [
       .max(LIMITS.action.paramName)
       .regex(
         PARAM_NAME_PATTERN,
-        'lowercase letters, digits, underscores, and hyphens; starts with a letter; not "job"',
+        'lowercase letters, digits, underscores, and hyphens; starts with a letter; not "job", "tab" or "page"',
       )
       .describe(
-        'A query parameter to set on the current page (keeping ?job=), e.g. "stack". Not "job", which picks the job.',
+        'A query parameter to set on the current page (keeping ?job=), e.g. "stack". Not "job", "tab" or "page", which the panel uses.',
       ),
     value: text(LIMITS.action.paramValue).describe("The value to set it to."),
     target: id
@@ -471,7 +472,7 @@ const jobSchema = z.object({
   gearSet: gearSetSchema.optional().describe("Replaces the config's gearSet for this job."),
 });
 
-export const characterSheetConfigSchema = z.object({
+export const characterPanelConfigSchema = z.object({
   $schema: z.string().optional(),
   title: text(LIMITS.config.title).optional().describe("Text in the panel's top bar."),
   characterName: text(LIMITS.config.characterName).optional().describe("Text at the right of the top bar."),

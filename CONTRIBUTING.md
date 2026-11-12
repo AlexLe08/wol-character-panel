@@ -26,7 +26,7 @@ the playground.
 - The package imports only `react`, `zod` and its own files. A new
   runtime dependency is a design decision; raise it in an issue.
 - After changing `src/schema.ts`, run `npm run generate:schema` and commit
-  `character-sheet.schema.json`.
+  `character-panel.schema.json`.
 - Fill in the template's semver line, and add a line under Unreleased in
   `CHANGELOG.md` for anything a host can see.
 - Changes to entries, the config format, behaviour or theming update the

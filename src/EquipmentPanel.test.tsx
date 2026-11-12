@@ -1,9 +1,11 @@
 /// <reference types="vite/client" />
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { CharacterSheet, type CharacterSheetProps } from "./CharacterSheet.tsx";
+import { EquipmentPanel, type EquipmentPanelProps } from "./EquipmentPanel.tsx";
 import { parseConfig } from "./parse.ts";
-import type { CharacterSheetConfig, Job, SlotContent } from "./types.ts";
+import { LIMITS } from "./schema.ts";
+import type { CharacterPanelConfig, GearSet, GearSetLink, Job, SlotContent } from "./types.ts";
+import type { LinkRendererProps } from "./EquipmentBody.tsx";
 
 // The panel as a server renders it: HTML from react-dom/server in plain
 // Node, no DOM and no JavaScript in a browser. That is what a host's page
@@ -14,7 +16,7 @@ import type { CharacterSheetConfig, Job, SlotContent } from "./types.ts";
 
 const tip = (title: string): SlotContent["tooltip"] => ({ title });
 
-const slots: CharacterSheetConfig["slots"] = [
+const slots: CharacterPanelConfig["slots"] = [
   { id: "stack", label: "Core stack", position: "header-start", icon: "◆" },
   { id: "extra", label: "Extra", position: "header-start" },
   { id: "focus", label: "Focus", position: "header-end" },
@@ -66,10 +68,10 @@ const data: Job = {
   slots: {},
 };
 
-const config: CharacterSheetConfig = { title: "Profile", defaultJobId: "web", slots, jobs: [web, data] };
+const config: CharacterPanelConfig = { title: "Profile", defaultJobId: "web", slots, jobs: [web, data] };
 
-function render(props: Partial<CharacterSheetProps> = {}): string {
-  return renderToStaticMarkup(<CharacterSheet config={config} job={web} {...props} />);
+function render(props: Partial<EquipmentPanelProps> = {}): string {
+  return renderToStaticMarkup(<EquipmentPanel config={config} job={web} {...props} />);
 }
 
 // The opening tags of server-rendered HTML, with their attributes, which is
@@ -110,7 +112,7 @@ const section = (html: string) => tags(html).find((tag) => tag.name === "section
 
 const tooltipIds = (html: string) => tags(html).filter((tag) => tag.attrs.role === "tooltip").map((tag) => tag.attrs.id);
 
-describe("CharacterSheet (server render)", () => {
+describe("EquipmentPanel (server render)", () => {
   it("is a labelled landmark carrying its theme and label mode", () => {
     expect(section(render({ theme: "game", labels: "always", label: "Profile panel" }))).toEqual({
       name: "section",
@@ -123,9 +125,9 @@ describe("CharacterSheet (server render)", () => {
     expect(section(html)?.attrs).toMatchObject({
       "data-cs-theme": "document",
       "data-cs-labels": "narrow",
-      "aria-label": "Character sheet",
+      "aria-label": "Character panel",
     });
-    expect(html).toContain('<p class="cs__bar-title">Character sheet</p>');
+    expect(html).toContain('<p class="cs__bar-title">Character panel</p>');
   });
 
   it("shows the config's title in the top bar", () => {
@@ -158,8 +160,33 @@ describe("CharacterSheet (server render)", () => {
       expect(html).not.toContain("Change job");
     });
 
-    it("is a details element, so it opens without JavaScript", () => {
-      expect(render()).toMatch(/<details class="cs__jobs"><summary class="cs__jobs-toggle">Change job<\/summary>/);
+    it("is a details element in the gear-set row, so it opens without JavaScript", () => {
+      const html = render();
+      expect(html).toMatch(
+        /<div class="cs__gear"><div class="cs__gear-start"><details class="cs__jobs"><summary class="cs__jobs-toggle cs__gear-button">/,
+      );
+      expect(html).toContain('<span class="cs-visually-hidden">Change job</span></summary>');
+    });
+
+    it("is no longer in the bar", () => {
+      const html = render();
+      expect(html.slice(html.indexOf("cs__bar"), html.indexOf("cs__gear"))).not.toContain("cs__jobs");
+    });
+
+    it("draws a note as its toggle unless the config names another icon and label", () => {
+      const toggle = (html: string) => html.slice(html.indexOf("cs__jobs-toggle"), html.indexOf("</summary>"));
+      expect(toggle(render())).toContain('<svg class="cs-icon"');
+      const gearSet = { jobMenu: { label: "Switch persona", icon: "≡" } };
+      const custom = toggle(render({ config: { ...config, gearSet } }));
+      expect(custom).toContain('<span class="cs__gear-icon" aria-hidden="true">≡</span>');
+      expect(custom).toContain("Switch persona");
+      expect(custom).not.toContain("<svg");
+    });
+
+    it("is left out with parts.jobMenu false, keeping the rest of the row", () => {
+      const html = render({ config: { ...config, gearSet: { value: "v2" } }, parts: { jobMenu: false } });
+      expect(html).not.toContain("cs__jobs");
+      expect(html).toContain("cs__gear-caption");
     });
   });
 
@@ -193,8 +220,8 @@ describe("CharacterSheet (server render)", () => {
     it("gives two panels on one page different ids", () => {
       const html = renderToStaticMarkup(
         <>
-          <CharacterSheet config={config} job={web} />
-          <CharacterSheet config={config} job={web} />
+          <EquipmentPanel config={config} job={web} />
+          <EquipmentPanel config={config} job={web} />
         </>,
       );
       const ids = tags(html)
@@ -289,6 +316,20 @@ describe("CharacterSheet (server render)", () => {
       expect(tooltipIds(html).some((id) => id.endsWith("tip-unused"))).toBe(false);
     });
 
+    it("draws at most LIMITS.slot.column slots in a side column", () => {
+      const extra = Array.from({ length: LIMITS.slot.column }, (_, index) => ({
+        id: `more-${index}`,
+        label: `More ${index}`,
+        position: "right" as const,
+      }));
+      const html = render({ config: { ...config, slots: [...slots, ...extra] } });
+      const right = html.slice(html.indexOf("cs__slots--right"));
+      expect(right.match(/<li class="cs-slot/g)).toHaveLength(LIMITS.slot.column);
+      // The column has four slots already, so two of the extras fit.
+      expect(html).toContain("More 1");
+      expect(html).not.toContain("More 2");
+    });
+
     it("renders an empty column as an empty div", () => {
       expect(render({ config: { ...config, slots: slots.filter((slot) => slot.position !== "right") } })).toContain(
         '<div class="cs__slots cs__slots--right"></div>',
@@ -351,6 +392,133 @@ describe("CharacterSheet (server render)", () => {
     });
   });
 
+  describe("bar", () => {
+    it("shows the character name at its right", () => {
+      expect(render({ config: { ...config, characterName: "Alex" } })).toContain(
+        '<div class="cs__bar"><p class="cs__bar-title">Profile</p><p class="cs__bar-name">Alex</p></div>',
+      );
+    });
+
+    it("leaves the name out with parts.characterName false, and the whole bar with parts.bar false", () => {
+      const named = { ...config, characterName: "Alex" };
+      expect(render({ config: named, parts: { characterName: false } })).not.toContain("cs__bar-name");
+      const html = render({ config: named, parts: { bar: false } });
+      expect(html).not.toContain("cs__bar");
+      expect(section(html)?.attrs["aria-label"]).toBe("Character panel");
+    });
+  });
+
+  describe("gear-set row", () => {
+    const links: GearSet["links"] = [
+      { label: "Contact", iconName: "person", action: { kind: "anchor", target: "contact" } },
+      { label: "Résumé", icon: "CV", action: { kind: "link", href: "/resume" } },
+      { label: "Third start link", action: { kind: "none" } },
+      { label: "Save", position: "end", action: { kind: "external", href: "https://save.example/", newTab: true } },
+    ];
+    const withGearSet = (gearSet: GearSet, jobs = config.jobs) => ({ ...config, gearSet, jobs });
+    const linkTo = (props: LinkRendererProps, seen: string[]) => {
+      const { intent, children, ...rest } = props;
+      seen.push(`${intent} ${rest.href}`);
+      return <a {...rest}>{children}</a>;
+    };
+
+    it("is drawn for several jobs even without a gearSet, and not for one job without one", () => {
+      expect(render()).toContain('<div class="cs__gear">');
+      expect(render({ config: { ...config, jobs: [web] } })).not.toContain("cs__gear");
+    });
+
+    it("is drawn for one job with a gearSet or a host control", () => {
+      expect(render({ config: withGearSet({ label: "Résumé" }, [web]) })).toContain("cs__gear");
+      expect(render({ config: { ...config, jobs: [web] }, gearSetEnd: <button type="button">Save</button> })).toContain(
+        '<div class="cs__gear-end"><button type="button">Save</button></div>',
+      );
+    });
+
+    it("counts a false host control as none, as {editing && <Save />} gives", () => {
+      expect(render({ config: { ...config, jobs: [web] }, gearSetEnd: false })).not.toContain("cs__gear");
+    });
+
+    it("is left out, menu and host control too, with parts.gearSet false", () => {
+      const html = render({ config: withGearSet({ links }), parts: { gearSet: false }, gearSetEnd: <b>end</b> });
+      expect(html).not.toContain("cs__gear");
+      expect(html).not.toContain("cs__jobs");
+      expect(html).not.toContain("<b>end</b>");
+    });
+
+    it("shows the caption, label then value", () => {
+      expect(render({ config: withGearSet({ label: "Résumé", value: "v14" }) })).toContain(
+        '<p class="cs__gear-caption"><span class="cs__gear-label">Résumé</span> <span class="cs__gear-value">v14</span></p>',
+      );
+    });
+
+    it("draws two start links before the job menu and the end link at the end, as named icon buttons", () => {
+      const html = render({ config: withGearSet({ links }) });
+      const start = html.slice(html.indexOf("cs__gear-start"), html.indexOf("cs__jobs"));
+      expect(withClass(start, "cs__gear-button").map((tag) => tag.attrs.href)).toEqual(["#contact", "/resume"]);
+      expect(start).toContain('<span class="cs-visually-hidden">Contact</span>');
+      expect(start).toContain('<span class="cs__gear-icon" aria-hidden="true">CV</span>');
+      expect(html).not.toContain("Third start link");
+      const end = html.slice(html.indexOf("cs__gear-end"));
+      expect(withClass(end, "cs__gear-button")[0].attrs).toMatchObject({ href: "https://save.example/", target: "_blank" });
+      expect(end).toContain("(opens in a new tab)");
+    });
+
+    it("puts the host's control in place of the end link", () => {
+      const html = render({ config: withGearSet({ links }), gearSetEnd: <button type="button">Host</button> });
+      expect(html).toContain('<div class="cs__gear-end"><button type="button">Host</button></div>');
+      expect(html).not.toContain("https://save.example/");
+    });
+
+    it("takes the job's own gearSet over the config's, and skips a hidden one", () => {
+      const own = { ...web, gearSet: { value: "Job's own" } };
+      expect(render({ config: withGearSet({ value: "Shared" }), job: own })).toContain("Job&#x27;s own");
+      const hidden = { ...web, gearSet: { value: "Job's own", hidden: true } };
+      const html = render({ config: withGearSet({ value: "Shared" }), job: hidden });
+      expect(html).toContain("Shared");
+      expect(html).not.toContain("Job&#x27;s own");
+    });
+
+    it("links a job action like the job menu, marking the current job, and drops the link for an unknown job", () => {
+      const seen: string[] = [];
+      const jobLinks: GearSet["links"] = [
+        { label: "To data", action: { kind: "job", id: "data" } },
+        { label: "To web", action: { kind: "job", id: "web" } },
+      ];
+      const html = render({ config: withGearSet({ links: jobLinks }), renderLink: (props) => linkTo(props, seen) });
+      expect(seen).toEqual(expect.arrayContaining(["job /?job=data", "job /"]));
+      const links = withClass(html, "cs__gear-button").filter((tag) => tag.name === "a");
+      expect(links.map((tag) => tag.attrs["aria-current"])).toEqual([undefined, "true"]);
+
+      const gone = render({ config: withGearSet({ links: [{ label: "Gone", action: { kind: "job", id: "gone" } }] }) });
+      expect(withClass(gone, "cs__gear-button").filter((tag) => tag.name !== "summary")).toEqual([
+        { name: "span", attrs: { class: "cs__gear-button" } },
+      ]);
+    });
+
+    it("marks an active param link current and passes the param intent", () => {
+      const seen: string[] = [];
+      const param: GearSet["links"] = [{ label: "React", action: { kind: "param", name: "stack", value: "react" } }];
+      const html = render({
+        config: withGearSet({ links: param }),
+        isParamActive: () => true,
+        renderLink: (props) => linkTo(props, seen),
+      });
+      expect(seen).toContain("param /?stack=react");
+      expect(withClass(html, "cs__gear-button")[0].attrs["aria-current"]).toBe("true");
+    });
+
+    it("picks an icon by precedence: image, glyph, built-in drawing, then the label's first letters", () => {
+      const only = (link: Partial<GearSetLink>) =>
+        render({ config: withGearSet({ links: [{ label: "Plain", action: { kind: "none" }, ...link }] }) });
+      expect(only({ iconSrc: "/i.svg", icon: "G", iconName: "star" })).toContain(
+        '<img class="cs-icon cs-icon--img" src="/i.svg" alt=""/>',
+      );
+      expect(only({ icon: "G", iconName: "star" })).toContain('<span class="cs__gear-icon" aria-hidden="true">G</span>');
+      expect(only({ iconName: "star" })).toMatch(/<span class="cs__gear-icon" aria-hidden="true"><svg class="cs-icon"/);
+      expect(only({})).toContain('<span class="cs__gear-icon" aria-hidden="true">Pl</span>');
+    });
+  });
+
   describe("decorative extras", () => {
     it("are off by default", () => {
       const html = render();
@@ -359,13 +527,15 @@ describe("CharacterSheet (server render)", () => {
     });
 
     it("add sockets to filled slots only", () => {
-      const html = render({ showSockets: true });
+      const html = render({ parts: { sockets: true } });
       const filled = withClass(html, "cs-slot__face").filter((tag) => tag.attrs["aria-describedby"]).length;
       expect(withClass(html, "cs-slot__sockets")).toHaveLength(filled);
     });
 
-    it("hide the toolbar from assistive tech", () => {
-      expect(render({ showToolbar: true })).toContain('<div class="cs__toolbar" aria-hidden="true">');
+    it("hide the toolbar, six drawn buttons, from assistive tech", () => {
+      const html = render({ parts: { toolbar: true } });
+      expect(html).toContain('<div class="cs__toolbar" aria-hidden="true">');
+      expect(html.match(/<span class="cs__toolbar-button[^"]*"><svg class="cs-icon"/g)).toHaveLength(6);
     });
   });
 });
