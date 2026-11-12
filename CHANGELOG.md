@@ -27,7 +27,8 @@ A PR that changes what's published adds its line under Unreleased; the
   shared parts (the tooltip among them) once under `$defs`; what it accepts
   for existing fields is unchanged.
 - `parseConfig` checks tabs, pages, blocks, `gearSet` and `job.blocks`
-  entries one at a time, dropping and reporting a bad one, and reports
+  entries one at a time, dropping and reporting a bad one (tabs, pages and
+  blocks past their limit keep the first ones), and reports
   duplicate ids, a tab with both blocks and pages, job actions naming no
   job, collapsible groups without a label and gear-set links over the limit.
   `publicConfig` leaves out hidden tabs, pages, blocks and gear-set rows.

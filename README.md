@@ -254,9 +254,12 @@ without them stays valid, and `parseConfig`, `publicConfig`, `resolveTab` and
   instead of the shared one for that job. A replacement has no `id` or
   `hidden` of its own.
 - **`parseConfig`** checks each tab, page and block on its own: a bad one is
-  dropped and reported, and so is a tab or page left with no blocks. A bad
-  `job.blocks` entry (one that doesn't parse, names no block, or has another
-  type) is dropped without dropping the job. It also reports duplicate tab,
+  dropped and reported, and so is a tab or page left with no blocks. Past the
+  limit, tabs, pages and blocks keep their first entries and report the
+  rest. A `tabs` list left empty is left out. A bad `job.blocks` entry (one
+  that doesn't parse, names no block, or has another type) or a bad
+  `gearSet`, the config's or a job's, is dropped without dropping the job or
+  the config. It also reports duplicate tab,
   page and block ids (the later one dropped), a tab with both `blocks` and
   `pages` (its pages used), a job action naming no job, a `collapsible`
   group without a `label`, and gear-set links past the start or end limit
