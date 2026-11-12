@@ -270,11 +270,46 @@ describe("parseConfig: tabs, blocks and the gear-set row", () => {
     for (const error of errors) expect(error).toMatch(/^tabs\.1\.id: /);
   });
 
-  it("rejects the config with more tabs than the limit, as with slots", () => {
-    const tabs = Array.from({ length: LIMITS.config.tabs + 1 }, (_, index) => tab(`t${index}`));
+  it("keeps the first tabs up to the limit, and drops and reports the rest", () => {
+    const tabs = Array.from({ length: LIMITS.config.tabs + 2 }, (_, index) => tab(`t${index}`));
     const { config, errors } = parseConfig(rawConfig({ tabs }));
-    expect(config).toBeNull();
-    expect(errors).toEqual([expect.stringMatching(/^tabs: /)]);
+    expect(config?.tabs).toHaveLength(LIMITS.config.tabs);
+    expect(errors).toEqual([
+      `tabs.${LIMITS.config.tabs}: over the limit of ${LIMITS.config.tabs}, dropped`,
+      `tabs.${LIMITS.config.tabs + 1}: over the limit of ${LIMITS.config.tabs}, dropped`,
+    ]);
+  });
+
+  it("keeps a tab's first blocks up to the limit", () => {
+    const blocks = Array.from({ length: LIMITS.tab.blocks + 1 }, () => stats());
+    const { config, errors } = parseConfig(rawConfig({ tabs: [tab("a", { blocks })] }));
+    expect(config?.tabs?.[0].blocks).toHaveLength(LIMITS.tab.blocks);
+    expect(errors).toEqual([`tabs.0.blocks.${LIMITS.tab.blocks}: over the limit of ${LIMITS.tab.blocks}, dropped`]);
+  });
+
+  it("keeps a tab's first pages up to the limit, and a page's first blocks", () => {
+    const pages = Array.from({ length: LIMITS.tab.pages + 1 }, (_, index) => page(`p${index}`));
+    pages[0] = page("p0", { blocks: Array.from({ length: LIMITS.tab.blocks + 1 }, () => stats()) });
+    const { config, errors } = parseConfig(rawConfig({ tabs: [tab("a", { blocks: undefined, pages })] }));
+    expect(config?.tabs?.[0].pages).toHaveLength(LIMITS.tab.pages);
+    expect(config?.tabs?.[0].pages?.[0].blocks).toHaveLength(LIMITS.tab.blocks);
+    expect(errors).toEqual([
+      `tabs.0.pages.${LIMITS.tab.pages}: over the limit of ${LIMITS.tab.pages}, dropped`,
+      `tabs.0.pages.0.blocks.${LIMITS.tab.blocks}: over the limit of ${LIMITS.tab.blocks}, dropped`,
+    ]);
+  });
+
+  it("leaves out an empty tabs list, and reports it", () => {
+    const { config, errors } = parseConfig(rawConfig({ tabs: [] }));
+    expect(config).not.toHaveProperty("tabs");
+    expect(errors).toEqual(["tabs: empty, left out"]);
+  });
+
+  it("leaves out tabs when none is valid, and reports it", () => {
+    const { config, errors } = parseConfig(rawConfig({ tabs: [tab("Bad Id")] }));
+    expect(config).not.toBeNull();
+    expect(config).not.toHaveProperty("tabs");
+    expect(errors.at(-1)).toBe("tabs: no valid tab");
   });
 
   it("drops a bad block with errors under its path, and keeps the tab", () => {
@@ -336,8 +371,12 @@ describe("parseConfig: tabs, blocks and the gear-set row", () => {
 
     it("drops a page left with no blocks, and a tab left with no pages", () => {
       const { config, errors } = parseConfig(withPages([page("p", { blocks: [{ type: "chart" }] })]));
-      expect(config?.tabs).toEqual([]);
-      expect(errors.slice(1)).toEqual(["tabs.0.pages.0: no blocks, dropped", "tabs.0: no pages, dropped"]);
+      expect(config).not.toHaveProperty("tabs");
+      expect(errors.slice(1)).toEqual([
+        "tabs.0.pages.0: no blocks, dropped",
+        "tabs.0: no pages, dropped",
+        "tabs: no valid tab",
+      ]);
     });
   });
 
@@ -483,6 +522,13 @@ describe("parseConfig: tabs, blocks and the gear-set row", () => {
     it("names an unknown job in a link", () => {
       const { errors } = parseConfig(rawConfig({ gearSet: { links: [{ label: "Ops", action: { kind: "job", id: "ops" } }] } }));
       expect(errors).toEqual(['gearSet.links.0.action: unknown job "ops", drawn without a link']);
+    });
+
+    it("drops a job's bad gearSet and keeps the job", () => {
+      const { config, errors } = parseConfig(rawConfig({ jobs: [rawJob("web", { gearSet: { label: "" } })] }));
+      expect(jobIds(config)).toEqual(["web"]);
+      expect(config?.jobs[0]).not.toHaveProperty("gearSet");
+      expect(errors).toEqual([expect.stringMatching(/^jobs\.0\.gearSet\.label: /)]);
     });
 
     it("checks a job's own gearSet the same way", () => {

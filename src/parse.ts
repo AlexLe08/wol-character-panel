@@ -27,16 +27,21 @@ export type ParseResult = {
 const shellSchema = characterSheetConfigSchema.extend({
   jobs: z.array(z.unknown()).min(1),
   gearSet: z.unknown().optional(),
-  tabs: z.array(z.unknown()).max(LIMITS.config.tabs).optional(),
+  tabs: z.array(z.unknown()).optional(),
 });
-// A job with its blocks checked one at a time, so a bad replacement costs
-// that entry and not the job.
-const looseJobSchema = jobSchema.extend({ blocks: z.record(z.string(), z.unknown()).optional() });
+// A job with its blocks and gear-set row checked on their own, so a bad
+// replacement or row costs that part and not the job.
+const looseJobSchema = jobSchema.extend({
+  blocks: z.record(z.string(), z.unknown()).optional(),
+  gearSet: z.unknown().optional(),
+});
+// Counts are checked by withinLimit, so an over-limit list keeps its first
+// entries instead of costing the tab or the config.
 const looseTabSchema = tabSchema.extend({
-  blocks: z.array(z.unknown()).max(LIMITS.tab.blocks).optional(),
-  pages: z.array(z.unknown()).max(LIMITS.tab.pages).optional(),
+  blocks: z.array(z.unknown()).optional(),
+  pages: z.array(z.unknown()).optional(),
 });
-const loosePageSchema = tabPageSchema.extend({ blocks: z.array(z.unknown()).max(LIMITS.tab.blocks) });
+const loosePageSchema = tabPageSchema.extend({ blocks: z.array(z.unknown()) });
 
 // What the checks after the jobs need: the errors so far, the jobs a job
 // action may name, and the block ids seen so far with their types.
@@ -111,7 +116,14 @@ export function parseConfig(input: unknown): ParseResult {
 
   const context: Context = { errors, jobIds: new Set(jobs.map((job) => job.id)), blockTypes: new Map() };
   const { gearSet: rawGearSet, tabs: rawTabs, ...shared } = shell.data;
-  const tabs = rawTabs && parseTabs(rawTabs, context);
+  // An empty list is left out rather than kept: the exact schema needs at
+  // least one tab, so an editor could not save the parsed config back.
+  let tabs: Tab[] = [];
+  if (rawTabs?.length === 0) errors.push("tabs: empty, left out");
+  else if (rawTabs) {
+    tabs = parseTabs(rawTabs, context);
+    if (tabs.length === 0) errors.push("tabs: no valid tab");
+  }
   const finalJobs = looseJobs.map(({ job, index }) => finishJob(job, `jobs.${index}`, context));
   const gearSet = rawGearSet === undefined ? undefined : parseGearSet(rawGearSet, "gearSet", context);
 
@@ -120,16 +132,25 @@ export function parseConfig(input: unknown): ParseResult {
       ...shared,
       defaultJobId,
       ...(gearSet && { gearSet }),
-      ...(tabs && { tabs }),
+      ...(tabs.length > 0 && { tabs }),
       jobs: finalJobs,
     },
     errors,
   };
 }
 
+// The first `limit` entries; each one past it is reported and dropped, so
+// an over-long list costs its extras and not the list's owner.
+function withinLimit(raws: unknown[], limit: number, path: string, context: Context): unknown[] {
+  for (let index = limit; index < raws.length; index += 1) {
+    context.errors.push(`${path}.${index}: over the limit of ${limit}, dropped`);
+  }
+  return raws.slice(0, limit);
+}
+
 function parseTabs(raws: unknown[], context: Context): Tab[] {
   const tabs: Tab[] = [];
-  raws.forEach((raw, index) => {
+  withinLimit(raws, LIMITS.config.tabs, "tabs", context).forEach((raw, index) => {
     const path = `tabs.${index}`;
     const result = looseTabSchema.safeParse(raw);
     if (!result.success) {
@@ -157,7 +178,7 @@ function parseTabs(raws: unknown[], context: Context): Tab[] {
 
 function parsePages(raws: unknown[], path: string, context: Context): TabPage[] {
   const pages: TabPage[] = [];
-  raws.forEach((raw, index) => {
+  withinLimit(raws, LIMITS.tab.pages, path, context).forEach((raw, index) => {
     const pagePath = `${path}.${index}`;
     const result = loosePageSchema.safeParse(raw);
     if (!result.success) {
@@ -180,7 +201,7 @@ function parsePages(raws: unknown[], path: string, context: Context): TabPage[] 
 // names one block.
 function parseBlocks(raws: unknown[], path: string, context: Context): Block[] {
   const blocks: Block[] = [];
-  raws.forEach((raw, index) => {
+  withinLimit(raws, LIMITS.tab.blocks, path, context).forEach((raw, index) => {
     const blockPath = `${path}.${index}`;
     const result = blockSchema.safeParse(raw);
     if (!result.success) {
@@ -203,10 +224,11 @@ function parseBlocks(raws: unknown[], path: string, context: Context): Block[] {
 
 // A job's blocks, each checked on its own: one that doesn't parse, names
 // no shared block, or has another type than the block it names is dropped
-// and the job kept. Then its gear-set row.
+// and the job kept. Its gear-set row too: a bad one is dropped, the job kept.
 function finishJob(loose: z.output<typeof looseJobSchema>, path: string, context: Context): Job {
-  const { blocks: rawBlocks, ...job } = loose;
-  if (job.gearSet) checkGearSet(job.gearSet, `${path}.gearSet`, context);
+  const { blocks: rawBlocks, gearSet: rawGearSet, ...rest } = loose;
+  const gearSet = rawGearSet === undefined ? undefined : parseGearSet(rawGearSet, `${path}.gearSet`, context);
+  const job: Job = { ...rest, ...(gearSet && { gearSet }) };
   if (rawBlocks === undefined) return job;
   const blocks: Record<string, JobBlock> = {};
   for (const [id, raw] of Object.entries(rawBlocks)) {
