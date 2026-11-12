@@ -1260,6 +1260,16 @@ a.cs-field__line[aria-current="true"] .cs-field__value {
   right: 0;
 }
 
+/* Touch screens have no hover, and a tap focuses a row without
+   :focus-visible, so a row's tooltip (whose text is nowhere else, unlike a
+   slot's name) shows while the row has any focus: a tap opens it, a tap
+   elsewhere closes it. */
+@media (hover: none) {
+  .cs__content .cs-slot__hover:not([data-dismissed]):has(> [tabindex="0"]:focus) .cs-tip {
+    display: block;
+  }
+}
+
 /* ---------------------------------------------------------------------
    Game theme
    A darker, framed look in the spirit of an RPG equipment screen. Mostly
