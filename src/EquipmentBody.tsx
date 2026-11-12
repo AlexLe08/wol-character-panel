@@ -4,7 +4,8 @@ import { glyph, TOOLBAR_ICONS } from "./icons.tsx";
 import { actionHref, isActionActive } from "./resolve.ts";
 import { LIMITS } from "./schema.ts";
 import { SlotHover } from "./SlotHover.tsx";
-import type { CharacterPanelConfig, Job, Portrait, SlotContent, SlotDef, SlotPosition, Tooltip } from "./types.ts";
+import { TooltipCard } from "./Tooltip.tsx";
+import type { CharacterPanelConfig, Job, Portrait, SlotContent, SlotDef, SlotPosition } from "./types.ts";
 
 // The equipment pane's inside, shared by the components that draw it (no
 // entry exports it):
@@ -49,6 +50,7 @@ export function EquipmentBody({
   basePath,
   currentHref,
   jobParam,
+  ownParams = [jobParam],
   parts,
   gearSetEnd,
   renderLink,
@@ -64,6 +66,10 @@ export function EquipmentBody({
   // This job's own URL, which a param action adds its parameter to.
   currentHref: string;
   jobParam: string;
+  // The query parameters the component owns (jobParam, and the window's
+  // tabParam and pageParam): a param action naming one renders without a
+  // link, so a slot can't clobber them.
+  ownParams?: readonly string[];
   parts: EquipmentParts;
   gearSetEnd?: ReactNode;
   renderLink: RenderLink;
@@ -78,7 +84,7 @@ export function EquipmentBody({
     showSockets: parts.sockets,
     slots: config.slots,
     currentHref,
-    jobParam,
+    ownParams,
     isParamActive,
   };
   const gearSet = gearSetFor(config, job);
@@ -99,6 +105,7 @@ export function EquipmentBody({
           end={end}
           basePath={basePath}
           jobParam={jobParam}
+          ownParams={ownParams}
           currentHref={currentHref}
           renderLink={renderLink}
           isParamActive={isParamActive}
@@ -147,7 +154,7 @@ function SlotList({
   renderLink,
   showSockets,
   currentHref,
-  jobParam,
+  ownParams,
   isParamActive,
 }: {
   position: SlotPosition;
@@ -157,7 +164,7 @@ function SlotList({
   renderLink: RenderLink;
   showSockets: boolean;
   currentHref: string;
-  jobParam: string;
+  ownParams: readonly string[];
   isParamActive?: (name: string, value: string) => boolean;
 }) {
   // One slot each side of the job title, and LIMITS.slot.column in each
@@ -179,7 +186,7 @@ function SlotList({
           renderLink={renderLink}
           showSockets={showSockets}
           currentHref={currentHref}
-          jobParam={jobParam}
+          ownParams={ownParams}
           isParamActive={isParamActive}
         />
       ))}
@@ -203,7 +210,7 @@ function Slot({
   renderLink,
   showSockets,
   currentHref,
-  jobParam,
+  ownParams,
   isParamActive,
 }: {
   slot: SlotDef;
@@ -213,7 +220,7 @@ function Slot({
   renderLink: RenderLink;
   showSockets: boolean;
   currentHref: string;
-  jobParam: string;
+  ownParams: readonly string[];
   isParamActive?: (name: string, value: string) => boolean;
 }) {
   const face = (
@@ -245,11 +252,12 @@ function Slot({
   }
 
   const { action } = content;
-  // A param action may not set the job parameter (the schema refuses "job",
-  // but a host can name its own); that one renders tooltip-only, like none.
-  const href = action.kind === "param" && action.name === jobParam ? null : actionHref(action, currentHref);
+  // A param action may not set the component's own parameters (the schema
+  // refuses "job", "tab" and "page", but a host can rename them); that one
+  // renders tooltip-only, like none.
+  const href = action.kind === "param" && ownParams.includes(action.name) ? null : actionHref(action, currentHref);
   // The page is showing what this slot links to (its filter is on).
-  const active = isActionActive(action, isParamActive, jobParam);
+  const active = isActionActive(action, isParamActive, ownParams);
   const common = { className: "cs-slot__face", "aria-describedby": tipId };
 
   let trigger: ReactNode;
@@ -291,67 +299,14 @@ function Slot({
     <li className={`cs-slot cs-slot--${action.kind}${active ? " cs-slot--active" : ""}`}>
       <SlotHover>
         {trigger}
-        <SlotTooltip id={tipId} slot={slot} content={content} />
+        <TooltipCard
+          id={tipId}
+          tooltip={content.tooltip}
+          icon={<SlotIcon slot={slot} content={content} />}
+          subtitle={slot.label}
+        />
       </SlotHover>
     </li>
-  );
-}
-
-// A compact item card: icon and title block, an optional headline figure,
-// then the details.
-function SlotTooltip({ id, slot, content }: { id: string; slot: SlotDef; content: SlotContent }) {
-  const tooltip: Tooltip = content.tooltip;
-  const items = tooltip.items ?? [];
-  const pairs = items.filter((item) => typeof item !== "string");
-  const lines = items.filter((item) => typeof item === "string");
-
-  return (
-    <div className="cs-tip" role="tooltip" id={id}>
-      <div className="cs-tip__head">
-        <span className="cs-tip__icon" aria-hidden="true">
-          <SlotIcon slot={slot} content={content} />
-        </span>
-        <div className="cs-tip__heading">
-          {tooltip.tags && (
-            <p className="cs-tip__tags">
-              {tooltip.tags.map((tag) => (
-                <span key={tag}>{tag} </span>
-              ))}
-            </p>
-          )}
-          <p className="cs-tip__title">{tooltip.title}</p>
-          <p className="cs-tip__category">{tooltip.subtitle ?? slot.label}</p>
-        </div>
-      </div>
-      {tooltip.stat && (
-        <p className="cs-tip__stat">
-          <span className="cs-tip__stat-label">{tooltip.stat.label}</span>{" "}
-          <span className="cs-tip__stat-value">{tooltip.stat.value}</span>
-        </p>
-      )}
-      {(items.length > 0 || tooltip.note) && (
-        <div className="cs-tip__body">
-          {pairs.length > 0 && (
-            <dl className="cs-tip__pairs">
-              {pairs.map((pair) => (
-                <div key={pair.label} className="cs-tip__pair">
-                  <dt>{pair.label}</dt>
-                  <dd>{pair.value}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
-          {lines.length > 0 && (
-            <ul className="cs-tip__items">
-              {lines.map((line) => (
-                <li key={line}>{line}</li>
-              ))}
-            </ul>
-          )}
-          {tooltip.note && <p className="cs-tip__note">{tooltip.note}</p>}
-        </div>
-      )}
-    </div>
   );
 }
 

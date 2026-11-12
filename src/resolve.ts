@@ -192,12 +192,14 @@ export function actionHref(action: SlotAction, currentHref = "/"): string | null
 // panel can mark it. Only a param action can be: the host says which
 // parameter values its page applies (isParamActive), since only it knows
 // how it reads them (a case-insensitive filter, say). A param action
-// naming the job parameter renders tooltip-only, so it's never active.
+// naming one of the component's own parameters (ownParams: the job
+// parameter, and the window's tab and page ones) renders tooltip-only, so
+// it's never active.
 export function isActionActive(
   action: SlotAction,
   isParamActive?: (name: string, value: string) => boolean,
-  jobParam = "job",
+  ownParams: string | readonly string[] = "job",
 ): boolean {
-  if (action.kind !== "param" || action.name === jobParam || !isParamActive) return false;
+  if (action.kind !== "param" || [ownParams].flat().includes(action.name) || !isParamActive) return false;
   return isParamActive(action.name, action.value);
 }
