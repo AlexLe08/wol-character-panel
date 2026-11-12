@@ -1,12 +1,133 @@
-import type { CharacterSheetConfig, Job, SlotAction } from "./types.ts";
+import type { Block, CharacterSheetConfig, Job, SlotAction, Tab, TabPage } from "./types.ts";
 
 // The config as visitors see it: only published jobs, so drafts and hidden
 // jobs are left out of the job menu and a ?job= link to one falls back to
 // the default like an unknown id, without saying the job exists.
-// parseConfig() guarantees the default job is published. Editors use the
-// whole config instead.
+// parseConfig() guarantees the default job is published. Also without
+// anything marked hidden (tabs, pages, blocks, gear-set rows), a tab or
+// page left with nothing to show, and a job's replacement for a block
+// that's gone, so a host that sends the public config to the browser
+// doesn't send hidden data. Editors use the whole config instead.
 export function publicConfig(config: CharacterSheetConfig): CharacterSheetConfig {
-  return { ...config, jobs: config.jobs.filter((job) => job.status === "published") };
+  const { gearSet, tabs, ...rest } = config;
+  const publicTabs = tabs?.flatMap(publicTab);
+  const blockIds = new Set(publicTabs?.flatMap(tabBlocks).flatMap((block) => block.id ?? []));
+  return {
+    ...rest,
+    ...(gearSet && !gearSet.hidden && { gearSet }),
+    ...(publicTabs && { tabs: publicTabs }),
+    jobs: config.jobs.filter((job) => job.status === "published").map((job) => publicJob(job, blockIds)),
+  };
+}
+
+function publicTab(tab: Tab): Tab[] {
+  if (tab.hidden) return [];
+  if (tab.pages) {
+    const pages = tab.pages.flatMap((page): TabPage[] => {
+      const blocks = page.hidden ? [] : visibleBlocks(page.blocks);
+      return blocks.length > 0 ? [{ ...page, blocks }] : [];
+    });
+    return pages.length > 0 ? [{ ...tab, pages }] : [];
+  }
+  const blocks = visibleBlocks(tab.blocks ?? []);
+  return blocks.length > 0 ? [{ ...tab, blocks }] : [];
+}
+
+function publicJob(job: Job, blockIds: Set<string>): Job {
+  const { gearSet, blocks, ...rest } = job;
+  return {
+    ...rest,
+    ...(gearSet && !gearSet.hidden && { gearSet }),
+    ...(blocks && { blocks: Object.fromEntries(Object.entries(blocks).filter(([id]) => blockIds.has(id))) }),
+  };
+}
+
+const visibleBlocks = (blocks: Block[]) => blocks.filter((block) => !block.hidden);
+
+// Every block of a tab, on any page.
+const tabBlocks = (tab: Tab): Block[] => (tab.pages ? tab.pages.flatMap((page) => page.blocks) : (tab.blocks ?? []));
+
+// A tab's pages that can be shown: not hidden, with a block that isn't.
+// Pages win over blocks in a tab that has both, as parseConfig keeps them.
+function visiblePages(tab: Tab): TabPage[] {
+  return (tab.pages ?? []).filter((page) => !page.hidden && visibleBlocks(page.blocks).length > 0);
+}
+
+// The tabs that can be shown, in order: the first one is the default.
+function visibleTabs(config: CharacterSheetConfig): Tab[] {
+  return (config.tabs ?? []).filter(
+    (tab) => !tab.hidden && (tab.pages ? visiblePages(tab).length > 0 : visibleBlocks(tab.blocks ?? []).length > 0),
+  );
+}
+
+export type ResolvedTab = {
+  tab: Tab;
+  // The tab's page to show, or null for a tab of blocks.
+  page: TabPage | null;
+};
+
+// The tab and page named in the URL, or the first visible ones: as with
+// ?job=, an unknown or repeated value falls back instead of failing. Hidden
+// tabs and pages are skipped even in a config that didn't go through
+// publicConfig(). null when the config has no tab to show. For tabs a
+// host leaves out in one place, pass a config without them, here and to
+// tabHref, so both agree on which tab comes first.
+export function resolveTab(
+  config: CharacterSheetConfig,
+  tabParam: string | string[] | undefined,
+  pageParam?: string | string[],
+): ResolvedTab | null {
+  const tabs = visibleTabs(config);
+  if (tabs.length === 0) return null;
+  const tab = tabs.find((candidate) => candidate.id === first(tabParam)) ?? tabs[0];
+  const pages = visiblePages(tab);
+  if (pages.length === 0) return { tab, page: null };
+  return { tab, page: pages.find((candidate) => candidate.id === first(pageParam)) ?? pages[0] };
+}
+
+const first = (param: string | string[] | undefined) => (Array.isArray(param) ? param[0] : param);
+
+export type TabHrefOptions = {
+  // A page of the tab. Left out, the link goes to the tab's first page.
+  page?: string;
+  // The query parameters' names, if the host renamed them.
+  tabParam?: string;
+  pageParam?: string;
+};
+
+// A link to a tab, or to one of its pages, from currentHref: the other
+// parameters it has (?job=) are kept, and the page parameter is replaced
+// or dropped, since a page belongs to its tab. The first visible tab and a
+// tab's first page get no parameter, so each view has one URL, as the
+// default job does.
+export function tabHref(
+  config: CharacterSheetConfig,
+  tabId: string,
+  currentHref = "/",
+  { page, tabParam = "tab", pageParam = "page" }: TabHrefOptions = {},
+): string {
+  const tabs = visibleTabs(config);
+  const tab = tabs.find((candidate) => candidate.id === tabId);
+  const firstPage = tab && visiblePages(tab)[0];
+  return withQuery(currentHref, {
+    [tabParam]: tabs[0]?.id === tabId ? null : tabId,
+    [pageParam]: page === undefined || page === firstPage?.id ? null : page,
+  });
+}
+
+// The blocks to draw for a job, in order: hidden ones left out, and each
+// one the job replaces (job.blocks, by id) swapped for the job's, keeping
+// the shared block's id. parseConfig drops a replacement of another type;
+// one that slips through (a config not parsed) is ignored here too.
+// Private for now: the window uses it; hosts get it only if they need it.
+export function resolveBlocks(blocks: Block[], job: Job): Block[] {
+  return visibleBlocks(blocks).map((block) => {
+    // hasOwn: an id like "constructor" would otherwise find the prototype's.
+    if (block.id === undefined || !job.blocks || !Object.hasOwn(job.blocks, block.id)) return block;
+    const replacement = job.blocks[block.id];
+    if (replacement.type !== block.type) return block;
+    return { ...replacement, id: block.id } as Block;
+  });
 }
 
 // The job named in the URL, or the default one. An unknown or repeated

@@ -24,6 +24,8 @@ describe("public entries", () => {
         "parseConfig",
         "publicConfig",
         "resolveJob",
+        "resolveTab",
+        "tabHref",
         "withQuery",
       ]
     `);
