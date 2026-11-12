@@ -1,6 +1,7 @@
 # Character window plan
 
-Drafted 2026-11-11 with the owner, from four screenshots of the reference
+Drafted 2026-11-11 with the owner (answers to the first open questions
+added 2026-11-12), from four screenshots of the reference
 game's character window (not committed: they are the game's art). This is
 the brief for the sessions that build it. Decisions marked **Decided** were
 answered by the owner; **Proposed** ones are this plan's defaults, which an
@@ -15,11 +16,11 @@ the rest, as a second component that contains the first:
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│ Title                                   Character name  [Change job] │  bar
+│ Title                                                 Character name │  bar
 ├──────────────────────────────────────────────────────────────────────┤
 │ [ Tab one ▸] [ Tab two ] [ Tab three ] [ Tab four ]                  │  tab strip
 ├───────────────────────────────┬──────────────────────────────────────┤
-│                               │ [a][b][c]  CAPTION            [d]    │  gear-set row
+│                               │ [a][b][J]  CAPTION            [d]    │  gear-set row ([J] = job menu)
 │  content of the active tab    │            value                     │
 │  (an ordered list of blocks)  │ [slot]  LEVEL / emblem + job  [slot] │  header   ┐ today's
 │                               │ [col]   portrait              [col]  │  body     ┘ panel
@@ -40,9 +41,16 @@ comes from the config, as with the slots today.
 | 4 | Who toggles parts | **Decided.** Both: the config (a part without data, or marked `hidden`, isn't rendered) and props on the component (hide parts for one placement). Not visitors at runtime. |
 | 5 | Per-job data | **Decided.** Tabs and blocks are defined once; a job may replace a block's content by block id, as jobs fill slots by slot id. |
 | 6 | Extra parts | **Decided.** All four: sub-tabs inside a tab, collapsible groups, the gear-set row, the character name in the bar. No close button: a panel on a page has nothing to close. |
-| 7 | API shape | **Decided.** A new `CharacterWindow` export from `/react`, on the same config with new optional fields. `CharacterSheet` renders exactly as before. |
+| 7 | API shape | **Decided.** A new `CharacterWindow` export from `/react`, on the same config with new optional fields. `CharacterSheet` gains the gear-set row too (decision 11); otherwise it renders as before. |
 | 8 | Values | **Decided.** Config only. A host with live numbers writes them into the config object before rendering; there is no `values` prop. |
-| 9 | Release | **Proposed.** Additive throughout: minor (1.1.0), schema `$id` stays `@1`. |
+| 9 | Release | **Proposed.** Additive throughout: minor (1.1.0), schema `$id` stays `@1`. Depends on open question 1. |
+| 10 | Detail windows | **Decided.** A `fields` row may end in a small icon button that opens a window of more content (in the game: the list of titles, the list of ranks with the current one marked). Opened and closed by pressing the button, not by hover or focus, and larger than a slot tooltip. |
+| 11 | Job menu | **Decided.** "Change job" becomes one of the gear-set row's buttons (the note-like third one), and the row is part of the equipment pane, so `CharacterSheet` has it as well. |
+| 12 | Gear-set end button | **Decided.** The game's is "save this set". Here it is a link from the config, or a host's own control (a real save button in an editor). |
+| 13 | Row tooltips | **Decided.** Yes: rows can carry the slot tooltip. |
+| 14 | Decorative parts | **Decided.** The round buttons under the portrait and the corner marks on slot squares stay decorative (`showToolbar`, `showSockets`). Later idea for the round buttons: toggling decorative overlays on the portrait. |
+| 15 | Narrow order | **Decided.** Tab strip, content, then the equipment pane, which is also the DOM order. |
+| 16 | Width | **Decided.** The site's home page has room for the full window (about 58rem). |
 
 ## What the screenshots show, and what each part becomes
 
@@ -68,9 +76,11 @@ Left pane, per tab of the reference:
 
 Right pane, beyond what exists:
 
-- **Gear-set row** above the job header: three small square icon buttons,
-  a two-line caption (small label, larger value), one more icon button at
-  the far right. → `gearSet`: a caption and up to four icon links.
+- **Gear-set row** above the job header: three small square icon buttons
+  (the third, note-like one lists the gear sets), a two-line caption
+  (small label, larger value), one more icon button at the far right
+  (save). → `gearSet`: a caption, icon links, the job menu as the third
+  button, and an end control.
 - **Bar:** the character's name at the right. → `characterName`.
 - Already covered by `CharacterSheet`: header slots, level, emblem, job
   title, 6+6 slots, portrait, corner badge, the decorative toolbar under
@@ -92,6 +102,7 @@ import { CharacterWindow } from "@solution-nine/wol-character-panel/react";
   pageParam="page"
   hide={["gear-set"]}           // optional: structural parts to leave out
   hiddenTabs={["reputation"]}   // optional: tab ids to leave out here
+  gearSetEnd={<SaveButton />}   // optional: the host's own control at the row's right end
   // …and every CharacterSheet prop: basePath, jobParam, theme, labels,
   // showSockets, showToolbar, label, renderLink, renderPortrait, isParamActive
 />
@@ -102,8 +113,11 @@ import { CharacterWindow } from "@solution-nine/wol-character-panel/react";
   equipment pane under the bar); `"equipment"` leaves only the content
   pane. With one visible tab the strip isn't drawn (as the job menu isn't
   with one job) and its content still is.
+- `gearSetEnd` is a `ReactNode` the host owns (a client component of its
+  own, say a save button in an editor). It takes the place of a config
+  link with `position: "end"`. `CharacterSheet` takes it too.
 - A Server Component, with no new client code. `SlotHover.tsx` stays the
-  only `"use client"` file.
+  only `"use client"` file; row tooltips reuse it.
 - `LinkRendererProps["intent"]` gains `"tab"` (tab and page links), so a
   host can keep scroll position as it may for `"job"`. Only
   `CharacterWindow` emits it. A host `switch` over `intent` with no
@@ -147,6 +161,7 @@ then draws the bar and the equipment pane. Names below are **Proposed**.
   "characterName": "Alex Le",                       // bar, right
   "gearSet": {                                       // a job may set its own `gearSet`
     "label": "Résumé", "value": "v14 · Nov 2026",
+    "jobMenu": { "label": "Change job", "icon": "≡" },   // optional: the built-in button's name and icon
     "links": [
       { "id": "pdf", "label": "Download PDF", "icon": "⭳", "action": { "kind": "link", "href": "/resume.pdf" } },
       { "id": "git", "label": "GitHub", "icon": "GH", "position": "end",
@@ -163,7 +178,8 @@ then draws the bar and the equipment pane. Names below are **Proposed**.
         ] },
         { "type": "stats", "id": "core", "groups": [
           { "label": "Attributes", "icon": "✦", "rows": [
-            { "label": "Front end", "value": "4602", "tone": "highlight" },
+            { "label": "Front end", "value": "4602", "tone": "highlight",
+              "tooltip": { "title": "Front end", "note": "Component libraries, accessibility, performance." } },
             { "label": "Avg. review time", "value": "1.2 d", "tone": "muted" }
           ] },
           { "label": "Offensive", "column": "start", "rows": [ … ] },
@@ -189,7 +205,16 @@ then draws the bar and the equipment pane. Names below are **Proposed**.
     {
       "id": "reputation", "label": "Reputation", "hidden": true,
       "blocks": [
-        { "type": "fields", "rows": [ { "label": "Recommendations", "value": "37", "icon": "♥" } ] },
+        { "type": "fields", "rows": [
+          { "label": "Recommendations", "value": "37", "icon": "♥" },
+          { "label": "Title", "value": "Senior developer", "caption": "Since 2024",
+            "detail": { "label": "All titles", "icon": "☰", "title": "Titles", "blocks": [
+              { "type": "stats", "groups": [ { "rows": [
+                { "label": "Senior developer", "value": "2024–", "tone": "highlight" },
+                { "label": "Developer", "value": "2020–2024" }
+              ] } ] }
+            ] } }
+        ] },
         { "type": "progress", "label": "Communities", "groups": [
           { "label": "Open source", "collapsible": "open", "rows": [
             { "label": "Project A", "fill": 100, "caption": "Maintainer", "value": "212 PRs", "icon": "A" }
@@ -237,17 +262,51 @@ then draws the bar and the equipment pane. Names below are **Proposed**.
   menu does (intent `"job"`) and is `aria-current` on the current job. A
   `job` action naming no job in the config (unknown, or a draft after
   `publicConfig()`) renders the row without a link; `parseConfig` reports
-  an unknown id. Rows have no tooltip in this version.
+  an unknown id.
+- **Row tooltips:** a row of `gauges`, `stats`, `levels` or `progress` may
+  carry `tooltip`, the same shape slots use (`tooltipSchema`, its limits
+  unchanged; `subtitle` defaults to the row's label). It shows on hover
+  and keyboard focus through CSS and hides on Escape, exactly as a slot's
+  does. A row with a tooltip and no link is focusable (a named group with
+  `tabIndex={0}`, as a tooltip-only slot is); a row with neither takes no
+  Tab stop.
+- **Detail windows:** a `fields` row may carry `detail`: `label` (the
+  button's accessible name), `icon?`/`iconSrc?`, `title`, and `blocks`
+  (any block types, up to the per-tab block limit; a `detail` inside one
+  is not allowed, so windows don't nest). It draws a small icon button at
+  the row's right end. See Rendering.
 
 ### Blocks
 
 | `type` | Shape | Renders as |
 | --- | --- | --- |
-| `gauges` | `rows` (1 to 4): `label`, `value`, `secondary?`, `fill?`, `tone?: "primary" \| "secondary"` | Two per line. Label left and `value` right, the bar under them, `secondary` under the bar, right-aligned. |
-| `stats` | `groups` of `rows`: `label`, `value`, `tone?: "default" \| "muted" \| "highlight"` | A `<dl>` per group: label left, value right-aligned in tabular figures. |
-| `fields` | `rows`: `label`, `value`, `overline?`, `caption?`, `icon?`/`iconSrc?`, `action?` | Per row: `label` as a small ruled heading; under it the icon, then `overline` (small, muted), `value`, `caption` (small, accent). With an action the value line is the link. |
-| `levels` | `groups` of `rows`: `label`, `level` (short text), `fill?`, `tone?: "default" \| "highlight"`, `icon?`/`iconSrc?`, `action?` | Per row: icon square, large `level`, then `label` with a thin bar beneath it. `highlight` colours the level (the reference's level cap). |
-| `progress` | `groups` of `rows`: `label`, `fill?`, `caption?`, `value?`, `icon?`/`iconSrc?`, `action?` | Per row: icon and `label`; a full-width bar; `caption` under its left end, `value` under its right. |
+| `gauges` | `rows` (1 to 4): `label`, `value`, `secondary?`, `fill?`, `tone?: "primary" \| "secondary"`, `tooltip?` | Two per line. Label left and `value` right, the bar under them, `secondary` under the bar, right-aligned. |
+| `stats` | `groups` of `rows`: `label`, `value`, `tone?: "default" \| "muted" \| "highlight"`, `tooltip?` | A `<dl>` per group: label left, value right-aligned in tabular figures. |
+| `fields` | `rows`: `label`, `value`, `overline?`, `caption?`, `icon?`/`iconSrc?`, `action?`, `detail?` | Per row: `label` as a small ruled heading; under it the icon, then `overline` (small, muted), `value`, `caption` (small, accent), and the `detail` button at the right end. With an action the value line is the link. |
+| `levels` | `groups` of `rows`: `label`, `level` (short text), `fill?`, `tone?: "default" \| "highlight"`, `icon?`/`iconSrc?`, `action?`, `tooltip?` | Per row: icon square, large `level`, then `label` with a thin bar beneath it. `highlight` colours the level (the reference's level cap). |
+| `progress` | `groups` of `rows`: `label`, `fill?`, `caption?`, `value?`, `icon?`/`iconSrc?`, `action?`, `tooltip?` | Per row: icon and `label`; a full-width bar; `caption` under its left end, `value` under its right. |
+
+### Gear-set row
+
+Part of the equipment pane, above the job header, in both components.
+
+- Start group: the `links` without `position: "end"` (up to 2), then the
+  job menu button. Then the caption (`label` small, `value` larger). At
+  the right end: `gearSetEnd` if the host passes it, else the link with
+  `position: "end"`, else nothing.
+- **Job menu:** today's `<details>` list of job links, with an icon as its
+  toggle (accessible name from `jobMenu.label`, default "Change job"; the
+  default glyph is the package's). It keeps the `cs__jobs*` class names.
+  Not drawn with one job, or with `hide={["job-menu"]}`.
+- **When the row is drawn:**
+  - `CharacterWindow`: always when there is anything to put in it (more
+    than one job, a `gearSet`, or `gearSetEnd`). The bar never holds the
+    job menu.
+  - `CharacterSheet`: only when the config has `gearSet` or the host
+    passes `gearSetEnd`; the job menu then moves from the bar into it.
+    Without either, it renders exactly as in 1.0, menu in the bar. That
+    keeps the change a minor: no existing host's panel moves until its
+    config opts in (open question 1).
 
 ### Jobs
 
@@ -309,6 +368,26 @@ ship.
   against track needs 3:1 (WCAG 1.4.11) in both themes; tone is never the
   only signal (the value is always text). Check how axe treats `meter`
   first, and fall back to `role="img"` with an `aria-label` if needed.
+- **Row tooltips** reuse `SlotTooltip` and `SlotHover` as they are. They
+  open below the row, inside the pane. Check on a touch screen that a
+  tooltip-only row can be reached at all (slots sidestep this by showing
+  their names); if it can't, the tooltip's text needs another way in at
+  narrow widths before this ships.
+- **Detail windows** use the HTML Popover API: the button is
+  `<button type="button" popovertarget={id}>` and the window is
+  `<div popover id={id}>` holding a title bar, the blocks, and a close
+  button (`popovertargetaction="hide"`). The browser gives it everything
+  asked for with no script of ours: press to open, press again or Escape
+  or a click outside to close, the top layer (nothing clips it, no
+  z-index), and focus returned to the button. It is centred in the
+  viewport like a small window, about 24rem wide, scrolling inside if
+  taller than the viewport. All of it is in the HTML, so it works on
+  `/static` with JavaScript off. React 19.0 (the peer floor) passes the
+  attributes through; browsers have had it since 2024 (Chrome 114,
+  Safari 17, Firefox 125), and before that the content simply stays
+  hidden. Name the popover with `aria-labelledby` its title. If testing
+  turns up a blocker, fall back to a `<details>` positioned like the job
+  menu.
 - Rows with an action are links through `renderLink` with the same
   handling slots have (new-tab text, `aria-current` for an active param).
   Rows without one are plain text and take no Tab stop.
@@ -351,6 +430,9 @@ untouched.
     gradients on bars and icon squares.
 - Tooltips of the right slot column open leftward over the content pane;
   check they stay above it (stacking) and inside the window.
+- The gear-set row and the detail window follow the theme rules: flat
+  and ruled in `document`; in `game` the square bevelled icon buttons and
+  a framed window with a title bar.
 
 ### Playground, tests, tooling
 
@@ -366,7 +448,11 @@ untouched.
   assertions; the entries snapshot. Coverage thresholds don't go down.
 - Playwright: tab and page links with JavaScript off on `/static`,
   `aria-current`, focus rings on every new Tab stop in both themes,
-  `<details>` by keyboard, the side-by-side and stacked layouts following
+  `<details>` by keyboard, row tooltips (hover, focus, Escape), detail
+  windows (open and close by button, Escape, outside click, focus back
+  on the button, and with JavaScript off), the job menu in the gear-set
+  row in both components and still in the bar for a config without
+  `gearSet`, the side-by-side and stacked layouts following
   the container, the equipment pane's own narrow layout inside a wide
   window, axe on every example × theme × layout × tab.
 - `scripts/preview.mjs`: a wider viewport and one shot per tab for the
@@ -386,13 +472,18 @@ green, reviewed by the `reviewer` subagent before the PR opens.
    `publicConfig`, `resolveTab`, `tabHref`, block replacement, the
    generated JSON Schema, examples, unit tests, README Config section.
    Host-visible (new optional fields): CHANGELOG.
-3. **The window.** `CharacterWindow` with the bar, tab strip, sub-tabs,
-   both layouts, the gear-set row, `hide` and `hiddenTabs`, and the
-   blocks `gauges`, `stats` and `fields`. Playground, `/static`, preview
+3. **The gear-set row.** In the equipment pane, for `CharacterSheet`: the
+   links, caption, job menu button, `gearSetEnd`, and the opt-in rule.
+   Small, and the only PR that changes what `CharacterSheet` can render,
+   so it is reviewed on its own. CHANGELOG.
+4. **The window.** `CharacterWindow` with the bar, tab strip, sub-tabs,
+   both layouts, `hide` and `hiddenTabs`, and the blocks `gauges`,
+   `stats` and `fields` with row tooltips. Playground, `/static`, preview
    script, server-render and browser tests, README.
-4. **Lists.** `levels` and `progress`, two-column runs, collapsible
-   groups, the `job` action. Tests as above.
-5. **Finish.** Game-theme polish against the screenshots, limits measured
+5. **Lists and detail windows.** `levels` and `progress`, two-column
+   runs, collapsible groups, the `job` action, and `detail` on `fields`
+   rows. Tests as above.
+6. **Finish.** Game-theme polish against the screenshots, limits measured
    on `edge-cases`, the roadmap's Done entry. Then the owner runs
    `/release-prep` (1.1.0) and tags.
 
@@ -404,36 +495,27 @@ older package reading a newer config just strips the new keys.
 
 ## Open questions for the owner
 
-Each has a default the work proceeds on if unanswered.
+The first round (2026-11-11) is answered and folded in above as decisions
+10 to 16. What those answers raised; each has a default the work proceeds
+on if unanswered.
 
-1. **Small icons at the right of profile rows** (a note-like icon beside
-   the title, a banner beside the second field). What do they do in the
-   game, and do you want them? Default: left out; a row's `action` makes
-   its value line the link. If wanted: one optional trailing icon link
-   per `fields` row.
-2. **The six round buttons under the portrait.** They stay decorative
-   behind `showToolbar`; the gear-set row's links are the real controls.
-   Should they become real links too (a second `links` list)? Default: no.
-3. **The icon at the far right of the gear-set row** (two arrows in a
-   circle). Default: just another link with `position: "end"`, no
-   behaviour of its own.
-4. **Corner marks on slot squares and the coloured bars beside the right
-   column** (the reference shows a small + or ○ on some squares and thin
-   bars of varying colour). Default: unchanged, the existing rails and
-   optional socket dots. If they should carry data (say a per-slot
-   status), that is a separate slot feature.
-5. **Stacked order when narrow.** Default: tab strip, content, then the
-   equipment pane (DOM order). The alternative puts the portrait first on
-   phones, and then it comes first in the DOM at every width, so on wide
-   screens keyboard focus would visit the right pane before the tabs.
-6. **Where it goes on the site.** The window wants up to about 58rem. Is
-   the home page's column that wide, or should the stacked layout be what
-   most visitors get?
-7. **"Change job" in the window's bar.** Default: stays, after the
-   character name. With `levels` rows able to switch job, a host can hide
-   it with `hide={["job-menu"]}`.
-8. **Tooltips on rows** (hover a stat for an explanation, as the game
-   does). Default: not in this version; it reuses the slot tooltip later.
+1. **`CharacterSheet` and semver.** Default: the gear-set row appears in
+   `CharacterSheet` only for a config with `gearSet` (or a `gearSetEnd`
+   prop), so existing hosts see no change and the release is a minor. The
+   alternative is to always move "Change job" out of the bar into the
+   row, which changes every host's panel: a major (2.0.0, schema `@2`,
+   and an upgrade PR in the site that handles it).
+2. **Detail windows through the Popover API.** Default as described under
+   Rendering: a centred window in the browser's top layer, no script.
+   The alternative, a `<details>` anchored beside its button, sits nearer
+   the row but doesn't close on an outside click without JavaScript and
+   can be clipped by the pane.
+3. **The save button.** Default: the package draws no save button of its
+   own, since it has nothing to save; a config link or the host's
+   `gearSetEnd` fills the place. If the site's editor should get a
+   ready-made one, that is a host component, in the site.
+4. **The job menu button's default icon.** Default: a plain list glyph
+   (`≡`), overridable with `jobMenu.icon` or `iconSrc`.
 
 ## Ideas for what the parts can hold
 

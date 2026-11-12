@@ -161,7 +161,7 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 Planned 2026-11-11: a `CharacterWindow` component around today's panel,
 with a tab strip, a content pane of typed blocks (gauges, stats, fields,
 levels, progress) and a gear-set row, all from new optional config fields
-(a minor). The decisions, config shape, work order (five PRs) and the
+(a minor). The decisions, config shape, work order (six PRs) and the
 questions still open are in `docs/character-window-plan.md`.
 
 ## Later (candidates, unordered)
