@@ -58,3 +58,36 @@ test("the narrow layout needs no script", async ({ page }) => {
   await expect(label).toBeVisible();
   expect((await label.boundingBox())!.width).toBeGreaterThan(1);
 });
+
+// The window, server-rendered: tabs and sub-tabs are links, so they work
+// with no script, and so do row tooltips (CSS).
+test("the window's tab and sub-tab links work", async ({ page }) => {
+  await page.goto("/static?view=window&fixture=full");
+  const tabs = page.getByRole("navigation", { name: "Tabs" });
+  await expect(tabs.getByRole("link", { name: "Attributes" })).toHaveAttribute("aria-current", "page");
+
+  await tabs.getByRole("link", { name: "Skills" }).click();
+  await expect(page).toHaveURL(/[?&]tab=skills/);
+  await expect(tabs.getByRole("link", { name: "Skills" })).toHaveAttribute("aria-current", "page");
+
+  const pages = page.getByRole("navigation", { name: "Skills" });
+  await pages.getByRole("link", { name: "Run" }).click();
+  await expect(page).toHaveURL(/[?&]page=run/);
+  await expect(pages.getByRole("link", { name: "Run" })).toHaveAttribute("aria-current", "page");
+});
+
+test("changing job in the window keeps its tab", async ({ page }) => {
+  await page.goto("/static?view=window&fixture=full&tab=profile");
+  await page.locator(".cs__jobs-toggle").click();
+  await page.getByRole("link", { name: /Healthcare/ }).click();
+  await expect(page).toHaveURL(/[?&]job=healthcare/);
+  await expect(page).toHaveURL(/[?&]tab=profile/);
+  await expect(page.locator(".cs__content")).toContainText("Remote");
+});
+
+test("keyboard focus shows a row's tooltip", async ({ page }) => {
+  await page.goto("/static?view=window&fixture=full");
+  const frontEnd = page.locator(".cs__content [role='group'][tabindex='0']").filter({ hasText: "Front end" });
+  await tabTo(page, frontEnd);
+  await expect(await tooltipOf(frontEnd)).toBeVisible();
+});
