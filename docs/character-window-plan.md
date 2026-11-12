@@ -668,6 +668,21 @@ both. The fixed controls' drawings not used yet (detail, close,
 collapsible marker, active-tab marker) come with those controls in PRs 4
 and 5.
 
+Settled by PR 4 (Chromium): axe passes `role="meter"` bars (named by
+`aria-labelledby`, with `aria-valuenow`/`min`/`max`) on every tab of every
+example in both themes and layouts, so no `role="img"` fallback. A
+tooltip-only row could not be reached on a touch screen (in touch emulation a tap
+focuses it without `:focus-visible`, and there is no hover), so under
+`(hover: none)` a focused content-pane row shows its tooltip: a tap opens
+it, a tap elsewhere closes it; slots keep showing their names instead. A
+right-column slot's tooltip (17rem) stays inside the 30rem pane, so it
+never reaches the content pane; the crossing that happens is a row's
+tooltip dropping over the stacked equipment pane, which works because the
+hovered or focused pane comes forward (each pane is a container, so its
+own stacking context). The playground keeps `view=equipment` as its
+default, so the existing browser tests' URLs keep meaning the panel; the
+demo's default view is the owner's call for PR 6.
+
 ## Ideas for what the parts can hold
 
 - **Gauges:** years of experience against a goal, availability this
