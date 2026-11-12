@@ -170,3 +170,19 @@ for (const theme of ["document", "game"]) {
     expect(await oneLine(page, ".cs__jobs-toggle"), "the toggle").toBe(true);
   });
 }
+
+// LIMITS.job.levelLabel was tightened for 2.0.0 to what fits at 18rem (a
+// 320px phone less its gutters): one line in the document theme, and inside
+// the job column, wrapping, in the game theme's wider capitals.
+for (const theme of ["document", "game"]) {
+  test(`at 18rem, a level label at the limit stays inside the job column (${theme})`, async ({ page }) => {
+    await page.goto(`/?fixture=edge-cases&theme=${theme}&width=18`);
+    const { label, column } = await page.locator(".cs__job").evaluate((job) => {
+      const text = document.createRange();
+      text.selectNodeContents(job.querySelector(".cs__level-label")!);
+      return { label: text.getBoundingClientRect().toJSON(), column: job.getBoundingClientRect().toJSON() };
+    });
+    expect(label.right).toBeLessThanOrEqual(column.right + 0.5);
+    if (theme === "document") expect(await oneLine(page, ".cs__level-label")).toBe(true);
+  });
+}

@@ -231,7 +231,7 @@
               "label": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 20,
+                "maxLength": 16,
                 "description": "e.g. \"Lv.\" or \"Experience\"."
               },
               "value": {
@@ -1126,7 +1126,7 @@
         "subtitle": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 120
+          "maxLength": 60
         },
         "stat": {
           "description": "One headline figure, on its own ruled line.",
@@ -1151,7 +1151,7 @@
         },
         "items": {
           "description": "Listed in order, most relevant first. Label/value pairs render as a two-column table.",
-          "maxItems": 10,
+          "maxItems": 5,
           "type": "array",
           "items": {
             "anyOf": [
@@ -1186,7 +1186,7 @@
         "note": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 240
+          "maxLength": 120
         }
       },
       "required": [

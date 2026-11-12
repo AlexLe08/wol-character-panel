@@ -40,12 +40,12 @@ export const LIMITS = {
   // headings, rows, gear-set links); slotContent.iconSrc for every image.
   // column: slots drawn per side column (left, right); parseConfig reports more.
   slot: { label: 40, icon: 4, column: 6 },
-  job: { name: 40, title: 80, icon: 4, levelLabel: 20, levelValue: 40, section: 10_000 },
+  job: { name: 40, title: 80, icon: 4, levelLabel: 16, levelValue: 40, section: 10_000 },
   portrait: { src: 500, alt: 300 },
   // A label/value pair: a job's badge, a tooltip's stat or item.
   pair: { label: 40, value: 80 },
   // tags and items are counts; item is a plain line item's length.
-  tooltip: { title: 80, tag: 24, tags: 3, subtitle: 120, item: 80, items: 10, note: 240 },
+  tooltip: { title: 80, tag: 24, tags: 3, subtitle: 60, item: 80, items: 5, note: 120 },
   slotContent: { iconSrc: 500 },
   // A link's path or an external URL; a param action's query name and value.
   action: { href: 300, paramName: 40, paramValue: 80 },
