@@ -625,8 +625,9 @@ green, reviewed by the `reviewer` subagent before the PR opens.
    on `edge-cases`, the roadmap's Done entry. After changing a window
    limit, `node scripts/fill-edge-cases.mjs` rewrites `edge-cases`' window
    fields at the new values and `node scripts/check-edge-cases.mjs`
-   confirms each one is reached; the tooltip and level-label limits
-   (Breaking changes, 4) are still edited by hand. Then the owner runs
+   confirms each one is reached; the slot, job and tooltip limits
+   (among them Breaking changes 4's tooltip and level label) are still
+   filled by hand. Then the owner runs
    `/release-prep` (2.0.0, which regenerates the schema so its `$id`
    reads `@2`) and tags.
 

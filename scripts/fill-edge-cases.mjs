@@ -97,7 +97,7 @@ const levels = (id) => ({
       collapsible: "closed",
       rows: range(LIMITS.block.rows).map((i) => ({
         label: label(`Level ${i + 1}`),
-        level: glyph,
+        level: "W".repeat(LIMITS.row.level),
         ...(i % 3 !== 2 && { fill: (i * 9) % 101 }),
         tone: i % 2 ? "default" : "highlight",
         ...icons(i),
@@ -186,9 +186,19 @@ const tabs = [
 ];
 
 const gearSetLinks = [
-  { id: "start-1", label: label("Start link 1"), icon: glyph, action: actions[0] },
-  { id: "start-2", label: label("Start link 2"), iconSrc: "/icon.svg", action: actions[4] },
-  { id: "end", label: label("End link"), iconName: "save", position: "end", action: actions[2] },
+  ...range(LIMITS.gearSet.startLinks).map((i) => ({
+    id: `start-${i + 1}`,
+    label: label(`Start link ${i + 1}`),
+    ...icons(i),
+    action: actions[i % 2 ? 4 : 0],
+  })),
+  ...range(LIMITS.gearSet.endLinks).map((i) => ({
+    id: i ? `end-${i + 1}` : "end",
+    label: label(i ? `End link ${i + 1}` : "End link"),
+    iconName: "save",
+    position: "end",
+    action: actions[2],
+  })),
 ];
 
 const { $schema, title, defaultJobId, slots, jobs } = current;

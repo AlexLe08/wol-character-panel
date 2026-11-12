@@ -1,9 +1,10 @@
 // Checks that examples/edge-cases.json fills each of the window's limits
 // in LIMITS (tabs, pages, blocks, groups, rows, gear-set links, and the
-// lengths of their labels, values and captions): prints one line per
-// limit with the largest value found, and exits 1 if any falls short.
+// lengths of their labels, values, captions and levels): prints one line
+// per limit with the largest value found, and exits 1 if any falls short.
 //   node scripts/check-edge-cases.mjs
-// The slot, job and tooltip limits aren't checked here.
+// Not checked here: icon glyph lengths (LIMITS.slot.icon, which the fill
+// script writes at its limit) and the slot, job and tooltip limits.
 import { readFileSync } from "node:fs";
 import { LIMITS } from "../src/schema.ts";
 
@@ -15,7 +16,11 @@ const blocksOf = (tab) => (tab.pages ? tab.pages.flatMap((p) => p.blocks) : tab.
 see("config.characterName", c.characterName.length);
 see("config.tabs", c.tabs.length);
 see("gearSet.links", c.gearSet.links.length);
+see("gearSet.startLinks", c.gearSet.links.filter((link) => link.position !== "end").length);
+see("gearSet.endLinks", c.gearSet.links.filter((link) => link.position === "end").length);
 see("pair.label (gearSet)", c.gearSet.label.length);
+see("pair.label (gearSet links)", Math.max(...c.gearSet.links.map((link) => link.label.length)));
+see("pair.label (jobMenu)", c.gearSet.jobMenu.label.length);
 see("pair.value (gearSet)", c.gearSet.value.length);
 for (const tab of c.tabs) {
   see("tab.label", tab.label.length);
@@ -50,6 +55,10 @@ const limits = {
   "config.characterName": LIMITS.config.characterName,
   "config.tabs": LIMITS.config.tabs,
   "gearSet.links": LIMITS.gearSet.links,
+  "gearSet.startLinks": LIMITS.gearSet.startLinks,
+  "gearSet.endLinks": LIMITS.gearSet.endLinks,
+  "pair.label (gearSet links)": LIMITS.pair.label,
+  "pair.label (jobMenu)": LIMITS.pair.label,
   "tab.label": LIMITS.tab.label,
   "tab.pages": LIMITS.tab.pages,
   "tab.blocks": LIMITS.tab.blocks,
