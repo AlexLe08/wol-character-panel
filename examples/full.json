@@ -1,7 +1,239 @@
 {
   "$schema": "../character-sheet.schema.json",
   "title": "Character profile",
+  "characterName": "Alex Le",
   "defaultJobId": "frontend",
+  "gearSet": {
+    "label": "Résumé",
+    "value": "v14 · Nov 2026",
+    "jobMenu": { "label": "Change job", "iconName": "note" },
+    "links": [
+      { "id": "contact", "label": "Contact", "iconName": "person", "action": { "kind": "anchor", "target": "contact" } },
+      {
+        "id": "github",
+        "label": "GitHub",
+        "iconName": "star",
+        "action": { "kind": "external", "href": "https://github.com/AlexLe08", "newTab": true }
+      },
+      {
+        "id": "pdf",
+        "label": "Download the résumé",
+        "iconName": "save",
+        "position": "end",
+        "action": { "kind": "link", "href": "/resume.pdf" }
+      }
+    ]
+  },
+  "tabs": [
+    {
+      "id": "attributes",
+      "label": "Attributes",
+      "iconName": "crest",
+      "blocks": [
+        {
+          "type": "gauges",
+          "id": "vitals",
+          "rows": [
+            { "label": "Years", "value": "6", "secondary": "since 2020", "fill": 100, "tone": "primary" },
+            { "label": "Focus", "value": "80%", "secondary": "this month", "fill": 80, "tone": "secondary" }
+          ]
+        },
+        {
+          "type": "stats",
+          "id": "core",
+          "groups": [
+            {
+              "label": "Attributes",
+              "iconName": "star",
+              "rows": [
+                {
+                  "label": "Front end",
+                  "value": "92",
+                  "tone": "highlight",
+                  "tooltip": { "title": "Front end", "note": "Component libraries, accessibility, performance." }
+                },
+                { "label": "Back end", "value": "61" },
+                { "label": "Avg. review time", "value": "1.2 d", "tone": "muted" }
+              ]
+            },
+            {
+              "label": "Offensive",
+              "iconName": "sword",
+              "column": "start",
+              "rows": [
+                { "label": "Projects shipped", "value": "6" },
+                { "label": "Languages", "value": "4" }
+              ]
+            },
+            {
+              "label": "Defensive",
+              "iconName": "shield",
+              "column": "end",
+              "rows": [
+                { "label": "Test coverage", "value": "93%" },
+                { "label": "Incidents", "value": "0", "tone": "muted" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "profile",
+      "label": "Profile",
+      "iconName": "person",
+      "blocks": [
+        {
+          "type": "fields",
+          "rows": [
+            {
+              "label": "Title",
+              "value": "Front-end developer",
+              "caption": "Since 2022",
+              "iconName": "crest",
+              "detail": {
+                "label": "All titles",
+                "iconName": "list",
+                "title": "Titles",
+                "blocks": [
+                  {
+                    "type": "stats",
+                    "groups": [
+                      {
+                        "rows": [
+                          { "label": "Front-end developer", "value": "2022–", "tone": "highlight" },
+                          { "label": "Developer", "value": "2020–2022" }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            { "label": "Location", "value": "Remote", "overline": "Time zone", "iconName": "flag" },
+            {
+              "label": "Writing",
+              "value": "Notes on publishing",
+              "iconName": "note",
+              "action": { "kind": "link", "href": "/writing" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "label": "Skills",
+      "iconName": "hammer",
+      "pages": [
+        {
+          "id": "build",
+          "label": "Build",
+          "iconName": "hammer",
+          "blocks": [
+            {
+              "type": "levels",
+              "groups": [
+                {
+                  "label": "Front end",
+                  "column": "start",
+                  "rows": [
+                    {
+                      "label": "React",
+                      "level": "4",
+                      "fill": 90,
+                      "tone": "highlight",
+                      "iconName": "wand",
+                      "action": { "kind": "param", "name": "stack", "value": "react", "target": "projects" }
+                    },
+                    {
+                      "label": "TypeScript",
+                      "level": "4",
+                      "fill": 80,
+                      "iconName": "bow",
+                      "action": { "kind": "param", "name": "stack", "value": "typescript", "target": "projects" }
+                    }
+                  ]
+                },
+                {
+                  "label": "Domains",
+                  "column": "end",
+                  "rows": [
+                    {
+                      "label": "Healthcare work",
+                      "level": "3",
+                      "fill": 40,
+                      "iconName": "cross",
+                      "action": { "kind": "job", "id": "healthcare" },
+                      "tooltip": { "title": "Healthcare", "subtitle": "Switches the panel to this job" }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "run",
+          "label": "Run",
+          "iconName": "gear",
+          "blocks": [
+            {
+              "type": "levels",
+              "groups": [
+                {
+                  "rows": [
+                    { "label": "Testing", "level": "4", "fill": 70, "iconName": "shield" },
+                    { "label": "Releases", "level": "1", "fill": 20, "iconName": "leaf" }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reputation",
+      "label": "Reputation",
+      "iconName": "heart",
+      "blocks": [
+        {
+          "type": "progress",
+          "label": "Communities",
+          "iconName": "flag",
+          "groups": [
+            {
+              "label": "Open source",
+              "collapsible": "open",
+              "rows": [
+                {
+                  "label": "This panel",
+                  "fill": 100,
+                  "caption": "Maintainer",
+                  "value": "23 PRs",
+                  "iconName": "star",
+                  "action": { "kind": "external", "href": "https://github.com/AlexLe08/wol-character-panel" }
+                },
+                { "label": "Docs fixes", "fill": 30, "caption": "Contributor", "value": "4 PRs", "iconName": "note" }
+              ]
+            },
+            {
+              "label": "Earlier",
+              "collapsible": "closed",
+              "rows": [{ "label": "Study group", "fill": 60, "caption": "Organiser", "value": "2 years" }]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "notes",
+      "label": "Notes",
+      "hidden": true,
+      "blocks": [{ "type": "fields", "rows": [{ "label": "Draft", "value": "Not on the site yet" }] }]
+    }
+  ],
   "slots": [
     { "id": "stack", "label": "Core stack", "position": "header-start", "icon": "◆" },
     { "id": "focus", "label": "Current focus", "position": "header-end", "icon": "◇" },
@@ -126,7 +358,29 @@
           "action": { "kind": "none" }
         }
       },
-      "sections": { "skills": "Accessible, patient-facing interfaces." }
+      "sections": { "skills": "Accessible, patient-facing interfaces." },
+      "gearSet": {
+        "label": "Résumé",
+        "value": "Healthcare",
+        "links": [
+          {
+            "id": "pdf",
+            "label": "Download the résumé",
+            "iconName": "save",
+            "position": "end",
+            "action": { "kind": "link", "href": "/resume-healthcare.pdf" }
+          }
+        ]
+      },
+      "blocks": {
+        "vitals": {
+          "type": "gauges",
+          "rows": [
+            { "label": "Years", "value": "3", "secondary": "in healthcare", "fill": 50, "tone": "primary" },
+            { "label": "Focus", "value": "60%", "fill": 60, "tone": "secondary" }
+          ]
+        }
+      }
     },
     {
       "id": "backend",

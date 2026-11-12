@@ -1,7 +1,1425 @@
 {
   "$schema": "../character-sheet.schema.json",
   "title": "Title Long text that fills the field to its limit so overflo",
+  "characterName": "Character name Long text that fills the.",
   "defaultJobId": "limits",
+  "gearSet": {
+    "label": "Gear set Long text that fills the field.",
+    "value": "Gear set value Long text that fills the field to its limit so overflow and wrap.",
+    "jobMenu": {
+      "label": "Job menu Long text that fills the field.",
+      "icon": "WWWW"
+    },
+    "links": [
+      {
+        "id": "start-1",
+        "label": "Start link 1 Long text that fills the f.",
+        "icon": "WWWW",
+        "action": {
+          "kind": "anchor",
+          "target": "limits"
+        }
+      },
+      {
+        "id": "start-2",
+        "label": "Start link 2 Long text that fills the f.",
+        "iconSrc": "/icon.svg",
+        "action": {
+          "kind": "job",
+          "id": "bare"
+        }
+      },
+      {
+        "id": "end",
+        "label": "End link Long text that fills the field.",
+        "iconName": "save",
+        "position": "end",
+        "action": {
+          "kind": "external",
+          "href": "https://example.com/",
+          "newTab": true
+        }
+      }
+    ]
+  },
+  "tabs": [
+    {
+      "id": "limits",
+      "label": "Limits Long text that f.",
+      "icon": "WWWW",
+      "blocks": [
+        {
+          "type": "gauges",
+          "id": "gauges",
+          "label": "Gauges Long text that fills the field t.",
+          "icon": "WWWW",
+          "rows": [
+            {
+              "label": "Gauge 1 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "secondary": "Secondary Long text that fills the field to its limit so ov.",
+              "fill": 0,
+              "tone": "primary",
+              "tooltip": {
+                "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                "tags": [
+                  "Tag1 Long text that fill",
+                  "Tag2 Long text that fill",
+                  "Tag3 Long text that fill"
+                ],
+                "subtitle": "Subtitle Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to.",
+                "stat": {
+                  "label": "Stat Long text that fills the field to i",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                },
+                "items": [
+                  {
+                    "label": "Label 1 Long text that fills the field t",
+                    "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                  },
+                  "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                  {
+                    "label": "Label 3 Long text that fills the field t",
+                    "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                  },
+                  "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                  {
+                    "label": "Label 5 Long text that fills the field t",
+                    "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                  },
+                  "Item 6 Long text that fills the field to its limit so overflow and wrapping show",
+                  {
+                    "label": "Label 7 Long text that fills the field t",
+                    "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                  },
+                  "Item 8 Long text that fills the field to its limit so overflow and wrapping show",
+                  {
+                    "label": "Label 9 Long text that fills the field t",
+                    "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                  },
+                  "Item 10 Long text that fills the field to its limit so overflow and wrapping sho"
+                ],
+                "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long"
+              }
+            },
+            {
+              "label": "Gauge 2 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "secondary": "Secondary Long text that fills the field to its limit so ov.",
+              "fill": 100,
+              "tone": "secondary"
+            },
+            {
+              "label": "Gauge 3 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "secondary": "Secondary Long text that fills the field to its limit so ov.",
+              "fill": 33.3,
+              "tone": "primary"
+            },
+            {
+              "label": "Gauge 4 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "secondary": "Secondary Long text that fills the field to its limit so ov.",
+              "tone": "secondary"
+            }
+          ]
+        },
+        {
+          "type": "stats",
+          "id": "stats",
+          "label": "Stats Long text that fills the field to.",
+          "iconName": "shield",
+          "groups": [
+            {
+              "label": "Group 1 Long text that fills the field .",
+              "icon": "WWWW",
+              "rows": [
+                {
+                  "label": "Stat 1 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "default",
+                  "tooltip": {
+                    "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                    "tags": [
+                      "Tag1 Long text that fill",
+                      "Tag2 Long text that fill",
+                      "Tag3 Long text that fill"
+                    ],
+                    "subtitle": "Subtitle Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to.",
+                    "stat": {
+                      "label": "Stat Long text that fills the field to i",
+                      "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                    },
+                    "items": [
+                      {
+                        "label": "Label 1 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 3 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 5 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 6 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 7 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 8 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 9 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 10 Long text that fills the field to its limit so overflow and wrapping sho"
+                    ],
+                    "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long"
+                  }
+                },
+                {
+                  "label": "Stat 2 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "muted"
+                },
+                {
+                  "label": "Stat 3 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "highlight"
+                },
+                {
+                  "label": "Stat 4 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "default"
+                },
+                {
+                  "label": "Stat 5 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "muted"
+                },
+                {
+                  "label": "Stat 6 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "highlight"
+                },
+                {
+                  "label": "Stat 7 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "default"
+                },
+                {
+                  "label": "Stat 8 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "muted"
+                },
+                {
+                  "label": "Stat 9 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "highlight"
+                },
+                {
+                  "label": "Stat 10 Long text that fills the field .",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "default"
+                },
+                {
+                  "label": "Stat 11 Long text that fills the field .",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "muted"
+                },
+                {
+                  "label": "Stat 12 Long text that fills the field .",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "highlight"
+                }
+              ]
+            },
+            {
+              "label": "Group 2 Long text that fills the field .",
+              "iconSrc": "/icon.svg",
+              "column": "start",
+              "rows": [
+                {
+                  "label": "Stat 1 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "default",
+                  "tooltip": {
+                    "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                    "tags": [
+                      "Tag1 Long text that fill",
+                      "Tag2 Long text that fill",
+                      "Tag3 Long text that fill"
+                    ],
+                    "subtitle": "Subtitle Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to.",
+                    "stat": {
+                      "label": "Stat Long text that fills the field to i",
+                      "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                    },
+                    "items": [
+                      {
+                        "label": "Label 1 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 3 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 5 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 6 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 7 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 8 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 9 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 10 Long text that fills the field to its limit so overflow and wrapping sho"
+                    ],
+                    "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Group 3 Long text that fills the field .",
+              "iconName": "sword",
+              "column": "end",
+              "rows": [
+                {
+                  "label": "Stat 1 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "default",
+                  "tooltip": {
+                    "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                    "tags": [
+                      "Tag1 Long text that fill",
+                      "Tag2 Long text that fill",
+                      "Tag3 Long text that fill"
+                    ],
+                    "subtitle": "Subtitle Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to.",
+                    "stat": {
+                      "label": "Stat Long text that fills the field to i",
+                      "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                    },
+                    "items": [
+                      {
+                        "label": "Label 1 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 3 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 5 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 6 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 7 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 8 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 9 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 10 Long text that fills the field to its limit so overflow and wrapping sho"
+                    ],
+                    "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Group 4 Long text that fills the field .",
+              "column": "start",
+              "rows": [
+                {
+                  "label": "Stat 1 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "default",
+                  "tooltip": {
+                    "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                    "tags": [
+                      "Tag1 Long text that fill",
+                      "Tag2 Long text that fill",
+                      "Tag3 Long text that fill"
+                    ],
+                    "subtitle": "Subtitle Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to.",
+                    "stat": {
+                      "label": "Stat Long text that fills the field to i",
+                      "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                    },
+                    "items": [
+                      {
+                        "label": "Label 1 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 3 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 5 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 6 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 7 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 8 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 9 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 10 Long text that fills the field to its limit so overflow and wrapping sho"
+                    ],
+                    "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Group 5 Long text that fills the field .",
+              "icon": "WWWW",
+              "column": "end",
+              "rows": [
+                {
+                  "label": "Stat 1 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "default",
+                  "tooltip": {
+                    "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                    "tags": [
+                      "Tag1 Long text that fill",
+                      "Tag2 Long text that fill",
+                      "Tag3 Long text that fill"
+                    ],
+                    "subtitle": "Subtitle Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to.",
+                    "stat": {
+                      "label": "Stat Long text that fills the field to i",
+                      "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                    },
+                    "items": [
+                      {
+                        "label": "Label 1 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 3 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 5 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 6 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 7 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 8 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 9 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 10 Long text that fills the field to its limit so overflow and wrapping sho"
+                    ],
+                    "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Group 6 Long text that fills the field .",
+              "iconSrc": "/icon.svg",
+              "column": "start",
+              "rows": [
+                {
+                  "label": "Stat 1 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "default",
+                  "tooltip": {
+                    "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                    "tags": [
+                      "Tag1 Long text that fill",
+                      "Tag2 Long text that fill",
+                      "Tag3 Long text that fill"
+                    ],
+                    "subtitle": "Subtitle Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to.",
+                    "stat": {
+                      "label": "Stat Long text that fills the field to i",
+                      "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                    },
+                    "items": [
+                      {
+                        "label": "Label 1 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 3 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 5 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 6 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 7 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 8 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 9 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 10 Long text that fills the field to its limit so overflow and wrapping sho"
+                    ],
+                    "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Group 7 Long text that fills the field .",
+              "iconName": "sword",
+              "column": "end",
+              "rows": [
+                {
+                  "label": "Stat 1 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "default",
+                  "tooltip": {
+                    "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                    "tags": [
+                      "Tag1 Long text that fill",
+                      "Tag2 Long text that fill",
+                      "Tag3 Long text that fill"
+                    ],
+                    "subtitle": "Subtitle Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to.",
+                    "stat": {
+                      "label": "Stat Long text that fills the field to i",
+                      "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                    },
+                    "items": [
+                      {
+                        "label": "Label 1 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 3 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 5 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 6 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 7 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 8 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 9 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 10 Long text that fills the field to its limit so overflow and wrapping sho"
+                    ],
+                    "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Group 8 Long text that fills the field .",
+              "column": "start",
+              "rows": [
+                {
+                  "label": "Stat 1 Long text that fills the field t.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "tone": "default",
+                  "tooltip": {
+                    "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                    "tags": [
+                      "Tag1 Long text that fill",
+                      "Tag2 Long text that fill",
+                      "Tag3 Long text that fill"
+                    ],
+                    "subtitle": "Subtitle Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to.",
+                    "stat": {
+                      "label": "Stat Long text that fills the field to i",
+                      "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                    },
+                    "items": [
+                      {
+                        "label": "Label 1 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 3 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 5 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 6 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 7 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 8 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 9 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 10 Long text that fills the field to its limit so overflow and wrapping sho"
+                    ],
+                    "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "fields",
+          "id": "fields",
+          "label": "Fields Long text that fills the field t.",
+          "rows": [
+            {
+              "label": "Field 1 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "overline": "Overline Long text that fills the field to its limit so ove.",
+              "caption": "Caption Long text that fills the field to its limit so over.",
+              "icon": "WWWW",
+              "action": {
+                "kind": "anchor",
+                "target": "limits"
+              },
+              "detail": {
+                "label": "Detail Long text that fills the field t.",
+                "icon": "WWWW",
+                "title": "Detail window title Long text that fills the field to its l.",
+                "blocks": [
+                  {
+                    "type": "gauges",
+                    "label": "Gauges Long text that fills the field t.",
+                    "icon": "WWWW",
+                    "rows": [
+                      {
+                        "label": "Gauge 1 Long text that fills the field .",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                        "secondary": "Secondary Long text that fills the field to its limit so ov.",
+                        "fill": 0,
+                        "tone": "primary"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "fields",
+                    "rows": [
+                      {
+                        "label": "Field",
+                        "value": "1",
+                        "action": {
+                          "kind": "job",
+                          "id": "bare"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "levels",
+                    "groups": [
+                      {
+                        "rows": [
+                          {
+                            "label": "Level",
+                            "level": "1",
+                            "fill": 50
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "progress",
+                    "groups": [
+                      {
+                        "rows": [
+                          {
+                            "label": "Progress",
+                            "fill": 50,
+                            "caption": "Caption",
+                            "value": "1"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "stats",
+                    "groups": [
+                      {
+                        "rows": [
+                          {
+                            "label": "Small",
+                            "value": "1"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "stats",
+                    "groups": [
+                      {
+                        "rows": [
+                          {
+                            "label": "Small",
+                            "value": "1"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "stats",
+                    "groups": [
+                      {
+                        "rows": [
+                          {
+                            "label": "Small",
+                            "value": "1"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "stats",
+                    "groups": [
+                      {
+                        "rows": [
+                          {
+                            "label": "Small",
+                            "value": "1"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Field 2 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "overline": "Overline Long text that fills the field to its limit so ove.",
+              "caption": "Caption Long text that fills the field to its limit so over.",
+              "iconSrc": "/icon.svg",
+              "action": {
+                "kind": "link",
+                "href": "/elsewhere"
+              }
+            },
+            {
+              "label": "Field 3 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "overline": "Overline Long text that fills the field to its limit so ove.",
+              "caption": "Caption Long text that fills the field to its limit so over.",
+              "iconName": "sword",
+              "action": {
+                "kind": "external",
+                "href": "https://example.com/",
+                "newTab": true
+              }
+            },
+            {
+              "label": "Field 4 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "overline": "Overline Long text that fills the field to its limit so ove.",
+              "caption": "Caption Long text that fills the field to its limit so over.",
+              "action": {
+                "kind": "param",
+                "name": "stack",
+                "value": "edge",
+                "target": "limits"
+              }
+            },
+            {
+              "label": "Field 5 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "overline": "Overline Long text that fills the field to its limit so ove.",
+              "caption": "Caption Long text that fills the field to its limit so over.",
+              "icon": "WWWW",
+              "action": {
+                "kind": "job",
+                "id": "bare"
+              }
+            },
+            {
+              "label": "Field 6 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "overline": "Overline Long text that fills the field to its limit so ove.",
+              "caption": "Caption Long text that fills the field to its limit so over.",
+              "iconSrc": "/icon.svg",
+              "action": {
+                "kind": "none"
+              }
+            },
+            {
+              "label": "Field 7 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "overline": "Overline Long text that fills the field to its limit so ove.",
+              "caption": "Caption Long text that fills the field to its limit so over.",
+              "iconName": "sword"
+            },
+            {
+              "label": "Field 8 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "overline": "Overline Long text that fills the field to its limit so ove.",
+              "caption": "Caption Long text that fills the field to its limit so over."
+            },
+            {
+              "label": "Field 9 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "overline": "Overline Long text that fills the field to its limit so ove.",
+              "caption": "Caption Long text that fills the field to its limit so over.",
+              "icon": "WWWW"
+            },
+            {
+              "label": "Field 10 Long text that fills the field.",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "overline": "Overline Long text that fills the field to its limit so ove.",
+              "caption": "Caption Long text that fills the field to its limit so over.",
+              "iconSrc": "/icon.svg"
+            },
+            {
+              "label": "Field 11 Long text that fills the field.",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "overline": "Overline Long text that fills the field to its limit so ove.",
+              "caption": "Caption Long text that fills the field to its limit so over.",
+              "iconName": "sword"
+            },
+            {
+              "label": "Field 12 Long text that fills the field.",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "overline": "Overline Long text that fills the field to its limit so ove.",
+              "caption": "Caption Long text that fills the field to its limit so over."
+            }
+          ]
+        },
+        {
+          "type": "levels",
+          "id": "levels",
+          "label": "Levels Long text that fills the field t.",
+          "groups": [
+            {
+              "label": "Collapsible levels Long text that fills.",
+              "iconName": "star",
+              "collapsible": "closed",
+              "rows": [
+                {
+                  "label": "Level 1 Long text that fills the field .",
+                  "level": "WWWW",
+                  "fill": 0,
+                  "tone": "highlight",
+                  "icon": "WWWW",
+                  "action": {
+                    "kind": "anchor",
+                    "target": "limits"
+                  },
+                  "tooltip": {
+                    "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                    "tags": [
+                      "Tag1 Long text that fill",
+                      "Tag2 Long text that fill",
+                      "Tag3 Long text that fill"
+                    ],
+                    "subtitle": "Subtitle Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to.",
+                    "stat": {
+                      "label": "Stat Long text that fills the field to i",
+                      "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                    },
+                    "items": [
+                      {
+                        "label": "Label 1 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 3 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 5 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 6 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 7 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 8 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 9 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 10 Long text that fills the field to its limit so overflow and wrapping sho"
+                    ],
+                    "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long"
+                  }
+                },
+                {
+                  "label": "Level 2 Long text that fills the field .",
+                  "level": "WWWW",
+                  "fill": 9,
+                  "tone": "default",
+                  "iconSrc": "/icon.svg",
+                  "action": {
+                    "kind": "link",
+                    "href": "/elsewhere"
+                  }
+                },
+                {
+                  "label": "Level 3 Long text that fills the field .",
+                  "level": "WWWW",
+                  "tone": "highlight",
+                  "iconName": "sword",
+                  "action": {
+                    "kind": "external",
+                    "href": "https://example.com/",
+                    "newTab": true
+                  }
+                },
+                {
+                  "label": "Level 4 Long text that fills the field .",
+                  "level": "WWWW",
+                  "fill": 27,
+                  "tone": "default",
+                  "action": {
+                    "kind": "param",
+                    "name": "stack",
+                    "value": "edge",
+                    "target": "limits"
+                  }
+                },
+                {
+                  "label": "Level 5 Long text that fills the field .",
+                  "level": "WWWW",
+                  "fill": 36,
+                  "tone": "highlight",
+                  "icon": "WWWW",
+                  "action": {
+                    "kind": "job",
+                    "id": "bare"
+                  }
+                },
+                {
+                  "label": "Level 6 Long text that fills the field .",
+                  "level": "WWWW",
+                  "tone": "default",
+                  "iconSrc": "/icon.svg",
+                  "action": {
+                    "kind": "none"
+                  }
+                },
+                {
+                  "label": "Level 7 Long text that fills the field .",
+                  "level": "WWWW",
+                  "fill": 54,
+                  "tone": "highlight",
+                  "iconName": "sword"
+                },
+                {
+                  "label": "Level 8 Long text that fills the field .",
+                  "level": "WWWW",
+                  "fill": 63,
+                  "tone": "default"
+                },
+                {
+                  "label": "Level 9 Long text that fills the field .",
+                  "level": "WWWW",
+                  "tone": "highlight",
+                  "icon": "WWWW"
+                },
+                {
+                  "label": "Level 10 Long text that fills the field.",
+                  "level": "WWWW",
+                  "fill": 81,
+                  "tone": "default",
+                  "iconSrc": "/icon.svg"
+                },
+                {
+                  "label": "Level 11 Long text that fills the field.",
+                  "level": "WWWW",
+                  "fill": 90,
+                  "tone": "highlight",
+                  "iconName": "sword"
+                },
+                {
+                  "label": "Level 12 Long text that fills the field.",
+                  "level": "WWWW",
+                  "tone": "default"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "progress",
+          "id": "progress",
+          "label": "Progress Long text that fills the field.",
+          "iconSrc": "/icon.svg",
+          "groups": [
+            {
+              "label": "Open progress Long text that fills the .",
+              "collapsible": "open",
+              "rows": [
+                {
+                  "label": "Progress 1 Long text that fills the fie.",
+                  "fill": 0,
+                  "caption": "Caption Long text that fills the field to its limit so over.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "icon": "WWWW",
+                  "action": {
+                    "kind": "anchor",
+                    "target": "limits"
+                  },
+                  "tooltip": {
+                    "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                    "tags": [
+                      "Tag1 Long text that fill",
+                      "Tag2 Long text that fill",
+                      "Tag3 Long text that fill"
+                    ],
+                    "subtitle": "Subtitle Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to.",
+                    "stat": {
+                      "label": "Stat Long text that fills the field to i",
+                      "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                    },
+                    "items": [
+                      {
+                        "label": "Label 1 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 3 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 5 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 6 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 7 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 8 Long text that fills the field to its limit so overflow and wrapping show",
+                      {
+                        "label": "Label 9 Long text that fills the field t",
+                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                      },
+                      "Item 10 Long text that fills the field to its limit so overflow and wrapping sho"
+                    ],
+                    "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its limit so overflow and wrapping show up Long"
+                  }
+                },
+                {
+                  "label": "Progress 2 Long text that fills the fie.",
+                  "fill": 9,
+                  "caption": "Caption Long text that fills the field to its limit so over.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "iconSrc": "/icon.svg",
+                  "action": {
+                    "kind": "link",
+                    "href": "/elsewhere"
+                  }
+                },
+                {
+                  "label": "Progress 3 Long text that fills the fie.",
+                  "caption": "Caption Long text that fills the field to its limit so over.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "iconName": "sword",
+                  "action": {
+                    "kind": "external",
+                    "href": "https://example.com/",
+                    "newTab": true
+                  }
+                },
+                {
+                  "label": "Progress 4 Long text that fills the fie.",
+                  "fill": 27,
+                  "caption": "Caption Long text that fills the field to its limit so over.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "action": {
+                    "kind": "param",
+                    "name": "stack",
+                    "value": "edge",
+                    "target": "limits"
+                  }
+                },
+                {
+                  "label": "Progress 5 Long text that fills the fie.",
+                  "fill": 36,
+                  "caption": "Caption Long text that fills the field to its limit so over.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "icon": "WWWW",
+                  "action": {
+                    "kind": "job",
+                    "id": "bare"
+                  }
+                },
+                {
+                  "label": "Progress 6 Long text that fills the fie.",
+                  "caption": "Caption Long text that fills the field to its limit so over.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "iconSrc": "/icon.svg",
+                  "action": {
+                    "kind": "none"
+                  }
+                },
+                {
+                  "label": "Progress 7 Long text that fills the fie.",
+                  "fill": 54,
+                  "caption": "Caption Long text that fills the field to its limit so over.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "iconName": "sword"
+                },
+                {
+                  "label": "Progress 8 Long text that fills the fie.",
+                  "fill": 63,
+                  "caption": "Caption Long text that fills the field to its limit so over.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                },
+                {
+                  "label": "Progress 9 Long text that fills the fie.",
+                  "caption": "Caption Long text that fills the field to its limit so over.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "icon": "WWWW"
+                },
+                {
+                  "label": "Progress 10 Long text that fills the fi.",
+                  "fill": 81,
+                  "caption": "Caption Long text that fills the field to its limit so over.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "iconSrc": "/icon.svg"
+                },
+                {
+                  "label": "Progress 11 Long text that fills the fi.",
+                  "fill": 90,
+                  "caption": "Caption Long text that fills the field to its limit so over.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "iconName": "sword"
+                },
+                {
+                  "label": "Progress 12 Long text that fills the fi.",
+                  "caption": "Caption Long text that fills the field to its limit so over.",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "stats",
+          "groups": [
+            {
+              "rows": [
+                {
+                  "label": "Small",
+                  "value": "1"
+                }
+              ]
+            }
+          ],
+          "id": "small-1"
+        },
+        {
+          "type": "stats",
+          "groups": [
+            {
+              "rows": [
+                {
+                  "label": "Small",
+                  "value": "1"
+                }
+              ]
+            }
+          ],
+          "id": "small-2"
+        },
+        {
+          "type": "stats",
+          "groups": [
+            {
+              "rows": [
+                {
+                  "label": "Small",
+                  "value": "1"
+                }
+              ]
+            }
+          ],
+          "id": "small-3"
+        }
+      ]
+    },
+    {
+      "id": "pages",
+      "label": "Pages Long text that fi.",
+      "iconName": "list",
+      "pages": [
+        {
+          "id": "page-1",
+          "label": "Page 1 Long text that f.",
+          "icon": "WWWW",
+          "blocks": [
+            {
+              "type": "stats",
+              "groups": [
+                {
+                  "rows": [
+                    {
+                      "label": "Small",
+                      "value": "1"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "gauges",
+              "label": "Gauges Long text that fills the field t.",
+              "icon": "WWWW",
+              "rows": [
+                {
+                  "label": "Gauge 1 Long text that fills the field .",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "secondary": "Secondary Long text that fills the field to its limit so ov.",
+                  "fill": 0,
+                  "tone": "primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "page-2",
+          "label": "Page 2 Long text that f.",
+          "iconSrc": "/icon.svg",
+          "blocks": [
+            {
+              "type": "stats",
+              "groups": [
+                {
+                  "rows": [
+                    {
+                      "label": "Small",
+                      "value": "1"
+                    }
+                  ]
+                }
+              ],
+              "hidden": true
+            },
+            {
+              "type": "gauges",
+              "label": "Gauges Long text that fills the field t.",
+              "icon": "WWWW",
+              "rows": [
+                {
+                  "label": "Gauge 1 Long text that fills the field .",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "secondary": "Secondary Long text that fills the field to its limit so ov.",
+                  "fill": 0,
+                  "tone": "primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "page-3",
+          "label": "Page 3 Long text that f.",
+          "iconName": "sword",
+          "blocks": [
+            {
+              "type": "stats",
+              "groups": [
+                {
+                  "rows": [
+                    {
+                      "label": "Small",
+                      "value": "1"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "gauges",
+              "label": "Gauges Long text that fills the field t.",
+              "icon": "WWWW",
+              "rows": [
+                {
+                  "label": "Gauge 1 Long text that fills the field .",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "secondary": "Secondary Long text that fills the field to its limit so ov.",
+                  "fill": 0,
+                  "tone": "primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "page-4",
+          "label": "Page 4 Long text that f.",
+          "blocks": [
+            {
+              "type": "stats",
+              "groups": [
+                {
+                  "rows": [
+                    {
+                      "label": "Small",
+                      "value": "1"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "gauges",
+              "label": "Gauges Long text that fills the field t.",
+              "icon": "WWWW",
+              "rows": [
+                {
+                  "label": "Gauge 1 Long text that fills the field .",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "secondary": "Secondary Long text that fills the field to its limit so ov.",
+                  "fill": 0,
+                  "tone": "primary"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tab-3",
+      "label": "Tab 3 Long text that fi.",
+      "iconSrc": "/icon.svg",
+      "blocks": [
+        {
+          "type": "stats",
+          "groups": [
+            {
+              "rows": [
+                {
+                  "label": "Small",
+                  "value": "1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tab-4",
+      "label": "Tab 4 Long text that fi.",
+      "iconName": "sword",
+      "blocks": [
+        {
+          "type": "stats",
+          "groups": [
+            {
+              "rows": [
+                {
+                  "label": "Small",
+                  "value": "1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tab-5",
+      "label": "Tab 5 Long text that fi.",
+      "blocks": [
+        {
+          "type": "stats",
+          "groups": [
+            {
+              "rows": [
+                {
+                  "label": "Small",
+                  "value": "1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hidden-tab",
+      "label": "Hidden tab",
+      "hidden": true,
+      "blocks": [
+        {
+          "type": "stats",
+          "groups": [
+            {
+              "rows": [
+                {
+                  "label": "Small",
+                  "value": "1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
   "slots": [
     {
       "id": "header-start-1",
@@ -276,7 +1694,40 @@
         "label": "Lv.",
         "value": "0"
       },
-      "slots": {}
+      "slots": {},
+      "gearSet": {
+        "value": "A job's own gear set",
+        "links": []
+      },
+      "blocks": {
+        "gauges": {
+          "type": "gauges",
+          "label": "Gauges Long text that fills the field t.",
+          "icon": "WWWW",
+          "rows": [
+            {
+              "label": "Gauge 1 Long text that fills the field .",
+              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "secondary": "Secondary Long text that fills the field to its limit so ov.",
+              "fill": 0,
+              "tone": "primary"
+            }
+          ]
+        },
+        "progress": {
+          "type": "progress",
+          "groups": [
+            {
+              "rows": [
+                {
+                  "label": "Replaced for this job",
+                  "fill": 100
+                }
+              ]
+            }
+          ]
+        }
+      }
     },
     {
       "id": "hidden",

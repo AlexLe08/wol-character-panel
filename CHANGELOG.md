@@ -13,6 +13,28 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ## [Unreleased]
 
+### Added
+
+- Config: optional `characterName`, `gearSet` (a caption, the job menu's
+  label and icon, and up to 3 links) and `tabs` (blocks or pages of blocks:
+  `gauges`, `stats`, `fields`, `levels`, `progress`, with groups, row
+  tooltips, row actions including `{ "kind": "job" }`, and detail windows on
+  `fields` rows), `iconName` (16 built-in drawings) beside `icon`/`iconSrc`,
+  `hidden` on tabs, pages, blocks and `gearSet`, and per job `job.blocks`
+  (replace a block by id) and `job.gearSet`. `CharacterSheet` doesn't draw
+  them yet. `LIMITS` gains `config.characterName`, `config.tabs`, `tab`,
+  `block`, `row`, `gearSet` and `detail`. The JSON Schema now defines its
+  shared parts (the tooltip among them) once under `$defs`; what it accepts
+  for existing fields is unchanged.
+- `parseConfig` checks tabs, pages, blocks, `gearSet` and `job.blocks`
+  entries one at a time, dropping and reporting a bad one (tabs, pages and
+  blocks past their limit keep the first ones), and reports
+  duplicate ids, a tab with both blocks and pages, job actions naming no
+  job, collapsible groups without a label and gear-set links over the limit.
+  `publicConfig` leaves out hidden tabs, pages, blocks and gear-set rows.
+- `resolveTab` and `tabHref` (from `.`): the tab and page in the URL, and
+  links to them (`?tab=`, `?page=`). New types for the config's new parts.
+
 ## [1.0.4] - 2026-11-10
 
 ### Changed

@@ -31,7 +31,7 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 
 | Import | What it holds |
 | --- | --- |
-| `@solution-nine/wol-character-panel` | `parseConfig`, `loadConfig`, `findUnknownKeys`, `publicConfig`, `resolveJob`, `jobHref`, `actionHref`, `withQuery` (sets or removes query parameters on an href, keeping the rest; `jobHref` and `actionHref` are built on it), the config types, and the limits as plain values: `LIMITS` (max lengths and counts, grouped like the config), `ID_PATTERN` and `PARAM_NAME_PATTERN`. No React or CSS, so server code and plain Node can use it |
+| `@solution-nine/wol-character-panel` | `parseConfig`, `loadConfig`, `findUnknownKeys`, `publicConfig`, `resolveJob`, `jobHref`, `resolveTab`, `tabHref`, `actionHref`, `withQuery` (sets or removes query parameters on an href, keeping the rest; `jobHref`, `tabHref` and `actionHref` are built on it), the config types, and the limits as plain values: `LIMITS` (max lengths and counts, grouped like the config), `ID_PATTERN` and `PARAM_NAME_PATTERN`. No React or CSS, so server code and plain Node can use it |
 | `@solution-nine/wol-character-panel/react` | `CharacterSheet`, `CharacterSheetProps`, `LinkRendererProps`. The component imports its own CSS |
 | `@solution-nine/wol-character-panel/schema` | `characterSheetConfigSchema`, the whole config's zod schema. Its parts are internal |
 | `@solution-nine/wol-character-panel/character-sheet.css` | The styles, for hosts that want to control CSS order |
@@ -47,8 +47,8 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 | `src/schema.ts` | `LIMITS`, `ID_PATTERN`, `PARAM_NAME_PATTERN` and the zod schemas built from them: the config contract |
 | `src/schema-entry.ts` | The `/schema` entry (re-exports only) |
 | `src/types.ts` | Types inferred from the schemas |
-| `src/parse.ts` | `parseConfig` (drops invalid jobs, reports errors) and `loadConfig` (fallback chain of sources) |
-| `src/resolve.ts` | `resolveJob`, `withQuery`, and the links built on it: `jobHref`, `actionHref` |
+| `src/parse.ts` | `parseConfig` (drops invalid jobs, tabs and blocks, reports errors) and `loadConfig` (fallback chain of sources) |
+| `src/resolve.ts` | `publicConfig`, `resolveJob`, `resolveTab`, `withQuery`, and the links built on it: `jobHref`, `tabHref`, `actionHref` |
 | `src/react-entry.ts` | The `/react` entry (re-exports only) |
 | `src/CharacterSheet.tsx` | The panel (a Server Component): the section and the bar around `EquipmentBody` |
 | `src/EquipmentBody.tsx` | The panel's header and body: slots, tooltips, portrait. Private: no entry exports it |
@@ -166,6 +166,112 @@ The schema's `$id` is
 - **Portrait:** it fills the frame between the columns. `framing` picks the
   crop: `face` keeps the top, `full` centers. With no portrait, a placeholder
   silhouette is shown.
+
+### Tabs, blocks and the gear-set row
+
+These optional fields describe the rest of a character window: a name in the
+bar, a row above the job header, and a content pane of tabs. `CharacterSheet`
+doesn't draw them yet; the component that does is in progress. A config
+without them stays valid, and `parseConfig`, `publicConfig`, `resolveTab` and
+`tabHref` handle them already, so an editor can start writing them.
+
+```json
+{
+  "characterName": "Alex Le",
+  "gearSet": {
+    "label": "Résumé", "value": "v14 · Nov 2026",
+    "jobMenu": { "label": "Change job", "iconName": "note" },
+    "links": [
+      { "label": "Contact", "iconName": "person", "action": { "kind": "anchor", "target": "contact" } },
+      { "label": "Download", "iconName": "save", "position": "end", "action": { "kind": "link", "href": "/resume.pdf" } }
+    ]
+  },
+  "tabs": [
+    { "id": "attributes", "label": "Attributes", "iconName": "crest", "blocks": [
+      { "type": "gauges", "id": "vitals", "rows": [{ "label": "Years", "value": "6", "fill": 100, "tone": "primary" }] }
+    ] },
+    { "id": "skills", "label": "Skills", "pages": [
+      { "id": "build", "label": "Build", "blocks": [
+        { "type": "levels", "groups": [{ "label": "Front end", "rows": [
+          { "label": "React", "level": "4", "fill": 90, "action": { "kind": "job", "id": "frontend" } }
+        ] }] }
+      ] }
+    ] }
+  ],
+  "jobs": [
+    { "id": "healthcare", "…": "…",
+      "gearSet": { "label": "Résumé", "value": "Healthcare" },
+      "blocks": { "vitals": { "type": "gauges", "rows": [{ "label": "Years", "value": "3", "fill": 50 }] } } }
+  ]
+}
+```
+
+- **`characterName`:** text at the right of the bar.
+- **Tabs** have an `id` (used as `?tab=<id>`), a `label`, and either `blocks`
+  (an ordered list) or `pages` (sub-tabs, each with an `id` used as
+  `?page=<id>`, a `label` and its own `blocks`), not both. Up to 6 tabs, 4
+  pages per tab and 8 blocks per tab or page.
+- **Blocks** have a `type`, an optional heading (`label`, icon) and an
+  optional `id`, unique across all tabs, which a job can replace them by:
+  - `gauges`: 1 to 4 `rows` of `label`, `value`, `secondary`, `fill` and
+    `tone` (`primary` or `secondary`).
+  - `stats`: `groups` of `rows` of `label`, `value` and `tone` (`default`,
+    `muted` or `highlight`).
+  - `fields`: `rows` of `label`, `value`, `overline`, `caption`, an icon, an
+    `action`, and `detail`: a button that opens a window (`label` as its
+    accessible name, an icon, a `title`, and `blocks`, whose `fields` rows
+    can't have a `detail` of their own).
+  - `levels`: `groups` of `rows` of `label`, `level` (up to 4 characters),
+    `fill`, `tone` (`default` or `highlight`), an icon and an `action`.
+  - `progress`: `groups` of `rows` of `label`, `fill`, `caption`, `value`, an
+    icon and an `action`.
+- **Groups** (in `stats`, `levels` and `progress`) have an optional `label`
+  and icon, `column` (`start` or `end`: consecutive groups that set it form
+  two columns) and `collapsible` (`open` or `closed`, which needs a `label`).
+  Up to 8 groups per block and 12 rows per group or `fields` block.
+- **`fill`** is a number from 0 to 100. Left out, a row has no bar (a gauge's
+  defaults to 100).
+- **Row tooltips:** rows of `gauges`, `stats`, `levels` and `progress` may
+  have a `tooltip`, the same shape as a slot's.
+- **Row actions** (`fields`, `levels` and `progress` rows, gear-set links)
+  are the slot action kinds, plus `{ "kind": "job", "id": "<job id>" }`,
+  which switches to that job. One naming a job the config doesn't have is
+  drawn without a link.
+- **Icons:** `icon` (up to 4 characters), `iconSrc` (an image) or
+  `iconName`, one of the built-in drawings: `sword`, `shield`, `wand`,
+  `cross`, `bow`, `star`, `heart`, `person`, `note`, `list`, `save`, `gear`,
+  `hammer`, `leaf`, `crest`, `flag`. `iconSrc` wins over `icon`, which wins
+  over `iconName`. Icons are decorative: the label names the thing.
+- **`gearSet`:** a caption (`label`, `value`), `jobMenu` (the job menu
+  button's `label` and icon), and up to 3 `links`, each with a `label` (its
+  accessible name), an icon, an `action` and `position`: up to 2 at the
+  `start` (the default), 1 at the `end`.
+- **`hidden: true`** on a tab, page, block or `gearSet` keeps it in the
+  config but out of the panel. `publicConfig()` leaves hidden parts out (and
+  a tab or page with nothing left to show), so they aren't sent to visitors.
+- **Per job:** `job.gearSet` replaces the config's `gearSet`, and
+  `job.blocks` maps a block id to a whole block of the same `type`, shown
+  instead of the shared one for that job. A replacement has no `id` or
+  `hidden` of its own.
+- **`parseConfig`** checks each tab, page and block on its own: a bad one is
+  dropped and reported, and so is a tab or page left with no blocks. Past the
+  limit, tabs, pages and blocks keep their first entries and report the
+  rest. A `tabs` list left empty is left out. A bad `job.blocks` entry (one
+  that doesn't parse, names no block, or has another type) or a bad
+  `gearSet`, the config's or a job's, is dropped without dropping the job or
+  the config. It also reports duplicate tab,
+  page and block ids (the later one dropped), a tab with both `blocks` and
+  `pages` (its pages used), a job action naming no job, a `collapsible`
+  group without a `label`, and gear-set links past the start or end limit
+  (kept, not drawn).
+- **URLs:** `resolveTab(config, searchParams.tab, searchParams.page)` returns
+  the tab and page to show (`page` is null for a tab of blocks), falling
+  back to the first visible ones, or null with no tab to show. `tabHref(config,
+  tabId, currentHref, { page })` links to a tab or page: the first visible tab
+  and a tab's first page get no parameter, switching tab keeps `?job=` and
+  drops `?page=`, and `jobHref` keeps `?tab=` and `?page=` when given the
+  current URL as its base path. `tabParam` and `pageParam` options rename the
+  parameters.
 
 ## Usage
 

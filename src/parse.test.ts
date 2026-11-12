@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { findUnknownKeys, loadConfig, parseConfig, type ConfigSource } from "./parse.ts";
+import { LIMITS } from "./schema.ts";
 import type { CharacterSheetConfig } from "./types.ts";
 
 // Raw input, as a JSON file or the API would give it: plain objects, so a
@@ -160,6 +161,386 @@ describe("parseConfig", () => {
       const { config, errors } = parseConfig(rawConfig({ defaultJobId: "draft", jobs }));
       expect(config?.defaultJobId).toBe("data");
       expect(errors).toEqual(['defaultJobId: "draft" is draft, not published, using "data"']);
+    });
+  });
+});
+
+describe("parseConfig: tabs, blocks and the gear-set row", () => {
+  const stats = (id?: string, extra: Raw = {}): Raw => ({
+    type: "stats",
+    ...(id && { id }),
+    groups: [{ rows: [{ label: "Years", value: "6" }] }],
+    ...extra,
+  });
+  const gauges = (id?: string): Raw => ({ type: "gauges", ...(id && { id }), rows: [{ label: "Focus", value: "80%" }] });
+  // `blocks: undefined` in extra leaves the key out, as JSON would.
+  const tab = (id: string, extra: Raw = {}): Raw =>
+    Object.fromEntries(Object.entries({ id, label: id, blocks: [stats()], ...extra }).filter(([, value]) => value !== undefined));
+  const page = (id: string, extra: Raw = {}): Raw => ({ id, label: id, blocks: [stats()], ...extra });
+  const tabIds = (config: CharacterSheetConfig | null) => config?.tabs?.map((t) => t.id);
+
+  it("accepts every new field without errors", () => {
+    const raw = rawConfig({
+      characterName: "Alex Le",
+      gearSet: {
+        label: "Résumé",
+        value: "v14",
+        jobMenu: { label: "Switch", iconName: "note" },
+        links: [
+          { id: "pdf", label: "PDF", icon: "⭳", action: { kind: "link", href: "/resume.pdf" } },
+          { label: "Data", iconName: "list", action: { kind: "job", id: "data" } },
+          { label: "Save", iconName: "save", position: "end", action: { kind: "none" } },
+        ],
+      },
+      tabs: [
+        tab("attributes", {
+          iconName: "star",
+          blocks: [
+            { type: "gauges", id: "vitals", label: "Vitals", rows: [{ label: "Years", value: "6", fill: 100, tone: "primary" }] },
+            stats("core", {
+              groups: [
+                {
+                  label: "Core",
+                  column: "start",
+                  collapsible: "open",
+                  rows: [{ label: "A", value: "1", tone: "muted", tooltip: { title: "A" } }],
+                },
+              ],
+            }),
+          ],
+        }),
+        tab("skills", {
+          blocks: undefined,
+          pages: [
+            page("build", {
+              blocks: [
+                {
+                  type: "levels",
+                  groups: [{ rows: [{ label: "React", level: "7", fill: 90, tone: "highlight", action: { kind: "job", id: "web" } }] }],
+                },
+              ],
+            }),
+            page("run", {
+              blocks: [
+                { type: "progress", groups: [{ rows: [{ label: "Project", fill: 50, caption: "Maintainer", value: "212" }] }] },
+              ],
+            }),
+          ],
+        }),
+        tab("profile", {
+          blocks: [
+            {
+              type: "fields",
+              rows: [
+                {
+                  label: "Title",
+                  value: "Senior developer",
+                  overline: "Now",
+                  caption: "Since 2024",
+                  iconSrc: "/title.svg",
+                  action: { kind: "anchor", target: "about" },
+                  detail: { label: "All titles", iconName: "list", title: "Titles", blocks: [stats()] },
+                },
+              ],
+            },
+          ],
+        }),
+      ],
+      jobs: [rawJob("web", { blocks: { vitals: gauges() }, gearSet: { value: "Web" } }), rawJob("data")],
+    });
+    const { config, errors } = parseConfig(raw);
+    expect(errors).toEqual([]);
+    expect(tabIds(config)).toEqual(["attributes", "skills", "profile"]);
+    expect(config?.characterName).toBe("Alex Le");
+    expect(config?.gearSet?.links).toHaveLength(3);
+    expect(config?.jobs[0].blocks?.vitals.type).toBe("gauges");
+    expect(findUnknownKeys(raw, config)).toEqual([]);
+  });
+
+  it("leaves tabs and gearSet out of a config that has none", () => {
+    const { config } = parseConfig(rawConfig());
+    expect(config).not.toHaveProperty("tabs");
+    expect(config).not.toHaveProperty("gearSet");
+  });
+
+  it("drops a bad tab with errors under its index and keeps the rest", () => {
+    const { config, errors } = parseConfig(rawConfig({ tabs: [tab("a"), tab("Bad Id"), tab("c")] }));
+    expect(tabIds(config)).toEqual(["a", "c"]);
+    expect(errors.length).toBeGreaterThan(0);
+    for (const error of errors) expect(error).toMatch(/^tabs\.1\.id: /);
+  });
+
+  it("keeps the first tabs up to the limit, and drops and reports the rest", () => {
+    const tabs = Array.from({ length: LIMITS.config.tabs + 2 }, (_, index) => tab(`t${index}`));
+    const { config, errors } = parseConfig(rawConfig({ tabs }));
+    expect(config?.tabs).toHaveLength(LIMITS.config.tabs);
+    expect(errors).toEqual([
+      `tabs.${LIMITS.config.tabs}: over the limit of ${LIMITS.config.tabs}, dropped`,
+      `tabs.${LIMITS.config.tabs + 1}: over the limit of ${LIMITS.config.tabs}, dropped`,
+    ]);
+  });
+
+  it("keeps a tab's first blocks up to the limit", () => {
+    const blocks = Array.from({ length: LIMITS.tab.blocks + 1 }, () => stats());
+    const { config, errors } = parseConfig(rawConfig({ tabs: [tab("a", { blocks })] }));
+    expect(config?.tabs?.[0].blocks).toHaveLength(LIMITS.tab.blocks);
+    expect(errors).toEqual([`tabs.0.blocks.${LIMITS.tab.blocks}: over the limit of ${LIMITS.tab.blocks}, dropped`]);
+  });
+
+  it("keeps a tab's first pages up to the limit, and a page's first blocks", () => {
+    const pages = Array.from({ length: LIMITS.tab.pages + 1 }, (_, index) => page(`p${index}`));
+    pages[0] = page("p0", { blocks: Array.from({ length: LIMITS.tab.blocks + 1 }, () => stats()) });
+    const { config, errors } = parseConfig(rawConfig({ tabs: [tab("a", { blocks: undefined, pages })] }));
+    expect(config?.tabs?.[0].pages).toHaveLength(LIMITS.tab.pages);
+    expect(config?.tabs?.[0].pages?.[0].blocks).toHaveLength(LIMITS.tab.blocks);
+    expect(errors).toEqual([
+      `tabs.0.pages.${LIMITS.tab.pages}: over the limit of ${LIMITS.tab.pages}, dropped`,
+      `tabs.0.pages.0.blocks.${LIMITS.tab.blocks}: over the limit of ${LIMITS.tab.blocks}, dropped`,
+    ]);
+  });
+
+  it("leaves out an empty tabs list, and reports it", () => {
+    const { config, errors } = parseConfig(rawConfig({ tabs: [] }));
+    expect(config).not.toHaveProperty("tabs");
+    expect(errors).toEqual(["tabs: empty, left out"]);
+  });
+
+  it("leaves out tabs when none is valid, and reports it", () => {
+    const { config, errors } = parseConfig(rawConfig({ tabs: [tab("Bad Id")] }));
+    expect(config).not.toBeNull();
+    expect(config).not.toHaveProperty("tabs");
+    expect(errors.at(-1)).toBe("tabs: no valid tab");
+  });
+
+  it("drops a bad block with errors under its path, and keeps the tab", () => {
+    const { config, errors } = parseConfig(rawConfig({ tabs: [tab("a", { blocks: [stats("x"), { type: "stats", groups: [] }, gauges()] })] }));
+    expect(config?.tabs?.[0].blocks?.map((block) => block.type)).toEqual(["stats", "gauges"]);
+    expect(errors.length).toBeGreaterThan(0);
+    for (const error of errors) expect(error).toMatch(/^tabs\.0\.blocks\.1\.groups: /);
+  });
+
+  it("drops an unknown block type", () => {
+    const { config, errors } = parseConfig(rawConfig({ tabs: [tab("a", { blocks: [stats(), { type: "chart" }] })] }));
+    expect(config?.tabs?.[0].blocks).toHaveLength(1);
+    expect(errors).toEqual([expect.stringMatching(/^tabs\.0\.blocks\.1\.type: /)]);
+  });
+
+  it("drops a tab left with no blocks, or with none to begin with", () => {
+    const { config, errors } = parseConfig(
+      rawConfig({ tabs: [tab("a"), tab("b", { blocks: [{ type: "chart" }] }), tab("c", { blocks: undefined }), tab("d", { blocks: [] })] }),
+    );
+    expect(tabIds(config)).toEqual(["a"]);
+    expect(errors.filter((error) => !error.startsWith("tabs.1.blocks.0"))).toEqual([
+      "tabs.1: no blocks, dropped",
+      "tabs.2: no blocks, dropped",
+      "tabs.3: no blocks, dropped",
+    ]);
+  });
+
+  it("drops a tab whose id repeats an earlier one", () => {
+    const { config, errors } = parseConfig(rawConfig({ tabs: [tab("a"), tab("a", { label: "Again" })] }));
+    expect(config?.tabs?.map((t) => t.label)).toEqual(["a"]);
+    expect(errors).toEqual(['tabs.1: duplicate id "a", dropped']);
+  });
+
+  it("uses a tab's pages when it has blocks too, and reports it", () => {
+    const { config, errors } = parseConfig(rawConfig({ tabs: [tab("a", { pages: [page("p")] })] }));
+    expect(config?.tabs?.[0]).not.toHaveProperty("blocks");
+    expect(config?.tabs?.[0].pages?.map((p) => p.id)).toEqual(["p"]);
+    expect(errors).toEqual(["tabs.0: has both blocks and pages, blocks ignored"]);
+  });
+
+  describe("pages", () => {
+    const withPages = (pages: Raw[]) => rawConfig({ tabs: [tab("a", { blocks: undefined, pages })] });
+
+    it("drops a bad page and keeps the rest", () => {
+      const { config, errors } = parseConfig(withPages([page("p"), page("q", { label: "" })]));
+      expect(config?.tabs?.[0].pages?.map((p) => p.id)).toEqual(["p"]);
+      for (const error of errors) expect(error).toMatch(/^tabs\.0\.pages\.1\.label: /);
+    });
+
+    it("drops a page whose id repeats an earlier one in its tab", () => {
+      const { errors } = parseConfig(withPages([page("p"), page("p")]));
+      expect(errors).toEqual(['tabs.0.pages.1: duplicate id "p", dropped']);
+    });
+
+    it("allows the same page id in two tabs", () => {
+      const tabs = [tab("a", { blocks: undefined, pages: [page("p")] }), tab("b", { blocks: undefined, pages: [page("p")] })];
+      expect(parseConfig(rawConfig({ tabs })).errors).toEqual([]);
+    });
+
+    it("drops a page left with no blocks, and a tab left with no pages", () => {
+      const { config, errors } = parseConfig(withPages([page("p", { blocks: [{ type: "chart" }] })]));
+      expect(config).not.toHaveProperty("tabs");
+      expect(errors.slice(1)).toEqual([
+        "tabs.0.pages.0: no blocks, dropped",
+        "tabs.0: no pages, dropped",
+        "tabs: no valid tab",
+      ]);
+    });
+  });
+
+  describe("block ids", () => {
+    it("drops a block whose id repeats one in any tab or page", () => {
+      const tabs = [tab("a", { blocks: [stats("x")] }), tab("b", { blocks: undefined, pages: [page("p", { blocks: [gauges("x"), gauges()] })] })];
+      const { config, errors } = parseConfig(rawConfig({ tabs }));
+      expect(config?.tabs?.[1].pages?.[0].blocks).toHaveLength(1);
+      expect(errors).toEqual(['tabs.1.pages.0.blocks.0: duplicate block id "x", dropped']);
+    });
+
+    it("doesn't count blocks of a tab dropped as a duplicate", () => {
+      const tabs = [tab("a"), tab("a", { blocks: [stats("x")] }), tab("b", { blocks: [stats("x")] })];
+      expect(parseConfig(rawConfig({ tabs })).errors).toEqual(['tabs.1: duplicate id "a", dropped']);
+    });
+  });
+
+  describe("reported, and kept", () => {
+    it("names a job action with an unknown job", () => {
+      const levels = { type: "levels", groups: [{ rows: [{ label: "Ops", level: "1", action: { kind: "job", id: "ops" } }] }] };
+      const { config, errors } = parseConfig(rawConfig({ tabs: [tab("a", { blocks: [levels] })] }));
+      expect(config?.tabs?.[0].blocks).toHaveLength(1);
+      expect(errors).toEqual(['tabs.0.blocks.0.groups.0.rows.0.action: unknown job "ops", drawn without a link']);
+    });
+
+    it("counts a draft job as known", () => {
+      const levels = { type: "levels", groups: [{ rows: [{ label: "Ops", level: "1", action: { kind: "job", id: "next" } }] }] };
+      const jobs = [rawJob("web"), rawJob("next", { status: "draft" })];
+      expect(parseConfig(rawConfig({ jobs, tabs: [tab("a", { blocks: [levels] })] })).errors).toEqual([]);
+    });
+
+    it("names a job action inside a detail window", () => {
+      const row = { label: "Ops", level: "1", action: { kind: "job", id: "ops" } };
+      const detail = { label: "More", title: "More", blocks: [{ type: "levels", groups: [{ rows: [row] }] }] };
+      const fields = { type: "fields", rows: [{ label: "Role", value: "Dev", detail }] };
+      expect(parseConfig(rawConfig({ tabs: [tab("a", { blocks: [fields] })] })).errors).toEqual([
+        'tabs.0.blocks.0.rows.0.detail.blocks.0.groups.0.rows.0.action: unknown job "ops", drawn without a link',
+      ]);
+    });
+
+    it("names a collapsible group without a label", () => {
+      const block = stats(undefined, { groups: [{ collapsible: "closed", rows: [{ label: "A", value: "1" }] }] });
+      const { config, errors } = parseConfig(rawConfig({ tabs: [tab("a", { blocks: [block] })] }));
+      expect(config?.tabs?.[0].blocks).toHaveLength(1);
+      expect(errors).toEqual(["tabs.0.blocks.0.groups.0: collapsible without a label, drawn plain"]);
+    });
+  });
+
+  describe("detail windows", () => {
+    it("refuses a detail inside a detail", () => {
+      const inner = { label: "More", title: "More", blocks: [stats()] };
+      const detail = { label: "More", title: "More", blocks: [{ type: "fields", rows: [{ label: "A", value: "1", detail: inner }] }] };
+      const raw = rawConfig({ tabs: [tab("a", { blocks: [stats(), { type: "fields", rows: [{ label: "A", value: "1", detail }] }] })] });
+      const { config, errors } = parseConfig(raw);
+      // Stripped as an unknown key, as any other key the schema doesn't have.
+      expect(errors).toEqual([]);
+      expect(findUnknownKeys(raw, config)).toEqual(["tabs.0.blocks.1.rows.0.detail.blocks.0.rows.0.detail"]);
+    });
+  });
+
+  describe("job.blocks", () => {
+    const tabs = [tab("a", { blocks: [gauges("vitals"), stats("core")] })];
+    const withJobBlocks = (blocks: Raw) => rawConfig({ tabs, jobs: [rawJob("web", { blocks }), rawJob("data")] });
+
+    it("keeps a replacement of the same type", () => {
+      const { config, errors } = parseConfig(withJobBlocks({ vitals: gauges() }));
+      expect(errors).toEqual([]);
+      expect(Object.keys(config?.jobs[0].blocks ?? {})).toEqual(["vitals"]);
+    });
+
+    it("drops an entry naming no block, and keeps the job", () => {
+      const { config, errors } = parseConfig(withJobBlocks({ vitals: gauges(), ghost: gauges() }));
+      expect(jobIds(config)).toEqual(["web", "data"]);
+      expect(Object.keys(config?.jobs[0].blocks ?? {})).toEqual(["vitals"]);
+      expect(errors).toEqual(['jobs.0.blocks.ghost: unknown block "ghost", ignored']);
+    });
+
+    it("drops an entry of another type than the block it names", () => {
+      const { config, errors } = parseConfig(withJobBlocks({ vitals: stats() }));
+      expect(config?.jobs[0].blocks).toEqual({});
+      expect(errors).toEqual(["jobs.0.blocks.vitals: a stats block can't replace a gauges block, ignored"]);
+    });
+
+    it("drops an entry that doesn't parse, and keeps the job", () => {
+      const { config, errors } = parseConfig(withJobBlocks({ vitals: { type: "gauges", rows: [] }, core: stats() }));
+      expect(jobIds(config)).toEqual(["web", "data"]);
+      expect(Object.keys(config?.jobs[0].blocks ?? {})).toEqual(["core"]);
+      expect(errors.length).toBeGreaterThan(0);
+      for (const error of errors) expect(error).toMatch(/^jobs\.0\.blocks\.vitals\.rows: /);
+    });
+
+    it("names a block that was dropped as unknown", () => {
+      const raw = rawConfig({
+        tabs: [tab("a", { blocks: [stats(), { type: "gauges", id: "vitals", rows: [] }] })],
+        jobs: [rawJob("web", { blocks: { vitals: gauges() } })],
+      });
+      expect(parseConfig(raw).errors.at(-1)).toBe('jobs.0.blocks.vitals: unknown block "vitals", ignored');
+    });
+
+    it("names an unknown job in a replacement", () => {
+      const levels = (action?: Raw) => ({ type: "levels", groups: [{ rows: [{ label: "A", level: "1", action }] }] });
+      const raw = rawConfig({
+        tabs: [tab("a", { blocks: [{ ...levels(), id: "lv" }] })],
+        jobs: [rawJob("web", { blocks: { lv: levels({ kind: "job", id: "ops" }) } })],
+      });
+      expect(parseConfig(raw).errors).toEqual([
+        'jobs.0.blocks.lv.groups.0.rows.0.action: unknown job "ops", drawn without a link',
+      ]);
+    });
+
+    it("still drops a job whose other fields are bad", () => {
+      const { config } = parseConfig(rawConfig({ tabs, jobs: [rawJob("web"), rawJob("data", { blocks: { vitals: gauges() }, level: {} })] }));
+      expect(jobIds(config)).toEqual(["web"]);
+    });
+  });
+
+  describe("gearSet", () => {
+    const link = (label: string, position?: "start" | "end") => ({ label, action: { kind: "none" }, ...(position && { position }) });
+
+    it("drops a bad gearSet with errors under its path, and keeps the config", () => {
+      const { config, errors } = parseConfig(rawConfig({ gearSet: { label: "" } }));
+      expect(config).not.toBeNull();
+      expect(config).not.toHaveProperty("gearSet");
+      expect(errors).toEqual([expect.stringMatching(/^gearSet\.label: /)]);
+    });
+
+    it("reports a third start link, and keeps it for editors", () => {
+      const { config, errors } = parseConfig(rawConfig({ gearSet: { links: [link("a"), link("b", "start"), link("c")] } }));
+      expect(config?.gearSet?.links).toHaveLength(3);
+      expect(errors).toEqual(["gearSet.links.2: start link over the limit of 2, not shown"]);
+    });
+
+    it("reports a second end link", () => {
+      const { errors } = parseConfig(rawConfig({ gearSet: { links: [link("a", "end"), link("b"), link("c", "end")] } }));
+      expect(errors).toEqual(["gearSet.links.2: end link over the limit of 1, not shown"]);
+    });
+
+    it("refuses more links than the limit", () => {
+      const { errors } = parseConfig(rawConfig({ gearSet: { links: [link("a"), link("b"), link("c", "end"), link("d")] } }));
+      expect(errors).toEqual([expect.stringMatching(/^gearSet\.links: /)]);
+    });
+
+    it("names an unknown job in a link", () => {
+      const { errors } = parseConfig(rawConfig({ gearSet: { links: [{ label: "Ops", action: { kind: "job", id: "ops" } }] } }));
+      expect(errors).toEqual(['gearSet.links.0.action: unknown job "ops", drawn without a link']);
+    });
+
+    it("drops a job's bad gearSet and keeps the job", () => {
+      const { config, errors } = parseConfig(rawConfig({ jobs: [rawJob("web", { gearSet: { label: "" } })] }));
+      expect(jobIds(config)).toEqual(["web"]);
+      expect(config?.jobs[0]).not.toHaveProperty("gearSet");
+      expect(errors).toEqual([expect.stringMatching(/^jobs\.0\.gearSet\.label: /)]);
+    });
+
+    it("checks a job's own gearSet the same way", () => {
+      const gearSet = { links: [link("a", "end"), link("b", "end")] };
+      const { config, errors } = parseConfig(rawConfig({ jobs: [rawJob("web", { gearSet })] }));
+      expect(config?.jobs[0].gearSet?.links).toHaveLength(2);
+      expect(errors).toEqual(["jobs.0.gearSet.links.1: end link over the limit of 1, not shown"]);
+    });
+
+    it("refuses an icon name that isn't built in", () => {
+      const { errors } = parseConfig(rawConfig({ gearSet: { links: [{ ...link("a"), iconName: "dragon" }] } }));
+      expect(errors).toEqual([expect.stringMatching(/^gearSet\.links\.0\.iconName: /)]);
     });
   });
 });

@@ -18,10 +18,11 @@ export default defineConfig({
       // .logs/coverage/index.html for the line-by-line report.
       reportsDirectory: ".logs/coverage",
       reporter: ["text", "html"],
-      // Just under the numbers when coverage was added (2026-11-08). Raise
-      // them when coverage goes up; lowering one is a decision for review.
-      // SlotHover.tsx is the gap: its handlers only run in a browser.
-      thresholds: { statements: 92, branches: 96, functions: 86, lines: 93 },
+      // Just under the current numbers (raised 2026-11-12 with the window's
+      // config). Raise them when coverage goes up; lowering one is a
+      // decision for review. SlotHover.tsx is the gap: its handlers only run
+      // in a browser.
+      thresholds: { statements: 96, branches: 96, functions: 92, lines: 97 },
     },
   },
 });
