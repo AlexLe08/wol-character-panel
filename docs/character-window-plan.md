@@ -1,7 +1,7 @@
 # Character window plan
 
-Drafted 2026-11-11 with the owner (answers to the first open questions
-added 2026-11-12), from four screenshots of the reference
+Drafted 2026-11-11 with the owner (answers to two rounds of open
+questions added 2026-11-12), from four screenshots of the reference
 game's character window (not committed: they are the game's art). This is
 the brief for the sessions that build it. Decisions marked **Decided** were
 answered by the owner; **Proposed** ones are this plan's defaults, which an
@@ -41,9 +41,9 @@ comes from the config, as with the slots today.
 | 4 | Who toggles parts | **Decided.** Both: the config (a part without data, or marked `hidden`, isn't rendered) and props on the component (hide parts for one placement). Not visitors at runtime. |
 | 5 | Per-job data | **Decided.** Tabs and blocks are defined once; a job may replace a block's content by block id, as jobs fill slots by slot id. |
 | 6 | Extra parts | **Decided.** All four: sub-tabs inside a tab, collapsible groups, the gear-set row, the character name in the bar. No close button: a panel on a page has nothing to close. |
-| 7 | API shape | **Decided.** A new `CharacterWindow` export from `/react`, on the same config with new optional fields. `CharacterSheet` gains the gear-set row too (decision 11); otherwise it renders as before. |
+| 7 | API shape | **Decided.** A new `CharacterWindow` export from `/react`, on the same config with new optional fields. `CharacterSheet` gains the gear-set row too (decision 11); otherwise it renders as before, apart from what Breaking changes lists. |
 | 8 | Values | **Decided.** Config only. A host with live numbers writes them into the config object before rendering; there is no `values` prop. |
-| 9 | Release | **Proposed.** Additive throughout: minor (1.1.0), schema `$id` stays `@1`. Depends on open question 1. |
+| 9 | Release | **Decided.** A major: 2.0.0, schema `$id` `@2`. The job menu leaves the bar for every host, and the major is the occasion for the other breaks under Breaking changes. |
 | 10 | Detail windows | **Decided.** A `fields` row may end in a small icon button that opens a window of more content (in the game: the list of titles, the list of ranks with the current one marked). Opened and closed by pressing the button, not by hover or focus, and larger than a slot tooltip. |
 | 11 | Job menu | **Decided.** "Change job" becomes one of the gear-set row's buttons (the note-like third one), and the row is part of the equipment pane, so `CharacterSheet` has it as well. |
 | 12 | Gear-set end button | **Decided.** The game's is "save this set". Here it is a link from the config, or a host's own control (a real save button in an editor). |
@@ -51,6 +51,9 @@ comes from the config, as with the slots today.
 | 14 | Decorative parts | **Decided.** The round buttons under the portrait and the corner marks on slot squares stay decorative (`showToolbar`, `showSockets`). Later idea for the round buttons: toggling decorative overlays on the portrait. |
 | 15 | Narrow order | **Decided.** Tab strip, content, then the equipment pane, which is also the DOM order. |
 | 16 | Width | **Decided.** The site's home page has room for the full window (about 58rem). |
+| 17 | Detail window placement | **Decided.** Centred on the screen, through the Popover API. |
+| 18 | Save button | **Decided.** The package ships none. The importing codebase supplies the control and what it does (`gearSetEnd`). |
+| 19 | Default icons | **Decided.** Every button and icon has a default that looks like, or close to, its counterpart in the reference window, and the config can override any of them. |
 
 ## What the screenshots show, and what each part becomes
 
@@ -148,7 +151,8 @@ import { CharacterWindow } from "@solution-nine/wol-character-panel/react";
   major. So, as with `jobParam` today: inside `CharacterWindow` a `param`
   action whose name equals `tabParam` or `pageParam` renders without a
   link, and `parseConfig` reports a param action named `tab` or `page`
-  when the config has `tabs`.
+  when the config has `tabs`. (For the default names the pattern itself
+  refuses them in 2.0.0: Breaking changes, 2.)
 
 ## Config additions
 
@@ -298,15 +302,44 @@ Part of the equipment pane, above the job header, in both components.
   toggle (accessible name from `jobMenu.label`, default "Change job"; the
   default glyph is the package's). It keeps the `cs__jobs*` class names.
   Not drawn with one job, or with `hide={["job-menu"]}`.
-- **When the row is drawn:**
-  - `CharacterWindow`: always when there is anything to put in it (more
-    than one job, a `gearSet`, or `gearSetEnd`). The bar never holds the
-    job menu.
-  - `CharacterSheet`: only when the config has `gearSet` or the host
-    passes `gearSetEnd`; the job menu then moves from the bar into it.
-    Without either, it renders exactly as in 1.0, menu in the bar. That
-    keeps the change a minor: no existing host's panel moves until its
-    config opts in (open question 1).
+- **When the row is drawn:** in both components, whenever there is
+  anything to put in it (more than one job, a `gearSet`, or
+  `gearSetEnd`). The bar never holds the job menu. For a 1.x host with
+  several jobs this moves "Change job" from the bar into a new row above
+  the job header, with an icon as its toggle: the break behind 2.0.0.
+- The existing tests that expect the menu in the bar change with it.
+  That is this decision carried out, not a test loosened to pass; the PR
+  says so and lists each changed expectation.
+
+### Default icons
+
+- Every icon the package draws has a default close to the reference
+  window's, and `icon` (a glyph) or `iconSrc` (an image) overrides it
+  wherever a config can reach it.
+- The defaults are the package's own drawings: small inline SVGs in a
+  private `src/icons.tsx`, in `currentColor` so both themes colour them.
+  They echo the reference's shapes (a note for the job menu, two arrows
+  in a circle for the end control, a triangle in a circle for a
+  collapsible group, a small page for a detail button, a pointer on the
+  active tab) without copying its artwork, which isn't ours to ship.
+- Fixed controls always have such a default: the job menu, the detail
+  button, the detail window's close button, the collapsible marker, the
+  active-tab marker, the toolbar's six buttons (replacing today's
+  glyphs), and the end control's look, offered to hosts as a class
+  (`cs__gear-button`) to put on their own button.
+- Free content (tabs, block and group headings, rows, gear-set links,
+  slots) can't have one fixed default, since the package doesn't know
+  what a row means. Two parts:
+  - `iconName`: an optional third way to set an icon, naming one of the
+    built-in drawings. **Proposed** starter set, from what the
+    screenshots use: `sword`, `shield`, `wand`, `cross`, `bow`, `star`,
+    `heart`, `person`, `note`, `list`, `save`, `gear`, `hammer`, `leaf`,
+    `crest`, `flag`. Order of precedence: `iconSrc`, `icon`, `iconName`.
+    Adding names later is a minor; removing one is a major.
+  - With none of the three, a heading has no icon and a row's icon
+    square shows the label's first two letters, as slots do now.
+- `examples/full.json` uses `iconName` so the demo looks like the
+  reference out of the box.
 
 ### Jobs
 
@@ -346,6 +379,49 @@ ship.
   `parseConfig` strips unknown keys. Run `npm run generate:schema`.
 - `findUnknownKeys` lines input up with output by index, so its existing
   caveat (use it on a parse without errors) now covers tabs and blocks.
+
+## Breaking changes in 2.0.0
+
+The major is needed for the first; the rest ride along because a major is
+the only time they can. **Decided** for 1; 2 to 5 are **Proposed** and
+done unless the owner strikes them; the last group is offered, not
+planned.
+
+1. **The job menu moves** from the bar to the gear-set row
+   (`CharacterSheet` too), and its toggle is an icon. Hosts that style or
+   test `.cs__bar .cs__jobs` are affected.
+2. **`PARAM_NAME_PATTERN` also refuses `tab` and `page`**, as it refuses
+   `job`, so a slot can't clobber the window's own parameters. Replaces
+   the report-only handling under URLs for the default names (a host that
+   renames `tabParam` still gets the render-time rule).
+3. **`LinkRendererProps["intent"]` gains `"tab"`.**
+4. **Limits the roadmap found too loose**, both measured and written up
+   under Done ("The `edge-cases` findings"), left alone then because a
+   tighter limit is a major:
+   - the tooltip at its limits is about 985px tall against a 598px
+     panel. Tighten `LIMITS.tooltip` (`items`, `item`, `note`,
+     `subtitle`) until an at-limit card fits a height the PR measures;
+     this matters more now that rows carry tooltips too.
+   - `LIMITS.job.levelLabel` (20) breaks the header under about 20rem.
+     Tighten it to what fits at the narrowest supported width.
+   Check the site's saved config against the new numbers first, and name
+   each old and new value in the CHANGELOG.
+5. **Slot columns capped at 6** in `parseConfig` (a seventh `left` or
+   `right` slot reported and not shown, as a second header slot is
+   today). The layout was only ever drawn for 6, and beside a content
+   pane a longer column stretches the window.
+
+Offered, default no:
+
+- Renaming `CharacterSheet` (to `EquipmentPanel`, say) now that it is one
+  pane of a window. Every host edits its import for no gain in function.
+- Renaming the files hosts import by path (`character-sheet.css`,
+  `character-sheet.schema.json`). Same cost; the site's backend copies
+  the schema by that name.
+- Folding `showSockets` and `showToolbar` into one `show`/`hide` prop
+  with the window's `hide`. Tidier, but they default off while `hide`
+  parts default on, so one list would read backwards for half of it.
+- Raising the peer or Node floors. Nothing here needs it.
 
 ## Rendering
 
@@ -472,10 +548,14 @@ green, reviewed by the `reviewer` subagent before the PR opens.
    `publicConfig`, `resolveTab`, `tabHref`, block replacement, the
    generated JSON Schema, examples, unit tests, README Config section.
    Host-visible (new optional fields): CHANGELOG.
-3. **The gear-set row.** In the equipment pane, for `CharacterSheet`: the
-   links, caption, job menu button, `gearSetEnd`, and the opt-in rule.
-   Small, and the only PR that changes what `CharacterSheet` can render,
-   so it is reviewed on its own. CHANGELOG.
+3. **The gear-set row and the breaks.** In the equipment pane, for
+   `CharacterSheet`: the links, caption, job menu button, `gearSetEnd`,
+   `src/icons.tsx` with the fixed controls' defaults and `iconName`, and
+   Breaking changes 1, 2, 4 and 5. Every break in one PR, so the
+   CHANGELOG's Unreleased section and the PR body list them once, and
+   the PR says what breaks. From this merge on, `main` is 2.0.0 in the
+   making: a 1.x patch, if one is ever needed, is cut from the `v1.0.4`
+   tag on its own branch.
 4. **The window.** `CharacterWindow` with the bar, tab strip, sub-tabs,
    both layouts, `hide` and `hiddenTabs`, and the blocks `gauges`,
    `stats` and `fields` with row tooltips. Playground, `/static`, preview
@@ -485,37 +565,31 @@ green, reviewed by the `reviewer` subagent before the PR opens.
    rows. Tests as above.
 6. **Finish.** Game-theme polish against the screenshots, limits measured
    on `edge-cases`, the roadmap's Done entry. Then the owner runs
-   `/release-prep` (1.1.0) and tags.
+   `/release-prep` (2.0.0, which regenerates the schema so its `$id`
+   reads `@2`) and tags.
 
-After the release, in the site's own repository and session: upgrade,
-`npm run generate:character-schema` (the backend's copy must accept the
-new keys before the admin can save them), then switch the home page to
-`CharacterWindow` and extend the admin editor. Until that upgrade, an
-older package reading a newer config just strips the new keys.
+After the release, in the site's own repository and session, an upgrade
+PR that handles the break (the site depends on `^1`, so nothing reaches
+it before then): bump to `^2`, `npm run generate:character-schema` (the
+backend's copy must accept the new keys before the admin can save them),
+check the saved config against the tightened limits and the reserved
+parameter names, restyle anything that assumed the menu in the bar, then
+switch the home page to `CharacterWindow` and extend the admin editor,
+which supplies its own save button.
 
 ## Open questions for the owner
 
-The first round (2026-11-11) is answered and folded in above as decisions
-10 to 16. What those answers raised; each has a default the work proceeds
-on if unanswered.
+Two rounds are answered and folded in above (decisions 10 to 19). What is
+left; each has a default the work proceeds on if unanswered.
 
-1. **`CharacterSheet` and semver.** Default: the gear-set row appears in
-   `CharacterSheet` only for a config with `gearSet` (or a `gearSetEnd`
-   prop), so existing hosts see no change and the release is a minor. The
-   alternative is to always move "Change job" out of the bar into the
-   row, which changes every host's panel: a major (2.0.0, schema `@2`,
-   and an upgrade PR in the site that handles it).
-2. **Detail windows through the Popover API.** Default as described under
-   Rendering: a centred window in the browser's top layer, no script.
-   The alternative, a `<details>` anchored beside its button, sits nearer
-   the row but doesn't close on an outside click without JavaScript and
-   can be clipped by the pane.
-3. **The save button.** Default: the package draws no save button of its
-   own, since it has nothing to save; a config link or the host's
-   `gearSetEnd` fills the place. If the site's editor should get a
-   ready-made one, that is a host component, in the site.
-4. **The job menu button's default icon.** Default: a plain list glyph
-   (`≡`), overridable with `jobMenu.icon` or `iconSrc`.
+1. **Breaking changes 2 to 5.** Default: all four go in. Strike any you
+   don't want; the tightened limits (4) are the one that could reject
+   something the site has saved.
+2. **The offered breaks** (renaming `CharacterSheet` or the CSS and
+   schema files, one `show`/`hide` prop, raised floors). Default: none.
+3. **`iconName` and its starter set.** Default: in, with the sixteen
+   names listed under Default icons. Add or drop names before PR 3; after
+   the release, dropping one is a major.
 
 ## Ideas for what the parts can hold
 
