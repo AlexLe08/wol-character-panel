@@ -70,6 +70,12 @@ export function parseConfig(input: unknown): ParseResult {
     const extra = shell.data.slots.filter((slot) => slot.position === position).slice(1);
     for (const slot of extra) errors.push(`slots: "${slot.id}" is a second ${position} slot, not shown`);
   }
+  for (const position of ["left", "right"] as const) {
+    const extra = shell.data.slots.filter((slot) => slot.position === position).slice(LIMITS.slot.column);
+    for (const slot of extra) {
+      errors.push(`slots: "${slot.id}" is over the limit of ${LIMITS.slot.column} ${position} slots, not shown`);
+    }
+  }
 
   // Each job with its index in the input, for the paths of later reports;
   // its blocks are checked once the tabs are.

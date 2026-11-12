@@ -1,5 +1,6 @@
 import type { AnchorHTMLAttributes, ReactNode } from "react";
 import { actionHref, isActionActive } from "./resolve.ts";
+import { LIMITS } from "./schema.ts";
 import { SlotHover } from "./SlotHover.tsx";
 import type { Job, Portrait, SlotContent, SlotDef, SlotPosition, Tooltip } from "./types.ts";
 
@@ -121,9 +122,10 @@ function SlotList({
   jobParam: string;
   isParamActive?: (name: string, value: string) => boolean;
 }) {
-  let here = slots.filter((slot) => slot.position === position);
-  // One slot each side of the job title; parseConfig reports any extras.
-  if (position === "header-start" || position === "header-end") here = here.slice(0, 1);
+  // One slot each side of the job title, and LIMITS.slot.column in each
+  // side column; parseConfig reports any extras.
+  const header = position === "header-start" || position === "header-end";
+  const here = slots.filter((slot) => slot.position === position).slice(0, header ? 1 : LIMITS.slot.column);
   const className = `cs__slots cs__slots--${position}`;
   if (here.length === 0) return <div className={className} />;
 

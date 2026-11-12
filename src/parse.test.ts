@@ -89,6 +89,22 @@ describe("parseConfig", () => {
         'slots: "rank" is a second header-start slot, not shown',
       ]);
     });
+
+    it("reports slots past the column limit on either side, keeping them in the config", () => {
+      const column = (position: string, count: number) =>
+        Array.from({ length: count }, (_, index) => ({ id: `${position}-${index}`, label: "Slot", position }));
+      // The jobs fill "skills", the first left slot.
+      const slots = [
+        { id: "skills", label: "Skills", position: "left" },
+        ...column("left", LIMITS.slot.column),
+        ...column("right", LIMITS.slot.column),
+      ];
+      const { config, errors } = parseConfig(rawConfig({ slots }));
+      expect(errors).toEqual([
+        `slots: "left-${LIMITS.slot.column - 1}" is over the limit of ${LIMITS.slot.column} left slots, not shown`,
+      ]);
+      expect(config?.slots).toHaveLength(2 * LIMITS.slot.column + 1);
+    });
   });
 
   describe("jobs, checked one at a time", () => {
@@ -103,6 +119,18 @@ describe("parseConfig", () => {
       const { config, errors } = parseConfig(rawConfig({ jobs: [rawJob("web"), rawJob("web", { name: "Again" })] }));
       expect(config?.jobs.map((job) => job.name)).toEqual(["web"]);
       expect(errors).toEqual(['jobs.1: duplicate id "web", dropped']);
+    });
+
+    it.each(["job", "tab", "page"])('drops a job with a param action named "%s", which the panel owns', (name) => {
+      const slots = { skills: { tooltip: { title: "Skills" }, action: { kind: "param", name, value: "x" } } };
+      const { config, errors } = parseConfig(rawConfig({ jobs: [rawJob("web"), rawJob("data", { slots })] }));
+      expect(jobIds(config)).toEqual(["web"]);
+      expect(errors).toEqual([expect.stringMatching(/^jobs\.1\.slots\.skills\.action\.name: /)]);
+    });
+
+    it("keeps a param action whose name only starts with a reserved one", () => {
+      const slots = { skills: { tooltip: { title: "Skills" }, action: { kind: "param", name: "tabs", value: "x" } } };
+      expect(parseConfig(rawConfig({ jobs: [rawJob("web", { slots })] })).errors).toEqual([]);
     });
 
     it("keeps a job that fills an unknown slot, and says the content is ignored", () => {

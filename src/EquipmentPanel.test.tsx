@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { EquipmentPanel, type EquipmentPanelProps } from "./EquipmentPanel.tsx";
 import { parseConfig } from "./parse.ts";
+import { LIMITS } from "./schema.ts";
 import type { CharacterPanelConfig, Job, SlotContent } from "./types.ts";
 
 // The panel as a server renders it: HTML from react-dom/server in plain
@@ -287,6 +288,20 @@ describe("EquipmentPanel (server render)", () => {
       expect(empty).toEqual([{ name: "span", attrs: { class: "cs-slot__face" } }]);
       expect(html).toMatch(/Unused<\/span><span class="cs-visually-hidden"> \(empty\)<\/span>/);
       expect(tooltipIds(html).some((id) => id.endsWith("tip-unused"))).toBe(false);
+    });
+
+    it("draws at most LIMITS.slot.column slots in a side column", () => {
+      const extra = Array.from({ length: LIMITS.slot.column }, (_, index) => ({
+        id: `more-${index}`,
+        label: `More ${index}`,
+        position: "right" as const,
+      }));
+      const html = render({ config: { ...config, slots: [...slots, ...extra] } });
+      const right = html.slice(html.indexOf("cs__slots--right"));
+      expect(right.match(/<li class="cs-slot/g)).toHaveLength(LIMITS.slot.column);
+      // The column has four slots already, so two of the extras fit.
+      expect(html).toContain("More 1");
+      expect(html).not.toContain("More 2");
     });
 
     it("renders an empty column as an empty div", () => {
