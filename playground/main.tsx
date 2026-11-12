@@ -2,7 +2,7 @@
 import { StrictMode, useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { findUnknownKeys, parseConfig, publicConfig, resolveJob, withQuery } from "../src/index.ts";
-import { EquipmentPanel, type LinkRendererProps } from "../src/react-entry.ts";
+import { CharacterWindow, EquipmentPanel, type LinkRendererProps } from "../src/react-entry.ts";
 import "./playground.css";
 
 // `npm run dev`: the panel straight from src/, with hot reload, on the
@@ -10,7 +10,7 @@ import "./playground.css";
 // leaves it out).
 //
 // The page acts like a host: everything it shows comes from the URL, as a
-// host reads ?job=. The controls are query parameters too, so any state is
+// host reads ?job=, ?tab= and ?page=. The controls are query parameters too, so any state is
 // a link (for a bug report or a browser test), and they ride along in
 // basePath, whose query jobHref and actionHref keep.
 //
@@ -43,6 +43,8 @@ function underBase(value: unknown, key?: string): unknown {
 // The controls' query parameters, with their defaults. A fixture's param
 // action naming one of these would clash; none do.
 const CONTROLS = {
+  // "window": CharacterWindow, tabs and all; "equipment": EquipmentPanel.
+  view: "equipment",
   fixture: "full",
   theme: "document",
   labels: "narrow",
@@ -52,7 +54,9 @@ const CONTROLS = {
   // editor's save button would be.
   end: "",
   // Container width in rem; empty means as wide as the page allows (the
-  // panel itself stops at 30rem). Below 26rem it switches to the narrow layout.
+  // panel itself stops at 30rem, the window at 58rem). Below 26rem the
+  // equipment pane switches to its narrow layout; below 46rem the
+  // window's panes stack.
   width: "",
   // "dark": host tokens unlike the document theme's fallbacks, to show it
   // follows the host's --paper/--ink/--signal.
@@ -136,26 +140,29 @@ function App() {
   } else {
     const config = control("drafts") ? parsed : publicConfig(parsed);
     const job = resolveJob(config, query.get("job") ?? undefined);
+    const props = {
+      config,
+      job,
+      basePath,
+      theme: control("theme") === "game" ? "game" : "document",
+      labels: control("labels") === "always" ? "always" : "narrow",
+      parts: { sockets: Boolean(control("sockets")), toolbar: Boolean(control("toolbar")) },
+      gearSetEnd: control("end") ? (
+        <button type="button" className="cs__gear-button" onClick={() => setNotice("A host would save here")}>
+          <span aria-hidden="true">↻</span>
+          <span className="cs-visually-hidden">Save</span>
+        </button>
+      ) : undefined,
+      renderLink,
+      isParamActive: (name: string, value: string) => query.get(name) === value,
+    } as const;
     panel = (
       <>
-        <EquipmentPanel
-          config={config}
-          job={job}
-          basePath={basePath}
-          theme={control("theme") === "game" ? "game" : "document"}
-          labels={control("labels") === "always" ? "always" : "narrow"}
-          parts={{ sockets: Boolean(control("sockets")), toolbar: Boolean(control("toolbar")) }}
-          gearSetEnd={
-            control("end") ? (
-              <button type="button" className="cs__gear-button" onClick={() => setNotice("A host would save here")}>
-                <span aria-hidden="true">↻</span>
-                <span className="cs-visually-hidden">Save</span>
-              </button>
-            ) : undefined
-          }
-          renderLink={renderLink}
-          isParamActive={(name, value) => query.get(name) === value}
-        />
+        {control("view") === "window" ? (
+          <CharacterWindow {...props} tab={query.get("tab") ?? undefined} page={query.get("page") ?? undefined} />
+        ) : (
+          <EquipmentPanel {...props} />
+        )}
         {job.sections && (
           <div className="pg-sections">
             {Object.entries(job.sections).map(([id, text]) => (
@@ -171,7 +178,9 @@ function App() {
   }
 
   const width = control("width");
-  const hostParams = [...query].filter(([name]) => !Object.hasOwn(CONTROLS, name) && name !== "job");
+  const hostParams = [...query].filter(
+    ([name]) => !Object.hasOwn(CONTROLS, name) && !["job", "tab", "page"].includes(name),
+  );
 
   return (
     <div className="pg">
@@ -181,11 +190,19 @@ function App() {
         <h1>wol-character-panel</h1>
         <p>
           A React panel modelled on an RPG character screen, driven by one JSON config. Below are the
-          package&apos;s example configs; the controls set the panel&apos;s props.
+          package&apos;s example configs; the controls set the panel&apos;s props, and View switches between
+          the equipment panel and the whole character window.
         </p>
       </header>
 
       <form className="pg-controls" aria-label="Preview controls" onSubmit={(event) => event.preventDefault()}>
+        <label>
+          View{" "}
+          <select value={control("view")} onChange={(event) => setControl("view", event.target.value)}>
+            <option>equipment</option>
+            <option>window</option>
+          </select>
+        </label>
         <label>
           Fixture{" "}
           <select value={fixtureName} onChange={(event) => setControl("fixture", event.target.value)}>
@@ -218,10 +235,10 @@ function App() {
           <input
             type="range"
             min="16"
-            max="40"
+            max="60"
             step="0.5"
-            value={width || "40"}
-            onChange={(event) => setControl("width", event.target.value === "40" ? "" : event.target.value)}
+            value={width || "60"}
+            onChange={(event) => setControl("width", event.target.value === "60" ? "" : event.target.value)}
           />{" "}
           <output>{width ? `${width}rem` : "auto"}</output>
         </label>
