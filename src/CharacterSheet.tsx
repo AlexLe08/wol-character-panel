@@ -4,8 +4,6 @@ import { jobHref } from "./resolve.ts";
 import type { CharacterSheetConfig, Job, Portrait, Theme } from "./types.ts";
 import "./character-sheet.css";
 
-export type { LinkRendererProps };
-
 // An equipment-screen style panel:
 //   top bar      title, and the job menu
 //   header       [header-start slot]  level, emblem, job title  [header-end slot]

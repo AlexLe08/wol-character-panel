@@ -49,7 +49,9 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 | `src/types.ts` | Types inferred from the schemas |
 | `src/parse.ts` | `parseConfig` (drops invalid jobs, reports errors) and `loadConfig` (fallback chain of sources) |
 | `src/resolve.ts` | `resolveJob`, `withQuery`, and the links built on it: `jobHref`, `actionHref` |
-| `src/CharacterSheet.tsx` | The panel (a Server Component) |
+| `src/react-entry.ts` | The `/react` entry (re-exports only) |
+| `src/CharacterSheet.tsx` | The panel (a Server Component): the section and the bar around `EquipmentBody` |
+| `src/EquipmentBody.tsx` | The panel's header and body: slots, tooltips, portrait. Private: no entry exports it |
 | `src/SlotHover.tsx` | The only client code: Escape dismisses a tooltip. Private: no entry exports it |
 | `src/character-sheet.css` | Styles and themes; everything themable is a `--cs-*` variable |
 | `character-sheet.schema.json` | Generated JSON Schema for editing a config file by hand |

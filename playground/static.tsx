@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 import { renderToStaticMarkup } from "react-dom/server";
 import { parseConfig, publicConfig, resolveJob } from "../src/index.ts";
-import { CharacterSheet } from "../src/CharacterSheet.tsx";
+import { CharacterSheet } from "../src/react-entry.ts";
 import panelCss from "../src/character-sheet.css?raw";
 import playgroundCss from "./playground.css?raw";
 
