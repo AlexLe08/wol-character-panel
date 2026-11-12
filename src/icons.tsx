@@ -65,6 +65,15 @@ export function JobMenuIcon() {
   return <NamedIcon name="note" />;
 }
 
+// The pointer beside the active tab, as the reference marks it.
+export function TabMarkerIcon() {
+  return (
+    <Drawing>
+      <path d="M5 3l6 5-6 5z" fill="currentColor" />
+    </Drawing>
+  );
+}
+
 // The six round buttons under the portrait, start side then end side.
 export const TOOLBAR_ICONS: ReactNode[] = [
   <Drawing key="half-start">
@@ -89,6 +98,9 @@ export const TOOLBAR_ICONS: ReactNode[] = [
 export const glyph = (text: string) => text.slice(0, 2);
 
 type IconFields = { icon?: string; iconSrc?: string; iconName?: IconName };
+
+// Whether a config object sets any of its three icon fields.
+export const hasIcon = ({ icon, iconSrc, iconName }: IconFields) => Boolean(iconSrc || icon || iconName);
 
 // A config's icon, by precedence: an image, a glyph, a built-in drawing,
 // then `fallback` (a label's first letters, or a control's default).

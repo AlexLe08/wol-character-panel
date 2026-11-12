@@ -1,5 +1,7 @@
-// The "/react" entry: the component and its prop types. Re-exports only,
-// so the components it will hold can live in their own files.
+// The "/react" entry: the components and their prop types. Re-exports only,
+// so each component lives in its own file.
+export { CharacterWindow } from "./CharacterWindow.tsx";
+export type { CharacterWindowParts, CharacterWindowProps } from "./CharacterWindow.tsx";
 export { EquipmentPanel } from "./EquipmentPanel.tsx";
 export type { EquipmentPanelParts, EquipmentPanelProps } from "./EquipmentPanel.tsx";
 export type { LinkRendererProps } from "./EquipmentBody.tsx";

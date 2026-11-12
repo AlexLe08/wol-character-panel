@@ -49,12 +49,13 @@ const tabBlocks = (tab: Tab): Block[] => (tab.pages ? tab.pages.flatMap((page) =
 
 // A tab's pages that can be shown: not hidden, with a block that isn't.
 // Pages win over blocks in a tab that has both, as parseConfig keeps them.
-function visiblePages(tab: Tab): TabPage[] {
+// This and visibleTabs aren't re-exported by an entry: the window uses them.
+export function visiblePages(tab: Tab): TabPage[] {
   return (tab.pages ?? []).filter((page) => !page.hidden && visibleBlocks(page.blocks).length > 0);
 }
 
 // The tabs that can be shown, in order: the first one is the default.
-function visibleTabs(config: CharacterPanelConfig): Tab[] {
+export function visibleTabs(config: CharacterPanelConfig): Tab[] {
   return (config.tabs ?? []).filter(
     (tab) => !tab.hidden && (tab.pages ? visiblePages(tab).length > 0 : visibleBlocks(tab.blocks ?? []).length > 0),
   );
