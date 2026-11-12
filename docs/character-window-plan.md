@@ -657,6 +657,17 @@ its PR:
 - how axe treats `role="meter"`, and the Popover API in the browser tests
   (same section), each with its fallback named there.
 
+Settled by PR 3 (measured in Chromium on `edge-cases`): the tooltip's
+target is a 1280×800 laptop's viewport, 720px (`items` 5, `note` 120,
+`subtitle` 60 put an at-limit card at 699px, from 985px; pairs set the
+height, so `item` and `title` stay); the narrowest supported width is 18rem
+(a 320px phone less its gutters), where `levelLabel` 16 fits one line in
+`document` and wraps inside the column in `game`. The site's bundled config
+uses 16, so a lower limit would have dropped its job. Browser tests pin
+both. The fixed controls' drawings not used yet (detail, close,
+collapsible marker, active-tab marker) come with those controls in PRs 4
+and 5.
+
 ## Ideas for what the parts can hold
 
 - **Gauges:** years of experience against a goal, availability this
