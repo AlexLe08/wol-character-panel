@@ -94,6 +94,11 @@ describe("publicConfig: hidden parts", () => {
     expect(Object.keys(result.jobs[0].blocks ?? {})).toEqual(["x"]);
   });
 
+  it("leaves tabs out when every tab is hidden, as the schema needs at least one", () => {
+    const result = publicConfig(withTabs({ tabs: [tab("a", { hidden: true }), tab("b", { blocks: [stats("x", true)] })] }));
+    expect(result).not.toHaveProperty("tabs");
+  });
+
   it("adds no tabs or gearSet to a config without them", () => {
     expect(publicConfig(config)).not.toHaveProperty("tabs");
     expect(publicConfig(config)).not.toHaveProperty("gearSet");
@@ -187,6 +192,11 @@ describe("tabHref", () => {
     expect(tabHref(withTabs, "skills", "/?job=data&tab=skills&page=run", { page: "build" })).toBe(
       "/?job=data&tab=skills",
     );
+  });
+
+  it("names no page for a tab without pages, or a tab it doesn't know", () => {
+    expect(tabHref(withTabs, "attributes", "/?job=data&page=run", { page: "run" })).toBe("/?job=data");
+    expect(tabHref(withTabs, "nope", "/?page=run", { page: "run" })).toBe("/?tab=nope");
   });
 
   it("uses the host's parameter names", () => {

@@ -15,7 +15,7 @@ export function publicConfig(config: CharacterSheetConfig): CharacterSheetConfig
   return {
     ...rest,
     ...(gearSet && !gearSet.hidden && { gearSet }),
-    ...(publicTabs && { tabs: publicTabs }),
+    ...(publicTabs && publicTabs.length > 0 && { tabs: publicTabs }),
     jobs: config.jobs.filter((job) => job.status === "published").map((job) => publicJob(job, blockIds)),
   };
 }
@@ -108,10 +108,10 @@ export function tabHref(
 ): string {
   const tabs = visibleTabs(config);
   const tab = tabs.find((candidate) => candidate.id === tabId);
-  const firstPage = tab && visiblePages(tab)[0];
+  const pages = tab ? visiblePages(tab) : [];
   return withQuery(currentHref, {
     [tabParam]: tabs[0]?.id === tabId ? null : tabId,
-    [pageParam]: page === undefined || page === firstPage?.id ? null : page,
+    [pageParam]: page === undefined || pages.length === 0 || page === pages[0].id ? null : page,
   });
 }
 
