@@ -1,14 +1,5 @@
 import { z } from "zod";
-import {
-  blockSchema,
-  characterSheetConfigSchema,
-  gearSetSchema,
-  jobBlockSchema,
-  jobSchema,
-  LIMITS,
-  tabPageSchema,
-  tabSchema,
-} from "./schema.ts";
+import { characterSheetConfigSchema, LIMITS } from "./schema.ts";
 import type { Block, BlockType, CharacterSheetConfig, GearSet, Job, JobBlock, Tab, TabPage } from "./types.ts";
 
 export type ParseResult = {
@@ -17,6 +8,17 @@ export type ParseResult = {
   config: CharacterSheetConfig | null;
   errors: string[];
 };
+
+// The parts checked one at a time, reached through the whole config's
+// schema: schema.ts doesn't export them, since each exported schema's type
+// is written out in full in the emitted .d.ts (see types.ts).
+const configShape = characterSheetConfigSchema.shape;
+const jobSchema = configShape.jobs.element;
+const jobBlockSchema = jobSchema.shape.blocks.unwrap().valueType;
+const gearSetSchema = configShape.gearSet.unwrap();
+const tabSchema = configShape.tabs.unwrap().element;
+const tabPageSchema = tabSchema.shape.pages.unwrap().element;
+const blockSchema = tabPageSchema.shape.blocks.element;
 
 // Everything but the jobs, the tabs and the gear-set row is checked as a
 // whole: without valid slots there is no panel to draw. Jobs are checked

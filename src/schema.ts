@@ -221,7 +221,7 @@ const caption = text(LIMITS.row.caption);
 
 // A row's or gear-set link's action: a slot's kinds, or one that switches
 // to a job of the panel, linking like the job menu does.
-export const rowActionSchema = z.discriminatedUnion("kind", [
+const rowActionSchema = z.discriminatedUnion("kind", [
   ...slotActionSchema.options,
   z.object({
     kind: z.literal("job"),
@@ -353,7 +353,7 @@ const detailBlockSchema = z.discriminatedUnion("type", [
   progressBody,
 ]);
 
-export const detailSchema = z.object({
+const detailSchema = z.object({
   label: rowLabel.describe("The button's accessible name."),
   ...iconFields,
   title: text(LIMITS.detail.title).describe("The window's title."),
@@ -368,7 +368,7 @@ const fieldsBody = fieldsBodyOf(
 
 // A block as a job gives it in job.blocks: no id (the record's key is the
 // id) and no hidden (whether it shows is the shared block's call).
-export const jobBlockSchema = z.discriminatedUnion("type", [
+const jobBlockSchema = z.discriminatedUnion("type", [
   gaugesBody,
   statsBody,
   fieldsBody,
@@ -381,7 +381,7 @@ const blockMeta = {
   hidden,
 };
 
-export const blockSchema = z.discriminatedUnion("type", [
+const blockSchema = z.discriminatedUnion("type", [
   gaugesBody.extend(blockMeta),
   statsBody.extend(blockMeta),
   fieldsBody.extend(blockMeta),
@@ -391,7 +391,7 @@ export const blockSchema = z.discriminatedUnion("type", [
 
 const blocks = z.array(blockSchema).min(1).max(LIMITS.tab.blocks);
 
-export const tabPageSchema = z.object({
+const tabPageSchema = z.object({
   id: id.describe("Used in the URL: ?page=<id>. Unique within its tab."),
   label: text(LIMITS.tab.label),
   ...iconFields,
@@ -399,7 +399,7 @@ export const tabPageSchema = z.object({
   blocks,
 });
 
-export const tabSchema = z.object({
+const tabSchema = z.object({
   id: id.describe("Used in the URL: ?tab=<id>."),
   label: text(LIMITS.tab.label),
   ...iconFields,
@@ -413,7 +413,7 @@ export const tabSchema = z.object({
     .describe("Sub-tabs, each with its own blocks. A tab has blocks or pages, not both."),
 });
 
-export const gearSetSchema = z.object({
+const gearSetSchema = z.object({
   label: rowLabel.optional().describe("The caption's small line."),
   value: rowValue.optional().describe("The caption's larger line."),
   jobMenu: z
@@ -440,7 +440,7 @@ export const gearSetSchema = z.object({
   hidden,
 });
 
-export const jobSchema = z.object({
+const jobSchema = z.object({
   id: id.describe("Used in the URL: ?job=<id>."),
   name: text(LIMITS.job.name).describe('Short name for the job menu, e.g. "Healthcare".'),
   title: text(LIMITS.job.title).describe('The panel heading, e.g. "Developer in healthcare".'),
@@ -489,30 +489,3 @@ export const characterSheetConfigSchema = z.object({
   jobs: z.array(jobSchema).min(1).max(LIMITS.config.jobs),
 });
 
-// Pieces the JSON Schema defines once under $defs and points at with $ref
-// (scripts/generate-schema.mjs), by these names: each is used in several
-// places, and inlining every use made the file about 40 times larger. Not
-// public: the generated file's $defs names may change with any release.
-export const SHARED_SCHEMAS = {
-  tooltip: tooltipSchema,
-  rowAction: rowActionSchema,
-  iconName: iconNameSchema,
-  gaugeRow,
-  statRow,
-  fieldRow,
-  levelRow,
-  progressRow,
-  statsGroups,
-  levelsGroups,
-  progressGroups,
-  gaugesBlock: gaugesBody,
-  statsBlock: statsBody,
-  fieldsBlock: fieldsBody,
-  detailFieldsBlock: detailFieldsBody,
-  levelsBlock: levelsBody,
-  progressBlock: progressBody,
-  detail: detailSchema,
-  block: blockSchema,
-  jobBlock: jobBlockSchema,
-  gearSet: gearSetSchema,
-};
