@@ -112,15 +112,16 @@ import { CharacterWindow } from "@solution-nine/wol-character-panel/react";
 />
 ```
 
-- `parts` is described under Breaking changes, 7. `tabs: false` removes the strip and the content pane (the window is then the
-  equipment pane under the bar); `equipment: false` leaves only the content
+- `parts` is described under Breaking changes, 7. `tabs: false` removes
+  the strip and the content pane (the window is then the equipment pane
+  under the bar); `equipment: false` leaves only the content
   pane. With one visible tab the strip isn't drawn (as the job menu isn't
   with one job) and its content still is.
 - `gearSetEnd` is a `ReactNode` the host owns (a client component of its
   own, say a save button in an editor). It takes the place of a config
   link with `position: "end"`. `EquipmentPanel` takes it too.
 - A Server Component, with no new client code. `SlotHover.tsx` stays the
-  only `"use client"` file; row tooltips reuse it.
+  only `"use client"` file; row tooltips reuse it unchanged.
 - `LinkRendererProps["intent"]` gains `"tab"` (tab and page links), so a
   host can keep scroll position as it may for `"job"`. Only
   `CharacterWindow` emits it. A host `switch` over `intent` with no
@@ -132,7 +133,8 @@ import { CharacterWindow } from "@solution-nine/wol-character-panel/react";
   add `src/react-entry.ts` (like `schema-entry.ts`) re-exporting
   `EquipmentPanel`, `CharacterWindow` and the prop types, and point the
   `./react` export at it. `src/entries.test.ts` then snapshots
-  `react-entry.ts`: its list gains `CharacterWindow` (an addition, minor).
+  `react-entry.ts`: in 2.0.0 its list gains `CharacterWindow` and has `EquipmentPanel` in
+  place of `CharacterSheet` (a removal: part of the major).
 - `.` gains `resolveTab(config, tabParam, pageParam?)` (the active tab and
   page, for a host that wants them for its own heading or metadata),
   `tabHref(...)`, and `resolveBlocks(config, job)` if it turns out useful
@@ -148,17 +150,17 @@ import { CharacterWindow } from "@solution-nine/wol-character-panel/react";
 - Switching job keeps `tab` and `page`. Switching tab keeps `job` and
   drops `page`. A slot's or row's `param` action keeps all three.
   Build them all on `withQuery`.
-- `PARAM_NAME_PATTERN` only refuses `job`, and tightening it would be a
-  major. So, as with `jobParam` today: inside `CharacterWindow` a `param`
-  action whose name equals `tabParam` or `pageParam` renders without a
-  link, and `parseConfig` reports a param action named `tab` or `page`
-  when the config has `tabs`. (For the default names the pattern itself
-  refuses them in 2.0.0: Breaking changes, 2.)
+- A slot or row must not set the window's own parameters. From 2.0.0
+  `PARAM_NAME_PATTERN` refuses `tab` and `page` as it refuses `job`
+  (Breaking changes, 2), which covers the default names. For a host that
+  renames them, the rule `jobParam` has today applies: a `param` action
+  whose name equals `tabParam` or `pageParam` renders without a link.
 
 ## Config additions
 
-All optional; a config without them is still valid and `CharacterWindow`
-then draws the bar and the equipment pane. Names below are **Proposed**.
+All optional: a config needs none of them, and `CharacterWindow` then
+draws the bar and the equipment pane. (A 1.x config still has to meet
+2.0.0's tighter rules: Breaking changes 2, 4 and 5.) Names below are **Proposed**.
 
 ```jsonc
 {
@@ -269,8 +271,8 @@ then draws the bar and the equipment pane. Names below are **Proposed**.
   `publicConfig()`) renders the row without a link; `parseConfig` reports
   an unknown id.
 - **Row tooltips:** a row of `gauges`, `stats`, `levels` or `progress` may
-  carry `tooltip`, the same shape slots use (`tooltipSchema`, its limits
-  unchanged; `subtitle` defaults to the row's label). It shows on hover
+  carry `tooltip`, the same shape slots use (`tooltipSchema`, with the same
+  limits as a slot's; `subtitle` defaults to the row's label). It shows on hover
   and keyboard focus through CSS and hides on Escape, exactly as a slot's
   does. A row with a tooltip and no link is focusable (a named group with
   `tabIndex={0}`, as a tooltip-only slot is); a row with neither takes no
@@ -296,7 +298,8 @@ then draws the bar and the equipment pane. Names below are **Proposed**.
 Part of the equipment pane, above the job header, in both components.
 
 - Start group: the `links` without `position: "end"` (up to 2), then the
-  job menu button. Then the caption (`label` small, `value` larger). At
+  job menu button. A third start link or a second end link is reported
+  by `parseConfig` and not shown. Then the caption (`label` small, `value` larger). At
   the right end: `gearSetEnd` if the host passes it, else the link with
   `position: "end"`, else nothing.
 - **Job menu:** today's `<details>` list of job links, with an icon as its
@@ -359,7 +362,7 @@ New groups in `LIMITS`, each written once and used by the schemas, as
 now. Loosening a limit later is a minor and tightening one is a major, so
 start snug: enough for the reference layout and a little more.
 **Proposed:** tabs 6, pages per tab 4, blocks per tab or page 8, groups
-per block 8, rows per group 12, gauge rows 4, `gearSet` links 4, level
+per block 8, rows per group 12, gauge rows 4, `gearSet` links 3 (two at the start, one at the end), level
 text 4, tab and page labels 24, row labels and values as `pair` (40/80),
 captions and overlines 60. `examples/edge-cases.json` fills every one, and
 the PR measures the result (as the tooltip was measured) before the limits
@@ -392,19 +395,23 @@ in the site.
    (in `EquipmentPanel` too), and its toggle is an icon. Hosts that style or
    test `.cs__bar .cs__jobs` are affected.
 2. **`PARAM_NAME_PATTERN` also refuses `tab` and `page`**, as it refuses
-   `job`, so a slot can't clobber the window's own parameters. Replaces
-   the report-only handling under URLs for the default names (a host that
-   renames `tabParam` still gets the render-time rule).
+   `job`, so a slot can't clobber the window's own parameters. Because
+   the pattern is part of the job's schema, a 1.x job with a slot action
+   named `tab` or `page` fails to parse and `parseConfig` drops that
+   whole job, as it does any invalid job, and reports it.
 3. **`LinkRendererProps["intent"]` gains `"tab"`.**
 4. **Limits the roadmap found too loose**, both measured and written up
-   under Done ("The `edge-cases` findings"), left alone then because a
-   tighter limit is a major:
+   under Done ("The `edge-cases` findings") and accepted then:
    - the tooltip at its limits is about 985px tall against a 598px
-     panel. Tighten `LIMITS.tooltip` (`items`, `item`, `note`,
+     panel, left because a tighter limit is a major. Tighten
+     `LIMITS.tooltip` (`items`, `item`, `note`,
      `subtitle`) until an at-limit card fits a height the PR measures;
      this matters more now that rows carry tooltips too.
-   - `LIMITS.job.levelLabel` (20) breaks the header under about 20rem.
-     Tighten it to what fits at the narrowest supported width.
+   - `LIMITS.job.levelLabel` (20) breaks the header under about 20rem
+     (`document`) or 22rem (`game`). The roadmap's other fix was moving
+     the header slots on very small panels; a shorter limit is the
+     simpler one now. Tighten it to what fits at the narrowest
+     supported width.
    Check the site's saved config against the new numbers first, and name
    each old and new value in the CHANGELOG.
 5. **Slot columns capped at 6** in `parseConfig` (a seventh `left` or
@@ -428,14 +435,20 @@ in the site.
    clean major is simpler than a deprecation path. The source files
    follow (`src/EquipmentPanel.tsx`, `src/character-panel.css`), as do
    `scripts/generate-schema.mjs`, the `exports` map, `scripts/smoke/`,
-   the README's title and tables, and CLAUDE.md. The default `label`
+   the README's title and tables, and CLAUDE.md. Grep for both old
+   names rather than trusting this list; they are also hard-coded in
+   `package.json` (`files`, the `build` copy step, `lint:package`,
+   `keywords`), `scripts/strip-dts-css-imports.mjs`, `scripts/check.sh`,
+   `tsconfig.build.json`, both workflows, `CONTRIBUTING.md`, the
+   playground, each example's `$schema`, `.claude/agents/reviewer.md`
+   and the `release-prep` skill. The default `label`
    prop ("Character sheet") becomes "Character panel". Unchanged: the
    package name, the `cs` class prefix and every `--cs-*` variable (a
    rename there would touch every rule and every host override for no
    gain), `LinkRendererProps`, and the data functions' names.
-7. **One prop for what is shown.** `showSockets`, `showToolbar` and this
-   plan's earlier `hide` list become a single `parts` object of
-   booleans, each with a stated default:
+7. **One prop for what is shown.** `showSockets` and `showToolbar` become
+   one `parts` object of booleans, which also covers the new parts,
+   each with a stated default:
 
    | Key | Default | In |
    | --- | --- | --- |
@@ -444,8 +457,10 @@ in the site.
    | `toolbar`, `sockets` | `false` (decorative) | both components |
 
    `parts={{ toolbar: true, gearSet: false }}` reads the same way for
-   every key, which a single `hide` list couldn't, since two parts start
-   off. `hiddenTabs` stays its own prop: it takes tab ids, not parts.
+   every key, though two parts start off and the rest start on.
+   `hiddenTabs` stays its own prop: it takes tab ids, not parts.
+   `gearSet: false` removes the whole row, and with it the job menu and
+   `gearSetEnd`; `jobMenu: false` removes only that button.
 
 Considered and left out: raising the peer or Node floors. Nothing here
 needs it.
@@ -471,15 +486,19 @@ needs it.
   against track needs 3:1 (WCAG 1.4.11) in both themes; tone is never the
   only signal (the value is always text). Check how axe treats `meter`
   first, and fall back to `role="img"` with an `aria-label` if needed.
-- **Row tooltips** reuse `SlotTooltip` and `SlotHover` as they are. They
+- **Row tooltips** reuse `SlotHover` as it is. `SlotTooltip` is tied to
+  slots today (it takes a slot and its content, draws the slot's icon
+  and falls back to the slot's label), so it is generalised to take a
+  tooltip, an icon and a fallback subtitle; `.cs-tip`'s placement is
+  keyed to the slot columns, so rows get their own placement rules. They
   open below the row, inside the pane. Check on a touch screen that a
   tooltip-only row can be reached at all (slots sidestep this by showing
   their names); if it can't, the tooltip's text needs another way in at
   narrow widths before this ships.
 - **Detail windows** use the HTML Popover API: the button is
-  `<button type="button" popovertarget={id}>` and the window is
-  `<div popover id={id}>` holding a title bar, the blocks, and a close
-  button (`popovertargetaction="hide"`). The browser gives it everything
+  `<button type="button" popoverTarget={id}>` and the window is
+  `<div popover="auto" role="dialog" id={id}>` holding a title bar, the blocks, and a close
+  button (`popoverTargetAction="hide"`). The browser gives it everything
   asked for with no script of ours: press to open, press again or Escape
   or a click outside to close, the top layer (nothing clips it, no
   z-index), and focus returned to the button. It is centred in the
@@ -488,12 +507,15 @@ needs it.
   `/static` with JavaScript off. React 19.0 (the peer floor) passes the
   attributes through; browsers have had it since 2024 (Chrome 114,
   Safari 17, Firefox 125), and before that the content simply stays
-  hidden. Name the popover with `aria-labelledby` its title. If testing
+  hidden. The `dialog` role lets `aria-labelledby` name it by its title (a bare
+  `div` may not be named). React wants the camel-cased attribute names;
+  the lowercase ones log a warning, which fails `scripts/preview.mjs`. If testing
   turns up a blocker, fall back to a `<details>` positioned like the job
   menu.
 - Rows with an action are links through `renderLink` with the same
   handling slots have (new-tab text, `aria-current` for an active param).
-  Rows without one are plain text and take no Tab stop.
+  Rows with neither an action nor a tooltip are plain text and take no
+  Tab stop.
 - DOM order: bar, tab strip, content pane, equipment pane. The visual
   order never departs from it (WCAG 2.4.3), which settles the narrow
   layout below unless the owner chooses otherwise.
@@ -502,9 +524,9 @@ needs it.
 
 Move `CharacterSheet`'s header and body (and the private `SlotList`,
 `Slot`, `SlotTooltip`, `Toolbar`, `PortraitPlaceholder`) into a private
-`src/EquipmentPane.tsx`; the panel and `CharacterWindow` both render
-it. In PR 1 the panel's HTML must not change by a byte: its tests pass
-untouched. (Pane is the private inside; `EquipmentPanel` is the public
+`src/EquipmentBody.tsx`; the panel and `CharacterWindow` both render
+it. In PR 1 the panel's HTML must not change by a byte: its render tests
+pass untouched. (`EquipmentBody` is the private inside; `EquipmentPanel` is the public
 component that wraps it in the section and the bar.)
 
 ### CSS
@@ -540,7 +562,7 @@ component that wraps it in the section and the bar.)
 
 ### Playground, tests, tooling
 
-- Playground: a `view` control (`window` or `sheet`) plus `tab` and `page`
+- Playground: a `view` control (`window` or `equipment`) plus `tab` and `page`
   read from the URL as a host would; `/static` gets the same. Links built
   from `BASE_URL`, as now.
 - Examples: `full.json` gains all three top-level fields with every block
@@ -555,8 +577,8 @@ component that wraps it in the section and the bar.)
   `<details>` by keyboard, row tooltips (hover, focus, Escape), detail
   windows (open and close by button, Escape, outside click, focus back
   on the button, and with JavaScript off), the job menu in the gear-set
-  row in both components and still in the bar for a config without
-  `gearSet`, the side-by-side and stacked layouts following
+  row in both components, and the row drawn for a config with several
+  jobs and no `gearSet`, the side-by-side and stacked layouts following
   the container, the equipment pane's own narrow layout inside a wide
   window, axe on every example × theme × layout × tab.
 - `scripts/preview.mjs`: a wider viewport and one shot per tab for the
@@ -569,9 +591,11 @@ component that wraps it in the section and the bar.)
 One PR and one session each, in a fresh worktree, `scripts/check.sh`
 green, reviewed by the `reviewer` subagent before the PR opens.
 
-1. **Extract the equipment pane.** `src/EquipmentPane.tsx`,
+1. **Extract the equipment pane.** `src/EquipmentBody.tsx`,
    `src/react-entry.ts`, the container rename groundwork in the CSS. No
-   host-visible change, no CHANGELOG line; existing tests untouched.
+   host-visible change, no CHANGELOG line; existing tests untouched
+   except the import in `src/entries.test.ts`, which now reads the
+   `/react` entry from `react-entry.ts` (its snapshot stays the same).
 2. **Config and data.** Schemas, `LIMITS`, types, `parseConfig`,
    `publicConfig`, `resolveTab`, `tabHref`, block replacement, the
    generated JSON Schema, examples, unit tests, README Config section.
@@ -582,7 +606,10 @@ green, reviewed by the `reviewer` subagent before the PR opens.
    as the semver decision it records); then the gear-set row in the
    equipment pane (links, caption, job menu button, `gearSetEnd`),
    `src/icons.tsx` with the fixed controls' defaults and `iconName`,
-   and Breaking changes 1, 2, 4, 5 and 7. Every break in one PR, so the
+   and Breaking changes 1 to 5 and 7 (3 as the widened type, though only
+   PR 4's window emits `"tab"`; of 7, the keys both components share,
+   with `tabs` and `equipment` arriving with the window). Every break
+   in one PR, so the
    CHANGELOG's Unreleased section and the PR body list them once, and
    the PR says what breaks. From this merge on, `main` is 2.0.0 in the
    making: a 1.x patch, if one is ever needed, is cut from the `v1.0.4`
@@ -603,10 +630,11 @@ After the release, in the site's own repository and session, an upgrade
 PR that handles the break (the site depends on `^1`, so nothing reaches
 it before then): bump to `^2`, `npm run generate:character-schema` (the
 backend's copy must accept the new keys before the admin can save them),
-check the saved config against the tightened limits and the reserved
-parameter names, restyle anything that assumed the menu in the bar, take the renames
+check the saved config against the tightened limits, the 6-slot cap and
+the reserved parameter names (a job that breaks one is dropped whole), restyle anything that assumed the menu in the bar, take the renames
 (the component, the config type, the CSS and schema paths, the schema
-export, `parts` for `showSockets`/`showToolbar`), then
+export, `parts`
+for `showSockets`/`showToolbar`), then
 switch the home page to `CharacterWindow` and extend the admin editor,
 which supplies its own save button.
 

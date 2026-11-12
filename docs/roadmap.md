@@ -160,9 +160,11 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 
 Planned 2026-11-11: a `CharacterWindow` component around today's panel,
 with a tab strip, a content pane of typed blocks (gauges, stats, fields,
-levels, progress) and a gear-set row, all from new optional config fields.
-A major (2.0.0): the job menu moves into the gear-set row for every host. The decisions, config shape, work order (six PRs) and the
-questions still open are in `docs/character-window-plan.md`.
+levels, progress) and a gear-set row, all from new optional config
+fields. A major (2.0.0): the job menu moves into the gear-set row,
+`CharacterSheet` becomes `EquipmentPanel`, and five more breaks ride
+along. The decisions, config shape, seven breaking changes and work order
+(six PRs) are in `docs/character-window-plan.md`.
 
 ## Later (candidates, unordered)
 
