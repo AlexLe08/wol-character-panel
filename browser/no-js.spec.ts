@@ -36,7 +36,7 @@ test("the job menu opens and its links change the job", async ({ page }) => {
 
   const healthcare = page.getByRole("link", { name: /Healthcare/ });
   await expect(healthcare).toBeHidden();
-  await page.getByText("Change job").click();
+  await page.locator(".cs__jobs-toggle").click();
   await expect(healthcare).toBeVisible();
 
   await healthcare.click();

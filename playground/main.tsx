@@ -48,6 +48,9 @@ const CONTROLS = {
   labels: "narrow",
   sockets: "",
   toolbar: "",
+  // On: a host control at the gear-set row's right end (gearSetEnd), as an
+  // editor's save button would be.
+  end: "",
   // Container width in rem; empty means as wide as the page allows (the
   // panel itself stops at 30rem). Below 26rem it switches to the narrow layout.
   width: "",
@@ -141,8 +144,15 @@ function App() {
           basePath={basePath}
           theme={control("theme") === "game" ? "game" : "document"}
           labels={control("labels") === "always" ? "always" : "narrow"}
-          showSockets={Boolean(control("sockets"))}
-          showToolbar={Boolean(control("toolbar"))}
+          parts={{ sockets: Boolean(control("sockets")), toolbar: Boolean(control("toolbar")) }}
+          gearSetEnd={
+            control("end") ? (
+              <button type="button" className="cs__gear-button" onClick={() => setNotice("A host would save here")}>
+                <span aria-hidden="true">↻</span>
+                <span className="cs-visually-hidden">Save</span>
+              </button>
+            ) : undefined
+          }
           renderLink={renderLink}
           isParamActive={(name, value) => query.get(name) === value}
         />
@@ -200,6 +210,7 @@ function App() {
         </label>
         <Toggle name="sockets" label="Sockets" control={control} setControl={setControl} />
         <Toggle name="toolbar" label="Toolbar" control={control} setControl={setControl} />
+        <Toggle name="end" label="End control" control={control} setControl={setControl} />
         <Toggle name="tokens" label="Dark host tokens" on="dark" control={control} setControl={setControl} />
         <Toggle name="drafts" label="Drafts and hidden jobs" control={control} setControl={setControl} />
         <label>

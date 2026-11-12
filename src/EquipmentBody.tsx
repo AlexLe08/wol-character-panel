@@ -1,11 +1,14 @@
 import type { AnchorHTMLAttributes, ReactNode } from "react";
+import { GearSetRow, gearSetFor } from "./GearSet.tsx";
+import { glyph, TOOLBAR_ICONS } from "./icons.tsx";
 import { actionHref, isActionActive } from "./resolve.ts";
 import { LIMITS } from "./schema.ts";
 import { SlotHover } from "./SlotHover.tsx";
-import type { Job, Portrait, SlotContent, SlotDef, SlotPosition, Tooltip } from "./types.ts";
+import type { CharacterPanelConfig, Job, Portrait, SlotContent, SlotDef, SlotPosition, Tooltip } from "./types.ts";
 
 // The equipment pane's inside, shared by the components that draw it (no
 // entry exports it):
+//   gear set     [links] [job menu]  caption                    [end]
 //   header       [header-start slot]  level, emblem, job title  [header-end slot]
 //   body         left column | portrait (optional corner badge) | right column
 // Slots are links (to a page section, another page, or another site) with
@@ -16,11 +19,16 @@ import type { Job, Portrait, SlotContent, SlotDef, SlotPosition, Tooltip } from 
 export type LinkRendererProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;
   // "job": swaps the job on the same page (a host may want to keep the
-  // scroll position). "param": the same page with one query parameter set
-  // (a slot's param action; its href ends in #<id> when it should scroll).
-  // "page": goes to another page on the site.
-  intent: "job" | "param" | "page";
+  // scroll position). "tab": shows another tab or page of the window, on
+  // the same page (CharacterWindow only). "param": the same page with one
+  // query parameter set (a slot's param action; its href ends in #<id>
+  // when it should scroll). "page": goes to another page on the site.
+  intent: "job" | "tab" | "param" | "page";
 };
+
+// The parts of the equipment pane a placement can leave out, each already
+// resolved from the component's `parts` prop and its default.
+export type EquipmentParts = { gearSet: boolean; jobMenu: boolean; toolbar: boolean; sockets: boolean };
 
 type RenderLink = (props: LinkRendererProps) => ReactNode;
 
@@ -34,38 +42,66 @@ export function defaultPortrait(portrait: Portrait) {
   return <img src={portrait.src} alt={portrait.alt} width={portrait.width} height={portrait.height} />;
 }
 
-export const glyph = (text: string) => text.slice(0, 2);
-
 export function EquipmentBody({
-  slots,
+  config,
   job,
   idPrefix,
+  basePath,
   currentHref,
   jobParam,
-  showSockets,
-  showToolbar,
+  parts,
+  gearSetEnd,
   renderLink,
   renderPortrait,
   isParamActive,
 }: {
-  slots: SlotDef[];
+  config: CharacterPanelConfig;
   job: Job;
   // Makes tooltip ids unique, even with two panels on one page.
   idPrefix: string;
+  // The page the pane is on, for the job menu's links.
+  basePath: string;
   // This job's own URL, which a param action adds its parameter to.
   currentHref: string;
   jobParam: string;
-  showSockets: boolean;
-  showToolbar: boolean;
+  parts: EquipmentParts;
+  gearSetEnd?: ReactNode;
   renderLink: RenderLink;
   renderPortrait: (portrait: Portrait) => ReactNode;
   isParamActive?: (name: string, value: string) => boolean;
 }) {
   const framing = job.portrait?.framing ?? "face";
-  const column = { job, idPrefix, renderLink, showSockets, slots, currentHref, jobParam, isParamActive };
+  const column = {
+    job,
+    idPrefix,
+    renderLink,
+    showSockets: parts.sockets,
+    slots: config.slots,
+    currentHref,
+    jobParam,
+    isParamActive,
+  };
+  const gearSet = gearSetFor(config, job);
+  const jobMenu = parts.jobMenu && config.jobs.length > 1;
+  // The row is drawn whenever it has something to hold.
+  const gearSetRow = parts.gearSet && (jobMenu || gearSet !== undefined || gearSetEnd != null);
 
   return (
     <>
+      {gearSetRow && (
+        <GearSetRow
+          config={config}
+          job={job}
+          gearSet={gearSet}
+          jobMenu={jobMenu}
+          end={gearSetEnd}
+          basePath={basePath}
+          jobParam={jobParam}
+          currentHref={currentHref}
+          renderLink={renderLink}
+          isParamActive={isParamActive}
+        />
+      )}
       <div className="cs__header">
         <SlotList position="header-start" {...column} />
         <div className="cs__job">
@@ -95,7 +131,7 @@ export function EquipmentBody({
           )}
         </div>
         <SlotList position="right" {...column} />
-        {showToolbar && <Toolbar />}
+        {parts.toolbar && <Toolbar />}
       </div>
     </>
   );
@@ -319,19 +355,18 @@ function SlotTooltip({ id, slot, content }: { id: string; slot: SlotDef; content
 
 // Round buttons under the portrait: three each side, the first two lit.
 // Visual only for now; when they get a job, make them real <button>s.
-const TOOLBAR_GLYPHS = { start: ["◐", "◑", "↻"], end: ["△", "◎", "↺"] };
-
 function Toolbar() {
+  const sides = { start: TOOLBAR_ICONS.slice(0, 3), end: TOOLBAR_ICONS.slice(3) };
   return (
     <div className="cs__toolbar" aria-hidden="true">
       {(["start", "end"] as const).map((side) => (
         <span key={side} className={`cs__toolbar-group cs__toolbar-group--${side}`}>
-          {TOOLBAR_GLYPHS[side].map((glyph, index) => (
+          {sides[side].map((icon, index) => (
             <span
-              key={glyph}
+              key={index}
               className={`cs__toolbar-button${side === "start" && index < 2 ? " cs__toolbar-button--lit" : ""}`}
             >
-              {glyph}
+              {icon}
             </span>
           ))}
         </span>

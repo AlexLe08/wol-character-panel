@@ -1,20 +1,36 @@
 import { useId, type ReactNode } from "react";
-import { defaultLink, defaultPortrait, EquipmentBody, glyph, type LinkRendererProps } from "./EquipmentBody.tsx";
+import { defaultLink, defaultPortrait, EquipmentBody, type LinkRendererProps } from "./EquipmentBody.tsx";
 import { jobHref } from "./resolve.ts";
 import type { CharacterPanelConfig, Job, Portrait, Theme } from "./types.ts";
 import "./character-panel.css";
 
 // An equipment-screen style panel:
-//   top bar      title, and the job menu
+//   top bar      title ........................ character name
+//   gear set     [links] [job menu]  caption                    [end]
 //   header       [header-start slot]  level, emblem, job title  [header-end slot]
 //   body         left column | portrait (optional corner badge) | right column
-// The header and body are EquipmentBody (src/EquipmentBody.tsx); this adds
-// the section around them and the bar.
+// The gear set, header and body are EquipmentBody (src/EquipmentBody.tsx);
+// this adds the section around them and the bar.
 //
 // A Server Component with no framework imports. The host passes its own
 // link and image components, so in Next.js links use <Link> and the
 // portrait goes through next/image; anywhere else the defaults are plain
 // <a> and <img>.
+
+// Which parts are drawn. Each key reads the same way, true to draw it,
+// though the decorative ones start off: toolbar (a row of round buttons
+// under the portrait) and sockets (two dots on each filled slot) have no
+// function yet, so they are hidden from assistive tech and not focusable.
+// gearSet: false removes the whole row, with the job menu and gearSetEnd;
+// jobMenu: false removes only that button.
+export type EquipmentPanelParts = {
+  bar?: boolean; // default true
+  characterName?: boolean; // default true
+  jobMenu?: boolean; // default true
+  gearSet?: boolean; // default true
+  toolbar?: boolean; // default false
+  sockets?: boolean; // default false
+};
 
 export type EquipmentPanelProps = {
   config: CharacterPanelConfig;
@@ -27,11 +43,10 @@ export type EquipmentPanelProps = {
   // is narrow (touch screens have no hover tooltip); "always" shows them
   // at every width. Either way they are the slots' accessible names.
   labels?: "narrow" | "always";
-  // Decorative extras with no function yet: two socket dots on each filled
-  // slot, and a row of round buttons under the portrait. Hidden from
-  // assistive tech and not focusable until they do something.
-  showSockets?: boolean;
-  showToolbar?: boolean;
+  parts?: EquipmentPanelParts;
+  // The host's own control at the gear-set row's right end (a save button
+  // in an editor, say), in place of the config's end link.
+  gearSetEnd?: ReactNode;
   // Accessible name for the panel landmark; also the top bar's text when
   // the config sets no title.
   label?: string;
@@ -52,8 +67,8 @@ export function EquipmentPanel({
   jobParam = "job",
   theme = "document",
   labels = "narrow",
-  showSockets = false,
-  showToolbar = false,
+  parts = {},
+  gearSetEnd,
   label = "Character panel",
   renderLink = defaultLink,
   renderPortrait = defaultPortrait,
@@ -63,51 +78,26 @@ export function EquipmentPanel({
   const idPrefix = useId();
   // This job's own URL, which a param action adds its parameter to.
   const currentHref = jobHref(config, job.id, basePath, jobParam);
+  const { bar = true, characterName = true, jobMenu = true, gearSet = true, toolbar = false, sockets = false } = parts;
 
   return (
     <section className="cs" data-cs-theme={theme} data-cs-labels={labels} aria-label={label}>
-      <div className="cs__bar">
-        <p className="cs__bar-title">{config.title ?? label}</p>
-        {config.jobs.length > 1 && (
-          // Keyed by job so the menu closes after a job change, which
-          // re-renders this panel without reloading the page.
-          <details className="cs__jobs" key={job.id}>
-            <summary className="cs__jobs-toggle">Change job</summary>
-            <ul className="cs__jobs-list">
-              {config.jobs.map((option) => (
-                <li key={option.id}>
-                  {renderLink({
-                    href: jobHref(config, option.id, basePath, jobParam),
-                    intent: "job",
-                    className: "cs__jobs-link",
-                    "aria-current": option.id === job.id ? "true" : undefined,
-                    children: (
-                      <>
-                        <span className="cs__jobs-emblem" aria-hidden="true">
-                          {option.icon ?? glyph(option.name)}
-                        </span>
-                        <span className="cs__jobs-name">{option.name}</span>
-                        <span className="cs__jobs-level">
-                          {option.level.label} {option.level.value}
-                        </span>
-                      </>
-                    ),
-                  })}
-                </li>
-              ))}
-            </ul>
-          </details>
-        )}
-      </div>
+      {bar && (
+        <div className="cs__bar">
+          <p className="cs__bar-title">{config.title ?? label}</p>
+          {characterName && config.characterName && <p className="cs__bar-name">{config.characterName}</p>}
+        </div>
+      )}
 
       <EquipmentBody
-        slots={config.slots}
+        config={config}
         job={job}
         idPrefix={idPrefix}
+        basePath={basePath}
         currentHref={currentHref}
         jobParam={jobParam}
-        showSockets={showSockets}
-        showToolbar={showToolbar}
+        parts={{ gearSet, jobMenu, toolbar, sockets }}
+        gearSetEnd={gearSetEnd}
         renderLink={renderLink}
         renderPortrait={renderPortrait}
         isParamActive={isParamActive}
