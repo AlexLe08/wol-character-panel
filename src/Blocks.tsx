@@ -182,10 +182,12 @@ function GroupFrame({ group, id, children }: { group: Group; id: string; childre
   );
 }
 
-// A row's face. With an action, a link (see ActionLink); else, with a
-// tooltip, a named group that takes focus, as a tooltip-only slot is;
-// else plain text with no Tab stop. A tooltip is shown as a slot's is,
-// and describes the face.
+// A row's face. With an action, a link named by its text (see ActionLink);
+// else, with a tooltip, a group named by `labelledBy` that takes focus, as
+// a tooltip-only slot is; else plain text with no Tab stop. A tooltip is
+// shown as a slot's is, and describes the face. A row whose face can link
+// keeps its bar outside it (a meter inside a link adds its number to the
+// link's name), laid over the face by a subgrid.
 function RowFace({
   className,
   rowId,
@@ -198,7 +200,7 @@ function RowFace({
   children,
 }: {
   className: string;
-  // The row's id, which its tooltip's and new-tab hint's ids build on.
+  // The row's id, which its tooltip's id builds on.
   rowId: string;
   tooltip: Tooltip | undefined;
   action?: RowAction;
@@ -217,7 +219,7 @@ function RowFace({
         action={action}
         className={className}
         face={children}
-        naming={{ labelledBy, hintId: `${rowId}-hint`, tipId }}
+        naming={{ labelledBy, tipId }}
         {...context}
       />
     );
@@ -423,9 +425,9 @@ function Levels({ block, id, context }: { block: LevelsBlock; id: string; contex
                     tooltip={row.tooltip}
                     action={row.action}
                     context={context}
-                    // Named label first ("React 4"), though the level is
-                    // drawn first; the bar's number stays out of the name.
-                    labelledBy={`${rowId}-label ${rowId}-level`}
+                    // In the order it's drawn ("4 React"), as a link's
+                    // name from its text is.
+                    labelledBy={`${rowId}-level ${rowId}-label`}
                     icon={icon}
                     subtitle={row.label}
                   >
@@ -434,14 +436,12 @@ function Levels({ block, id, context }: { block: LevelsBlock; id: string; contex
                     </span>
                     <span className="cs-level__level" id={`${rowId}-level`}>
                       {row.level}
-                    </span>
-                    <span className="cs-level__main">
-                      <span className="cs-level__label" id={`${rowId}-label`}>
-                        {row.label}
-                      </span>
-                      {row.fill !== undefined && <Meter fill={row.fill} labelledBy={`${rowId}-label`} />}
+                    </span>{" "}
+                    <span className="cs-level__label" id={`${rowId}-label`}>
+                      {row.label}
                     </span>
                   </RowFace>
+                  {row.fill !== undefined && <Meter fill={row.fill} labelledBy={`${rowId}-label`} />}
                 </li>
               );
             })}
@@ -483,8 +483,7 @@ function Progress({ block, id, context }: { block: ProgressBlock; id: string; co
                       <span className="cs-track__label" id={`${rowId}-label`}>
                         {row.label}
                       </span>
-                    </span>
-                    {row.fill !== undefined && <Meter fill={row.fill} labelledBy={`${rowId}-label`} />}
+                    </span>{" "}
                     {(row.caption || row.value) && (
                       <span className="cs-track__foot">
                         {row.caption && (
@@ -500,6 +499,7 @@ function Progress({ block, id, context }: { block: ProgressBlock; id: string; co
                       </span>
                     )}
                   </RowFace>
+                  {row.fill !== undefined && <Meter fill={row.fill} labelledBy={`${rowId}-label`} />}
                 </li>
               );
             })}

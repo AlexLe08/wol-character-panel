@@ -421,10 +421,12 @@ describe("CharacterWindow (server render)", () => {
   });
 
   describe("levels", () => {
-    // A row's face, found by the label that names it first.
+    // A row's face (its opening tag), found by the label in its row.
     const face = (html: string, label: string) => {
-      const labelId = html.match(new RegExp(`<span class="cs-level__label" id="([^"]+)">${label}<`))?.[1];
-      return withClass(html, "cs-level__face").find((tag) => tag.attrs["aria-labelledby"]?.split(" ")[0] === labelId);
+      const opening = [...html.matchAll(/<(?:a|span)\b[^>]*class="cs-level__face"[^>]*>/g)].find((match) =>
+        html.slice(match.index, html.indexOf("</li>", match.index)).includes(`>${label}<`),
+      );
+      return opening && tags(opening[0])[0];
     };
 
     it("draw an icon square, the level, and the label over a bar only when fill is set", () => {
@@ -437,21 +439,20 @@ describe("CharacterWindow (server render)", () => {
       // A row with no icon shows its label's first two letters.
       expect(html).toContain('<span class="cs-level__icon" aria-hidden="true">Pl</span>');
       expect(html).toMatch(/<span class="cs-level__icon" aria-hidden="true"><svg/);
-      expect(html).toMatch(/>React<\/span><span class="cs-meter" role="meter" aria-valuenow="90"/);
-      expect(html).toMatch(/>Plain<\/span><\/span>/);
+      // The bar follows the face, outside it, named by the row's label.
+      expect(html).toMatch(/>React<\/span><\/a><span class="cs-meter" role="meter" aria-valuenow="90"/);
+      const meter = tags(html).find((tag) => tag.attrs["aria-valuenow"] === "90")!;
+      expect(byId(html, meter.attrs["aria-labelledby"])?.attrs.class).toBe("cs-level__label");
+      expect(html).toMatch(/>Plain<\/span><\/span><\/li>/);
     });
 
-    it("link by their action, named by label then level, keeping the window's own query", () => {
+    it("link by their action, named by their text in the order drawn, keeping the window's own query", () => {
       const html = lists();
-      const react = face(html, "React")!;
-      expect(react).toMatchObject({
+      expect(face(html, "React")).toEqual({
         name: "a",
-        attrs: { "data-intent": "param", href: "/?tab=lists&stack=react#projects" },
+        attrs: { "data-intent": "param", href: "/?tab=lists&stack=react#projects", class: "cs-level__face" },
       });
-      const [label, level] = react.attrs["aria-labelledby"].split(" ");
-      expect(byId(html, label)?.attrs.class).toBe("cs-level__label");
-      expect(byId(html, level)?.attrs.class).toBe("cs-level__level");
-      expect(react.attrs["aria-describedby"]).toBeUndefined();
+      expect(html).toMatch(/>7<\/span> <span class="cs-level__label" id="[^"]+">React</);
     });
 
     it("switch job by a job action, current on its job, described by a tooltip", () => {
@@ -467,8 +468,14 @@ describe("CharacterWindow (server render)", () => {
     it("are a focusable group with a tooltip and no link to make, plain text with neither", () => {
       const html = lists();
       for (const label of ["Gone", "Vite"]) {
-        expect(face(html, label)).toMatchObject({ name: "span", attrs: { role: "group", tabindex: "0" } });
-        expect(byId(html, face(html, label)!.attrs["aria-describedby"])?.attrs.role).toBe("tooltip");
+        const group = face(html, label)!;
+        expect(group).toMatchObject({ name: "span", attrs: { role: "group", tabindex: "0" } });
+        expect(byId(html, group.attrs["aria-describedby"])?.attrs.role).toBe("tooltip");
+        // Named as it's drawn: level, then label.
+        expect(group.attrs["aria-labelledby"].split(" ").map((id) => byId(html, id)?.attrs.class)).toEqual([
+          "cs-level__level",
+          "cs-level__label",
+        ]);
       }
       // Plain, Writing and Later: no Tab stop, no role.
       const plain = withClass(html, "cs-level__face").filter((tag) => tag.name === "span" && !tag.attrs.tabindex);
@@ -477,23 +484,32 @@ describe("CharacterWindow (server render)", () => {
   });
 
   describe("progress", () => {
-    it("draw icon and label, a bar, and caption and value, named by all three", () => {
+    it("draw icon and label, caption and value, and the bar after the face", () => {
       const html = lists();
-      const faces = withClass(html, "cs-track__face");
-      const names = faces.map((tag) => (tag.attrs["aria-labelledby"] ?? "").split(" ").filter(Boolean).map((id) => byId(html, id)?.attrs.class));
-      expect(names.slice(0, 2)).toEqual([
-        ["cs-track__label", "cs-track__caption", "cs-track__value", "cs-visually-hidden"],
-        ["cs-track__label", "cs-track__value"],
-      ]);
+      expect(html).toMatch(
+        /<span class="cs-track__label" id="[^"]+">This panel<\/span><\/span> <span class="cs-track__foot"><span class="cs-track__caption" id="[^"]+">Maintainer<\/span> <span class="cs-track__value" id="[^"]+">23 PRs<\/span><\/span>/,
+      );
+      expect(html).toMatch(/<\/a><span class="cs-meter" role="meter" aria-valuenow="100"/);
       expect(html).toContain('<span class="cs-track__icon" aria-hidden="true">Do</span>');
     });
 
-    it("open an external link in a new tab, saying so in its name", () => {
+    it("are named by label, caption and value as a tooltip group", () => {
       const html = lists();
-      const link = withClass(html, "cs-track__face")[0];
-      expect(link).toMatchObject({ name: "a", attrs: { href: "https://example.com/", target: "_blank", rel: "noopener noreferrer" } });
-      const hint = link.attrs["aria-labelledby"].split(" ").at(-1)!;
-      expect(html).toContain(`<span class="cs-visually-hidden" id="${hint}"> (opens in a new tab)</span>`);
+      const docs = withClass(html, "cs-track__face")[1];
+      expect(docs.attrs).toMatchObject({ role: "group", tabindex: "0" });
+      expect(docs.attrs["aria-labelledby"].split(" ").map((id) => byId(html, id)?.attrs.class)).toEqual([
+        "cs-track__label",
+        "cs-track__value",
+      ]);
+    });
+
+    it("open an external link in a new tab, saying so in its text", () => {
+      const html = lists();
+      expect(withClass(html, "cs-track__face")[0]).toEqual({
+        name: "a",
+        attrs: { class: "cs-track__face", href: "https://example.com/", target: "_blank", rel: "noopener noreferrer" },
+      });
+      expect(html).toContain('23 PRs</span></span><span class="cs-visually-hidden"> (opens in a new tab)</span></a>');
     });
   });
 

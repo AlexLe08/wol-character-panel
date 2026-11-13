@@ -152,12 +152,10 @@ export function ActionLink({
   action: RowAction;
   className: string;
   face: ReactNode;
-  // For a row named by its parts rather than its whole text (a level row's
-  // meter would otherwise add its number to the name): the ids that name
-  // it, an id for the new-tab hint, and its tooltip's id if it has one.
-  // With a tooltip and no link to make, the face is focusable, as a
-  // tooltip-only slot's is.
-  naming?: { labelledBy: string; hintId: string; tipId?: string };
+  // For a row with a tooltip: the card's id, which describes the link. With
+  // no link to make, the face is then a focusable group named by
+  // `labelledBy`, as a tooltip-only slot is. A link is named by its text.
+  naming?: { labelledBy: string; tipId?: string };
   config: CharacterPanelConfig;
   job: Job;
   jobParam: string;
@@ -167,11 +165,11 @@ export function ActionLink({
   renderLink: RenderLink;
   isParamActive?: (name: string, value: string) => boolean;
 }) {
-  const named = naming && { "aria-labelledby": naming.labelledBy, "aria-describedby": naming.tipId };
+  const described = naming?.tipId ? { "aria-describedby": naming.tipId } : undefined;
   const unlinked = () =>
     naming?.tipId ? (
       // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- focus shows the tooltip it's described by
-      <span className={className} role="group" {...named} tabIndex={0}>
+      <span className={className} role="group" aria-labelledby={naming.labelledBy} {...described} tabIndex={0}>
         {face}
       </span>
     ) : (
@@ -187,7 +185,7 @@ export function ActionLink({
       intent: "job",
       className,
       "aria-current": action.id === job.id ? "true" : undefined,
-      ...named,
+      ...described,
       children: face,
     });
   }
@@ -196,34 +194,27 @@ export function ActionLink({
   // "page", but a host can rename them).
   const href = action.kind === "param" && ownParams.includes(action.name) ? null : actionHref(action, currentHref);
   if (href === null) return unlinked();
-  if (action.kind === "link") return renderLink({ className, href, intent: "page", ...named, children: face });
+  if (action.kind === "link") return renderLink({ className, href, intent: "page", ...described, children: face });
   if (action.kind === "param") {
     return renderLink({
       className,
       href,
       intent: "param",
       "aria-current": isActionActive(action, isParamActive, ownParams) ? "true" : undefined,
-      ...named,
+      ...described,
       children: face,
     });
   }
   if (action.kind === "external" && action.newTab) {
     return (
-      <a
-        className={className}
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        {...named}
-        {...(naming && { "aria-labelledby": `${naming.labelledBy} ${naming.hintId}` })}
-      >
+      <a className={className} href={href} target="_blank" rel="noopener noreferrer" {...described}>
         {face}
-        <span className="cs-visually-hidden" id={naming?.hintId}> (opens in a new tab)</span>
+        <span className="cs-visually-hidden"> (opens in a new tab)</span>
       </a>
     );
   }
   return (
-    <a className={className} href={href} {...named}>
+    <a className={className} href={href} {...described}>
       {face}
     </a>
   );
