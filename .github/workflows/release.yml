@@ -58,6 +58,10 @@ jobs:
           npm run generate:schema
           git diff --exit-code character-panel.schema.json
 
-      # prepack runs the build.
+      # prepack runs the build. A prerelease (a version with a `-`, such as
+      # 2.0.0-beta.0) goes to the `next` dist-tag, so `npm install` keeps
+      # getting the latest stable; npm 11 refuses a prerelease without --tag.
       - name: Publish
-        run: npm publish
+        run: |
+          version="$(node -p 'require("./package.json").version')"
+          if [[ "$version" == *-* ]]; then npm publish --tag next; else npm publish; fi
