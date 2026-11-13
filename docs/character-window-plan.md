@@ -710,6 +710,46 @@ one closes the whole window, not just the tooltip (1.4.13 is still met,
 but the window is lost), with no browser test of such a tooltip yet; and
 level numbers line up only within a row, not down a column of rows.
 
+Settled by PR 6 (Chromium, 1280×800): the window limits ship as proposed
+except one. At the limits `edge-cases`' first tab was 4,919px tall (7,221px
+at 22rem), and the counts weren't the cause: every row value shared
+`pair.value` (80), so a gauge's figure squeezed its label to 39px and stat
+values wrapped to five lines. `LIMITS.row.figure` (24) now caps the
+`gauges`, `stats` and `progress` values (a `fields` value keeps 80, with a
+line to itself), which is free before 2.0.0 ships, since no host has these
+fields yet; a gauge's or stat's label keeps at least 6rem and a longer value
+wraps under it, right-aligned. The tab is then 4,194px tall in the wide window: real content
+(8 blocks, 8 groups, 12 rows), not wrapping. At the limits a detail window
+is 737px, inside the 768px its `max-height` allows in an 800px viewport;
+past that its body scrolls. Gauges go one per line in a content pane under 22rem.
+Levels line up down a group: the list holds the columns and each row is a
+subgrid of it. A row tooltip in a detail window is drawn past the window's
+edge with CSS anchor positioning (Baseline since January 2026, Firefox 147
+last; gated on `position-try-fallbacks`, the name Chrome uses from 128) in
+viewports at least 45rem tall: below its row, above, beside the window, or
+pinned near the screen's top, so an at-limit one (699px) is always fully on
+screen. The window then can't be a size container (it would be the
+tooltip's containing block, and the fallbacks would test against it, which
+the reviewer caught: at-limit tooltips ran off screen with nothing to
+scroll), so its runs follow the content pane's width. In Chromium a list of
+six fallbacks went unused, so it keeps five. In shorter viewports, or
+without support, the tooltip stays inside the scrolling body, as before.
+An Escape spent hiding a tooltip is cancelled, so the window closes on the
+next one (listed as breaking: a host dialog around the panel needs a second
+Escape too). The playground and the
+demo open on the window view (owner's call); browser tests that mean the
+panel say `view=equipment`. The fixed English names ("Tabs", "Close", and
+1.x's "(opens in a new tab)" and "No portrait yet") stay for 2.0.0: an
+optional prop for them later is a minor (roadmap, Later). Game theme against
+the four screenshots: tabs as equal slanted buttons filling the strip (a
+grid of 9rem-or-wider columns; the shape drawn on pseudo-elements, since a
+clip-path on the link would cut off its focus ring), sub-tabs as a
+full-width switch, sentence-case light headings, gauges in a dark inset
+box, gold field and orange progress captions, the character's name in gold
+small capitals, and the gear-set label small and uppercase over a plain
+value. Measured by hand, since axe can't see text over gradients: each new
+colour is 4.73:1 or more at its background's lightest stop.
+
 ## Ideas for what the parts can hold
 
 - **Gauges:** years of experience against a goal, availability this

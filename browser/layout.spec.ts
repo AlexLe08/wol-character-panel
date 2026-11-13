@@ -6,7 +6,7 @@ import { slot } from "./helpers.ts";
 
 for (const theme of ["document", "game"]) {
   test(`every focusable element in the panel shows a focus ring (${theme})`, async ({ page }) => {
-    await page.goto(`/?fixture=full&theme=${theme}`);
+    await page.goto(`/?view=equipment&fixture=full&theme=${theme}`);
     // Open the job menu so its links are in the tab order too, without
     // moving focus: the walk starts from the top of the page.
     await page.locator(".cs__jobs").evaluate((details: HTMLDetailsElement) => (details.open = true));
@@ -52,7 +52,7 @@ async function box(page: Page, selector: string) {
 }
 
 test("wide: the portrait sits between the columns, slot names hidden", async ({ page }) => {
-  await page.goto("/?fixture=full");
+  await page.goto("/?view=equipment&fixture=full");
   const left = await box(page, ".cs__slots--left");
   const portrait = await box(page, ".cs__portrait");
   const right = await box(page, ".cs__slots--right");
@@ -66,7 +66,7 @@ test("wide: the portrait sits between the columns, slot names hidden", async ({ 
 });
 
 test("narrow (below 26rem): portrait on top, slots in rows of three with names", async ({ page }) => {
-  await page.goto("/?fixture=full&width=22");
+  await page.goto("/?view=equipment&fixture=full&width=22");
   const portrait = await box(page, ".cs__portrait");
   const left = await box(page, ".cs__slots--left");
   expect(portrait.y + portrait.height).toBeLessThanOrEqual(left.y);
@@ -84,7 +84,7 @@ test("narrow (below 26rem): portrait on top, slots in rows of three with names",
 test("the layout follows the container, not the viewport", async ({ page }) => {
   // A wide viewport with a narrow container still gets the narrow layout.
   await page.setViewportSize({ width: 1400, height: 900 });
-  await page.goto("/?fixture=full&width=22");
+  await page.goto("/?view=equipment&fixture=full&width=22");
   const portrait = await box(page, ".cs__portrait");
   const left = await box(page, ".cs__slots--left");
   expect(portrait.y + portrait.height).toBeLessThanOrEqual(left.y);
@@ -95,7 +95,7 @@ test("in a window, the slot layout follows the equipment pane, not the window", 
   // panel: the root gets cs--window (its container renamed cs-window) and
   // the header and body go into a .cs__equipment wrapper (the cs container).
   await page.setViewportSize({ width: 1400, height: 900 });
-  await page.goto("/?fixture=full");
+  await page.goto("/?view=equipment&fixture=full");
   await page.locator(".cs").evaluate((root: HTMLElement) => {
     root.classList.add("cs--window");
     root.style.maxWidth = "60rem";
@@ -121,7 +121,7 @@ test("in a window, the slot layout follows the equipment pane, not the window", 
 test("a cs--window root is not the cs container", async ({ page }) => {
   // At 22rem the root alone would get the narrow layout; renamed cs-window,
   // with no pane wrapper, the narrow rules don't apply.
-  await page.goto("/?fixture=full&width=22");
+  await page.goto("/?view=equipment&fixture=full&width=22");
   await page.locator(".cs").evaluate((root: HTMLElement) => root.classList.add("cs--window"));
   const left = await box(page, ".cs__slots--left");
   const portrait = await box(page, ".cs__portrait");
@@ -146,7 +146,7 @@ for (const theme of ["document", "game"]) {
     ["narrow", "&width=22"],
   ]) {
     test(`at the limits, the gear-set buttons stay square (${theme}, ${layout})`, async ({ page }) => {
-      await page.goto(`/?fixture=edge-cases&theme=${theme}${width}`);
+      await page.goto(`/?view=equipment&fixture=edge-cases&theme=${theme}${width}`);
       const sizes = await page
         .locator(".cs__gear-button")
         .evaluateAll((buttons) => buttons.map((button) => button.getBoundingClientRect().toJSON()));
@@ -162,7 +162,7 @@ for (const theme of ["document", "game"]) {
   }
 
   test(`a title with no break in it wraps before the character name (${theme})`, async ({ page }) => {
-    await page.goto(`/?fixture=edge-cases&theme=${theme}&width=22`);
+    await page.goto(`/?view=equipment&fixture=edge-cases&theme=${theme}&width=22`);
     // The longest title the schema allows, as one word (a URL, a handle).
     const { textRight, nameLeft } = await page.locator(".cs__bar").evaluate((bar) => {
       const title = bar.querySelector(".cs__bar-title")!;
@@ -181,7 +181,7 @@ for (const theme of ["document", "game"]) {
 // The job menu sits in the gear-set row, above the job header, in both
 // layouts; the bar has none.
 test("the job menu is in the gear-set row, not the bar", async ({ page }) => {
-  await page.goto("/?fixture=full");
+  await page.goto("/?view=equipment&fixture=full");
   await expect(page.locator(".cs__bar .cs__jobs")).toHaveCount(0);
   const toggle = page.locator(".cs__gear .cs__jobs-toggle");
   await expect(toggle).toHaveAccessibleName("Change job");
@@ -195,7 +195,7 @@ test("the job menu is in the gear-set row, not the bar", async ({ page }) => {
 // the job column, wrapping, in the game theme's wider capitals.
 for (const theme of ["document", "game"]) {
   test(`at 18rem, a level label at the limit stays inside the job column (${theme})`, async ({ page }) => {
-    await page.goto(`/?fixture=edge-cases&theme=${theme}&width=18`);
+    await page.goto(`/?view=equipment&fixture=edge-cases&theme=${theme}&width=18`);
     const { label, column } = await page.locator(".cs__job").evaluate((job) => {
       const text = document.createRange();
       text.selectNodeContents(job.querySelector(".cs__level-label")!);
@@ -211,7 +211,7 @@ for (const theme of ["document", "game"]) {
 for (const theme of ["document", "game"]) {
   for (const width of ["", "22", "18"]) {
     test(`the open job menu stays inside the panel (${theme}, ${width || "wide"})`, async ({ page }) => {
-      await page.goto(`/?fixture=edge-cases&theme=${theme}${width && `&width=${width}`}`);
+      await page.goto(`/?view=equipment&fixture=edge-cases&theme=${theme}${width && `&width=${width}`}`);
       await page.locator(".cs__jobs-toggle").click();
       const list = await box(page, ".cs__jobs-list");
       const panel = await box(page, ".cs");

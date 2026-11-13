@@ -56,7 +56,7 @@
           "rows": [
             {
               "label": "Gauge 1 Long text that fills the field .",
-              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "value": "Figure Long text that f.",
               "secondary": "Secondary Long text that fills the field to its limit so ov.",
               "fill": 0,
               "tone": "primary",
@@ -93,21 +93,51 @@
             },
             {
               "label": "Gauge 2 Long text that fills the field .",
-              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "value": "Figure Long text that f.",
               "secondary": "Secondary Long text that fills the field to its limit so ov.",
               "fill": 100,
-              "tone": "secondary"
+              "tone": "secondary",
+              "tooltip": {
+                "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                "tags": [
+                  "Tag1 Long text that fill",
+                  "Tag2 Long text that fill",
+                  "Tag3 Long text that fill"
+                ],
+                "subtitle": "Subtitle Long text that fills the field to its limit so ove.",
+                "stat": {
+                  "label": "Stat Long text that fills the field to i",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                },
+                "items": [
+                  {
+                    "label": "Label 1 Long text that fills the field t",
+                    "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                  },
+                  "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                  {
+                    "label": "Label 3 Long text that fills the field t",
+                    "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                  },
+                  "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                  {
+                    "label": "Label 5 Long text that fills the field t",
+                    "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                  }
+                ],
+                "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its."
+              }
             },
             {
               "label": "Gauge 3 Long text that fills the field .",
-              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "value": "Figure Long text that f.",
               "secondary": "Secondary Long text that fills the field to its limit so ov.",
               "fill": 33.3,
               "tone": "primary"
             },
             {
               "label": "Gauge 4 Long text that fills the field .",
-              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "value": "Figure Long text that f.",
               "secondary": "Secondary Long text that fills the field to its limit so ov.",
               "tone": "secondary"
             }
@@ -125,7 +155,7 @@
               "rows": [
                 {
                   "label": "Stat 1 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "default",
                   "tooltip": {
                     "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
@@ -160,57 +190,57 @@
                 },
                 {
                   "label": "Stat 2 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "muted"
                 },
                 {
                   "label": "Stat 3 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "highlight"
                 },
                 {
                   "label": "Stat 4 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "default"
                 },
                 {
                   "label": "Stat 5 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "muted"
                 },
                 {
                   "label": "Stat 6 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "highlight"
                 },
                 {
                   "label": "Stat 7 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "default"
                 },
                 {
                   "label": "Stat 8 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "muted"
                 },
                 {
                   "label": "Stat 9 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "highlight"
                 },
                 {
                   "label": "Stat 10 Long text that fills the field .",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "default"
                 },
                 {
                   "label": "Stat 11 Long text that fills the field .",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "muted"
                 },
                 {
                   "label": "Stat 12 Long text that fills the field .",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "highlight"
                 }
               ]
@@ -222,7 +252,7 @@
               "rows": [
                 {
                   "label": "Stat 1 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "default",
                   "tooltip": {
                     "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
@@ -264,7 +294,7 @@
               "rows": [
                 {
                   "label": "Stat 1 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "default",
                   "tooltip": {
                     "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
@@ -305,7 +335,7 @@
               "rows": [
                 {
                   "label": "Stat 1 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "default",
                   "tooltip": {
                     "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
@@ -347,7 +377,7 @@
               "rows": [
                 {
                   "label": "Stat 1 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "default",
                   "tooltip": {
                     "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
@@ -389,7 +419,7 @@
               "rows": [
                 {
                   "label": "Stat 1 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "default",
                   "tooltip": {
                     "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
@@ -431,7 +461,7 @@
               "rows": [
                 {
                   "label": "Stat 1 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "default",
                   "tooltip": {
                     "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
@@ -472,7 +502,7 @@
               "rows": [
                 {
                   "label": "Stat 1 Long text that fills the field t.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "tone": "default",
                   "tooltip": {
                     "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
@@ -536,7 +566,7 @@
                     "rows": [
                       {
                         "label": "Gauge 1 Long text that fills the field .",
-                        "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                        "value": "Figure Long text that f.",
                         "secondary": "Secondary Long text that fills the field to its limit so ov.",
                         "fill": 0,
                         "tone": "primary"
@@ -579,7 +609,37 @@
                             "label": "Progress",
                             "fill": 50,
                             "caption": "Caption",
-                            "value": "1"
+                            "value": "1",
+                            "tooltip": {
+                              "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                              "tags": [
+                                "Tag1 Long text that fill",
+                                "Tag2 Long text that fill",
+                                "Tag3 Long text that fill"
+                              ],
+                              "subtitle": "Subtitle Long text that fills the field to its limit so ove.",
+                              "stat": {
+                                "label": "Stat Long text that fills the field to i",
+                                "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                              },
+                              "items": [
+                                {
+                                  "label": "Label 1 Long text that fills the field t",
+                                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                                },
+                                "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                                {
+                                  "label": "Label 3 Long text that fills the field t",
+                                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                                },
+                                "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                                {
+                                  "label": "Label 5 Long text that fills the field t",
+                                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                                }
+                              ],
+                              "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its."
+                            }
                           }
                         ]
                       }
@@ -899,7 +959,7 @@
                   "label": "Progress 1 Long text that fills the fie.",
                   "fill": 0,
                   "caption": "Caption Long text that fills the field to its limit so over.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "icon": "WWWW",
                   "action": {
                     "kind": "anchor",
@@ -940,7 +1000,7 @@
                   "label": "Progress 2 Long text that fills the fie.",
                   "fill": 9,
                   "caption": "Caption Long text that fills the field to its limit so over.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "iconSrc": "/icon.svg",
                   "action": {
                     "kind": "link",
@@ -950,7 +1010,7 @@
                 {
                   "label": "Progress 3 Long text that fills the fie.",
                   "caption": "Caption Long text that fills the field to its limit so over.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "iconName": "sword",
                   "action": {
                     "kind": "external",
@@ -962,7 +1022,7 @@
                   "label": "Progress 4 Long text that fills the fie.",
                   "fill": 27,
                   "caption": "Caption Long text that fills the field to its limit so over.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "action": {
                     "kind": "param",
                     "name": "stack",
@@ -974,7 +1034,7 @@
                   "label": "Progress 5 Long text that fills the fie.",
                   "fill": 36,
                   "caption": "Caption Long text that fills the field to its limit so over.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "icon": "WWWW",
                   "action": {
                     "kind": "job",
@@ -984,7 +1044,7 @@
                 {
                   "label": "Progress 6 Long text that fills the fie.",
                   "caption": "Caption Long text that fills the field to its limit so over.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "iconSrc": "/icon.svg",
                   "action": {
                     "kind": "none"
@@ -994,39 +1054,39 @@
                   "label": "Progress 7 Long text that fills the fie.",
                   "fill": 54,
                   "caption": "Caption Long text that fills the field to its limit so over.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "iconName": "sword"
                 },
                 {
                   "label": "Progress 8 Long text that fills the fie.",
                   "fill": 63,
                   "caption": "Caption Long text that fills the field to its limit so over.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                  "value": "Figure Long text that f."
                 },
                 {
                   "label": "Progress 9 Long text that fills the fie.",
                   "caption": "Caption Long text that fills the field to its limit so over.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "icon": "WWWW"
                 },
                 {
                   "label": "Progress 10 Long text that fills the fi.",
                   "fill": 81,
                   "caption": "Caption Long text that fills the field to its limit so over.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "iconSrc": "/icon.svg"
                 },
                 {
                   "label": "Progress 11 Long text that fills the fi.",
                   "fill": 90,
                   "caption": "Caption Long text that fills the field to its limit so over.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "iconName": "sword"
                 },
                 {
                   "label": "Progress 12 Long text that fills the fi.",
                   "caption": "Caption Long text that fills the field to its limit so over.",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                  "value": "Figure Long text that f."
                 }
               ]
             }
@@ -1106,7 +1166,7 @@
               "rows": [
                 {
                   "label": "Gauge 1 Long text that fills the field .",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "secondary": "Secondary Long text that fills the field to its limit so ov.",
                   "fill": 0,
                   "tone": "primary"
@@ -1141,7 +1201,7 @@
               "rows": [
                 {
                   "label": "Gauge 1 Long text that fills the field .",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "secondary": "Secondary Long text that fills the field to its limit so ov.",
                   "fill": 0,
                   "tone": "primary"
@@ -1175,7 +1235,7 @@
               "rows": [
                 {
                   "label": "Gauge 1 Long text that fills the field .",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "secondary": "Secondary Long text that fills the field to its limit so ov.",
                   "fill": 0,
                   "tone": "primary"
@@ -1208,7 +1268,7 @@
               "rows": [
                 {
                   "label": "Gauge 1 Long text that fills the field .",
-                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+                  "value": "Figure Long text that f.",
                   "secondary": "Secondary Long text that fills the field to its limit so ov.",
                   "fill": 0,
                   "tone": "primary"
@@ -1553,7 +1613,7 @@
           "rows": [
             {
               "label": "Gauge 1 Long text that fills the field .",
-              "value": "Value Long text that fills the field to its limit so overflow and wrapping show.",
+              "value": "Figure Long text that f.",
               "secondary": "Secondary Long text that fills the field to its limit so ov.",
               "fill": 0,
               "tone": "primary"

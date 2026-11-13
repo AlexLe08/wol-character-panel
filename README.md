@@ -227,18 +227,18 @@ without these fields stays valid.
   pages per tab and 8 blocks per tab or page.
 - **Blocks** have a `type`, an optional heading (`label`, icon) and an
   optional `id`, unique across all tabs, which a job can replace them by:
-  - `gauges`: 1 to 4 `rows` of `label`, `value`, `secondary`, `fill` and
-    `tone` (`primary` or `secondary`).
-  - `stats`: `groups` of `rows` of `label`, `value` and `tone` (`default`,
-    `muted` or `highlight`).
+  - `gauges`: 1 to 4 `rows` of `label`, `value` (up to 24 characters),
+    `secondary`, `fill` and `tone` (`primary` or `secondary`).
+  - `stats`: `groups` of `rows` of `label`, `value` (up to 24 characters)
+    and `tone` (`default`, `muted` or `highlight`).
   - `fields`: `rows` of `label`, `value`, `overline`, `caption`, an icon, an
     `action`, and `detail`: a button that opens a window (`label` as its
     accessible name, an icon, a `title`, and `blocks`, whose `fields` rows
     can't have a `detail` of their own).
   - `levels`: `groups` of `rows` of `label`, `level` (up to 4 characters),
     `fill`, `tone` (`default` or `highlight`), an icon and an `action`.
-  - `progress`: `groups` of `rows` of `label`, `fill`, `caption`, `value`, an
-    icon and an `action`.
+  - `progress`: `groups` of `rows` of `label`, `fill`, `caption`, `value`
+    (up to 24 characters), an icon and an `action`.
 - **Groups** (in `stats`, `levels` and `progress`) have an optional `label`
   and icon, `column` (`start` or `end`: consecutive groups that set it form
   two columns, the `start` ones stacked on the left and the `end` ones on the
@@ -354,7 +354,9 @@ because something failed, which a host can tell visitors about.
 - **Tooltips:**
   - CSS shows them on hover (on devices that can hover) and on keyboard focus,
     so they work before hydration and without JavaScript.
-  - Escape hides them (WCAG 1.4.13).
+  - Escape hides them (WCAG 1.4.13). An Escape that hides a tooltip is
+    cancelled (`preventDefault`), so a detail window, or a host's own dialog
+    around the panel, closes on the next Escape, not with the tooltip.
   - On touch screens, a tap simply follows the slot's link.
 - **Job menu:** an icon button in the gear-set row (its name from
   `gearSet.jobMenu.label`), opening a `<details>` list of job links. It needs
@@ -382,7 +384,10 @@ because something failed, which a host can tell visitors about.
   tap elsewhere hides it. Rows with neither a tooltip nor an action take no
   Tab stop. Bars are `role="meter"` (0 to 100) named by their row's label,
   and sit outside a row's link, so their number isn't read as part of its
-  name.
+  name. A gauge's or stat's label keeps at least 6rem; a longer value wraps
+  under it, still right-aligned. Gauges are two per line, one per line in a
+  pane narrower than 22rem. Levels line up down a group, at its widest
+  level's width.
 - **Groups:** a two-column run is two stacks, each with its own row
   heights; when the pane is narrower than 22rem they become one column, the
   `start` groups first (also their order for screen readers and the Tab
@@ -393,10 +398,18 @@ because something failed, which a host can tell visitors about.
   (`popover="auto"`, `role="dialog"`), so it needs no JavaScript: the button
   opens and closes it, as do Escape and a click outside, and focus goes
   back to the button. Tab from the button moves into the window. The close
-  button is named "Close".
+  button is named "Close". Its body scrolls when it is taller than the
+  screen. A row's tooltip inside it is drawn past the window's edges where
+  the browser supports CSS anchor positioning and the viewport is at least
+  45rem tall: below its row, above it, beside the window, or, with no room
+  for those, near the top of the screen. Elsewhere it opens inside the
+  window's scrolling body. In those viewports a window's two-column runs
+  follow the content pane's width rather than the window's.
 - **Window layout:** the content pane beside the 30rem equipment pane, up to
   58rem; below a 46rem container width the panes stack in DOM order (tab
   strip, content, equipment), and below 26rem the tab strip is two per row.
+  In the `game` theme the tabs share the strip equally at every width, as
+  many 9rem-or-wider columns as fit.
   The equipment pane's own layout follows its own width. With one pane (no
   tabs, or a part turned off) the window is as wide as the panel.
 
@@ -505,8 +518,8 @@ The playground renders the panel straight from `src/` with hot reload, on any
 config in `examples/`. Its controls (view, fixture, theme, labels, sockets,
 toolbar, end control, container width, dark host tokens, drafts) are query
 parameters, so every state is a link, such as
-`/?fixture=edge-cases&theme=game&width=22`. `view=window` shows
-`CharacterWindow` instead of `EquipmentPanel`. Like a host, it reads `?job=`,
+`/?fixture=edge-cases&theme=game&width=22`. It shows `CharacterWindow`;
+`view=equipment` shows `EquipmentPanel` alone. Like a host, it reads `?job=`,
 `?tab=`, `?page=` and the param actions' parameters from the URL and passes
 `isParamActive`; a `link` action shows where a host would go instead of
 leaving the page. It renders on the client, while hosts render the panel on

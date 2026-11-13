@@ -5,7 +5,7 @@ import { pointerAway, slot, tabTo, tooltipOf } from "./helpers.ts";
 // without moving focus or the pointer (SlotHover.tsx, WCAG 1.4.13).
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/?fixture=full");
+  await page.goto("/?view=equipment&fixture=full");
 });
 
 test("hover shows a slot's tooltip, and leaving hides it", async ({ page }) => {
@@ -91,7 +91,7 @@ test("Escape hides a hovered slot's tooltip without moving the pointer", async (
 // about 720px; it was 985px before.
 for (const theme of ["document", "game"]) {
   test(`a tooltip at the limits is at most 720px tall (${theme})`, async ({ page }) => {
-    await page.goto(`/?fixture=edge-cases&theme=${theme}`);
+    await page.goto(`/?view=equipment&fixture=edge-cases&theme=${theme}`);
     const face = page.locator(".cs__slots--left .cs-slot__face").first();
     await face.hover();
     const tip = await tooltipOf(face);

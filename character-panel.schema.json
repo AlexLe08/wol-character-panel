@@ -1074,7 +1074,7 @@
         "value": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 80
+          "maxLength": 24
         },
         "secondary": {
           "description": "A small line under the bar.",
@@ -1264,7 +1264,7 @@
         "value": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 80
+          "maxLength": 24
         },
         "tone": {
           "type": "string",
@@ -1802,7 +1802,7 @@
           "description": "Under the bar's right end.",
           "type": "string",
           "minLength": 1,
-          "maxLength": 80
+          "maxLength": 24
         },
         "icon": {
           "description": "Up to 4 characters drawn as the icon.",

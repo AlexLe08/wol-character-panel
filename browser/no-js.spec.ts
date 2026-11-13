@@ -12,13 +12,13 @@ import { pointerAway, slot, tabTo, tooltipOf } from "./helpers.ts";
 test.use({ javaScriptEnabled: false });
 
 test("the page has no script", async ({ page }) => {
-  await page.goto("/static?fixture=full");
+  await page.goto("/static?view=equipment&fixture=full");
   await expect(page.locator(".cs")).toBeVisible();
   await expect(page.locator("script")).toHaveCount(0);
 });
 
 test("hover and keyboard focus show tooltips", async ({ page }) => {
-  await page.goto("/static?fixture=full");
+  await page.goto("/static?view=equipment&fixture=full");
   const skills = slot(page, "Skills");
   const tip = await tooltipOf(skills);
 
@@ -32,7 +32,7 @@ test("hover and keyboard focus show tooltips", async ({ page }) => {
 });
 
 test("the job menu opens and its links change the job", async ({ page }) => {
-  await page.goto("/static?fixture=full");
+  await page.goto("/static?view=equipment&fixture=full");
   await expect(page.locator(".cs__job-title")).toHaveText("Front-end developer");
 
   const healthcare = page.getByRole("link", { name: /Healthcare/ });
@@ -50,7 +50,7 @@ test("the job menu opens and its links change the job", async ({ page }) => {
 });
 
 test("the narrow layout needs no script", async ({ page }) => {
-  await page.goto("/static?fixture=full&width=22");
+  await page.goto("/static?view=equipment&fixture=full&width=22");
   const portrait = (await page.locator(".cs__portrait").boundingBox())!;
   const left = (await page.locator(".cs__slots--left").boundingBox())!;
   expect(portrait.y + portrait.height).toBeLessThanOrEqual(left.y);

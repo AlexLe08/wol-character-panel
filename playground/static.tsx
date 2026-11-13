@@ -36,7 +36,7 @@ export function render(url: URL): string {
       labels: query.get("labels") === "always" ? "always" : "narrow",
     } as const;
     panel = renderToStaticMarkup(
-      query.get("view") === "window" ? (
+      query.get("view") !== "equipment" ? (
         <CharacterWindow {...props} tab={query.get("tab") ?? undefined} page={query.get("page") ?? undefined} />
       ) : (
         <EquipmentPanel {...props} />

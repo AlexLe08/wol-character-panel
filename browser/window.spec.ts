@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { pointerAway, tabTo, tooltipOf } from "./helpers.ts";
 
 // CharacterWindow in the playground (view=window): tab and sub-tab links,
@@ -230,6 +230,9 @@ test.describe("detail windows", () => {
 
     await button.click();
     await expect(dialog).toBeVisible();
+    // The window opens under the pointer, which may rest on a row with a
+    // tooltip; an Escape would hide that first (tested below).
+    await pointerAway(page);
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
     await expect(button).toBeFocused();
@@ -245,6 +248,87 @@ test.describe("detail windows", () => {
     const { dialog } = await open(page);
     await page.keyboard.press("Tab");
     await expect(dialog.getByRole("button", { name: "Close" })).toBeFocused();
+  });
+
+  const developer = (dialog: Locator) => dialog.locator("[role='group'][tabindex='0']").filter({ hasText: "Developer" });
+
+  test("a row's tooltip is drawn past the window's edge, not cut off by its scrolling", async ({ page }) => {
+    const { dialog } = await open(page);
+    const face = developer(dialog);
+    await face.hover();
+    const tip = await tooltipOf(face);
+    await expect(tip).toBeVisible();
+    const tipBox = (await tip.boundingBox())!;
+    const dialogBox = (await dialog.boundingBox())!;
+    expect(tipBox.y + tipBox.height).toBeGreaterThan(dialogBox.y + dialogBox.height + 8);
+    const below = [tipBox.x + 20, (dialogBox.y + dialogBox.height + tipBox.y + tipBox.height) / 2];
+    expect(await tip.evaluate((el, [x, y]) => el.contains(document.elementFromPoint(x, y)), below)).toBe(true);
+    // Nothing to scroll to: the tooltip doesn't add to the window's height.
+    expect(await dialog.locator(".cs-detail__body").evaluate((el) => el.scrollHeight - el.clientHeight)).toBeLessThanOrEqual(0);
+  });
+
+  test("an at-limit row tooltip in a detail window is on screen, or a scroll away", async ({ page }) => {
+    // edge-cases' detail window: its last row's tooltip is about 630px tall.
+    // Forced hovers: the last-resort placement covers the row itself.
+    for (const [width, height] of [
+      [1280, 800], // fits neither below nor above: beside the window
+      [1280, 720], // the same at the laptop height tooltips are sized for
+      [800, 800], // and no room beside: pinned over the window
+      [800, 400], // under 45rem tall: inside the body, which scrolls to it
+    ]) {
+      await page.setViewportSize({ width, height });
+      await page.goto("/?view=window&fixture=edge-cases");
+      await page.locator(".cs__content [popovertarget]").first().click();
+      await pointerAway(page);
+      const dialog = page.locator(".cs-detail:popover-open");
+      const body = dialog.locator(".cs-detail__body");
+      await body.evaluate((el) => (el.scrollTop = el.scrollHeight));
+      const face = dialog.locator("[role='group'][tabindex='0']").last();
+      await face.hover({ force: true });
+      const tip = await tooltipOf(face);
+      await expect(tip).toBeVisible();
+      const at = `${width}×${height}`;
+      if (height >= 45 * 16) {
+        const box = (await tip.boundingBox())!;
+        expect(box.y, at).toBeGreaterThanOrEqual(0);
+        expect(box.y + box.height, at).toBeLessThanOrEqual(height);
+        expect(box.x, at).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width, at).toBeLessThanOrEqual(width);
+      } else {
+        // The body holds the tooltip: scrolled to the end, its bottom shows.
+        await body.evaluate((el) => (el.scrollTop = el.scrollHeight));
+        const [box, bodyBox] = [(await tip.boundingBox())!, (await body.boundingBox())!];
+        expect(box.y + box.height, at).toBeLessThanOrEqual(bodyBox.y + bodyBox.height + 1);
+      }
+    }
+  });
+
+  test("Escape over a row's tooltip hides only the tooltip; the next closes the window", async ({ page }) => {
+    // Hovered.
+    let { dialog } = await open(page);
+    let face = developer(dialog);
+    await face.hover();
+    let tip = await tooltipOf(face);
+    await expect(tip).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(tip).toBeHidden();
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+
+    // Focused from the keyboard, the pointer elsewhere.
+    ({ dialog } = await open(page));
+    await pointerAway(page);
+    face = developer(dialog);
+    await tabTo(page, face);
+    tip = await tooltipOf(face);
+    await expect(tip).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(tip).toBeHidden();
+    await expect(dialog).toBeVisible();
+    await expect(face).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
   });
 });
 
@@ -289,7 +373,7 @@ test.describe("layout", () => {
   });
 
   test("with no tabs the window is the panel's width", async ({ page }) => {
-    await page.goto("/?fixture=minimal");
+    await page.goto("/?view=equipment&fixture=minimal");
     const panel = await box(page, ".cs");
     await page.goto("/?view=window&fixture=minimal");
     await expect(page.locator(".cs__content")).toHaveCount(0);
@@ -304,6 +388,71 @@ test.describe("layout", () => {
         const overflow = await page.locator(".cs").evaluate((el) => el.scrollWidth - el.clientWidth);
         expect(overflow, `${tab}`).toBeLessThanOrEqual(0);
       }
+    }
+  });
+
+  test("at the limits a gauge's or stat's label keeps 6rem; the value wraps under it", async ({ page }) => {
+    for (const width of ["", "22"]) {
+      await page.goto(`/?view=window&fixture=edge-cases${width && `&width=${width}`}`);
+      for (const [face, label, value] of [
+        [".cs-gauge", ".cs-gauge__label", ".cs-gauge__value"],
+        [".cs-stat", ".cs-stat__label", ".cs-stat__value"],
+      ]) {
+        const widths = await page.locator(face).evaluateAll(
+          (faces, [labelSel, valueSel]) =>
+            // Those drawn: not in a closed group or detail window.
+            faces.filter((el) => el.getClientRects().length > 0).map((el) => {
+              const l = el.querySelector(labelSel)!.getBoundingClientRect();
+              const v = el.querySelector(valueSel)!.getBoundingClientRect();
+              return { label: l.width, valueRight: v.right, faceRight: el.getBoundingClientRect().right };
+            }),
+          [label, value],
+        );
+        expect(widths.length).toBeGreaterThan(0);
+        for (const w of widths) {
+          expect(w.label, `${face} label, width ${width || "wide"}`).toBeGreaterThanOrEqual(6 * 16 - 0.5);
+          expect(Math.abs(w.valueRight - w.faceRight), `${face} value stays right-aligned`).toBeLessThan(1);
+        }
+      }
+    }
+  });
+
+  test("gauges are two per line, and one per line in a pane under 22rem", async ({ page }) => {
+    await page.goto(windowUrl());
+    let [first, second] = await page.locator(".cs-gauge").evaluateAll((els) => els.map((el) => el.getBoundingClientRect().toJSON()));
+    expect(Math.abs(first.y - second.y)).toBeLessThan(1);
+
+    await page.goto(windowUrl("&width=22"));
+    [first, second] = await page.locator(".cs-gauge").evaluateAll((els) => els.map((el) => el.getBoundingClientRect().toJSON()));
+    expect(second.y).toBeGreaterThanOrEqual(first.y + first.height);
+
+    // Two per line, the second gauge's tooltip opens from its right edge;
+    // one per line, from the left, as the first's does.
+    for (const [width, edge] of [["", "right"], ["22", "left"]] as const) {
+      await page.goto(`/?view=window&fixture=edge-cases${width && `&width=${width}`}`);
+      const gauge = (await page.locator(".cs-gauge").nth(1).boundingBox())!;
+      const face = row(page, "Gauge 2");
+      await face.hover();
+      const tip = (await (await tooltipOf(face)).boundingBox())!;
+      const gap = edge === "left" ? tip.x - gauge.x : gauge.x + gauge.width - (tip.x + tip.width);
+      expect(Math.abs(gap), `${edge} edge, width ${width || "wide"}`).toBeLessThan(1);
+    }
+  });
+
+  test("levels line up down a group, at its widest level", async ({ page }) => {
+    await page.goto(windowUrl("&tab=skills"));
+    const group = page.locator(".cs-levels").first();
+    await group.locator(".cs-level__level").first().evaluate((level) => (level.textContent = "100"));
+    const edges = await group.locator(".cs-level").evaluateAll((rows) =>
+      rows.map((row) => ({
+        level: row.querySelector(".cs-level__level")!.getBoundingClientRect().right,
+        label: row.querySelector(".cs-level__label")!.getBoundingClientRect().left,
+      })),
+    );
+    expect(edges.length).toBeGreaterThan(1);
+    for (const edge of edges) {
+      expect(edge.level).toBeCloseTo(edges[0].level, 0);
+      expect(edge.label).toBeCloseTo(edges[0].label, 0);
     }
   });
 
