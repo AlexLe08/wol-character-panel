@@ -857,6 +857,7 @@ a.cs-slot__face:hover .cs-slot__square,
   --cs-gauge-primary: var(--cs-accent);
   --cs-gauge-secondary: var(--cs-ink);
   --cs-stat-highlight: var(--cs-accent);
+  --cs-level-highlight: var(--cs-accent);
 }
 
 .cs.cs--window {
@@ -1242,6 +1243,295 @@ a.cs-field__line[aria-current="true"] .cs-field__value {
   font-size: 0.75rem;
 }
 
+/* A row with a detail window: its button at the right end of the line. */
+.cs-field__body {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.cs-field__body > .cs-field__line {
+  flex: 1;
+  min-width: 0;
+}
+
+.cs-field__detail {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 1px solid var(--cs-rule-strong);
+  border-radius: var(--cs-radius);
+  background: var(--cs-panel);
+  color: var(--cs-accent);
+  font: 500 0.6875rem/1 var(--cs-font-technical);
+  cursor: pointer;
+}
+
+.cs-field__detail:hover,
+.cs-field__detail:has(+ .cs-detail:popover-open) {
+  border-color: var(--cs-accent);
+}
+
+.cs-field__detail .cs-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Two-column runs of groups: a start stack and an end stack, each with
+   its own row heights; one column, start stack first, when the pane (or
+   a detail window) is narrow. */
+.cs-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 0.75rem 1.25rem;
+}
+
+.cs-columns__stack {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.cs-columns__stack--end {
+  grid-column: 2;
+}
+
+@container cs-content (max-width: 22rem) {
+  .cs-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cs-columns__stack--end {
+    grid-column: auto;
+  }
+}
+
+/* Collapsible groups: a <details> whose summary is the group's label. */
+.cs-group--collapsible > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.cs-group--collapsible > summary::-webkit-details-marker {
+  display: none;
+}
+
+.cs-group__marker {
+  flex: none;
+  color: var(--cs-accent);
+  transition: transform 0.15s;
+}
+
+.cs-group--collapsible[open] > summary .cs-group__marker {
+  transform: rotate(90deg);
+}
+
+/* Levels and progress rows: an icon square, as fields have. */
+.cs-levels,
+.cs-tracks {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.cs-level__icon,
+.cs-track__icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--cs-rule-strong);
+  border-radius: var(--cs-radius);
+  background: var(--cs-square-bg);
+  color: var(--cs-accent);
+  font-family: var(--cs-font-technical);
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.cs-level__icon .cs-icon,
+.cs-track__icon .cs-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.cs-level__face,
+.cs-track__face {
+  color: var(--cs-ink);
+  text-decoration: none;
+}
+
+/* Levels: icon, a large level, then the label over a thin bar. */
+.cs-level__face {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.cs-level__level {
+  min-width: 2ch;
+  font-family: var(--cs-font-technical);
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  line-height: 1;
+  text-align: right;
+}
+
+.cs-level--highlight .cs-level__level {
+  color: var(--cs-level-highlight);
+  font-weight: 700;
+}
+
+.cs-level__main {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.875rem;
+  line-height: 1.25;
+}
+
+.cs-level .cs-meter {
+  height: 0.3rem;
+}
+
+/* Progress: icon and label, a full-width bar, caption and value under it. */
+.cs-track__face {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.cs-track__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.875rem;
+  line-height: 1.25;
+}
+
+.cs-track__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.cs-track__foot {
+  display: flex;
+  gap: 1rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+
+.cs-track__caption {
+  min-width: 0;
+  color: var(--cs-accent);
+}
+
+.cs-track__value {
+  margin-left: auto;
+  color: var(--cs-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* A row that links: its label reads as a link, as a field's value does.
+   One with only a tooltip: marked as having more, as a stat's is. */
+a.cs-level__face .cs-level__label,
+a.cs-track__face .cs-track__label {
+  color: var(--cs-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+a.cs-level__face[aria-current="true"] .cs-level__label,
+a.cs-track__face[aria-current="true"] .cs-track__label {
+  font-weight: 700;
+}
+
+span.cs-level__face[tabindex] .cs-level__label,
+span.cs-track__face[tabindex] .cs-track__label {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+}
+
+/* Detail window: centred in the viewport by the popover's own styles, in
+   the top layer. The browser hides it while closed (display: none), so
+   only the open one sets a display. It is its own cs-content container,
+   so the runs and tooltips inside follow its width. */
+.cs-detail {
+  container: cs-content / inline-size;
+  width: min(24rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--cs-rule-strong);
+  border-radius: var(--cs-radius);
+  background: var(--cs-panel);
+  box-shadow: var(--cs-tip-shadow);
+  color: var(--cs-ink);
+  font-family: var(--cs-font);
+  font-size: 1rem;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.cs-detail::backdrop {
+  background: rgb(0 0 0 / 0.2);
+}
+
+.cs-detail__bar {
+  position: sticky;
+  z-index: 3;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.4rem 0.4rem 0.4rem 1rem;
+  border-bottom: 1px solid var(--cs-rule-strong);
+  background: var(--cs-bar-bg);
+}
+
+.cs-detail__title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.cs-detail__close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--cs-radius);
+  background: transparent;
+  color: var(--cs-ink);
+  cursor: pointer;
+}
+
+.cs-detail__close:hover {
+  border-color: var(--cs-rule-strong);
+}
+
+.cs-detail__body {
+  display: grid;
+  gap: 1rem;
+  padding: 0.85rem 1rem 1rem;
+}
+
 /* Row tooltips open below the row, inside the content pane. */
 .cs__content .cs-tip {
   top: calc(100% + 0.4rem);
@@ -1255,7 +1545,8 @@ a.cs-field__line[aria-current="true"] .cs-field__value {
   height: 0.5rem;
 }
 
-.cs-gauge:nth-child(2n) .cs-tip {
+.cs-gauge:nth-child(2n) .cs-tip,
+.cs-columns__stack--end .cs-tip {
   left: auto;
   right: 0;
 }
@@ -1478,8 +1769,60 @@ a.cs-field__line[aria-current="true"] .cs-field__value {
   color: #86e09a;
 }
 
+/* Lists and detail windows: the orange level cap, bevelled icon squares
+   and detail button, and a framed window with a title bar. */
+.cs[data-cs-theme="game"] {
+  --cs-level-highlight: #f2a54a;
+}
+
+.cs[data-cs-theme="game"] .cs-level__icon,
+.cs[data-cs-theme="game"] .cs-track__icon {
+  border-color: #6f8fb8;
+  color: #f1e9d4;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.5), inset 0 2px 6px rgb(255 255 255 / 0.12);
+}
+
+.cs[data-cs-theme="game"] .cs-track__caption {
+  color: #86e09a;
+}
+
+.cs[data-cs-theme="game"] .cs-field__detail {
+  border-color: #5b5e6c;
+  background: linear-gradient(180deg, #3a3b46, #22232a);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), inset 0 -1px 2px rgb(0 0 0 / 0.5);
+  color: #f1e9d4;
+}
+
+.cs[data-cs-theme="game"] .cs-field__detail:hover,
+.cs[data-cs-theme="game"] .cs-field__detail:has(+ .cs-detail:popover-open) {
+  border-color: var(--cs-accent);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 0 8px rgb(226 194 127 / 0.4);
+}
+
+.cs[data-cs-theme="game"] .cs-detail {
+  border-color: #8a7647;
+  background: linear-gradient(180deg, #2a2b33, #1b1c22);
+  box-shadow: 0 0 0 1px #0c0c10, 0 16px 40px rgb(0 0 0 / 0.6);
+}
+
+.cs[data-cs-theme="game"] .cs-detail::backdrop {
+  background: rgb(0 0 0 / 0.45);
+}
+
+.cs[data-cs-theme="game"] .cs-detail__title {
+  color: var(--cs-accent);
+  font-family: var(--cs-font-display);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.cs[data-cs-theme="game"] .cs-detail__close:hover {
+  border-color: var(--cs-accent);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .cs-slot__square {
+  .cs-slot__square,
+  .cs-group__marker {
     transition: none;
   }
 }
