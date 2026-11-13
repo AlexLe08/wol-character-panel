@@ -49,7 +49,7 @@ const gauges = (id, n = LIMITS.block.gaugeRows, withTooltip = n > 1) => ({
     secondary: caption("Secondary"),
     ...([{ fill: 0 }, { fill: 100 }, { fill: 33.3 }, {}][i % 4]),
     ...(i % 2 ? { tone: "secondary" } : { tone: "primary" }),
-    ...(withTooltip && i === 0 && { tooltip }),
+    ...(withTooltip && i < 2 && { tooltip }),
   })),
 });
 

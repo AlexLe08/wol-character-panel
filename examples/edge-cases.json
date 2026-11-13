@@ -96,7 +96,37 @@
               "value": "Figure Long text that f.",
               "secondary": "Secondary Long text that fills the field to its limit so ov.",
               "fill": 100,
-              "tone": "secondary"
+              "tone": "secondary",
+              "tooltip": {
+                "title": "Title Long text that fills the field to its limit so overflow and wrapping show.",
+                "tags": [
+                  "Tag1 Long text that fill",
+                  "Tag2 Long text that fill",
+                  "Tag3 Long text that fill"
+                ],
+                "subtitle": "Subtitle Long text that fills the field to its limit so ove.",
+                "stat": {
+                  "label": "Stat Long text that fills the field to i",
+                  "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                },
+                "items": [
+                  {
+                    "label": "Label 1 Long text that fills the field t",
+                    "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                  },
+                  "Item 2 Long text that fills the field to its limit so overflow and wrapping show",
+                  {
+                    "label": "Label 3 Long text that fills the field t",
+                    "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                  },
+                  "Item 4 Long text that fills the field to its limit so overflow and wrapping show",
+                  {
+                    "label": "Label 5 Long text that fills the field t",
+                    "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+                  }
+                ],
+                "note": "Note Long text that fills the field to its limit so overflow and wrapping show up Long text that fills the field to its."
+              }
             },
             {
               "label": "Gauge 3 Long text that fills the field .",

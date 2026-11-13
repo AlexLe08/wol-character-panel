@@ -307,6 +307,54 @@ test.describe("layout", () => {
     }
   });
 
+  test("at the limits a gauge's or stat's label keeps 6rem; the value wraps under it", async ({ page }) => {
+    for (const width of ["", "22"]) {
+      await page.goto(`/?view=window&fixture=edge-cases${width && `&width=${width}`}`);
+      for (const [face, label, value] of [
+        [".cs-gauge", ".cs-gauge__label", ".cs-gauge__value"],
+        [".cs-stat", ".cs-stat__label", ".cs-stat__value"],
+      ]) {
+        const widths = await page.locator(face).evaluateAll(
+          (faces, [labelSel, valueSel]) =>
+            // Those drawn: not in a closed group or detail window.
+            faces.filter((el) => el.getClientRects().length > 0).map((el) => {
+              const l = el.querySelector(labelSel)!.getBoundingClientRect();
+              const v = el.querySelector(valueSel)!.getBoundingClientRect();
+              return { label: l.width, valueRight: v.right, faceRight: el.getBoundingClientRect().right };
+            }),
+          [label, value],
+        );
+        expect(widths.length).toBeGreaterThan(0);
+        for (const w of widths) {
+          expect(w.label, `${face} label, width ${width || "wide"}`).toBeGreaterThanOrEqual(6 * 16 - 0.5);
+          expect(Math.abs(w.valueRight - w.faceRight), `${face} value stays right-aligned`).toBeLessThan(1);
+        }
+      }
+    }
+  });
+
+  test("gauges are two per line, and one per line in a pane under 22rem", async ({ page }) => {
+    await page.goto(windowUrl());
+    let [first, second] = await page.locator(".cs-gauge").evaluateAll((els) => els.map((el) => el.getBoundingClientRect().toJSON()));
+    expect(Math.abs(first.y - second.y)).toBeLessThan(1);
+
+    await page.goto(windowUrl("&width=22"));
+    [first, second] = await page.locator(".cs-gauge").evaluateAll((els) => els.map((el) => el.getBoundingClientRect().toJSON()));
+    expect(second.y).toBeGreaterThanOrEqual(first.y + first.height);
+
+    // Two per line, the second gauge's tooltip opens from its right edge;
+    // one per line, from the left, as the first's does.
+    for (const [width, edge] of [["", "right"], ["22", "left"]] as const) {
+      await page.goto(`/?view=window&fixture=edge-cases${width && `&width=${width}`}`);
+      const gauge = (await page.locator(".cs-gauge").nth(1).boundingBox())!;
+      const face = row(page, "Gauge 2");
+      await face.hover();
+      const tip = (await (await tooltipOf(face)).boundingBox())!;
+      const gap = edge === "left" ? tip.x - gauge.x : gauge.x + gauge.width - (tip.x + tip.width);
+      expect(Math.abs(gap), `${edge} edge, width ${width || "wide"}`).toBeLessThan(1);
+    }
+  });
+
   test("stacked, a row's tooltip is drawn over the equipment pane below it", async ({ page }) => {
     // Each pane is a stacking context; the hovered one must come forward.
     await page.goto(windowUrl("&width=40"));
