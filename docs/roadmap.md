@@ -148,6 +148,16 @@
   which the browser tests reach by Tab). `/static` stays dev only. Needs
   the owner once: Pages source "GitHub Actions". The first deploy is the
   next release (1.0.4): older tags have no `build:demo`.
+- Dependency majors (dev only, no release). Dependabot's ESLint 10 (#14)
+  and TypeScript 7 (#15) PRs failed `npm ci` on peer ranges:
+  `eslint-plugin-jsx-a11y` 6.10.2 allows ESLint up to 9, `typescript-eslint`
+  8.72 TypeScript below 6.1. Both closed. TypeScript moved to `^6.0.3`
+  instead, the newest that `typescript-eslint` allows. `dependabot.yml`
+  ignores ESLint majors and TypeScript `>=6.1.0`: a 6.1 in the grouped
+  minor PR would otherwise fail every dev update with it. TS 6 checks side-effect imports by default, so
+  the build (which sees only `src/`, not the playground's Vite types) needed
+  `src/css.d.ts` for the CSS import; it isn't emitted, so `dist/` is
+  unchanged.
 
 ## Next up: tooling plan (in order, one PR and session each)
 
@@ -170,6 +180,17 @@ along. The decisions, config shape, seven breaking changes and work order
 
 ## Later (candidates, unordered)
 
+- Lift the Dependabot ignores once the plugins allow the versions (check
+  their `peerDependencies`): ESLint majors when `eslint-plugin-jsx-a11y`
+  allows ESLint 10; TypeScript `>=6.1.0` as `typescript-eslint` widens its
+  range (narrow it to the next blocked version, or drop it).
+- If the `browser` job's "Install Chromium" keeps failing on Ubuntu's apt
+  archive (it did four times on 2026-11-11, PR #22: `security.ubuntu.com`
+  and `azure.archive.ubuntu.com` unreachable from the runner, while
+  `packages.microsoft.com` answered), run that job in Playwright's image
+  (`mcr.microsoft.com/playwright:v<version>`) instead of
+  `install --with-deps`, with a check that the tag matches
+  `@playwright/test`. apt retries wouldn't cover a minutes-long outage.
 - Themes beyond `document` and `game`.
 - CMS adapters, Contentful first (on its free plan), as `loadConfig`
   sources. The core never imports a CMS SDK: an adapter is its own entry
