@@ -39,7 +39,7 @@ for (const tab of c.tabs) {
     for (const list of rows) see("block.rows", list.length);
     for (const row of [...(block.type === "gauges" ? block.rows : []), ...rows.flat()]) {
       see("pair.label", row.label.length);
-      if (row.value) see("pair.value", row.value.length);
+      if (row.value) see(block.type === "fields" ? "pair.value" : "row.figure", row.value.length);
       for (const k of ["caption", "overline", "secondary"]) if (row[k]) see("row.caption", row[k].length);
       if (row.level) see("row.level", row.level.length);
       if (row.detail) {
@@ -73,6 +73,7 @@ const limits = {
   "pair.value (gearSet)": LIMITS.pair.value,
   "row.caption": LIMITS.row.caption,
   "row.level": LIMITS.row.level,
+  "row.figure": LIMITS.row.figure,
   "detail.title": LIMITS.detail.title,
 };
 let ok = true;

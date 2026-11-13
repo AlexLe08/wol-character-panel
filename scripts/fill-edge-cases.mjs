@@ -23,6 +23,7 @@ const fill = (prefix, n) => {
 const glyph = "W".repeat(LIMITS.slot.icon);
 const label = (prefix) => fill(prefix, LIMITS.pair.label);
 const value = (prefix = "Value") => fill(prefix, LIMITS.pair.value);
+const figure = () => fill("Figure", LIMITS.row.figure);
 const caption = (prefix) => fill(prefix, LIMITS.row.caption);
 
 const tooltip = current.jobs[0].slots["header-start-1"].tooltip;
@@ -44,7 +45,7 @@ const gauges = (id, n = LIMITS.block.gaugeRows, withTooltip = n > 1) => ({
   icon: glyph,
   rows: range(n).map((i) => ({
     label: label(`Gauge ${i + 1}`),
-    value: value(),
+    value: figure(),
     secondary: caption("Secondary"),
     ...([{ fill: 0 }, { fill: 100 }, { fill: 33.3 }, {}][i % 4]),
     ...(i % 2 ? { tone: "secondary" } : { tone: "primary" }),
@@ -55,7 +56,7 @@ const gauges = (id, n = LIMITS.block.gaugeRows, withTooltip = n > 1) => ({
 const statRows = (n) =>
   range(n).map((i) => ({
     label: label(`Stat ${i + 1}`),
-    value: value(),
+    value: figure(),
     tone: ["default", "muted", "highlight"][i % 3],
     ...(i === 0 && { tooltip }),
   }));
@@ -121,7 +122,7 @@ const progress = (id) => ({
         label: label(`Progress ${i + 1}`),
         ...(i % 3 !== 2 && { fill: (i * 9) % 101 }),
         caption: caption("Caption"),
-        value: value(),
+        value: figure(),
         ...icons(i),
         ...(i < actions.length && { action: actions[i] }),
         ...(i === 0 && { tooltip }),

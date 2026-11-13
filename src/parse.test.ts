@@ -327,6 +327,27 @@ describe("parseConfig: tabs, blocks and the gear-set row", () => {
     ]);
   });
 
+  it("holds gauges, stats and progress values to row.figure, and fields values to pair.value", () => {
+    const value = (n: number) => "9".repeat(n);
+    const blocksAt = (n: number): Raw[] => [
+      { type: "gauges", rows: [{ label: "G", value: value(n) }] },
+      stats(undefined, { groups: [{ rows: [{ label: "S", value: value(n) }] }] }),
+      { type: "progress", groups: [{ rows: [{ label: "P", value: value(n) }] }] },
+    ];
+    const fields = { type: "fields", rows: [{ label: "F", value: value(LIMITS.pair.value) }] };
+    const atLimit = parseConfig(rawConfig({ tabs: [tab("a", { blocks: [...blocksAt(LIMITS.row.figure), fields] })] }));
+    expect(atLimit.errors).toEqual([]);
+    expect(atLimit.config?.tabs?.[0].blocks).toHaveLength(4);
+
+    const over = parseConfig(rawConfig({ tabs: [tab("a", { blocks: [...blocksAt(LIMITS.row.figure + 1), fields] })] }));
+    expect(over.config?.tabs?.[0].blocks?.map((block) => block.type)).toEqual(["fields"]);
+    expect(over.errors.map((error) => error.split(":")[0])).toEqual([
+      "tabs.0.blocks.0.rows.0.value",
+      "tabs.0.blocks.1.groups.0.rows.0.value",
+      "tabs.0.blocks.2.groups.0.rows.0.value",
+    ]);
+  });
+
   it("leaves out an empty tabs list, and reports it", () => {
     const { config, errors } = parseConfig(rawConfig({ tabs: [] }));
     expect(config).not.toHaveProperty("tabs");

@@ -227,18 +227,18 @@ without these fields stays valid.
   pages per tab and 8 blocks per tab or page.
 - **Blocks** have a `type`, an optional heading (`label`, icon) and an
   optional `id`, unique across all tabs, which a job can replace them by:
-  - `gauges`: 1 to 4 `rows` of `label`, `value`, `secondary`, `fill` and
-    `tone` (`primary` or `secondary`).
-  - `stats`: `groups` of `rows` of `label`, `value` and `tone` (`default`,
-    `muted` or `highlight`).
+  - `gauges`: 1 to 4 `rows` of `label`, `value` (up to 24 characters),
+    `secondary`, `fill` and `tone` (`primary` or `secondary`).
+  - `stats`: `groups` of `rows` of `label`, `value` (up to 24 characters)
+    and `tone` (`default`, `muted` or `highlight`).
   - `fields`: `rows` of `label`, `value`, `overline`, `caption`, an icon, an
     `action`, and `detail`: a button that opens a window (`label` as its
     accessible name, an icon, a `title`, and `blocks`, whose `fields` rows
     can't have a `detail` of their own).
   - `levels`: `groups` of `rows` of `label`, `level` (up to 4 characters),
     `fill`, `tone` (`default` or `highlight`), an icon and an `action`.
-  - `progress`: `groups` of `rows` of `label`, `fill`, `caption`, `value`, an
-    icon and an `action`.
+  - `progress`: `groups` of `rows` of `label`, `fill`, `caption`, `value`
+    (up to 24 characters), an icon and an `action`.
 - **Groups** (in `stats`, `levels` and `progress`) have an optional `label`
   and icon, `column` (`start` or `end`: consecutive groups that set it form
   two columns, the `start` ones stacked on the left and the `end` ones on the

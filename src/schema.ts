@@ -54,9 +54,11 @@ export const LIMITS = {
   // label: a block's or a group's heading. rows: per group, and a fields
   // block's rows; a gauges block has its own, smaller count.
   block: { label: 40, groups: 8, rows: 12, gaugeRows: 4 },
-  // Row text beyond the label/value pair: a levels row's level, and a
-  // caption, an overline or a gauge's secondary line.
-  row: { level: 4, caption: 60 },
+  // Row text beyond the label/value pair: a levels row's level; a caption,
+  // an overline or a gauge's secondary line; and figure, the right-aligned
+  // value of a gauges, stats or progress row (a fields row's value is a
+  // pair's).
+  row: { level: 4, caption: 60, figure: 24 },
   // links: in all; at most startLinks before the job menu, endLinks at the end.
   gearSet: { links: 3, startLinks: 2, endLinks: 1 },
   detail: { title: 60 },
@@ -218,6 +220,7 @@ const fill = z
 
 const rowLabel = text(LIMITS.pair.label);
 const rowValue = text(LIMITS.pair.value);
+const rowFigure = text(LIMITS.row.figure);
 const caption = text(LIMITS.row.caption);
 
 // A row's or gear-set link's action: a slot's kinds, or one that switches
@@ -261,7 +264,7 @@ const groupsOf = <Row extends z.ZodType>(row: Row) =>
 
 const gaugeRow = z.object({
   label: rowLabel,
-  value: rowValue,
+  value: rowFigure,
   secondary: caption.optional().describe("A small line under the bar."),
   fill: fill.describe("How full the bar is, 0 to 100. Defaults to 100."),
   tone: z.enum(["primary", "secondary"]).optional(),
@@ -276,7 +279,7 @@ const gaugesBody = z.object({
 
 const statRow = z.object({
   label: rowLabel,
-  value: rowValue,
+  value: rowFigure,
   tone: z.enum(["default", "muted", "highlight"]).optional(),
   tooltip: tooltipSchema.optional(),
 });
@@ -327,7 +330,7 @@ const progressRow = z.object({
   label: rowLabel,
   fill,
   caption: caption.optional().describe("Under the bar's left end."),
-  value: rowValue.optional().describe("Under the bar's right end."),
+  value: rowFigure.optional().describe("Under the bar's right end."),
   ...iconFields,
   action: rowActionSchema.optional(),
   tooltip: tooltipSchema.optional(),
