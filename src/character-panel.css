@@ -1543,8 +1543,9 @@ span.cs-track__face[tabindex] .cs-track__label {
   text-align: left;
 }
 
+/* A light scrim from the ink token, so the document theme adds no colour. */
 .cs-detail::backdrop {
-  background: rgb(0 0 0 / 0.2);
+  background: color-mix(in srgb, var(--cs-ink) 20%, transparent);
 }
 
 .cs-detail__bar {

@@ -256,7 +256,10 @@ without these fields stays valid.
   `iconName`, one of the built-in drawings: `sword`, `shield`, `wand`,
   `cross`, `bow`, `star`, `heart`, `person`, `note`, `list`, `save`, `gear`,
   `hammer`, `leaf`, `crest`, `flag`. `iconSrc` wins over `icon`, which wins
-  over `iconName`. Icons are decorative: the label names the thing.
+  over `iconName`. Icons are decorative: the label names the thing. On an
+  icon-only button (a gear-set link, a detail button) prefer `iconName` or
+  `iconSrc`: a text `icon` shows text that the button's name doesn't contain
+  (WCAG 2.5.3).
 - **`gearSet`:** a caption (`label`, `value`), `jobMenu` (the job menu
   button's `label`, default "Change job", and icon, default a note), and up
   to 3 `links`, each with a `label` (its accessible name), an icon, an

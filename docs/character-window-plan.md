@@ -705,8 +705,10 @@ a subgrid, and a link is named by its own text. A two-column run is two
 DOM stacks, so narrow and for assistive tech its order is the start groups,
 then the end groups (see Shared pieces). Left for PR 6: the close button's
 name ("Close") is fixed English, like the tab strip's; a row tooltip inside
-a detail window is clipped by the window's own scrolling; and level numbers
-line up only within a row, not down a column of rows.
+a detail window is clipped by the window's own scrolling, and Escape over
+one closes the whole window, not just the tooltip (1.4.13 is still met,
+but the window is lost), with no browser test of such a tooltip yet; and
+level numbers line up only within a row, not down a column of rows.
 
 ## Ideas for what the parts can hold
 
