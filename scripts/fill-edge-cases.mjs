@@ -141,7 +141,7 @@ const detail = {
     gauges(undefined, 1),
     { type: "fields", rows: [{ label: "Field", value: "1", action: actions[4] }] },
     { type: "levels", groups: [{ rows: [{ label: "Level", level: "1", fill: 50 }] }] },
-    { type: "progress", groups: [{ rows: [{ label: "Progress", fill: 50, caption: "Caption", value: "1" }] }] },
+    { type: "progress", groups: [{ rows: [{ label: "Progress", fill: 50, caption: "Caption", value: "1", tooltip }] }] },
     ...range(LIMITS.tab.blocks - 4).map(() => smallStats),
   ],
 };

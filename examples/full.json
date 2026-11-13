@@ -102,7 +102,11 @@
                       {
                         "rows": [
                           { "label": "Front-end developer", "value": "2022–", "tone": "highlight" },
-                          { "label": "Developer", "value": "2020–2022" }
+                          {
+                            "label": "Developer",
+                            "value": "2020–2022",
+                            "tooltip": { "title": "Developer", "note": "Agency work: marketing sites and internal tools." }
+                          }
                         ]
                       }
                     ]

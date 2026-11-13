@@ -1547,13 +1547,15 @@ span.cs-track__face[tabindex] .cs-track__label {
 /* Detail window: centred in the viewport by the popover's own styles, in
    the top layer. The browser hides it while closed (display: none), so
    only the open one sets a display. It is its own cs-content container,
-   so the runs and tooltips inside follow its width. */
+   so the runs and tooltips inside follow its width. Its body scrolls, not
+   the window, so a row's tooltip can be drawn past the body's edges (see
+   below). */
 .cs-detail {
   container: cs-content / inline-size;
   width: min(24rem, calc(100vw - 2rem));
   max-height: calc(100dvh - 2rem);
   padding: 0;
-  overflow: auto;
+  overflow: visible;
   border: 1px solid var(--cs-rule-strong);
   border-radius: var(--cs-radius);
   background: var(--cs-panel);
@@ -1608,10 +1610,51 @@ span.cs-track__face[tabindex] .cs-track__label {
   border-color: var(--cs-rule-strong);
 }
 
+.cs-detail:popover-open {
+  display: flex;
+  flex-direction: column;
+}
+
 .cs-detail__body {
   display: grid;
+  flex: 1 1 auto;
   gap: 1rem;
+  min-height: 0;
   padding: 0.85rem 1rem 1rem;
+  overflow: auto;
+}
+
+/* A row's tooltip in a detail window would be cut off by the body's
+   scrolling, so where anchor positioning is supported it is fixed under
+   its row instead: the window (a container, so the containing block of
+   fixed boxes) lets it run past the body and the window's edges, and it
+   flips above or to the other side when it doesn't fit. Only a row whose
+   tooltip shows takes the anchor name (the conditions above, and the touch
+   rule below); a hovered row wins over a focused one, so one shows at a
+   time. Elsewhere it stays inside the body, scrolling with it. */
+@supports (anchor-name: --cs-row) {
+  .cs-detail .cs-slot__hover:hover,
+  .cs-detail .cs-slot__hover:has(:focus-visible),
+  .cs-detail .cs-slot__hover:has(> [tabindex="0"]:focus) {
+    anchor-name: --cs-row;
+  }
+
+  .cs-detail:has(.cs-slot__hover:hover) .cs-slot__hover:not(:hover) {
+    anchor-name: none;
+  }
+
+  .cs-detail:has(.cs-slot__hover:hover) .cs-slot__hover:not(:hover) .cs-tip {
+    display: none;
+  }
+
+  .cs__content .cs-detail .cs-slot__hover .cs-tip {
+    position: fixed;
+    position-anchor: --cs-row;
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+    top: calc(anchor(bottom) + 0.4rem);
+    right: auto;
+    left: anchor(left);
+  }
 }
 
 /* Row tooltips open below the row, inside the content pane. */

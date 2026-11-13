@@ -58,6 +58,12 @@ A PR that changes what's published adds its line under Unreleased; the
   `--cs-stat-highlight` and `--cs-level-highlight`.
 - `LIMITS.slot.column` (6) and the `EquipmentPanelParts` type.
 
+### Changed
+
+- Escape over a shown slot or row tooltip hides it and is cancelled
+  (`preventDefault`), so a detail window, or a host's own dialog around the
+  panel, closes on the next Escape rather than with the tooltip.
+
 ### Changed (breaking)
 
 - Renamed, with no aliases: `CharacterSheet` → `EquipmentPanel`,

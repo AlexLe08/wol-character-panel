@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { pointerAway, tabTo, tooltipOf } from "./helpers.ts";
 
 // CharacterWindow in the playground (view=window): tab and sub-tab links,
@@ -245,6 +245,51 @@ test.describe("detail windows", () => {
     const { dialog } = await open(page);
     await page.keyboard.press("Tab");
     await expect(dialog.getByRole("button", { name: "Close" })).toBeFocused();
+  });
+
+  const developer = (dialog: Locator) => dialog.locator("[role='group'][tabindex='0']").filter({ hasText: "Developer" });
+
+  test("a row's tooltip is drawn past the window's edge, not cut off by its scrolling", async ({ page }) => {
+    const { dialog } = await open(page);
+    const face = developer(dialog);
+    await face.hover();
+    const tip = await tooltipOf(face);
+    await expect(tip).toBeVisible();
+    const tipBox = (await tip.boundingBox())!;
+    const dialogBox = (await dialog.boundingBox())!;
+    expect(tipBox.y + tipBox.height).toBeGreaterThan(dialogBox.y + dialogBox.height + 8);
+    const below = [tipBox.x + 20, (dialogBox.y + dialogBox.height + tipBox.y + tipBox.height) / 2];
+    expect(await tip.evaluate((el, [x, y]) => el.contains(document.elementFromPoint(x, y)), below)).toBe(true);
+    // Nothing to scroll to: the tooltip doesn't add to the window's height.
+    expect(await dialog.locator(".cs-detail__body").evaluate((el) => el.scrollHeight - el.clientHeight)).toBeLessThanOrEqual(0);
+  });
+
+  test("Escape over a row's tooltip hides only the tooltip; the next closes the window", async ({ page }) => {
+    // Hovered.
+    let { dialog } = await open(page);
+    let face = developer(dialog);
+    await face.hover();
+    let tip = await tooltipOf(face);
+    await expect(tip).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(tip).toBeHidden();
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+
+    // Focused from the keyboard, the pointer elsewhere.
+    ({ dialog } = await open(page));
+    await pointerAway(page);
+    face = developer(dialog);
+    await tabTo(page, face);
+    tip = await tooltipOf(face);
+    await expect(tip).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(tip).toBeHidden();
+    await expect(dialog).toBeVisible();
+    await expect(face).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
   });
 });
 
