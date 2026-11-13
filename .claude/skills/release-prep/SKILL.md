@@ -45,6 +45,17 @@ merge commit and `release.yml` publishes.
    - The Unreleased section of `CHANGELOG.md`.
 3. If nothing a host can see changed, say a release isn't needed and stop.
 
+## Prereleases
+
+A new major ships as betas first: `2.0.0-beta.0`, then `2.0.0-beta.1` and
+so on, which `release.yml` publishes to npm's `next` dist-tag (`latest`
+stays on the last stable). While `main` holds a major that has no stable
+release yet (2.0 now), propose the next beta, whatever the size of the
+changes since the last one. Propose the stable version (`2.0.0`) only when
+the owner says the API is settled. Give `npm version` the exact version:
+`npm version prerelease --preid beta` turns 1.0.4 into 1.0.5-beta.0, not
+2.0.0-beta.0.
+
 ## 2. Propose, then wait
 
 Report: the proposed version and why, each host-visible change with its
@@ -60,14 +71,18 @@ you'll use.
    the new worktree (EnterWorktree with its path).
 2. `npm version X.Y.Z --no-git-tag-version` (`package.json` and
    `package-lock.json`, no commit, no tag).
-3. Major only: `npm run generate:schema`, so the `$id` moves to
-   `@<major>`; then update the README and examples wherever they name the
-   old major (`grep -rn "@<old major>" README.md examples/`). Leave the
-   CHANGELOG's history and `package-lock.json` alone.
+3. A new major (its first beta included): `npm run generate:schema`, so
+   the `$id` moves to `@<major>`; then update the README and examples
+   wherever they name the old major (`grep -rn "@<old major>" README.md
+   examples/`). Leave the CHANGELOG's history and `package-lock.json`
+   alone.
 4. `CHANGELOG.md`: the Unreleased entries become `## [X.Y.Z] - <today,
    YYYY-MM-DD>` under a new empty `## [Unreleased]`, with any missing lines
-   from step 2. At the bottom, `[Unreleased]` compares from `vX.Y.Z`, and a
-   new `[X.Y.Z]` link compares `vL...vX.Y.Z`.
+   from step 2 (a beta gets its own heading, such as `## [2.0.0-beta.1]`).
+   At the bottom, `[Unreleased]` compares from `vX.Y.Z`, and a new
+   `[X.Y.Z]` link compares `vL...vX.Y.Z`. The stable release after betas
+   keeps their sections and opens its own with a line saying it includes
+   them.
 5. `scripts/check.sh` must pass. If it doesn't, stop and report; a
    release PR fixes nothing else.
 6. One commit, `release: X.Y.Z`. `git push -u origin release/X.Y.Z`, then
@@ -79,6 +94,8 @@ you'll use.
      push origin vX.Y.Z`, checking first that `origin/main` is the merge
      commit (nothing merged after it);
    - watch the Release workflow, then confirm on npm that the version
-     shows provenance;
+     shows provenance, and that `npm view @solution-nine/wol-character-panel
+     dist-tags` has it under `next` for a beta, `latest` otherwise (the
+     Demo workflow skips a beta);
    - upgrade the site in its own repository and session (bump the
      dependency in `frontend/`, `npm run generate:character-schema`).

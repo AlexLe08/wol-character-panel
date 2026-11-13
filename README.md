@@ -30,6 +30,9 @@ started.
 npm install @solution-nine/wol-character-panel react zod
 ```
 
+Betas of the next major are on npm's `next` tag:
+`npm install @solution-nine/wol-character-panel@next`.
+
 Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 (below) on the example configs, as of the latest release.
 
@@ -573,6 +576,12 @@ checks, and publishes with npm trusted publishing (no npm token; provenance
 added by npm). Once it succeeds, `.github/workflows/pages.yml` builds the
 demo site from the same commit and deploys it, so the demo never runs ahead
 of npm.
+
+A prerelease version (one with a `-`, such as `2.0.0-beta.0`, tagged
+`v2.0.0-beta.0`) is published to the `next` dist-tag instead of `latest`, so
+a plain `npm install` keeps getting the last stable release, and the Demo
+workflow skips it. Check with
+`npm view @solution-nine/wol-character-panel dist-tags`.
 
 GitHub Pages is set once in the repository's Settings → Pages: Source
 "GitHub Actions". To redeploy a release, run the Demo workflow by hand with
