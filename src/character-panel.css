@@ -1625,35 +1625,75 @@ span.cs-track__face[tabindex] .cs-track__label {
 }
 
 /* A row's tooltip in a detail window would be cut off by the body's
-   scrolling, so where anchor positioning is supported it is fixed under
-   its row instead: the window (a container, so the containing block of
-   fixed boxes) lets it run past the body and the window's edges, and it
-   flips above or to the other side when it doesn't fit. Only a row whose
-   tooltip shows takes the anchor name (the conditions above, and the touch
-   rule below); a hovered row wins over a focused one, so one shows at a
-   time. Elsewhere it stays inside the body, scrolling with it. */
-@supports (anchor-name: --cs-row) {
-  .cs-detail .cs-slot__hover:hover,
-  .cs-detail .cs-slot__hover:has(:focus-visible),
-  .cs-detail .cs-slot__hover:has(> [tabindex="0"]:focus) {
-    anchor-name: --cs-row;
-  }
+   scrolling, so it is fixed under its row instead, drawn past the body and
+   the window's edges, where that is sure to keep it on screen: with
+   anchor positioning, and a viewport at least 45rem (720px, a laptop's)
+   tall, which holds an at-limit tooltip (699px in Chromium) pinned 0.5rem
+   from its top. There the window
+   stops being a size container (one would be the tooltip's containing
+   block, so it couldn't leave the window), its runs following the
+   content pane's width instead. A tooltip that fits neither below its row
+   nor above it is pinned near the viewport's top, beside the window
+   (touching its row's edge, so the pointer can cross onto it), or, if the
+   viewport is too narrow for that, over the window. Only a row whose
+   tooltip shows takes the anchor name (the conditions above, and the
+   touch rule below); a hovered row wins over a focused one, so one shows
+   at a time. Elsewhere it stays inside the scrolling body, which a
+   scroll reaches. */
+@position-try --cs-tip-beside {
+  top: 0.5rem;
+  right: auto;
+  left: anchor(right);
+}
 
-  .cs-detail:has(.cs-slot__hover:hover) .cs-slot__hover:not(:hover) {
-    anchor-name: none;
-  }
+@position-try --cs-tip-beside-start {
+  top: 0.5rem;
+  right: anchor(left);
+  left: auto;
+}
 
-  .cs-detail:has(.cs-slot__hover:hover) .cs-slot__hover:not(:hover) .cs-tip {
-    display: none;
-  }
+@position-try --cs-tip-pinned {
+  top: 0.5rem;
+  right: auto;
+  left: anchor(left);
+}
 
-  .cs__content .cs-detail .cs-slot__hover .cs-tip {
-    position: fixed;
-    position-anchor: --cs-row;
-    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
-    top: calc(anchor(bottom) + 0.4rem);
-    right: auto;
-    left: anchor(left);
+@supports (position-try-fallbacks: flip-block) {
+  @media (min-height: 45rem) {
+    .cs-detail {
+      container-type: normal;
+    }
+
+    .cs-detail .cs-slot__hover:hover,
+    .cs-detail .cs-slot__hover:has(:focus-visible),
+    .cs-detail .cs-slot__hover:has(> [tabindex="0"]:focus) {
+      anchor-name: --cs-row;
+    }
+
+    .cs-detail:has(.cs-slot__hover:hover) .cs-slot__hover:not(:hover) {
+      anchor-name: none;
+    }
+
+    .cs-detail:has(.cs-slot__hover:hover) .cs-slot__hover:not(:hover) .cs-tip {
+      display: none;
+    }
+
+    .cs__content .cs-detail .cs-slot__hover .cs-tip {
+      position: fixed;
+      position-anchor: --cs-row;
+      /* Five: in Chromium a sixth (flip-block flip-inline) left the
+         list unused, the tooltip stuck below its row off screen. */
+      position-try-fallbacks:
+        flip-block,
+        flip-inline,
+        --cs-tip-beside,
+        --cs-tip-beside-start,
+        --cs-tip-pinned;
+      top: calc(anchor(bottom) + 0.4rem);
+      right: auto;
+      left: anchor(left);
+      width: min(17rem, calc(100vw - 2rem));
+    }
   }
 }
 
@@ -1868,18 +1908,19 @@ span.cs-track__face[tabindex] .cs-track__label {
   grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr));
 }
 
-/* A slanted button, its ends cut to points. The shape is drawn behind the
-   label by two layers (::before the edge, ::after the face 1px inside it),
-   not clipped from the link, so the link's focus ring isn't cut off. */
+/* A slanted button, its ends cut to points (the --_cs-* properties are
+   its own, not theming variables). The shape is drawn behind the label by
+   two layers (::before the edge, ::after the face 1px inside it), not
+   clipped from the link, so the link's focus ring isn't cut off. */
 .cs[data-cs-theme="game"] .cs__tab {
-  --cs-tab-edge: #5b5e6c;
-  --cs-tab-cut: 0.7rem;
+  --_cs-tab-edge: #5b5e6c;
+  --_cs-tab-cut: 0.7rem;
   position: relative;
   z-index: 0;
   justify-content: center;
   height: 100%;
   margin-bottom: 0;
-  padding: 0.35rem calc(var(--cs-tab-cut) + 0.4rem);
+  padding: 0.35rem calc(var(--_cs-tab-cut) + 0.4rem);
   border: 0;
   background: none;
   color: #cfc8b6;
@@ -1893,17 +1934,17 @@ span.cs-track__face[tabindex] .cs-track__label {
   z-index: -1;
   inset: 0;
   clip-path: polygon(
-    var(--cs-tab-cut) 0,
-    calc(100% - var(--cs-tab-cut)) 0,
+    var(--_cs-tab-cut) 0,
+    calc(100% - var(--_cs-tab-cut)) 0,
     100% 50%,
-    calc(100% - var(--cs-tab-cut)) 100%,
-    var(--cs-tab-cut) 100%,
+    calc(100% - var(--_cs-tab-cut)) 100%,
+    var(--_cs-tab-cut) 100%,
     0 50%
   );
 }
 
 .cs[data-cs-theme="game"] .cs__tab::before {
-  background: var(--cs-tab-edge);
+  background: var(--_cs-tab-edge);
 }
 
 .cs[data-cs-theme="game"] .cs__tab::after {
@@ -1914,7 +1955,7 @@ span.cs-track__face[tabindex] .cs-track__label {
 
 .cs[data-cs-theme="game"] .cs__tab:hover,
 .cs[data-cs-theme="game"] .cs__tab[aria-current="page"] {
-  --cs-tab-edge: #8a7647;
+  --_cs-tab-edge: #8a7647;
   color: #f1e9d4;
 }
 

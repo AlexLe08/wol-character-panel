@@ -718,16 +718,25 @@ values wrapped to five lines. `LIMITS.row.figure` (24) now caps the
 `gauges`, `stats` and `progress` values (a `fields` value keeps 80, with a
 line to itself), which is free before 2.0.0 ships, since no host has these
 fields yet; a gauge's or stat's label keeps at least 6rem and a longer value
-wraps under it, right-aligned. The tab is then 4,194px wide: real content
+wraps under it, right-aligned. The tab is then 4,194px tall in the wide window: real content
 (8 blocks, 8 groups, 12 rows), not wrapping. At the limits a detail window
 is 737px, inside the 768px its `max-height` allows in an 800px viewport;
 past that its body scrolls. Gauges go one per line in a content pane under 22rem.
 Levels line up down a group: the list holds the columns and each row is a
 subgrid of it. A row tooltip in a detail window is drawn past the window's
-edge where CSS anchor positioning is supported (Baseline since January
-2026: Chrome 125, Safari 26, Firefox 147; elsewhere it stays inside the
-scrolling body, as before), and an Escape spent hiding a tooltip is
-cancelled, so the window closes on the next one. The playground and the
+edge with CSS anchor positioning (Baseline since January 2026, Firefox 147
+last; gated on `position-try-fallbacks`, the name Chrome uses from 128) in
+viewports at least 45rem tall: below its row, above, beside the window, or
+pinned near the screen's top, so an at-limit one (699px) is always fully on
+screen. The window then can't be a size container (it would be the
+tooltip's containing block, and the fallbacks would test against it, which
+the reviewer caught: at-limit tooltips ran off screen with nothing to
+scroll), so its runs follow the content pane's width. In Chromium a list of
+six fallbacks went unused, so it keeps five. In shorter viewports, or
+without support, the tooltip stays inside the scrolling body, as before.
+An Escape spent hiding a tooltip is cancelled, so the window closes on the
+next one (listed as breaking: a host dialog around the panel needs a second
+Escape too). The playground and the
 demo open on the window view (owner's call); browser tests that mean the
 panel say `view=equipment`. The fixed English names ("Tabs", "Close", and
 1.x's "(opens in a new tab)" and "No portrait yet") stay for 2.0.0: an

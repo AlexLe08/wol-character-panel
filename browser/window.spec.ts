@@ -230,6 +230,9 @@ test.describe("detail windows", () => {
 
     await button.click();
     await expect(dialog).toBeVisible();
+    // The window opens under the pointer, which may rest on a row with a
+    // tooltip; an Escape would hide that first (tested below).
+    await pointerAway(page);
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
     await expect(button).toBeFocused();
@@ -262,6 +265,42 @@ test.describe("detail windows", () => {
     expect(await tip.evaluate((el, [x, y]) => el.contains(document.elementFromPoint(x, y)), below)).toBe(true);
     // Nothing to scroll to: the tooltip doesn't add to the window's height.
     expect(await dialog.locator(".cs-detail__body").evaluate((el) => el.scrollHeight - el.clientHeight)).toBeLessThanOrEqual(0);
+  });
+
+  test("an at-limit row tooltip in a detail window is on screen, or a scroll away", async ({ page }) => {
+    // edge-cases' detail window: its last row's tooltip is about 630px tall.
+    // Forced hovers: the last-resort placement covers the row itself.
+    for (const [width, height] of [
+      [1280, 800], // fits neither below nor above: beside the window
+      [1280, 720], // the same at the laptop height tooltips are sized for
+      [800, 800], // and no room beside: pinned over the window
+      [800, 400], // under 45rem tall: inside the body, which scrolls to it
+    ]) {
+      await page.setViewportSize({ width, height });
+      await page.goto("/?view=window&fixture=edge-cases");
+      await page.locator(".cs__content [popovertarget]").first().click();
+      await pointerAway(page);
+      const dialog = page.locator(".cs-detail:popover-open");
+      const body = dialog.locator(".cs-detail__body");
+      await body.evaluate((el) => (el.scrollTop = el.scrollHeight));
+      const face = dialog.locator("[role='group'][tabindex='0']").last();
+      await face.hover({ force: true });
+      const tip = await tooltipOf(face);
+      await expect(tip).toBeVisible();
+      const at = `${width}×${height}`;
+      if (height >= 45 * 16) {
+        const box = (await tip.boundingBox())!;
+        expect(box.y, at).toBeGreaterThanOrEqual(0);
+        expect(box.y + box.height, at).toBeLessThanOrEqual(height);
+        expect(box.x, at).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width, at).toBeLessThanOrEqual(width);
+      } else {
+        // The body holds the tooltip: scrolled to the end, its bottom shows.
+        await body.evaluate((el) => (el.scrollTop = el.scrollHeight));
+        const [box, bodyBox] = [(await tip.boundingBox())!, (await body.boundingBox())!];
+        expect(box.y + box.height, at).toBeLessThanOrEqual(bodyBox.y + bodyBox.height + 1);
+      }
+    }
   });
 
   test("Escape over a row's tooltip hides only the tooltip; the next closes the window", async ({ page }) => {

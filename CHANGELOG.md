@@ -24,7 +24,9 @@ A PR that changes what's published adds its line under Unreleased; the
   (replace a block by id) and `job.gearSet`. `EquipmentPanel` draws
   `characterName` and `gearSet` (see Changed); `CharacterWindow` draws the
   tabs. `LIMITS` gains `config.characterName`, `config.tabs`, `tab`,
-  `block`, `row`, `gearSet` and `detail`. The JSON Schema now defines its
+  `block`, `row`, `gearSet` and `detail`; a `gauges`, `stats` or `progress`
+  row's value is capped at 24 characters (`row.figure`), a `fields` row's
+  at 80 (`pair.value`). The JSON Schema now defines its
   shared parts (the tooltip among them) once under `$defs`; what it accepts
   for existing fields is unchanged.
 - `parseConfig` checks tabs, pages, blocks, `gearSet` and `job.blocks`
@@ -58,13 +60,12 @@ A PR that changes what's published adds its line under Unreleased; the
   `--cs-stat-highlight` and `--cs-level-highlight`.
 - `LIMITS.slot.column` (6) and the `EquipmentPanelParts` type.
 
-### Changed
+### Changed (breaking)
 
 - Escape over a shown slot or row tooltip hides it and is cancelled
   (`preventDefault`), so a detail window, or a host's own dialog around the
-  panel, closes on the next Escape rather than with the tooltip.
-
-### Changed (breaking)
+  panel, closes on the next Escape rather than with the tooltip. In 1.x one
+  Escape over a hovered slot did both.
 
 - Renamed, with no aliases: `CharacterSheet` → `EquipmentPanel`,
   `CharacterSheetProps` → `EquipmentPanelProps`, the type
