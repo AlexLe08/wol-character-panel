@@ -355,6 +355,23 @@ test.describe("layout", () => {
     }
   });
 
+  test("levels line up down a group, at its widest level", async ({ page }) => {
+    await page.goto(windowUrl("&tab=skills"));
+    const group = page.locator(".cs-levels").first();
+    await group.locator(".cs-level__level").first().evaluate((level) => (level.textContent = "100"));
+    const edges = await group.locator(".cs-level").evaluateAll((rows) =>
+      rows.map((row) => ({
+        level: row.querySelector(".cs-level__level")!.getBoundingClientRect().right,
+        label: row.querySelector(".cs-level__label")!.getBoundingClientRect().left,
+      })),
+    );
+    expect(edges.length).toBeGreaterThan(1);
+    for (const edge of edges) {
+      expect(edge.level).toBeCloseTo(edges[0].level, 0);
+      expect(edge.label).toBeCloseTo(edges[0].label, 0);
+    }
+  });
+
   test("stacked, a row's tooltip is drawn over the equipment pane below it", async ({ page }) => {
     // Each pane is a stacking context; the hovered one must come forward.
     await page.goto(windowUrl("&width=40"));

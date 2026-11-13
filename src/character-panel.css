@@ -1403,10 +1403,18 @@ a.cs-field__line[aria-current="true"] .cs-field__value {
   pointer-events: none;
 }
 
-/* Levels: icon, a large level, then the label over a thin bar. */
+/* Levels: icon, a large level, then the label over a thin bar. The list
+   holds the columns and each row takes them as a subgrid, so levels line up
+   down a group at its widest level's width. */
+.cs-levels {
+  grid-template-columns: auto auto minmax(0, 1fr);
+  column-gap: 0.55rem;
+}
+
 .cs-level {
   grid-template-rows: auto auto;
-  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
   align-items: center;
   gap: 0.2rem 0.55rem;
 }
