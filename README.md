@@ -505,8 +505,8 @@ The playground renders the panel straight from `src/` with hot reload, on any
 config in `examples/`. Its controls (view, fixture, theme, labels, sockets,
 toolbar, end control, container width, dark host tokens, drafts) are query
 parameters, so every state is a link, such as
-`/?fixture=edge-cases&theme=game&width=22`. `view=window` shows
-`CharacterWindow` instead of `EquipmentPanel`. Like a host, it reads `?job=`,
+`/?fixture=edge-cases&theme=game&width=22`. It shows `CharacterWindow`;
+`view=equipment` shows `EquipmentPanel` alone. Like a host, it reads `?job=`,
 `?tab=`, `?page=` and the param actions' parameters from the URL and passes
 `isParamActive`; a `link` action shows where a host would go instead of
 leaving the page. It renders on the client, while hosts render the panel on

@@ -44,7 +44,7 @@ function underBase(value: unknown, key?: string): unknown {
 // action naming one of these would clash; none do.
 const CONTROLS = {
   // "window": CharacterWindow, tabs and all; "equipment": EquipmentPanel.
-  view: "equipment",
+  view: "window",
   fixture: "full",
   theme: "document",
   labels: "narrow",
@@ -191,7 +191,7 @@ function App() {
         <p>
           A React panel modelled on an RPG character screen, driven by one JSON config. Below are the
           package&apos;s example configs; the controls set the panel&apos;s props, and View switches between
-          the equipment panel and the whole character window.
+          the whole character window and its equipment panel alone.
         </p>
       </header>
 
@@ -199,8 +199,8 @@ function App() {
         <label>
           View{" "}
           <select value={control("view")} onChange={(event) => setControl("view", event.target.value)}>
-            <option>equipment</option>
             <option>window</option>
+            <option>equipment</option>
           </select>
         </label>
         <label>

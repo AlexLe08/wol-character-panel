@@ -20,7 +20,7 @@ for (const fixture of ["full", "minimal", "edge-cases"]) {
     for (const width of ["", "22"]) {
       const layout = width ? "narrow" : "wide";
       test(`no axe violations: ${fixture}, ${theme}, ${layout}`, async ({ page }) => {
-        await page.goto(`/?fixture=${fixture}&theme=${theme}&width=${width}`);
+        await page.goto(`/?view=equipment&fixture=${fixture}&theme=${theme}&width=${width}`);
         await expect(page.locator(".cs")).toBeVisible();
         expect(await violations(page)).toEqual([]);
       });
@@ -30,7 +30,7 @@ for (const fixture of ["full", "minimal", "edge-cases"]) {
 
 for (const theme of ["document", "game"]) {
   test(`no axe violations with a tooltip shown and the job menu open (${theme})`, async ({ page }) => {
-    await page.goto(`/?fixture=full&theme=${theme}`);
+    await page.goto(`/?view=equipment&fixture=full&theme=${theme}`);
     await page.locator(".cs__jobs-toggle").click();
     await tabTo(page, slot(page, "Skills"));
     expect(await violations(page)).toEqual([]);
@@ -38,7 +38,7 @@ for (const theme of ["document", "game"]) {
 }
 
 test("no axe violations on dark host tokens (document theme)", async ({ page }) => {
-  await page.goto("/?fixture=full&tokens=dark");
+  await page.goto("/?view=equipment&fixture=full&tokens=dark");
   await page.locator(".cs__jobs-toggle").click();
   await tabTo(page, slot(page, "Skills"));
   expect(await violations(page)).toEqual([]);
@@ -49,7 +49,7 @@ test("no axe violations on dark host tokens (document theme)", async ({ page }) 
 // runs above cover it, this one names it.
 for (const tokens of ["", "dark"]) {
   test(`empty slots' glyphs meet contrast (document${tokens ? ", dark host tokens" : ""})`, async ({ page }) => {
-    await page.goto(`/?fixture=full${tokens ? `&tokens=${tokens}` : ""}`);
+    await page.goto(`/?view=equipment&fixture=full${tokens ? `&tokens=${tokens}` : ""}`);
     const squares = page.locator(".cs .cs-slot--empty .cs-slot__square");
     expect(await squares.count()).toBeGreaterThan(0);
     const { violations: found } = await new AxeBuilder({ page })
@@ -65,7 +65,7 @@ for (const tokens of ["", "dark"]) {
 // --cs-muted, which clears 4.5:1 in both themes.
 for (const theme of ["document", "game"]) {
   test(`an empty slot's glyph has its label's colour (${theme})`, async ({ page }) => {
-    await page.goto(`/?fixture=full&theme=${theme}`);
+    await page.goto(`/?view=equipment&fixture=full&theme=${theme}`);
     const empty = page.locator(".cs .cs-slot--empty").first();
     const color = (selector: string) =>
       empty.locator(selector).evaluate((el) => getComputedStyle(el).color);

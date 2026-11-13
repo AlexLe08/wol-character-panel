@@ -289,7 +289,7 @@ test.describe("layout", () => {
   });
 
   test("with no tabs the window is the panel's width", async ({ page }) => {
-    await page.goto("/?fixture=minimal");
+    await page.goto("/?view=equipment&fixture=minimal");
     const panel = await box(page, ".cs");
     await page.goto("/?view=window&fixture=minimal");
     await expect(page.locator(".cs__content")).toHaveCount(0);
