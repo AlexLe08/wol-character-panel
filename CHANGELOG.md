@@ -46,12 +46,16 @@ A PR that changes what's published adds its line under Unreleased; the
   the active tab's blocks, and the equipment pane beside them, stacked below
   a 46rem container. Props `tab`, `page`, `tabParam`, `pageParam`,
   `hiddenTabs`, and `parts.tabs` and `parts.equipment`. Job links keep the
-  tab and page; switching tab keeps the job. It draws `gauges`, `stats` and
-  `fields` blocks, with row tooltips (on touch screens a tap shows one); not
-  yet `levels`, `progress`, two-column runs, collapsible groups or detail
-  windows. New CSS variables: `--cs-tab-bg`, `--cs-tab-active-bg`,
-  `--cs-bar-track`, `--cs-bar-fill`, `--cs-gauge-primary`,
-  `--cs-gauge-secondary` and `--cs-stat-highlight`.
+  tab and page; switching tab keeps the job. It draws every block type, with
+  row tooltips (on touch screens a tap shows one) and row actions (a `job`
+  action switches job, `aria-current` on its own); groups with `column` as
+  two-column runs (one column, start groups first, in a narrow pane);
+  `collapsible` groups as `<details>`; and a `fields` row's `detail` as a
+  button opening a window centred on the screen, through the Popover API
+  (no JavaScript needed; Escape and a click outside close it). New CSS
+  variables: `--cs-tab-bg`, `--cs-tab-active-bg`, `--cs-bar-track`,
+  `--cs-bar-fill`, `--cs-gauge-primary`, `--cs-gauge-secondary`,
+  `--cs-stat-highlight` and `--cs-level-highlight`.
 - `LIMITS.slot.column` (6) and the `EquipmentPanelParts` type.
 
 ### Changed (breaking)

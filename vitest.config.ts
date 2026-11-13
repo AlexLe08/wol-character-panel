@@ -22,7 +22,7 @@ export default defineConfig({
       // component). Raise them when coverage goes up; lowering one is a
       // decision for review. SlotHover.tsx is the gap: its handlers only run
       // in a browser.
-      thresholds: { statements: 97, branches: 97, functions: 94, lines: 97 },
+      thresholds: { statements: 97, branches: 97, functions: 95, lines: 97 },
     },
   },
 });

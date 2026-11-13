@@ -140,6 +140,7 @@ export function ActionLink({
   action,
   className,
   face,
+  naming,
   config,
   job,
   jobParam,
@@ -151,6 +152,10 @@ export function ActionLink({
   action: RowAction;
   className: string;
   face: ReactNode;
+  // For a row with a tooltip: the card's id, which describes the link. With
+  // no link to make, the face is then a focusable group named by
+  // `labelledBy`, as a tooltip-only slot is. A link is named by its text.
+  naming?: { labelledBy: string; tipId?: string };
   config: CharacterPanelConfig;
   job: Job;
   jobParam: string;
@@ -160,8 +165,19 @@ export function ActionLink({
   renderLink: RenderLink;
   isParamActive?: (name: string, value: string) => boolean;
 }) {
+  const described = naming?.tipId ? { "aria-describedby": naming.tipId } : undefined;
+  const unlinked = () =>
+    naming?.tipId ? (
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- focus shows the tooltip it's described by
+      <span className={className} role="group" aria-labelledby={naming.labelledBy} {...described} tabIndex={0}>
+        {face}
+      </span>
+    ) : (
+      <span className={className}>{face}</span>
+    );
+
   if (action.kind === "job") {
-    if (!config.jobs.some((option) => option.id === action.id)) return <span className={className}>{face}</span>;
+    if (!config.jobs.some((option) => option.id === action.id)) return unlinked();
     // currentHref carries the panel's own query (a host's basePath), so
     // the job's link keeps it, as the job menu's links do.
     return renderLink({
@@ -169,6 +185,7 @@ export function ActionLink({
       intent: "job",
       className,
       "aria-current": action.id === job.id ? "true" : undefined,
+      ...described,
       children: face,
     });
   }
@@ -176,27 +193,28 @@ export function ActionLink({
   // without a link, as on a slot (the schema refuses "job", "tab" and
   // "page", but a host can rename them).
   const href = action.kind === "param" && ownParams.includes(action.name) ? null : actionHref(action, currentHref);
-  if (href === null) return <span className={className}>{face}</span>;
-  if (action.kind === "link") return renderLink({ className, href, intent: "page", children: face });
+  if (href === null) return unlinked();
+  if (action.kind === "link") return renderLink({ className, href, intent: "page", ...described, children: face });
   if (action.kind === "param") {
     return renderLink({
       className,
       href,
       intent: "param",
       "aria-current": isActionActive(action, isParamActive, ownParams) ? "true" : undefined,
+      ...described,
       children: face,
     });
   }
   if (action.kind === "external" && action.newTab) {
     return (
-      <a className={className} href={href} target="_blank" rel="noopener noreferrer">
+      <a className={className} href={href} target="_blank" rel="noopener noreferrer" {...described}>
         {face}
         <span className="cs-visually-hidden"> (opens in a new tab)</span>
       </a>
     );
   }
   return (
-    <a className={className} href={href}>
+    <a className={className} href={href} {...described}>
       {face}
     </a>
   );

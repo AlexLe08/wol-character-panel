@@ -186,10 +186,8 @@ The schema's `$id` is
 
 These optional fields describe the rest of a character window: a name in the
 bar, a row above the job header, and a content pane of tabs. `EquipmentPanel`
-draws the name and the row; `CharacterWindow` draws all three. It doesn't yet
-draw `levels` and `progress` blocks, two-column runs, collapsible groups or
-detail windows, which a config can already hold. A config without these
-fields stays valid.
+draws the name and the row; `CharacterWindow` draws all three. A config
+without these fields stays valid.
 
 ```json
 {
@@ -243,8 +241,9 @@ fields stays valid.
     icon and an `action`.
 - **Groups** (in `stats`, `levels` and `progress`) have an optional `label`
   and icon, `column` (`start` or `end`: consecutive groups that set it form
-  two columns) and `collapsible` (`open` or `closed`, which needs a `label`).
-  Up to 8 groups per block and 12 rows per group or `fields` block.
+  two columns, the `start` ones stacked on the left and the `end` ones on the
+  right) and `collapsible` (`open` or `closed`, which needs a `label`). Up to
+  8 groups per block and 12 rows per group or `fields` block.
 - **`fill`** is a number from 0 to 100. Left out, a row has no bar (a gauge's
   defaults to 100).
 - **Row tooltips:** rows of `gauges`, `stats`, `levels` and `progress` may
@@ -257,7 +256,10 @@ fields stays valid.
   `iconName`, one of the built-in drawings: `sword`, `shield`, `wand`,
   `cross`, `bow`, `star`, `heart`, `person`, `note`, `list`, `save`, `gear`,
   `hammer`, `leaf`, `crest`, `flag`. `iconSrc` wins over `icon`, which wins
-  over `iconName`. Icons are decorative: the label names the thing.
+  over `iconName`. Icons are decorative: the label names the thing. On an
+  icon-only button (a gear-set link, a detail button) prefer `iconName` or
+  `iconSrc`: a text `icon` shows text that the button's name doesn't contain
+  (WCAG 2.5.3).
 - **`gearSet`:** a caption (`label`, `value`), `jobMenu` (the job menu
   button's `label`, default "Change job", and icon, default a note), and up
   to 3 `links`, each with a `label` (its accessible name), an icon, an
@@ -372,12 +374,26 @@ because something failed, which a host can tell visitors about.
   drops the page; a param action keeps all three, and one naming the
   window's own parameters (`tabParam`, `pageParam`, `jobParam`) is drawn
   without a link.
-- **Rows:** a row with a tooltip shows it as a slot does (hover, keyboard
-  focus, Escape), and is a focusable group named by its label and value. On
-  a touch screen a tap shows it and a tap elsewhere hides it. Rows with
-  neither a tooltip nor an action take no Tab stop. Bars are
-  `role="meter"` (0 to 100) named by their row's label, beside the value as
-  text.
+- **Rows:** a row with an action is a link through `renderLink`, named by
+  its text (a `job` action has intent `"job"` and is `aria-current` on the
+  current job). A row with a tooltip shows it as a slot does (hover,
+  keyboard focus, Escape); without a link it is a focusable group named by
+  its text. On a touch screen a tap shows a tooltip-only row's tooltip and a
+  tap elsewhere hides it. Rows with neither a tooltip nor an action take no
+  Tab stop. Bars are `role="meter"` (0 to 100) named by their row's label,
+  and sit outside a row's link, so their number isn't read as part of its
+  name.
+- **Groups:** a two-column run is two stacks, each with its own row
+  heights; when the pane is narrower than 22rem they become one column, the
+  `start` groups first (also their order for screen readers and the Tab
+  key). A `collapsible` group is a `<details>` whose summary is its label.
+- **Detail windows:** a `fields` row's `detail` is a small button at the
+  row's right end that opens a window centred on the screen, with a title
+  bar, a close button and its blocks. It uses the Popover API
+  (`popover="auto"`, `role="dialog"`), so it needs no JavaScript: the button
+  opens and closes it, as do Escape and a click outside, and focus goes
+  back to the button. Tab from the button moves into the window. The close
+  button is named "Close".
 - **Window layout:** the content pane beside the 30rem equipment pane, up to
   58rem; below a 46rem container width the panes stack in DOM order (tab
   strip, content, equipment), and below 26rem the tab strip is two per row.
@@ -408,9 +424,10 @@ colours otherwise.
 
 The window adds `--cs-tab-bg` and `--cs-tab-active-bg` (tabs),
 `--cs-bar-track` and `--cs-bar-fill` (bars), `--cs-gauge-primary` and
-`--cs-gauge-secondary` (a gauge's two tones) and `--cs-stat-highlight` (a
-`highlight` stat). In the `document` theme they come from the existing
-colours; the `game` theme gives them gradients.
+`--cs-gauge-secondary` (a gauge's two tones), `--cs-stat-highlight` (a
+`highlight` stat) and `--cs-level-highlight` (a `highlight` level). In the
+`document` theme they come from the existing colours; the `game` theme gives
+them gradients and its own tones.
 
 ## Development
 

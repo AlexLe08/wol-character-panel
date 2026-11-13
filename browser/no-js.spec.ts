@@ -5,8 +5,9 @@ import { pointerAway, slot, tabTo, tooltipOf } from "./helpers.ts";
 // /static is server-rendered with no script (playground/static.tsx), and
 // these tests run with JavaScript disabled too. What must still work:
 // tooltips on hover and focus (CSS), the job menu (<details> of links),
-// and the narrow layout (a container query). Escape needs the script, so
-// it isn't expected here.
+// and the narrow layout (a container query). Escape needs the script to
+// hide a tooltip, so that isn't expected here (a detail window's Escape is
+// the browser's own).
 
 test.use({ javaScriptEnabled: false });
 
@@ -90,4 +91,26 @@ test("keyboard focus shows a row's tooltip", async ({ page }) => {
   const frontEnd = page.locator(".cs__content [role='group'][tabindex='0']").filter({ hasText: "Front end" });
   await tabTo(page, frontEnd);
   await expect(await tooltipOf(frontEnd)).toBeVisible();
+});
+
+// Collapsible groups are <details>, and detail windows the Popover API:
+// both are HTML, so neither needs a script.
+test("a collapsible group opens", async ({ page }) => {
+  await page.goto("/static?view=window&fixture=full&tab=reputation");
+  const row = page.locator(".cs-track", { hasText: "Study group" });
+  await expect(row).toBeHidden();
+  await page.locator("summary", { hasText: "Earlier" }).click();
+  await expect(row).toBeVisible();
+});
+
+test("a detail window opens and closes", async ({ page }) => {
+  await page.goto("/static?view=window&fixture=full&tab=profile");
+  const dialog = page.getByRole("dialog", { name: "Titles" });
+  await page.getByRole("button", { name: "All titles" }).click();
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "Close" }).click();
+  await expect(dialog).toBeHidden();
+  await page.getByRole("button", { name: "All titles" }).click();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
 });

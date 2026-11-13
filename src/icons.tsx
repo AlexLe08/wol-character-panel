@@ -74,6 +74,27 @@ export function TabMarkerIcon() {
   );
 }
 
+// A fields row's detail button: a small page.
+export function DetailIcon() {
+  return <Drawing>{path("M4 2h5.5L12 4.5V14H4zM9.5 2v2.5H12M6 7.5h4M6 10h4")}</Drawing>;
+}
+
+// The detail window's close button.
+export function CloseIcon() {
+  return <Drawing>{path("M4 4l8 8M12 4l-8 8")}</Drawing>;
+}
+
+// A collapsible group's marker: a triangle in a circle, pointing right
+// while closed (the CSS turns it down when open).
+export function CollapseIcon() {
+  return (
+    <Drawing>
+      <circle cx="8" cy="8" r="6" />
+      <path d="M7 5.5 10 8l-3 2.5z" fill="currentColor" />
+    </Drawing>
+  );
+}
+
 // The six round buttons under the portrait, start side then end side.
 export const TOOLBAR_ICONS: ReactNode[] = [
   <Drawing key="half-start">

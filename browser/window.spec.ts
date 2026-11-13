@@ -142,6 +142,112 @@ test.describe("row tooltips", () => {
   }
 });
 
+test.describe("lists", () => {
+  test("a level row's job action switches job, keeping the tab and page", async ({ page }) => {
+    await page.goto(windowUrl("&tab=skills"));
+    // Named by its text, in the order drawn, and the bar's number left out.
+    const healthcare = page.getByRole("link", { name: "3 Healthcare work", exact: true });
+    await expect(healthcare).not.toHaveAttribute("aria-current");
+    await healthcare.click();
+    await expect(page).toHaveURL(/[?&]job=healthcare/);
+    await expect(page).toHaveURL(/[?&]tab=skills/);
+    await expect(page.getByRole("link", { name: "3 Healthcare work", exact: true })).toHaveAttribute("aria-current", "true");
+  });
+
+  test("a level row's param action keeps the tab", async ({ page }) => {
+    await page.goto(windowUrl("&tab=skills"));
+    await page.getByRole("link", { name: "4 React", exact: true }).click();
+    await expect(page).toHaveURL(/[?&]tab=skills/);
+    await expect(page).toHaveURL(/[?&]stack=react/);
+  });
+
+  test("a linked row with a tooltip shows it on focus", async ({ page }) => {
+    await page.goto(windowUrl("&tab=skills"));
+    const healthcare = page.getByRole("link", { name: "3 Healthcare work", exact: true });
+    const tip = await tooltipOf(healthcare);
+    await tabTo(page, healthcare);
+    await expect(tip).toBeVisible();
+    await expect(tip).toContainText("Switches the panel to this job");
+  });
+
+  test("a run's stacks sit side by side, and stack in order when the pane is narrow", async ({ page }) => {
+    await page.goto(windowUrl("&tab=skills"));
+    let start = await box(page, ".cs-columns__stack--start");
+    let end = await box(page, ".cs-columns__stack--end");
+    expect(start.x + start.width).toBeLessThanOrEqual(end.x);
+    expect(Math.abs(start.y - end.y)).toBeLessThan(1);
+
+    await page.goto(windowUrl("&tab=skills&width=22"));
+    start = await box(page, ".cs-columns__stack--start");
+    end = await box(page, ".cs-columns__stack--end");
+    expect(start.y + start.height).toBeLessThanOrEqual(end.y);
+  });
+
+  test("a collapsible group opens and closes by keyboard", async ({ page }) => {
+    await page.goto(windowUrl("&tab=reputation"));
+    const earlier = page.locator("summary", { hasText: "Earlier" });
+    const row = page.locator(".cs-track", { hasText: "Study group" });
+    await expect(row).toBeHidden();
+    await tabTo(page, earlier);
+    await page.keyboard.press("Enter");
+    await expect(row).toBeVisible();
+    await page.keyboard.press("Space");
+    await expect(row).toBeHidden();
+    // The open one starts open.
+    await expect(page.locator(".cs-track", { hasText: "Docs fixes" })).toBeVisible();
+  });
+});
+
+test.describe("detail windows", () => {
+  const open = async (page: Page) => {
+    await page.goto(windowUrl("&tab=profile"));
+    const button = page.getByRole("button", { name: "All titles" });
+    const dialog = page.getByRole("dialog", { name: "Titles" });
+    await expect(dialog).toBeHidden();
+    await button.click();
+    await expect(dialog).toBeVisible();
+    return { button, dialog };
+  };
+
+  test("the button opens it, centred in the viewport, and presses again to close", async ({ page }) => {
+    const { button, dialog } = await open(page);
+    await expect(dialog).toContainText("Developer");
+    const found = await box(page, ".cs-detail");
+    const viewport = page.viewportSize()!;
+    expect(Math.abs(found.x + found.width / 2 - viewport.width / 2)).toBeLessThan(2);
+    // The window may cover the button, so press it from the keyboard: it
+    // still has focus from the click.
+    await expect(button).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(dialog).toBeHidden();
+  });
+
+  test("its close button and Escape close it, focus going back to the button", async ({ page }) => {
+    const { button, dialog } = await open(page);
+    await dialog.getByRole("button", { name: "Close" }).click();
+    await expect(dialog).toBeHidden();
+    await expect(button).toBeFocused();
+
+    await button.click();
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(button).toBeFocused();
+  });
+
+  test("a click outside closes it", async ({ page }) => {
+    const { dialog } = await open(page);
+    await page.mouse.click(5, 5);
+    await expect(dialog).toBeHidden();
+  });
+
+  test("Tab moves from the button into the window", async ({ page }) => {
+    const { dialog } = await open(page);
+    await page.keyboard.press("Tab");
+    await expect(dialog.getByRole("button", { name: "Close" })).toBeFocused();
+  });
+});
+
 test.describe("layout", () => {
   test("wide: the content pane beside the equipment pane, which keeps its wide layout", async ({ page }) => {
     await page.goto(windowUrl());
@@ -222,11 +328,17 @@ test.describe("layout", () => {
   });
 });
 
-for (const theme of ["document", "game"]) {
-  test(`every focusable element in the window shows a focus ring (${theme})`, async ({ page }) => {
-    await page.goto(windowUrl(`&theme=${theme}&tab=profile`));
+for (const [theme, tab] of [
+  ["document", "profile"],
+  ["game", "profile"],
+  ["document", "skills"],
+  ["game", "reputation"],
+]) {
+  test(`every focusable element in the window shows a focus ring (${theme}, ${tab})`, async ({ page }) => {
+    await page.goto(windowUrl(`&theme=${theme}&tab=${tab}`));
     await page.locator(".cs__jobs").evaluate((details: HTMLDetailsElement) => (details.open = true));
-    const focusable = await page.locator(".cs").locator("a, summary, [tabindex='0']").count();
+    // Visible ones only: a closed detail window's controls take no Tab stop.
+    const focusable = await page.locator(".cs").locator("a, summary, button, [tabindex='0'] >> visible=true").count();
     const seen: string[] = [];
     let entered = false;
     let left = false;
@@ -253,9 +365,10 @@ for (const theme of ["document", "game"]) {
     }
     expect(left, "Tab left the window").toBe(true);
     expect(seen).toHaveLength(focusable);
-    // The tab strip and the profile's links are among them.
+    // The tab strip and the tab's own controls are among them.
     expect(seen.some((name) => name.includes("Attributes"))).toBe(true);
-    expect(seen.some((name) => name.includes("Notes on publishing"))).toBe(true);
+    const own = { profile: "All titles", skills: "Healthcare work", reputation: "Earlier" }[tab];
+    expect(seen.some((name) => name.includes(own!)), own).toBe(true);
   });
 }
 
@@ -289,6 +402,13 @@ for (const theme of ["document", "game"]) {
   test(`no axe violations with a row tooltip shown (${theme})`, async ({ page }) => {
     await page.goto(windowUrl(`&theme=${theme}`));
     await tabTo(page, row(page, "Front end"));
+    expect(await violations(page)).toEqual([]);
+  });
+
+  test(`no axe violations with a detail window open (${theme})`, async ({ page }) => {
+    await page.goto(windowUrl(`&theme=${theme}&tab=profile`));
+    await page.getByRole("button", { name: "All titles" }).click();
+    await expect(page.getByRole("dialog", { name: "Titles" })).toBeVisible();
     expect(await violations(page)).toEqual([]);
   });
 }

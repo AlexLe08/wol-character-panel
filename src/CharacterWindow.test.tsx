@@ -102,6 +102,90 @@ function render(props: Partial<CharacterWindowProps> = {}): string {
   return renderToStaticMarkup(<CharacterWindow config={config} job={web} {...props} />);
 }
 
+// Levels, progress and a detail window, on a tab of their own.
+const levels: Block = {
+  type: "levels",
+  groups: [
+    {
+      label: "Front end",
+      column: "start",
+      rows: [
+        {
+          label: "React",
+          level: "7",
+          fill: 90,
+          tone: "highlight",
+          iconName: "wand",
+          action: { kind: "param", name: "stack", value: "react", target: "projects" },
+        },
+        { label: "Plain", level: "2" },
+      ],
+    },
+    {
+      label: "Domains",
+      column: "end",
+      rows: [
+        { label: "Data work", level: "3", action: { kind: "job", id: "data" }, tooltip: { title: "Data" } },
+        // No such job: no link, but still focusable for its tooltip.
+        { label: "Gone", level: "1", action: { kind: "job", id: "nope" }, tooltip: { title: "Gone" } },
+      ],
+    },
+    { label: "Tools", column: "start", rows: [{ label: "Vite", level: "5", tooltip: { title: "Vite" } }] },
+    { label: "Wide", rows: [{ label: "Writing", level: "1" }] },
+    { label: "Late", column: "end", rows: [{ label: "Later", level: "1" }] },
+  ],
+};
+
+const progress: Block = {
+  type: "progress",
+  groups: [
+    {
+      label: "Open source",
+      collapsible: "open",
+      rows: [
+        {
+          label: "This panel",
+          fill: 100,
+          caption: "Maintainer",
+          value: "23 PRs",
+          action: { kind: "external", href: "https://example.com/", newTab: true },
+        },
+        { label: "Docs", fill: 30, value: "4 PRs", tooltip: { title: "Docs" } },
+      ],
+    },
+    { label: "Earlier", collapsible: "closed", rows: [{ label: "Study group", caption: "Organiser" }] },
+    // parseConfig reports this one; drawn plain.
+    { collapsible: "closed", rows: [{ label: "Unlabelled", fill: 10 }] },
+  ],
+};
+
+const detailFields: Block = {
+  type: "fields",
+  rows: [
+    {
+      label: "Title",
+      value: "Developer",
+      detail: {
+        label: "All titles",
+        title: "Titles",
+        blocks: [
+          { type: "stats", groups: [{ rows: [{ label: "Senior", value: "2024–", tooltip: { title: "Senior" } }] }] },
+          { type: "gauges", rows: [{ label: "Years", value: "6" }] },
+        ],
+      },
+    },
+    { label: "Plain", value: "x" },
+  ],
+};
+
+const lists = (props: Partial<CharacterWindowProps> = {}) =>
+  render({
+    config: { ...config, tabs: [tabs[1], { id: "lists", label: "Lists", blocks: [levels, progress, detailFields] }] },
+    tab: "lists",
+    renderLink: intentLink,
+    ...props,
+  });
+
 // Opening tags with their attributes, as in EquipmentPanel.test.tsx (kept
 // in each test file: a shared helper in src/ would be built and published).
 type Tag = { name: string; attrs: Record<string, string> };
@@ -263,26 +347,213 @@ describe("CharacterWindow (server render)", () => {
       expect(html).not.toContain("Vitals");
     });
 
-    it("leave out levels and progress blocks for now, and the rest still draw", () => {
+    it("draw every type, in config order", () => {
+      const html = lists();
+      expect(withClass(html, "cs-block").map((tag) => tag.attrs.class)).toEqual([
+        "cs-block cs-block--levels",
+        "cs-block cs-block--progress",
+        "cs-block cs-block--fields",
+        // The detail window's, inside the fields block.
+        "cs-block cs-block--stats",
+        "cs-block cs-block--gauges",
+      ]);
+    });
+  });
+
+  describe("groups", () => {
+    it("form a two-column run from consecutive groups with a column, start stack first", () => {
+      const html = lists();
+      // Front end, Domains, Tools form one run; Wide ends it; Late starts another.
+      expect(withClass(html, "cs-columns")).toHaveLength(2);
+      expect(withClass(html, "cs-columns__stack").map((tag) => tag.attrs.class)).toEqual([
+        "cs-columns__stack cs-columns__stack--start",
+        "cs-columns__stack cs-columns__stack--end",
+        "cs-columns__stack cs-columns__stack--end",
+      ]);
+      const at = (text: string) => html.indexOf(`>${text}<`);
+      expect(at("Front end")).toBeLessThan(at("Tools"));
+      expect(at("Tools")).toBeLessThan(at("Domains"));
+      expect(at("Domains")).toBeLessThan(at("Wide"));
+      expect(at("Wide")).toBeLessThan(at("Late"));
+    });
+
+    it("form runs in stats blocks too", () => {
       const html = render({
         config: {
           ...config,
           tabs: [
             {
-              id: "only",
-              label: "Only",
+              id: "s",
+              label: "S",
               blocks: [
-                { type: "levels", groups: [{ rows: [{ label: "React", level: "7" }] }] },
-                { type: "progress", groups: [{ rows: [{ label: "Project", fill: 50 }] }] },
-                fields,
+                {
+                  type: "stats",
+                  groups: [
+                    { label: "Offensive", column: "start", rows: [{ label: "A", value: "1" }] },
+                    { label: "Defensive", column: "end", rows: [{ label: "B", value: "2" }] },
+                  ],
+                },
               ],
             },
           ],
         },
       });
-      expect(html).not.toContain("cs-block--levels");
-      expect(html).not.toContain("cs-block--progress");
-      expect(html).toContain("cs-block--fields");
+      expect(html).toMatch(/<div class="cs-columns"><div class="cs-columns__stack cs-columns__stack--start"><div class="cs-group"/);
+    });
+
+    it("are a <details> named by its summary when collapsible, open or closed at first", () => {
+      const html = lists();
+      const details = withClass(html, "cs-group").filter((tag) => tag.name === "details");
+      expect(details.map((tag) => [tag.attrs.class, "open" in tag.attrs])).toEqual([
+        ["cs-group cs-group--collapsible", true],
+        ["cs-group cs-group--collapsible", false],
+      ]);
+      const summary = byId(html, details[0].attrs["aria-labelledby"]);
+      expect(summary).toMatchObject({ name: "summary", attrs: { class: "cs-group__label" } });
+      expect(html).toContain('<span class="cs-group__marker" aria-hidden="true"><svg');
+    });
+
+    it("draw a collapsible group without a label plain", () => {
+      const html = lists();
+      expect(html).toMatch(/<div class="cs-group"><ul class="cs-tracks"><li class="cs-track"><span class="cs-track__face">/);
+      expect(html).toContain("Unlabelled");
+    });
+  });
+
+  describe("levels", () => {
+    // A row's face (its opening tag), found by the label in its row.
+    const face = (html: string, label: string) => {
+      const opening = [...html.matchAll(/<(?:a|span)\b[^>]*class="cs-level__face"[^>]*>/g)].find((match) =>
+        html.slice(match.index, html.indexOf("</li>", match.index)).includes(`>${label}<`),
+      );
+      return opening && tags(opening[0])[0];
+    };
+
+    it("draw an icon square, the level, and the label over a bar only when fill is set", () => {
+      const html = lists();
+      expect(withClass(html, "cs-levels").map((tag) => tag.name)).toEqual(["ul", "ul", "ul", "ul", "ul"]);
+      expect(withClass(html, "cs-level").map((tag) => tag.attrs.class)).toEqual([
+        "cs-level cs-level--highlight",
+        ...Array(6).fill("cs-level cs-level--default"),
+      ]);
+      // A row with no icon shows its label's first two letters.
+      expect(html).toContain('<span class="cs-level__icon" aria-hidden="true">Pl</span>');
+      expect(html).toMatch(/<span class="cs-level__icon" aria-hidden="true"><svg/);
+      // The bar follows the face, outside it, named by the row's label.
+      expect(html).toMatch(/>React<\/span><\/a><span class="cs-meter" role="meter" aria-valuenow="90"/);
+      const meter = tags(html).find((tag) => tag.attrs["aria-valuenow"] === "90")!;
+      expect(byId(html, meter.attrs["aria-labelledby"])?.attrs.class).toBe("cs-level__label");
+      expect(html).toMatch(/>Plain<\/span><\/span><\/li>/);
+    });
+
+    it("link by their action, named by their text in the order drawn, keeping the window's own query", () => {
+      const html = lists();
+      expect(face(html, "React")).toEqual({
+        name: "a",
+        attrs: { "data-intent": "param", href: "/?tab=lists&stack=react#projects", class: "cs-level__face" },
+      });
+      expect(html).toMatch(/>7<\/span> <span class="cs-level__label" id="[^"]+">React</);
+    });
+
+    it("switch job by a job action, current on its job, described by a tooltip", () => {
+      const asWeb = face(lists(), "Data work")!;
+      expect(asWeb).toMatchObject({ name: "a", attrs: { "data-intent": "job", href: "/?tab=lists&job=data" } });
+      expect(asWeb.attrs["aria-current"]).toBeUndefined();
+      const html = lists({ job: data });
+      const asData = face(html, "Data work")!;
+      expect(asData.attrs["aria-current"]).toBe("true");
+      expect(byId(html, asData.attrs["aria-describedby"])?.attrs).toMatchObject({ class: "cs-tip", role: "tooltip" });
+    });
+
+    it("are a focusable group with a tooltip and no link to make, plain text with neither", () => {
+      const html = lists();
+      for (const label of ["Gone", "Vite"]) {
+        const group = face(html, label)!;
+        expect(group).toMatchObject({ name: "span", attrs: { role: "group", tabindex: "0" } });
+        expect(byId(html, group.attrs["aria-describedby"])?.attrs.role).toBe("tooltip");
+        // Named as it's drawn: level, then label.
+        expect(group.attrs["aria-labelledby"].split(" ").map((id) => byId(html, id)?.attrs.class)).toEqual([
+          "cs-level__level",
+          "cs-level__label",
+        ]);
+      }
+      // Plain, Writing and Later: no Tab stop, no role.
+      const plain = withClass(html, "cs-level__face").filter((tag) => tag.name === "span" && !tag.attrs.tabindex);
+      expect(plain.map((tag) => tag.attrs.role)).toEqual([undefined, undefined, undefined]);
+    });
+  });
+
+  describe("progress", () => {
+    it("draw icon and label, caption and value, and the bar after the face", () => {
+      const html = lists();
+      expect(html).toMatch(
+        /<span class="cs-track__label" id="[^"]+">This panel<\/span><\/span> <span class="cs-track__foot"><span class="cs-track__caption" id="[^"]+">Maintainer<\/span> <span class="cs-track__value" id="[^"]+">23 PRs<\/span><\/span>/,
+      );
+      expect(html).toMatch(/<\/a><span class="cs-meter" role="meter" aria-valuenow="100"/);
+      expect(html).toContain('<span class="cs-track__icon" aria-hidden="true">Do</span>');
+    });
+
+    it("are named by label, caption and value as a tooltip group", () => {
+      const html = lists();
+      const docs = withClass(html, "cs-track__face")[1];
+      expect(docs.attrs).toMatchObject({ role: "group", tabindex: "0" });
+      expect(docs.attrs["aria-labelledby"].split(" ").map((id) => byId(html, id)?.attrs.class)).toEqual([
+        "cs-track__label",
+        "cs-track__value",
+      ]);
+    });
+
+    it("open an external link in a new tab, saying so in its text", () => {
+      const html = lists();
+      expect(withClass(html, "cs-track__face")[0]).toEqual({
+        name: "a",
+        attrs: { class: "cs-track__face", href: "https://example.com/", target: "_blank", rel: "noopener noreferrer" },
+      });
+      expect(html).toContain('23 PRs</span></span><span class="cs-visually-hidden"> (opens in a new tab)</span></a>');
+    });
+  });
+
+  describe("detail windows", () => {
+    it("are a button at the row's end, opening a popover dialog named by its title", () => {
+      const html = lists();
+      const [button, close] = tags(html).filter((tag) => tag.name === "button");
+      expect(button.attrs).toMatchObject({ type: "button", class: "cs-field__detail" });
+      const window = byId(html, button.attrs.popoverTarget)!;
+      expect(window).toEqual({
+        name: "div",
+        attrs: {
+          class: "cs-detail",
+          id: button.attrs.popoverTarget,
+          popover: "auto",
+          role: "dialog",
+          "aria-labelledby": `${button.attrs.popoverTarget}-title`,
+        },
+      });
+      expect(html).toContain(`<p class="cs-detail__title" id="${button.attrs.popoverTarget}-title">Titles</p>`);
+      expect(close.attrs).toEqual({
+        type: "button",
+        class: "cs-detail__close",
+        popoverTarget: button.attrs.popoverTarget,
+        popoverTargetAction: "hide",
+      });
+      expect(html).toContain('<span class="cs-visually-hidden">All titles</span>');
+      expect(html).toContain('<span class="cs-visually-hidden">Close</span>');
+      // The default drawing, as the detail sets no icon.
+      expect(html).toContain('<span class="cs-field__detail-icon" aria-hidden="true"><svg');
+    });
+
+    it("hold their blocks, rows with tooltips included, and only rows with a detail get a button", () => {
+      const html = lists();
+      expect(withClass(html, "cs-field__detail")).toHaveLength(1);
+      const inside = html.slice(html.indexOf('class="cs-detail"'));
+      expect(inside).toContain("cs-block--stats");
+      expect(inside).toContain("cs-block--gauges");
+      expect(inside).toMatch(/<span class="cs-stat__face" role="group"[^>]*tabindex="0"/);
+    });
+
+    it("give every id in the window once", () => {
+      const ids = tags(lists()).flatMap((tag) => tag.attrs.id ?? []);
+      expect(new Set(ids).size).toBe(ids.length);
     });
   });
 
