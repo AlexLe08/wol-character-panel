@@ -259,7 +259,9 @@ draws the bar and the equipment pane. (A 1.x config still has to meet
     ones on the right (the reference's classes page is two such stacks of
     unequal length, which a row-flow grid can't reproduce). A group
     without it spans the pane and ends the run. When the pane is narrow
-    the run becomes one column, in config order.
+    the run becomes one column: the start stack, then the end stack (its
+    DOM order; PR 5 found two independent stacks can't keep config order
+    for interleaved groups).
   - `collapsible: "open" | "closed"`: the group is a `<details>` with its
     label as the `<summary>` (no JavaScript). Needs a `label`; without
     one `parseConfig` reports it and the group renders plain.
@@ -687,6 +689,24 @@ demo's default view is the owner's call for PR 6. Left for PR 6: the tab
 strip's name ("Tabs") is fixed English, with no config or prop to change
 it; and at 22rem `edge-cases`' gauges, two per line, break long labels
 every few characters (no overflow), where one per line would read better.
+
+Settled by PR 5 (Chromium): the Popover API works as planned, with no
+fallback needed. React 19 server-renders `popoverTarget` in camel case,
+which HTML reads case-insensitively, so `/static` opens and closes a detail
+window with JavaScript off. Escape, a click outside and the close button
+close it, focus goes back to the button, and axe passes with one open. The
+window doesn't take focus when it opens; Tab from the button moves into it
+(the browser's popover order). A `meter` inside a link adds its value to
+the link's name in Chrome ("4 React 90"), and naming the link explicitly
+instead tripped axe's label-content-name-mismatch (WCAG 2.5.3), because a
+text glyph in the icon square counts as visible text. So a level or
+progress row's bar sits outside its face, in the face's empty cell through
+a subgrid, and a link is named by its own text. A two-column run is two
+DOM stacks, so narrow and for assistive tech its order is the start groups,
+then the end groups (see Shared pieces). Left for PR 6: the close button's
+name ("Close") is fixed English, like the tab strip's; a row tooltip inside
+a detail window is clipped by the window's own scrolling; and level numbers
+line up only within a row, not down a column of rows.
 
 ## Ideas for what the parts can hold
 
