@@ -162,8 +162,13 @@
   props, `tab` and `page` are reserved parameter names, and the tooltip,
   level-label and slot-column limits are tighter. Still no client code but
   `SlotHover`, and everything works with JavaScript off. The playground and
-  demo open on the window. Ships as 2.0.0 through `/release-prep`; the site
-  takes it in an upgrade PR of its own (see the plan's Work order).
+  demo open on the window. Ships as `2.0.0-beta.N` betas first (next
+  entry), then 2.0.0; the site takes it in an upgrade PR of its own (see
+  the plan's Work order).
+- Prereleases (2026-11-13): `release.yml` publishes a version with a `-`
+  to npm's `next` dist-tag (npm 11 refuses a prerelease without `--tag`),
+  the Demo deploy skips prerelease tags, and `/release-prep` proposes
+  `2.0.0-beta.N` until the owner calls the API settled.
 
 ## Next up: tooling plan (in order, one PR and session each)
 
@@ -174,12 +179,14 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 3. Repository hygiene: done (above).
 4. Claude Code: done (above).
 
-## Next up: release 2.0.0
+## Next up: 2.0 betas, then 2.0.0
 
-The owner runs `/release-prep` (2.0.0; it regenerates the schema so its
-`$id` reads `@2`) and tags the merge commit. Then the site's upgrade PR,
-in its own repository and session (the plan's Work order lists what it
-handles).
+The owner runs `/release-prep` for `2.0.0-beta.0` (it regenerates the
+schema so its `$id` reads `@2`) and tags the merge commit; npm's `next`
+tag gets it, `latest` stays on 1.0.4. Then the site's upgrade PR, in its
+own repository and session, installs `@next` (the plan's Work order lists
+what it handles); its API pain goes here as the beta's findings. 2.0.0
+follows once a beta has gone about a week without an API change.
 
 ## Later (candidates, unordered)
 

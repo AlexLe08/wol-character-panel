@@ -16,7 +16,10 @@ merge commit and `release.yml` publishes.
 ## 1. What changed since the last release
 
 1. `git fetch origin --tags`, then the last release tag:
-   `git describe --tags --abbrev=0 origin/main` (call it `vL`).
+   `git describe --tags --abbrev=0 origin/main` (call it `vL`). For a
+   stable release after betas, also read everything below from the last
+   stable tag (`git describe --tags --abbrev=0 --exclude='*-*'
+   origin/main`), so what breaks is listed against the previous major.
 2. From `vL` to `origin/main`, read:
    - `git log --oneline vL..origin/main` and the merged PRs' semver lines.
    - `git diff vL origin/main -- src/entries.test.ts`: the runtime export
@@ -45,16 +48,14 @@ merge commit and `release.yml` publishes.
    - The Unreleased section of `CHANGELOG.md`.
 3. If nothing a host can see changed, say a release isn't needed and stop.
 
-## Prereleases
-
-A new major ships as betas first: `2.0.0-beta.0`, then `2.0.0-beta.1` and
-so on, which `release.yml` publishes to npm's `next` dist-tag (`latest`
-stays on the last stable). While `main` holds a major that has no stable
-release yet (2.0 now), propose the next beta, whatever the size of the
-changes since the last one. Propose the stable version (`2.0.0`) only when
-the owner says the API is settled. Give `npm version` the exact version:
-`npm version prerelease --preid beta` turns 1.0.4 into 1.0.5-beta.0, not
-2.0.0-beta.0.
+4. Prereleases: a new major ships as betas first (`X.0.0-beta.0`, then
+   `X.0.0-beta.1` and so on; 2.0 as of 2026-11), which `release.yml`
+   publishes to npm's `next` dist-tag while `latest` stays on the last
+   stable. While `main` holds a major with no stable release yet, propose
+   the next beta, whatever the size of the changes since the last one, and
+   the stable `X.0.0` only when the owner says the API is settled. Give
+   `npm version` the exact version: `npm version prerelease --preid beta`
+   turns 1.0.4 into 1.0.5-beta.0, not 2.0.0-beta.0.
 
 ## 2. Propose, then wait
 
@@ -75,7 +76,10 @@ you'll use.
    the `$id` moves to `@<major>`; then update the README and examples
    wherever they name the old major (`grep -rn "@<old major>" README.md
    examples/`). Leave the CHANGELOG's history and `package-lock.json`
-   alone.
+   alone. (jsDelivr's `@<major>` range skips prereleases, so that URL
+   resolves only once the stable release is out.) The stable release
+   after betas also removes the README's `@next` install line, until the
+   next major's betas.
 4. `CHANGELOG.md`: the Unreleased entries become `## [X.Y.Z] - <today,
    YYYY-MM-DD>` under a new empty `## [Unreleased]`, with any missing lines
    from step 2 (a beta gets its own heading, such as `## [2.0.0-beta.1]`).
@@ -88,7 +92,9 @@ you'll use.
 6. One commit, `release: X.Y.Z`. `git push -u origin release/X.Y.Z`, then
    `gh pr create` titled `release: X.Y.Z`, the body following
    `.github/pull_request_template.md` (Semver line: the bump, and what
-   breaks for a major), with the new CHANGELOG section quoted.
+   breaks for a major; for a beta, "major (prerelease of X.0.0)" with the
+   breaks against the last stable on the first beta, and the changes since
+   the previous beta after that), with the new CHANGELOG section quoted.
 7. Finish by giving the owner the next steps, with the version filled in:
    - after merging: `git fetch origin && git tag vX.Y.Z origin/main && git
      push origin vX.Y.Z`, checking first that `origin/main` is the merge
@@ -98,4 +104,9 @@ you'll use.
      dist-tags` has it under `next` for a beta, `latest` otherwise (the
      Demo workflow skips a beta);
    - upgrade the site in its own repository and session (bump the
-     dependency in `frontend/`, `npm run generate:character-schema`).
+     dependency in `frontend/`, `npm run generate:character-schema`). Its
+     `^1` range doesn't match a beta: it takes one only on purpose
+     (`npm install @solution-nine/wol-character-panel@next`);
+   - after a stable release that followed betas, `next` still points at
+     the last beta: the owner may run `npm dist-tag rm
+     @solution-nine/wol-character-panel next`.

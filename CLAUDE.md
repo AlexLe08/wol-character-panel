@@ -165,8 +165,8 @@ that install in the site.
   `.github/workflows/release.yml` checks the tag against `package.json`,
   runs the checks, and publishes with npm trusted publishing (no token,
   provenance from npm), to the `next` dist-tag when the version is a
-  prerelease (`2.0.0-beta.N`, while 2.0 is unreleased), where the Demo
-  deploy skips it. Never publish from a local machine. The owner
+  prerelease (`2.0.0-beta.N`, while 2.0 is unreleased); the Demo deploy
+  skips prereleases. Never publish from a local machine. The owner
   starts that PR with `/release-prep` (`.claude/skills/`), which proposes
   the bump and waits for a yes; it never tags.
 - After a release, the site upgrades in its own repository and session:
