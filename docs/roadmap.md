@@ -149,6 +149,22 @@
   the owner once: Pages source "GitHub Actions". The first deploy is the
   next release (1.0.4): older tags have no `build:demo`.
 
+- Character window (2026-11-11 to 11-13, six PRs, the plan and what each
+  PR measured in `docs/character-window-plan.md`): `CharacterWindow` from
+  `/react`, a bar, a tab strip and sub-tabs as links (`?tab=`, `?page=`), a
+  content pane of typed blocks (`gauges`, `stats`, `fields`, `levels`,
+  `progress`) with groups, two-column runs, collapsible groups, row
+  tooltips and actions, and detail windows through the Popover API, beside
+  the equipment pane, which gained the gear-set row (the job menu moved
+  there). All from new optional config fields with their own `LIMITS`,
+  measured on `edge-cases`. The major's other breaks ride along:
+  `CharacterSheet` is `EquipmentPanel`, `parts` replaces the `show*`
+  props, `tab` and `page` are reserved parameter names, and the tooltip,
+  level-label and slot-column limits are tighter. Still no client code but
+  `SlotHover`, and everything works with JavaScript off. The playground and
+  demo open on the window. Ships as 2.0.0 through `/release-prep`; the site
+  takes it in an upgrade PR of its own (see the plan's Work order).
+
 ## Next up: tooling plan (in order, one PR and session each)
 
 Agreed 2026-11-08 after a review of the repository as extracted.
@@ -158,15 +174,12 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 3. Repository hygiene: done (above).
 4. Claude Code: done (above).
 
-## Next up: character window
+## Next up: release 2.0.0
 
-Planned 2026-11-11: a `CharacterWindow` component around today's panel,
-with a tab strip, a content pane of typed blocks (gauges, stats, fields,
-levels, progress) and a gear-set row, all from new optional config
-fields. A major (2.0.0): the job menu moves into the gear-set row,
-`CharacterSheet` becomes `EquipmentPanel`, and five more breaks ride
-along. The decisions, config shape, seven breaking changes and work order
-(six PRs) are in `docs/character-window-plan.md`.
+The owner runs `/release-prep` (2.0.0; it regenerates the schema so its
+`$id` reads `@2`) and tags the merge commit. Then the site's upgrade PR,
+in its own repository and session (the plan's Work order lists what it
+handles).
 
 ## Later (candidates, unordered)
 
@@ -179,6 +192,10 @@ along. The decisions, config shape, seven breaking changes and work order
   WCAG 1.4.13 on new hover content), if component work grows past what
   axe, the browser specs and the reviewer's accessibility checks catch.
   Left out of step 4: an agent called now and then goes stale.
+- An optional prop for the components' fixed English names (the tab
+  strip's "Tabs", a detail window's "Close", "(opens in a new tab)", "No
+  portrait yet"), for a host in another language. A minor whenever it
+  comes; left out of 2.0.0 until a host needs it.
 - Backend code stays out (decided with the site's PR #54): the JSON
   Schema is the contract, which any backend validates in its own language.
   A Python validator package (`find_issues` and its `oneOf` explanation)
