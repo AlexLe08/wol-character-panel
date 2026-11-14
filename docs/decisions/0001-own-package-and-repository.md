@@ -28,7 +28,9 @@ The character sheet is its own npm package, `@solution-nine/wol-character-panel`
 in its own public repository, published from there; the site is a host
 that depends on it. The package's history came with it.
 
-**Why:** TODO(Alex)
+**Why:**
+
+I wanted to set up this web component as a standalone package library that can be worked on independent of the Portfolio site's needs and specs, as well as being able to share the web component to other users with different needs and specs.
 
 ## Consequences
 

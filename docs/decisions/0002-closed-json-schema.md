@@ -24,7 +24,9 @@ Strict on write, lenient on read. The JSON Schema rejects unknown keys;
 `parseConfig` strips them and renders the rest. An object meant to stay
 open uses `z.looseObject`.
 
-**Why:** TODO(Alex)
+**Why:**
+
+Maintain strict write and ensuring typing is known..
 
 ## Consequences
 

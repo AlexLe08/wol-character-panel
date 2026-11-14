@@ -20,7 +20,9 @@ release, and the roadmap's Later list still holds tooling candidates (an
 No new tooling (dependencies, workflows, scripts, agents, skills, checks)
 unless a real bug or real friction calls for it. Feature work comes first.
 
-**Why:** TODO(Alex)
+**Why:**
+
+As a midlevel developer, I have gotten fairly tunnel visioned into setting up my Git tooling and workflows as a sort of "proof" of my midlevel experience. This has resulted in slowdowns with actually looking into feature development. Tha tsaid as we approach feature parity, it is likely I will look back on the workflow before starting new major features.
 
 ## Consequences
 
@@ -34,4 +36,4 @@ unless a real bug or real friction calls for it. Feature work comes first.
 - Gaps already known stay open until they bite, such as exported *types*
   not being covered by the export snapshot, or browser tests in Chromium
   only.
-- When to revisit: TODO(Alex)
+- When to revisit: after 2.0 release

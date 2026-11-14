@@ -12,10 +12,9 @@ merge, so the owner pressed "Delete branch" and `scripts/cleanup-merged.sh`
 removed the worktree and local branch. There is one maintainer and one
 host, and 1.x has had no fix since 2.0 started.
 
-On 2026-11-14 the repository deletes head branches on merge, but still
-allows merge commits and rebase merges, and a squash commit takes its
-title and message from the commits rather than the PR. The owner changes
-those settings by hand.
+On 2026-11-14 the owner set the repository by hand to allow squash merges
+only, take the commit title and message from the PR title and body, and
+delete head branches on merge (already on).
 
 ## Decision
 
@@ -25,7 +24,9 @@ from `v1.0.4`, is created only if a 1.x fix is ever needed. The
 repository allows squash merges only, with the PR title and body as the
 commit.
 
-**Why:** TODO(Alex)
+**Why:**
+
+During 1.0 and prior, I made commits left and right, and included merge commits without worry of git history. As I approach a major release, I reflected on how I need to change this behavior for my future self maintaining this package, starting with utilizing squash commits on main. 
 
 ## Consequences
 
