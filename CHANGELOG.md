@@ -59,6 +59,8 @@ A PR that changes what's published adds its line under Unreleased; the
   `--cs-bar-fill`, `--cs-gauge-primary`, `--cs-gauge-secondary`,
   `--cs-stat-highlight` and `--cs-level-highlight`.
 - `LIMITS.slot.column` (6) and the `EquipmentPanelParts` type.
+- README: betas of a new major are published to npm's `next` tag
+  (`npm install @solution-nine/wol-character-panel@next`).
 
 ### Changed (breaking)
 

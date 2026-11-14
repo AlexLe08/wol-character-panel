@@ -5,7 +5,9 @@ name: Demo
 # workflow has published a version, built from that release's commit, so
 # the demo shows what npm has: never unreleased work on main, nor a tag
 # whose release failed. To deploy a release again, run it by hand (Actions >
-# Demo > Run workflow) with the tag; only tags can be built. Both triggers
+# Demo > Run workflow) with the tag; only tags can be built. Prerelease tags
+# (with a `-`, such as v2.0.0-beta.0) are skipped either way, so the demo
+# shows the latest stable release, what `npm install` gets. Both triggers
 # run with main as their ref, which the github-pages environment allows.
 # Needs Settings > Pages > Source set to "GitHub Actions".
 on:
@@ -29,7 +31,11 @@ concurrency:
 
 jobs:
   build:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    # For a run Release triggered, head_branch is the tag it ran on.
+    if: >-
+      (github.event_name == 'workflow_dispatch' && !contains(inputs.tag, '-')) ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' &&
+      !contains(github.event.workflow_run.head_branch, '-'))
     runs-on: ubuntu-latest
     steps:
       # Actions pinned by commit SHA, as in release.yml: the deploy job can
