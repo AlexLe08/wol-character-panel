@@ -6,7 +6,7 @@ Status: Accepted · 2026-11-08
 
 The character sheet was written inside
 [the-portfolio-site](https://github.com/AlexLe08/the-portfolio-site), first
-as frontend components. It moved there in steps:
+as frontend components. It moved out in steps:
 
 - Site #74 and #75 (2026-11-06): an npm workspace, and the module as
   `packages/eorzean-character-sheet/` (private, 1.0.0), with the entries it
@@ -17,8 +17,8 @@ as frontend components. It moved there in steps:
 - Site #96 (2026-11-08): the rename ([0003](0003-package-name.md)), as step
   1 of the move.
 - This repository started from `git filter-repo` on the site, keeping the
-  package's history since site #75; #1 joined it to the repository's
-  initial commit (`a0cfc22`). 1.0.0 was published by hand, 1.0.1 (#4)
+  package's history since site #75; #1 (`a0cfc22`) joined it to the
+  repository's initial commit. 1.0.0 was published by hand, 1.0.1 (#4)
   through `release.yml` with trusted publishing, and the site switched to
   `^1.0.1` from npm (its PR #97).
 
@@ -42,5 +42,5 @@ that depends on it. The package's history came with it.
   regenerated after each upgrade (`generate:character-schema` there).
 - `git log` and `git blame` reach back to site #75 here; decisions from
   before the move are in the site's `docs/roadmap.md`.
-- Two repositories to keep in step: rules such as the workflow and these
-  records are copied to the site by hand.
+- Two repositories to keep in step; shared rules such as the workflow are
+  copied by hand.

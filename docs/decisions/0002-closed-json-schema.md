@@ -10,7 +10,7 @@ site's admin editor, its backend's save, any editor using `$schema`)
 validate against the exported JSON Schema, and the live page reads the
 config through `parseConfig` (zod).
 
-Site #85 (`9355659`, `4676354`) made the generator's override set
+Site #85 (here `9355659`, `4676354`) made the generator's override set
 `additionalProperties: false` on every plain `z.object` in the exported
 JSON Schema, while `src/schema.ts` stayed plain `z.object`. The
 alternatives on record in the site's `docs/roadmap.md`: `.strict()` in

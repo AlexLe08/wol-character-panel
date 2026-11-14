@@ -194,6 +194,13 @@ own repository and session, installs `@next` (the plan's Work order lists
 what it handles); its API pain goes here as the beta's findings. 2.0.0
 follows once a beta has gone about a week without an API change.
 
+Squash-only PRs ([decision 0005](decisions/0005-small-prs-squash-only.md))
+leave two gaps, for the workflow-rules PR: `CLAUDE.md`, the README's
+release steps, `release-prep` and this roadmap still say to tag the merge
+commit and press "Delete branch", and `scripts/cleanup-merged.sh` treats
+a branch as merged only when it's an ancestor of `origin/main`, which a
+squash merge never makes it.
+
 ## Later (candidates, unordered)
 
 - Themes beyond `document` and `game`.
