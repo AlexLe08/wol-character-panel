@@ -169,6 +169,12 @@
   to npm's `next` dist-tag (npm 11 refuses a prerelease without `--tag`),
   the Demo deploy skips prerelease tags, and `/release-prep` proposes
   `2.0.0-beta.N` until the owner calls the API settled.
+- Decision records (2026-11-14): `docs/decisions/`, a template and an
+  index, and six records drafted from the history (the extraction, the
+  closed JSON Schema, the name, the 2.0 betas, squash-only small PRs, the
+  tooling freeze), each with its Why left for the owner. `CLAUDE.md` has
+  agents read them before changing what they cover and propose a
+  superseding record rather than go against one.
 
 ## Next up: tooling plan (in order, one PR and session each)
 
@@ -187,6 +193,13 @@ tag gets it, `latest` stays on 1.0.4. Then the site's upgrade PR, in its
 own repository and session, installs `@next` (the plan's Work order lists
 what it handles); its API pain goes here as the beta's findings. 2.0.0
 follows once a beta has gone about a week without an API change.
+
+Squash-only PRs ([decision 0005](decisions/0005-small-prs-squash-only.md))
+leave two gaps, for the workflow-rules PR: `CLAUDE.md`, the README's
+release steps, `release-prep` and this roadmap still say to tag the merge
+commit and press "Delete branch", and `scripts/cleanup-merged.sh` treats
+a branch as merged only when it's an ancestor of `origin/main`, which a
+squash merge never makes it.
 
 ## Later (candidates, unordered)
 
