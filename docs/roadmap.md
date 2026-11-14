@@ -169,6 +169,12 @@
   to npm's `next` dist-tag (npm 11 refuses a prerelease without `--tag`),
   the Demo deploy skips prerelease tags, and `/release-prep` proposes
   `2.0.0-beta.N` until the owner calls the API settled.
+- Decision records (2026-11-14): `docs/decisions/`, a template and an
+  index, and six records drafted from the history (the extraction, the
+  closed JSON Schema, the name, the 2.0 betas, squash-only small PRs, the
+  tooling freeze), each with its Why left for the owner. `CLAUDE.md` has
+  agents read them before changing what they cover and propose a
+  superseding record rather than go against one.
 
 ## Next up: tooling plan (in order, one PR and session each)
 

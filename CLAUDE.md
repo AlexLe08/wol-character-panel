@@ -20,6 +20,17 @@ page renders it, the admin editor writes configs, and the site's backend
 validates saves against a copy of this package's JSON Schema. Changes here
 reach the site only through a release and an upgrade there.
 
+## Decision records
+
+`docs/decisions/` holds one record per decision that shapes the package
+or the workflow, indexed in its `README.md`.
+
+- Before changing an area a record covers, read the record.
+- Don't quietly go against one. Propose a new record that supersedes it,
+  in the PR that changes course, and say so in the PR.
+- Never write a record's **Why**: draft Context and Consequences from the
+  history and leave the Why as `TODO(Alex)` for the owner.
+
 ## Commands
 
 - Install: `npm ci`
