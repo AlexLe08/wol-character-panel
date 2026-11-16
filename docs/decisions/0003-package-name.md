@@ -20,8 +20,6 @@ Publish as `@solution-nine/wol-character-panel`, under a free npm
 organization rather than the owner's user scope, with no Square Enix trademark in the name.
 
 **Why:**
-As of writing this, this package is still without users so there is plenty of freedom to make "breaking" changes as needed for feature development before finding users.
-
 The name change was to better reflect the scope and features of the project to account for more than just the equipment window view, as well as ensuring little to no conflicts with trademark.
 
 ## Consequences

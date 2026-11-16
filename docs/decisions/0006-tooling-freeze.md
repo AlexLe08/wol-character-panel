@@ -22,7 +22,7 @@ unless a real bug or real friction calls for it. Feature work comes first.
 
 **Why:**
 
-As a midlevel developer, I have gotten fairly tunnel visioned into setting up my Git tooling and workflows as a sort of "proof" of my midlevel experience. This has resulted in slowdowns with actually looking into feature development. Tha tsaid as we approach feature parity, it is likely I will look back on the workflow before starting new major features.
+As a midlevel developer, I have gotten fairly tunnel visioned into setting up my Git tooling and workflows as a sort of "proof" of my midlevel experience. This has resulted in slowdowns with actually looking into feature development. That said, as we approach feature parity, it is likely I will look back on the workflow before starting new major features.
 
 ## Consequences
 

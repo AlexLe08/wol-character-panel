@@ -26,7 +26,7 @@ open uses `z.looseObject`.
 
 **Why:**
 
-Maintain strict write and ensuring typing is known..
+Maintain strict write and catch typos when the config is saved, without the live site dropping a job over one.
 
 ## Consequences
 
