@@ -219,17 +219,23 @@ Feature work toward a stable 2.0.0; no new tooling meanwhile
    (2026-11-18, every example, view, theme, layout and tab; no console or
    parse errors) found two, both from 1.x:
    - The portrait badge fails contrast. It has no background of its own,
-     so it sits on the host's portrait. On `full`'s (`#b9c4d4`) the game
-     theme's label (`--cs-muted`, `#a8a191`) is 1.46:1 and its value
-     (`#6fd3d3`) 1.00:1; the document theme's label is 3.54:1. All need
-     4.5:1. Axe can't see it (text over an image). A backing plate behind
-     the badge, in each theme's rules, would fix it whatever the portrait;
-     CSS only, so not a break.
+     so it sits on the host's portrait. On the `full` example's portrait
+     (`/portrait.svg`, `#b9c4d4` behind the figure) the game theme's label
+     (`--cs-muted`, `#a8a191`) is 1.46:1 and its value (`#6fd3d3`) 1.00:1;
+     the document theme's label (`#5b616b`) is 3.54:1 and its value
+     (`--cs-accent`, `#2f5fa3`) 3.62:1. All need 4.5:1. Axe can't see it
+     (text over an image). A backing plate behind the badge, in each
+     theme's rules, would fix it whatever the portrait; CSS only, so not a
+     break. In the document theme the plate is a flat fill, with no radius
+     or shadow (CLAUDE.md's theme rules).
    - The badge's limits are the generic `pair` (label 40, value 80). At
      those, `edge-cases`' badge covers about half the portrait wide and
      nearly all of it at 22rem. `LIMITS.row.figure` (24) settled the same
-     for row values in PR 6. Capping the badge's value (and maybe its
-     label) is a tighter limit, so a break: before 2.0.0 or not until 3.0.
+     for gauge, stat and progress values in the character window's PR 6
+     (`docs/character-window-plan.md`). Capping the badge's value (and
+     maybe its label) is a tighter limit, so a break: before 2.0.0 or not
+     until 3.0. The badge shares `pairSchema` with tooltip stats and items,
+     so it would get a schema of its own.
      The site's source sets no badge; check its saved config first.
    Not covered by screenshots: hover, focus, Escape, a real phone, and
    the deployed `/next/` page itself.
