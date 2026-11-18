@@ -175,8 +175,17 @@
   tooling freeze), each with its Why left for the owner. `CLAUDE.md` has
   agents read them before changing what they cover and propose a
   superseding record rather than go against one.
+- Workflow rules (2026-11-18): `CLAUDE.md` says PRs are squash-merged
+  with the title as the commit subject, the roadmap entry rides in the
+  feature's PR, and new tooling waits for a real bug or friction
+  (decisions 0005, 0006); the README, `release-prep` and CONTRIBUTING tag
+  and describe the squash commit instead of a merge commit.
+  `scripts/cleanup-merged.sh` now finds squash-merged branches: a branch
+  whose tip is, or is an ancestor of, the head of a merged PR of that name
+  (`gh pr list --state merged`) counts as merged, beside the ancestor
+  check that still covers PRs up to #31.
 
-## Next up: tooling plan (in order, one PR and session each)
+## Tooling plan (done)
 
 Agreed 2026-11-08 after a review of the repository as extracted.
 
@@ -187,19 +196,18 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 
 ## Next up: 2.0 betas, then 2.0.0
 
-The owner runs `/release-prep` for `2.0.0-beta.0` (it regenerates the
-schema so its `$id` reads `@2`) and tags the merge commit; npm's `next`
-tag gets it, `latest` stays on 1.0.4. Then the site's upgrade PR, in its
-own repository and session, installs `@next` (the plan's Work order lists
-what it handles); its API pain goes here as the beta's findings. 2.0.0
-follows once a beta has gone about a week without an API change.
+Feature work toward a stable 2.0.0; no new tooling meanwhile
+([decision 0006](decisions/0006-tooling-freeze.md)).
 
-Squash-only PRs ([decision 0005](decisions/0005-small-prs-squash-only.md))
-leave two gaps, for the workflow-rules PR: `CLAUDE.md`, the README's
-release steps, `release-prep` and this roadmap still say to tag the merge
-commit and press "Delete branch", and `scripts/cleanup-merged.sh` treats
-a branch as merged only when it's an ancestor of `origin/main`, which a
-squash merge never makes it.
+1. The owner runs `/release-prep` for `2.0.0-beta.0` (it regenerates the
+   schema so its `$id` reads `@2`) and tags its squash commit; npm's
+   `next` tag gets it, `latest` stays on 1.0.4.
+2. The site's upgrade PR, in its own repository and session, installs
+   `@next` (the plan's Work order lists what it handles). Its API pain
+   goes here as the beta's findings.
+3. Those findings, as small PRs and further betas.
+4. 2.0.0, once a beta has gone about a week without an API change
+   ([decision 0004](decisions/0004-2.0-betas-on-next.md)).
 
 ## Later (candidates, unordered)
 
