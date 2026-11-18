@@ -197,8 +197,9 @@
   also checks the playground under the `/next/` base.
 - Dependency majors (2026-11-11 to 11-18, dev only, no release).
   Dependabot's ESLint 10 (#14) and TypeScript 7 (#15) PRs failed `npm ci`
-  on peer ranges: `eslint-plugin-jsx-a11y` 6.10.2 allows ESLint up to 9,
-  `typescript-eslint` 8.72 TypeScript below 6.1. Both closed. TypeScript
+  on peer ranges: `eslint-plugin-jsx-a11y` 6.10.2 and `eslint-plugin-react`
+  7.37.5 allow ESLint up to 9, `typescript-eslint` 8.72–8.73 TypeScript
+  below 6.1. Both closed. TypeScript
   moved to `^6.0.3` instead, the newest that `typescript-eslint` allows.
   `dependabot.yml` ignores ESLint majors and TypeScript `>=6.1.0`: a 6.1
   in the grouped minor PR would otherwise fail every dev update with it.
@@ -238,7 +239,7 @@ Feature work toward a stable 2.0.0; no new tooling meanwhile
 
 - Lift the Dependabot ignores once the plugins allow the versions (check
   their `peerDependencies`): ESLint majors when `eslint-plugin-jsx-a11y`
-  allows ESLint 10; TypeScript `>=6.1.0` as `typescript-eslint` widens its
+  and `eslint-plugin-react` both allow ESLint 10; TypeScript `>=6.1.0` as `typescript-eslint` widens its
   range (narrow it to the next blocked version, or drop it).
 - If the `browser` job's "Install Chromium" keeps failing on Ubuntu's apt
   archive (it did four times on 2026-11-11, PR #22: `security.ubuntu.com`

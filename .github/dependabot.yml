@@ -24,11 +24,11 @@ updates:
       - dependency-name: "zod"
         update-types: ["version-update:semver-major"]
       # Blocked upstream, so their PRs fail `npm ci` (ERESOLVE): ESLint 10
-      # until eslint-plugin-jsx-a11y allows it (6.10.2 stops at ^9),
-      # TypeScript 6.1 and up until typescript-eslint does (8.72 stops
-      # below 6.1; a 6.1 in the grouped minor PR would fail the whole
-      # group). Widen or remove each once the plugin allows it
-      # (docs/roadmap.md).
+      # until eslint-plugin-jsx-a11y and eslint-plugin-react allow it
+      # (6.10.2 and 7.37.5 stop at ^9), TypeScript 6.1 and up until
+      # typescript-eslint does (8.72-8.73 stop below 6.1; a 6.1 in the
+      # grouped minor PR would fail the whole group). Widen or remove each
+      # once the plugins allow it (docs/roadmap.md).
       - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
       - dependency-name: "typescript"
