@@ -10,6 +10,7 @@ declare const process: { env: Record<string, string | undefined> };
 
 const PORT = 5199;
 const DEMO_PORT = 5200;
+const NEXT_DEMO_PORT = 5201;
 const CI = Boolean(process.env.CI);
 
 export default defineConfig({
@@ -41,6 +42,13 @@ export default defineConfig({
     {
       command: `npm run build:demo && vite preview playground --base /wol-character-panel/ --port ${DEMO_PORT} --strictPort`,
       url: `http://localhost:${DEMO_PORT}/wol-character-panel/`,
+      reuseExistingServer: false,
+    },
+    // The next demo, built as pages.yml builds it, under /next/ below the
+    // stable one; into .logs/ so it doesn't clobber the build above.
+    {
+      command: `vite build playground --base /wol-character-panel/next/ --outDir ../.logs/demo-next --emptyOutDir && vite preview playground --base /wol-character-panel/next/ --outDir ../.logs/demo-next --port ${NEXT_DEMO_PORT} --strictPort`,
+      url: `http://localhost:${NEXT_DEMO_PORT}/wol-character-panel/next/`,
       reuseExistingServer: false,
     },
   ],

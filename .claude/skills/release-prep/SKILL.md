@@ -79,7 +79,8 @@ you'll use.
    alone. (jsDelivr's `@<major>` range skips prereleases, so that URL
    resolves only once the stable release is out.) The stable release
    after betas also removes the README's `@next` install line, until the
-   next major's betas.
+   next major's betas; the sentence on the next demo (`/next/`) stays,
+   since that page falls back to the latest release.
 4. `CHANGELOG.md`: the Unreleased entries become `## [X.Y.Z] - <today,
    YYYY-MM-DD>` under a new empty `## [Unreleased]`, with any missing lines
    from step 2 (a beta gets its own heading, such as `## [2.0.0-beta.1]`).
@@ -101,12 +102,14 @@ you'll use.
      PR's squash commit, `release: X.Y.Z (#N)` (nothing merged after it);
    - watch the Release workflow, then confirm on npm that the version
      shows provenance, and that `npm view @solution-nine/wol-character-panel
-     dist-tags` has it under `next` for a beta, `latest` otherwise (the
-     Demo workflow skips a beta);
-   - upgrade the site in its own repository and session (bump the
-     dependency in `frontend/`, `npm run generate:character-schema`). Its
-     `^1` range doesn't match a beta: it takes one only on purpose
-     (`npm install @solution-nine/wol-character-panel@next`);
+     dist-tags` has it under `next` for a beta, `latest` otherwise;
+   - watch the Demo workflow it triggers, then open the demo it updated:
+     <https://alexle08.github.io/wol-character-panel/next/> for a beta (try
+     the beta there, decision 0007), the root otherwise;
+   - after a stable release, upgrade the site in its own repository and
+     session (bump the dependency in `frontend/`, `npm run
+     generate:character-schema`). Betas skip the site for now (decision
+     0007);
    - after a stable release that followed betas, `next` still points at
      the last beta: the owner may run `npm dist-tag rm
      @solution-nine/wol-character-panel next`.

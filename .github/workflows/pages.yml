@@ -1,24 +1,22 @@
 name: Demo
 
-# Deploys the playground to GitHub Pages
-# (https://alexle08.github.io/wol-character-panel/) once the Release
-# workflow has published a version, built from that release's commit, so
-# the demo shows what npm has: never unreleased work on main, nor a tag
-# whose release failed. To deploy a release again, run it by hand (Actions >
-# Demo > Run workflow) with the tag; only tags can be built. Prerelease tags
-# (with a `-`, such as v2.0.0-beta.0) are skipped either way, so the demo
-# shows the latest stable release, what `npm install` gets. Both triggers
-# run with main as their ref, which the github-pages environment allows.
-# Needs Settings > Pages > Source set to "GitHub Actions".
+# Deploys the playground to GitHub Pages as two demos, built from the
+# release tags of the versions npm serves, so the demos show what npm has:
+# never unreleased work on main, nor a tag whose release failed.
+# - https://alexle08.github.io/wol-character-panel/: npm's `latest`, what
+#   `npm install` gets.
+# - https://alexle08.github.io/wol-character-panel/next/: npm's `next` (the
+#   newest beta), or `latest` again when no beta is newer.
+# A Pages deploy replaces the whole site, so every run builds both. It runs
+# once the Release workflow has published a version, beta or stable; to
+# deploy again, run it by hand (Actions > Demo > Run workflow). Both
+# triggers run with main as their ref, which the github-pages environment
+# allows. Needs Settings > Pages > Source set to "GitHub Actions".
 on:
   workflow_run:
     workflows: [Release]
     types: [completed]
   workflow_dispatch:
-    inputs:
-      tag:
-        description: "Release tag to deploy, such as v1.0.3"
-        required: true
 
 permissions:
   contents: read
@@ -31,36 +29,90 @@ concurrency:
 
 jobs:
   build:
-    # For a run Release triggered, head_branch is the tag it ran on.
     if: >-
-      (github.event_name == 'workflow_dispatch' && !contains(inputs.tag, '-')) ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' &&
-      !contains(github.event.workflow_run.head_branch, '-'))
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
-      # Actions pinned by commit SHA, as in release.yml: the deploy job can
-      # write to the site. Dependabot bumps the SHA and the comment together.
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          # The commit Release published, or the tag asked for (refs/tags/
-          # so a branch name can't be given).
-          ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', inputs.tag) || github.event.workflow_run.head_sha }}
-
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "24"
           package-manager-cache: false
 
-      - name: Install dependencies
-        run: npm ci
+      # npm's dist-tags pick the two versions. After a release, its version
+      # can take a moment to show there, so wait for it (a run Release
+      # triggered has the tag it ran on as head_branch).
+      - name: Versions on npm
+        id: versions
+        env:
+          RELEASED: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_branch || '' }}
+        run: |
+          released="${RELEASED#v}"
+          for attempt in $(seq 1 10); do
+            tags="$(npm view @solution-nine/wol-character-panel dist-tags --json)"
+            latest="$(node -p 'JSON.parse(process.argv[1]).latest ?? ""' "$tags")"
+            next="$(node -p 'JSON.parse(process.argv[1]).next ?? ""' "$tags")"
+            if [ -z "$released" ] || [ "$released" = "$latest" ] || [ "$released" = "$next" ]; then break; fi
+            if [ "$attempt" = 10 ]; then echo "npm doesn't list $released under latest or next"; exit 1; fi
+            sleep 15
+          done
+          # The next demo shows `next` only while it's ahead of `latest`
+          # (once 2.0.0 is out, `next` may still name a 2.0.0 beta).
+          if [ -z "$next" ] || ! node -e '
+            const [a, b] = process.argv.slice(1).map((v) => v.split("-")[0].split(".").map(Number));
+            process.exit((a[0] - b[0] || a[1] - b[1] || a[2] - b[2]) > 0 ? 0 : 1);
+          ' "$next" "$latest"; then
+            next="$latest"
+          fi
+          for version in "$latest" "$next"; do
+            if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+              echo "not a version: $version"
+              exit 1
+            fi
+          done
+          echo "stable demo: $latest, next demo: $next"
+          echo "stable=$latest" >> "$GITHUB_OUTPUT"
+          echo "next=$next" >> "$GITHUB_OUTPUT"
 
-      # The playground built with the repository's name as its base path.
-      - name: Build the demo
-        run: npm run build:demo
+      # Actions pinned by commit SHA, as in release.yml: the deploy job can
+      # write to the site. Dependabot bumps the SHA and the comment together.
+      # No token left in .git/config while npm ci runs each tag's
+      # dependencies' install scripts.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/v${{ steps.versions.outputs.stable }}
+          path: stable
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/v${{ steps.versions.outputs.next }}
+          path: next
+          persist-credentials: false
+
+      # Each tag's playground built with its own base path. The next demo
+      # runs Vite directly: tags already released have no script for its
+      # base, and browser/demo.spec.ts builds it the same way.
+      - name: Build the stable demo
+        working-directory: stable
+        run: |
+          npm ci
+          npm run build:demo
+
+      - name: Build the next demo
+        working-directory: next
+        run: |
+          npm ci
+          npx vite build playground --base /wol-character-panel/next/
+
+      - name: Put the demos together
+        run: |
+          cp -R stable/playground/dist site
+          cp -R next/playground/dist site/next
 
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: playground/dist
+          path: site
 
   deploy:
     needs: build
