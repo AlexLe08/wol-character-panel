@@ -148,16 +148,6 @@
   which the browser tests reach by Tab). `/static` stays dev only. Needs
   the owner once: Pages source "GitHub Actions". The first deploy is the
   next release (1.0.4): older tags have no `build:demo`.
-- Dependency majors (dev only, no release). Dependabot's ESLint 10 (#14)
-  and TypeScript 7 (#15) PRs failed `npm ci` on peer ranges:
-  `eslint-plugin-jsx-a11y` 6.10.2 allows ESLint up to 9, `typescript-eslint`
-  8.72 TypeScript below 6.1. Both closed. TypeScript moved to `^6.0.3`
-  instead, the newest that `typescript-eslint` allows. `dependabot.yml`
-  ignores ESLint majors and TypeScript `>=6.1.0`: a 6.1 in the grouped
-  minor PR would otherwise fail every dev update with it. TS 6 checks side-effect imports by default, so
-  the build (which sees only `src/`, not the playground's Vite types) needed
-  `src/css.d.ts` for the CSS import; it isn't emitted, so `dist/` is
-  unchanged.
 
 - Character window (2026-11-11 to 11-13, six PRs, the plan and what each
   PR measured in `docs/character-window-plan.md`): `CharacterWindow` from
@@ -205,6 +195,17 @@
   host ([decision 0007](decisions/0007-next-demo-for-betas.md), which
   supersedes 0004's "the site tries the betas"). `browser/demo.spec.ts`
   also checks the playground under the `/next/` base.
+- Dependency majors (2026-11-11 to 11-18, dev only, no release).
+  Dependabot's ESLint 10 (#14) and TypeScript 7 (#15) PRs failed `npm ci`
+  on peer ranges: `eslint-plugin-jsx-a11y` 6.10.2 allows ESLint up to 9,
+  `typescript-eslint` 8.72 TypeScript below 6.1. Both closed. TypeScript
+  moved to `^6.0.3` instead, the newest that `typescript-eslint` allows.
+  `dependabot.yml` ignores ESLint majors and TypeScript `>=6.1.0`: a 6.1
+  in the grouped minor PR would otherwise fail every dev update with it.
+  TS 6 checks side-effect imports by default, so the build (which sees
+  only `src/`, not the playground's Vite types) needed `src/css.d.ts` for
+  the components' CSS import; it isn't emitted. `dist/`'s `.d.ts` files
+  are unchanged and its `.js` loses only a few `//` comments before JSX.
 
 ## Tooling plan (done)
 
