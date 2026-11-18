@@ -13,6 +13,9 @@ showed 1.0.4.
 2.0.0-beta.0 was released on 2026-11-18 (#34). The owner chose then to
 leave the site on 1.x for now rather than upgrade it to try the beta, which
 left a published beta with nowhere to be seen outside a local checkout.
+That is the friction [0006](0006-tooling-freeze.md) asks a tooling change
+to name; this one extends the existing Demo workflow and its browser test
+rather than adding new tools.
 
 A repository has one Pages site, and a deploy replaces all of it, so a beta
 can't be deployed beside the stable demo on its own. Options: one workflow

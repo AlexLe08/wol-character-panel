@@ -76,15 +76,19 @@ jobs:
 
       # Actions pinned by commit SHA, as in release.yml: the deploy job can
       # write to the site. Dependabot bumps the SHA and the comment together.
+      # No token left in .git/config while npm ci runs each tag's
+      # dependencies' install scripts.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: refs/tags/v${{ steps.versions.outputs.stable }}
           path: stable
+          persist-credentials: false
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: refs/tags/v${{ steps.versions.outputs.next }}
           path: next
+          persist-credentials: false
 
       # Each tag's playground built with its own base path. The next demo
       # runs Vite directly: tags already released have no script for its

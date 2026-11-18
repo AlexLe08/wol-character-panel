@@ -9,7 +9,8 @@ later change can tell a deliberate choice from an accident.
   number, and goes in the PR that acts on the decision (or its own, if
   nothing changes yet).
 - A record isn't rewritten once accepted. To change a decision, write a
-  new record and set the old one's status to `Superseded by NNNN`.
+  new record and set the old one's status to `Superseded by NNNN`, or
+  `superseded in part by NNNN (what changed)` when the rest still stands.
 - The **Why** is the owner's. Claude drafts Context and Consequences from
   the history and leaves the Why as `TODO(Alex)`.
 

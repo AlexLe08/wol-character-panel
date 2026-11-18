@@ -79,7 +79,8 @@ you'll use.
    alone. (jsDelivr's `@<major>` range skips prereleases, so that URL
    resolves only once the stable release is out.) The stable release
    after betas also removes the README's `@next` install line, until the
-   next major's betas.
+   next major's betas; the sentence on the next demo (`/next/`) stays,
+   since that page falls back to the latest release.
 4. `CHANGELOG.md`: the Unreleased entries become `## [X.Y.Z] - <today,
    YYYY-MM-DD>` under a new empty `## [Unreleased]`, with any missing lines
    from step 2 (a beta gets its own heading, such as `## [2.0.0-beta.1]`).
