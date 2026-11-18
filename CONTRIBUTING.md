@@ -20,6 +20,8 @@ the playground.
 ## Pull requests
 
 - Branch from `main` and keep each PR to one change.
+- PRs are squash-merged: the title becomes the commit on `main`, so write
+  it like a commit subject (`fix: …`, `docs: …`).
 - `scripts/check.sh` runs everything CI runs; it must pass.
 - New behaviour gets tests. Don't loosen or delete a test to make a check
   pass; say in the PR why it looks wrong instead.

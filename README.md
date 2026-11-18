@@ -565,7 +565,7 @@ npm install ../wol-character-panel/solution-nine-wol-character-panel-<version>.t
 
 Bump `version` in `package.json` (a major bump changes the schema's `$id`, so
 regenerate it) and turn `CHANGELOG.md`'s Unreleased section into the new
-version, merge, then tag the merge commit:
+version, merge (PRs are squash-merged), then tag that commit on `main`:
 
 ```sh
 git tag v1.0.1 && git push origin v1.0.1
