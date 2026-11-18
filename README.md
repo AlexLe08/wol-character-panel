@@ -440,6 +440,9 @@ Override any `--cs-*` variable on `.cs`, or add a theme block like
 `--paper`/`--ink`/`--signal`/… tokens when they exist and falls back to neutral
 colours otherwise.
 
+The portrait's badge sits on a plate, `--cs-badge-bg` (the panel's colour by
+default), so its text keeps its contrast over any portrait; keep it opaque.
+
 The window adds `--cs-tab-bg` and `--cs-tab-active-bg` (tabs),
 `--cs-bar-track` and `--cs-bar-fill` (bars), `--cs-gauge-primary` and
 `--cs-gauge-secondary` (a gauge's two tones), `--cs-stat-highlight` (a
