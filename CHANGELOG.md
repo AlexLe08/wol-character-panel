@@ -21,9 +21,9 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ### Fixed
 
-- The portrait badge's text failed contrast over a light portrait (1.00 to
-  3.62:1 on the playground's, needing 4.5:1), since it had no background of
-  its own. It now sits on an opaque plate (`--cs-badge-bg`), flat in the
+- The portrait badge's text failed contrast over a light portrait (on the
+  playground's, down to 1.00:1 in `game` and 3.62:1 at best, needing 4.5:1),
+  since it had no background of its own. It now sits on an opaque plate (`--cs-badge-bg`), flat in the
   `document` theme and framed in `game`.
 
 ## [2.0.0-beta.0] - 2026-11-18
