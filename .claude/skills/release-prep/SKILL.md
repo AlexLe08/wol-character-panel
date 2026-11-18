@@ -101,12 +101,14 @@ you'll use.
      PR's squash commit, `release: X.Y.Z (#N)` (nothing merged after it);
    - watch the Release workflow, then confirm on npm that the version
      shows provenance, and that `npm view @solution-nine/wol-character-panel
-     dist-tags` has it under `next` for a beta, `latest` otherwise (the
-     Demo workflow skips a beta);
-   - upgrade the site in its own repository and session (bump the
-     dependency in `frontend/`, `npm run generate:character-schema`). Its
-     `^1` range doesn't match a beta: it takes one only on purpose
-     (`npm install @solution-nine/wol-character-panel@next`);
+     dist-tags` has it under `next` for a beta, `latest` otherwise;
+   - watch the Demo workflow it triggers, then open the demo it updated:
+     <https://alexle08.github.io/wol-character-panel/next/> for a beta (try
+     the beta there, decision 0007), the root otherwise;
+   - after a stable release, upgrade the site in its own repository and
+     session (bump the dependency in `frontend/`, `npm run
+     generate:character-schema`). Betas skip the site for now (decision
+     0007);
    - after a stable release that followed betas, `next` still points at
      the last beta: the owner may run `npm dist-tag rm
      @solution-nine/wol-character-panel next`.

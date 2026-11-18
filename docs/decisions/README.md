@@ -18,6 +18,7 @@ later change can tell a deliberate choice from an accident.
 | [0001](0001-own-package-and-repository.md) | The character sheet becomes its own package and repository, history kept | Accepted · 2026-11-08 |
 | [0002](0002-closed-json-schema.md) | The JSON Schema rejects unknown keys; `parseConfig` strips them | Accepted · 2026-11-06 |
 | [0003](0003-package-name.md) | The package is named `@solution-nine/wol-character-panel` | Accepted · 2026-11-08 |
-| [0004](0004-2.0-betas-on-next.md) | 2.0 ships as `2.0.0-beta.N` on `next` first | Accepted · 2026-11-13 |
+| [0004](0004-2.0-betas-on-next.md) | 2.0 ships as `2.0.0-beta.N` on `next` first | Accepted · 2026-11-13 · superseded in part by 0007 |
 | [0005](0005-small-prs-squash-only.md) | Small PRs to `main`, squash-merged; `release/1.x` only if needed | Accepted · 2026-11-14 |
 | [0006](0006-tooling-freeze.md) | New tooling only for a real bug or real friction | Accepted · 2026-11-14 |
+| [0007](0007-next-demo-for-betas.md) | Betas are tried in a next demo at `/next/`, not the site | Accepted · 2026-11-18 |

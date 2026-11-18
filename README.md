@@ -34,7 +34,9 @@ Betas of the next major are on npm's `next` tag:
 `npm install @solution-nine/wol-character-panel@next`.
 
 Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
-(below) on the example configs, as of the latest release.
+(below) on the example configs, as of the latest release. The newest beta
+is at <https://alexle08.github.io/wol-character-panel/next/> (the latest
+release again when no beta is newer).
 
 ## Entries
 
@@ -83,11 +85,11 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 | `eslint.config.mjs` | Lint rules (React, hooks, jsx-a11y, TypeScript) and the import allowlist (`npm run lint`) |
 | `tsconfig.json` | Compiler options for editors and `npm run typecheck` (tests, the playground, the browser tests and both test configs included) |
 | `vitest.config.ts` | Which tests run (`src/**/*.test.{ts,tsx}`), and coverage: every source file in `src/` (not the tests or CSS), its thresholds, the report in `.logs/coverage/` |
-| `playwright.config.ts` | The browser tests: Chromium, the playground started on port 5199 and the demo build on 5200, the report in `.logs/playwright-report/` |
+| `playwright.config.ts` | The browser tests: Chromium, the playground started on port 5199, the demo build on 5200 and the next demo's on 5201, the report in `.logs/playwright-report/` |
 | `tsconfig.build.json` | `npm run build`: one `.js` and `.d.ts` per source file in `dist/`, so `SlotHover.js` keeps its `"use client"` |
 | `.github/workflows/ci.yml` | On every pull request: `check` (lint, type-check, tests with coverage thresholds, the schema up to date, build, demo build, pack, package lint and the tarball smoke test), `compat` (type-check, tests and the smoke test on Node 22.12, and with the oldest peers) and `browser` (the Playwright tests) |
 | `.github/workflows/release.yml` | Publishes to npm when a `v*` tag is pushed (its actions pinned by commit SHA) |
-| `.github/workflows/pages.yml` | Deploys the demo (the built playground) to GitHub Pages after each successful release, or by hand for a given tag (its actions pinned by commit SHA) |
+| `.github/workflows/pages.yml` | Deploys the demos (the built playground) to GitHub Pages after each successful release, or by hand: npm's `latest` at the root and `next` under `/next/`, each built from its release tag (its actions pinned by commit SHA) |
 | `.github/dependabot.yml` | Weekly update PRs for dev dependencies and the workflows' actions (not the peer ranges), each release a week old first |
 | `.github/pull_request_template.md`, `.github/ISSUE_TEMPLATE/` | The PR checklist with its semver line; bug and feature forms |
 | `CHANGELOG.md` | What changed for hosts in each release |
@@ -484,7 +486,8 @@ JavaScript off. axe can't measure text over the game theme's gradients
 (it reports it incomplete, not passed), so a test pins an empty slot's
 glyph to its label's colour, which clears 4.5:1 in both themes. The demo
 tests build the demo site and serve it under `/wol-character-panel/` on
-port 5200, and check its images and links take that base path.
+port 5200, and under `/wol-character-panel/next/` (as the next demo) on
+5201, and check its images and links take each base path.
 
 ### Package checks
 
@@ -535,7 +538,9 @@ The demo site is this page built with Vite (`npm run build:demo`, into
 `playground/dist/`), served from `/wol-character-panel/`: the panel's links
 take that base path, and the examples' root-relative image paths
 (`/portrait.svg`) are prefixed with it. `/static` is dev-server only, so the
-demo doesn't have it. To look at the build locally:
+demo doesn't have it. The next demo is the same page built under
+`/wol-character-panel/next/` (`npx vite build playground --base
+/wol-character-panel/next/`). To look at the build locally:
 
 ```sh
 npm run build:demo && npx vite preview playground --base /wol-character-panel/
@@ -573,19 +578,24 @@ git tag v1.0.1 && git push origin v1.0.1
 
 `.github/workflows/release.yml` checks the tag matches `package.json`, runs the
 checks, and publishes with npm trusted publishing (no npm token; provenance
-added by npm). Once it succeeds, `.github/workflows/pages.yml` builds the
-demo site from the same commit and deploys it, so the demo never runs ahead
-of npm.
+added by npm).
 
 A prerelease version (one with a `-`, such as `2.0.0-beta.0`, tagged
 `v2.0.0-beta.0`) is published to the `next` dist-tag instead of `latest`, so
-a plain `npm install` keeps getting the last stable release, and the Demo
-workflow skips it. Check with
+a plain `npm install` keeps getting the last stable release. Check with
 `npm view @solution-nine/wol-character-panel dist-tags`.
 
+Once a release succeeds, beta or stable, `.github/workflows/pages.yml`
+deploys two demos, built from the release tags of the versions npm's
+dist-tags name, so neither runs ahead of npm: `latest` at
+`/wol-character-panel/`, and `next` at `/wol-character-panel/next/` while it
+is newer than `latest` (`latest` again otherwise, as after a stable release
+that followed betas). A Pages deploy replaces the whole site, so each run
+builds both.
+
 GitHub Pages is set once in the repository's Settings → Pages: Source
-"GitHub Actions". To redeploy a release, run the Demo workflow by hand with
-its tag (from 1.0.4 on: older tags have no `build:demo`). Both ways run with
+"GitHub Actions". To redeploy, run the Demo workflow by hand: it builds what
+npm's dist-tags name at the time. Both ways run with
 `main` as their ref, which the `github-pages` environment allows; if a run
 is refused there, check Settings → Environments → `github-pages` allows
 `main`.

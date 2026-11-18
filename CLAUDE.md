@@ -48,10 +48,13 @@ or the workflow, indexed in its `README.md`.
   server-rendered with no script (`playground/static.tsx`).
 - `npm run build:demo`: the playground built for GitHub Pages into
   `playground/dist/`, under the base path `/wol-character-panel/`;
-  `.github/workflows/pages.yml` deploys it after each successful release.
+  `.github/workflows/pages.yml` deploys it after each successful release,
+  npm's `latest` there and `next` (the newest beta) under
+  `/wol-character-panel/next/`, each from its release tag
+  ([decision 0007](docs/decisions/0007-next-demo-for-betas.md)).
   In the playground, build links and image paths from
   `import.meta.env.BASE_URL`, never a bare `/`; `browser/demo.spec.ts`
-  checks the build under that base.
+  checks the build under both bases.
 - `npm run build`: `tsc -p tsconfig.build.json` to `dist/` (ESM, one `.js`
   and `.d.ts` per source file) plus the CSS; then
   `scripts/strip-dts-css-imports.mjs` blanks the CSS import in the
@@ -177,10 +180,12 @@ that install in the site.
   runs the checks, and publishes with npm trusted publishing (no token,
   provenance from npm), to the `next` dist-tag when the version is a
   prerelease (`2.0.0-beta.N`, while 2.0 is unreleased); the Demo deploy
-  skips prereleases. Never publish from a local machine. The owner
+  then shows it under `/next/`. Never publish from a local machine. The owner
   starts that PR with `/release-prep` (`.claude/skills/`), which proposes
   the bump and waits for a yes; it never tags.
-- After a release, the site upgrades in its own repository and session:
+- Betas are tried in the next demo, not the site, which stays on 1.x for
+  now ([decision 0007](docs/decisions/0007-next-demo-for-betas.md)).
+  After a stable release, the site upgrades in its own repository and session:
   bump the dependency in its `frontend/`, run
   `npm run generate:character-schema` there, and commit both.
 

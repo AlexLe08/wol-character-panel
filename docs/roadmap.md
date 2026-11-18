@@ -185,6 +185,16 @@
   into `main` (`gh pr list --state merged --base main`) counts as merged,
   beside the ancestor check that still covers PRs up to #31. Without `gh`
   it says so and keeps those branches.
+- 2.0.0-beta.0 (2026-11-18, #34): on npm's `next`, `latest` still 1.0.4.
+- Next demo (2026-11-18): `pages.yml` deploys two demos in one Pages
+  deploy, built from the release tags npm's dist-tags name: `latest` at
+  `/wol-character-panel/`, `next` at `/wol-character-panel/next/` (or
+  `latest` again once no beta is newer). It runs after every successful
+  release, betas included, and by hand with no input. Chosen over a
+  `gh-pages` branch with a `next/` folder and over a second repository or
+  host ([decision 0007](decisions/0007-next-demo-for-betas.md), which
+  supersedes 0004's "the site tries the betas"). `browser/demo.spec.ts`
+  also checks the playground under the `/next/` base.
 
 ## Tooling plan (done)
 
@@ -200,15 +210,18 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 Feature work toward a stable 2.0.0; no new tooling meanwhile
 ([decision 0006](decisions/0006-tooling-freeze.md)).
 
-1. The owner runs `/release-prep` for `2.0.0-beta.0` (it regenerates the
-   schema so its `$id` reads `@2`) and tags its squash commit; npm's
-   `next` tag gets it, `latest` stays on 1.0.4.
-2. The site's upgrade PR, in its own repository and session, installs
-   `@next` (the plan's Work order lists what it handles). Its API pain
-   goes here as the beta's findings.
+1. The owner runs the Demo workflow by hand once this merges, so
+   2.0.0-beta.0 shows at `/wol-character-panel/next/` (its release ran
+   while the workflow still skipped betas).
+2. Trying the beta in the next demo; what it runs into goes here as the
+   beta's findings ([decision 0007](decisions/0007-next-demo-for-betas.md);
+   the site stays on 1.x for now).
 3. Those findings, as small PRs and further betas.
 4. 2.0.0, once a beta has gone about a week without an API change
-   ([decision 0004](decisions/0004-2.0-betas-on-next.md)).
+   ([decision 0004](decisions/0004-2.0-betas-on-next.md)). Before it, check
+   a packed release candidate in the site (server-rendered, with its CSS
+   around the panel), which the next demo doesn't cover; the site's
+   upgrade PR follows the release.
 
 ## Later (candidates, unordered)
 
