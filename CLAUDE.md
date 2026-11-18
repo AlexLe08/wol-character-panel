@@ -172,7 +172,7 @@ that install in the site.
 - A PR that changes anything a host can see adds a line under Unreleased
   in `CHANGELOG.md`. A release is a version-bump PR (`release: X.Y.Z`)
   that turns Unreleased into the new version, merged, then the owner tags
-  the merge commit (`git tag vX.Y.Z && git push origin vX.Y.Z`).
+  its squash commit on `main` (`git tag vX.Y.Z && git push origin vX.Y.Z`).
   `.github/workflows/release.yml` checks the tag against `package.json`,
   runs the checks, and publishes with npm trusted publishing (no token,
   provenance from npm), to the `next` dist-tag when the version is a
@@ -200,10 +200,18 @@ that install in the site.
 ## Workflow
 
 - `main` has no ruleset or branch protection (owner's choice), so the rule
-  is by convention: branch, PR, CI green, owner merges. Never push to
-  `main`. GitHub doesn't delete branches on merge here unless the owner
-  turns on "Automatically delete head branches"; otherwise the owner
-  presses "Delete branch" on the merged PR.
+  is by convention: branch off `main`, PR, CI green, owner merges. Never
+  push to `main`. Keep PRs small, one change each; a large change is a
+  series of them, each passing the checks.
+- PRs are squash-merged, the only merge the repository allows
+  ([decision 0005](docs/decisions/0005-small-prs-squash-only.md)): the PR
+  title and body become the one commit on `main`, so write the title like
+  a commit subject (`fix: …`, `docs: …`). GitHub deletes the branch on
+  merge.
+- New tooling (dependencies, workflows, scripts, agents, skills, checks)
+  only for a real bug or real friction, named in the PR; feature work
+  comes first ([decision 0006](docs/decisions/0006-tooling-freeze.md)).
+  Maintaining what exists isn't new tooling.
 - Each task starts in a new worktree under `.claude/worktrees/`
   (gitignored): `scripts/new-worktree.sh <branch>` branches from the latest
   `origin/main` with no upstream, into `.claude/worktrees/<branch, / as ->`,
@@ -212,8 +220,10 @@ that install in the site.
   `git push -u origin <branch>`.
 - Once the PR has merged and its remote branch is deleted, run
   `scripts/cleanup-merged.sh` (a dry run), then `--apply`: it removes each
-  worktree and local branch that is merged into `origin/main` with its
-  remote branch gone, and nothing else. A dirty worktree is refused (no
+  worktree and local branch whose remote branch is gone and which is
+  merged (an ancestor of `origin/main`, or, squash-merged, no further
+  than the head of a PR merged into `main`, asked of GitHub with `gh`),
+  and nothing else. A dirty worktree is refused (no
   `git worktree remove --force`); a branch goes with `git branch -D` only
   after that check. It skips the worktree it is called from and the one
   the script lives in, so a session cleans up its own worktree after
@@ -229,4 +239,5 @@ that install in the site.
   branch (never `--force`). The `reviewer` subagent (`.claude/agents/`)
   reviews the branch before the PR is opened; only the owner approves,
   merges, and pushes release tags.
-- The roadmap's Done entry goes in the feature's own PR.
+- The roadmap's Done entry goes in the feature's own PR, not in a
+  follow-up (no "add the PR number" commits after merging).

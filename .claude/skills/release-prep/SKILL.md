@@ -11,7 +11,7 @@ argument ($ARGUMENTS) is the owner's proposal: check it against the diff
 like any other, and say so if it is the wrong size.
 
 Never create or push a tag, and never run `npm publish`: the owner tags the
-merge commit and `release.yml` publishes.
+release PR's squash commit and `release.yml` publishes.
 
 ## 1. What changed since the last release
 
@@ -97,8 +97,8 @@ you'll use.
    the previous beta after that), with the new CHANGELOG section quoted.
 7. Finish by giving the owner the next steps, with the version filled in:
    - after merging: `git fetch origin && git tag vX.Y.Z origin/main && git
-     push origin vX.Y.Z`, checking first that `origin/main` is the merge
-     commit (nothing merged after it);
+     push origin vX.Y.Z`, checking first that `origin/main` is the release
+     PR's squash commit, `release: X.Y.Z (#N)` (nothing merged after it);
    - watch the Release workflow, then confirm on npm that the version
      shows provenance, and that `npm view @solution-nine/wol-character-panel
      dist-tags` has it under `next` for a beta, `latest` otherwise (the
