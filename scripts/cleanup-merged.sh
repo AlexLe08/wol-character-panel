@@ -1,24 +1,29 @@
 #!/usr/bin/env bash
 # After a PR merges: lists the local branches and worktrees it left behind,
 # and with --apply removes them. A branch qualifies only when its upstream
-# is gone (the remote branch was deleted: press "Delete branch" on the
-# merged PR, or let GitHub do it with "Automatically delete head branches")
-# AND it is merged into origin/main. "Merged" alone isn't enough: a new
-# branch with no commits yet counts as merged too, and one never pushed has
-# no upstream, so neither is touched.
+# is gone (GitHub deletes the remote branch on merge here) AND it is merged
+# into origin/main. "Merged" alone isn't enough: a new branch with no
+# commits yet counts as merged too, and one never pushed has no upstream,
+# so neither is touched.
+#
+# Merged means either of:
+# - an ancestor of origin/main (PRs merged with a merge commit, up to #31);
+# - its tip is, or is an ancestor of, the head of a PR GitHub merged from a
+#   branch of that name (`gh pr list --state merged`). A squash merge, how
+#   PRs merge now, leaves no ancestry to check, so GitHub is asked instead:
+#   every local commit reached the merged PR. A commit added locally after
+#   the merge, or no `gh`, keeps the branch.
 #
 # Deletes only safely: `git worktree remove` without --force (refuses
 # uncommitted or untracked files; ignored ones like node_modules, dist and
 # .logs go with the worktree) and `git branch -D` only after the check
-# above has proved the branch is in origin/main. Plain -d would compare
+# above has proved the branch was merged. Plain -d would compare
 # against HEAD instead (the upstream is gone), so a main checkout that
 # hasn't been pulled yet made it refuse branches that were already merged.
 # Never touches main, the main checkout, the worktree the script lives in,
 # or the one it is called from (removing a session's own worktree strands
 # it); to clean up the current one, run scripts/new-worktree.sh and rerun
 # from there. A branch some worktree still has checked out is kept too.
-# Detects merge commits, which is how PRs merge here; a squash-merged
-# branch looks unmerged and is kept.
 #
 # Usage: scripts/cleanup-merged.sh [--apply]   (default: dry run)
 set -euo pipefail
@@ -35,10 +40,22 @@ git fetch -q --prune origin
 # The first entry of `git worktree list` is always the main checkout.
 main_checkout="$(git worktree list --porcelain | head -n 1 | sed 's/^worktree //')"
 
+# The branch's commits all reached a PR GitHub merged (see the header).
+squash_merged() {
+  command -v gh >/dev/null || return 1
+  local head
+  for head in $(gh pr list --state merged --head "$1" --json headRefOid \
+    --jq '.[].headRefOid' 2>/dev/null); do
+    # Fails when the head commit isn't here, which keeps the branch.
+    git merge-base --is-ancestor "refs/heads/$1" "$head" 2>/dev/null && return 0
+  done
+  return 1
+}
+
 finished() {
   [[ "$1" != "main" ]] \
     && [[ "$(git for-each-ref --format='%(upstream:track)' "refs/heads/$1")" == "[gone]" ]] \
-    && git merge-base --is-ancestor "refs/heads/$1" origin/main
+    && { git merge-base --is-ancestor "refs/heads/$1" origin/main || squash_merged "$1"; }
 }
 
 found=0
@@ -73,7 +90,7 @@ while read -r branch; do
   if grep -Fxq -- "$branch" <<<"$checked_out"; then
     echo "keep      branch $branch: a worktree still has it checked out"
   elif ((apply)); then
-    # finished() just checked it against origin/main; see the header.
+    # finished() just checked it was merged; see the header.
     git branch -D -q "$branch" && echo "deleted   branch $branch"
   else
     echo "would delete branch $branch"
