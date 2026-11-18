@@ -221,8 +221,9 @@ that install in the site.
 - Once the PR has merged and its remote branch is deleted, run
   `scripts/cleanup-merged.sh` (a dry run), then `--apply`: it removes each
   worktree and local branch whose remote branch is gone and which is
-  merged (an ancestor of `origin/main`, or, squash-merged, no further than
-  the head of a merged PR, asked of GitHub with `gh`), and nothing else. A dirty worktree is refused (no
+  merged (an ancestor of `origin/main`, or, squash-merged, no further
+  than the head of a PR merged into `main`, asked of GitHub with `gh`),
+  and nothing else. A dirty worktree is refused (no
   `git worktree remove --force`); a branch goes with `git branch -D` only
   after that check. It skips the worktree it is called from and the one
   the script lives in, so a session cleans up its own worktree after

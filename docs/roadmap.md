@@ -181,9 +181,10 @@
   (decisions 0005, 0006); the README, `release-prep` and CONTRIBUTING tag
   and describe the squash commit instead of a merge commit.
   `scripts/cleanup-merged.sh` now finds squash-merged branches: a branch
-  whose tip is, or is an ancestor of, the head of a merged PR of that name
-  (`gh pr list --state merged`) counts as merged, beside the ancestor
-  check that still covers PRs up to #31.
+  whose tip is, or is an ancestor of, the head of a PR of that name merged
+  into `main` (`gh pr list --state merged --base main`) counts as merged,
+  beside the ancestor check that still covers PRs up to #31. Without `gh`
+  it says so and keeps those branches.
 
 ## Tooling plan (done)
 

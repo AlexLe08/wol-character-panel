@@ -8,8 +8,8 @@
 #
 # Merged means either of:
 # - an ancestor of origin/main (PRs merged with a merge commit, up to #31);
-# - its tip is, or is an ancestor of, the head of a PR GitHub merged from a
-#   branch of that name (`gh pr list --state merged`). A squash merge, how
+# - its tip is, or is an ancestor of, the head of a PR GitHub merged into
+#   main from a branch of that name (`gh pr list --state merged`). A squash merge, how
 #   PRs merge now, leaves no ancestry to check, so GitHub is asked instead:
 #   every local commit reached the merged PR. A commit added locally after
 #   the merge, or no `gh`, keeps the branch.
@@ -40,12 +40,18 @@ git fetch -q --prune origin
 # The first entry of `git worktree list` is always the main checkout.
 main_checkout="$(git worktree list --porcelain | head -n 1 | sed 's/^worktree //')"
 
-# The branch's commits all reached a PR GitHub merged (see the header).
+# The branch's commits all reached a PR GitHub merged into main (see the
+# header). Without an answer from gh, says so once and keeps the branch.
+gh_noted=0
 squash_merged() {
-  command -v gh >/dev/null || return 1
-  local head
-  for head in $(gh pr list --state merged --head "$1" --json headRefOid \
-    --jq '.[].headRefOid' 2>/dev/null); do
+  local heads head
+  if ! heads="$(gh pr list --state merged --base main --head "$1" \
+    --json headRefOid --jq '.[].headRefOid' 2>/dev/null)"; then
+    ((gh_noted)) || echo "note: gh unavailable; squash-merged branches are kept" >&2
+    gh_noted=1
+    return 1
+  fi
+  for head in $heads; do
     # Fails when the head commit isn't here, which keeps the branch.
     git merge-base --is-ancestor "refs/heads/$1" "$head" 2>/dev/null && return 0
   done
