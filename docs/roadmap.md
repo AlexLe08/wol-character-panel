@@ -245,7 +245,8 @@
   centred on its slot now (the middle column's centre is the panel's).
   A browser test hovers every slot with a tooltip, in both themes, at
   22rem and 18rem and at 390px and 320px viewports, and checks each stays
-  inside the panel with no sideways scroll; it failed on Projects before.
+  inside the panel with no sideways scroll; it failed on the Projects
+  slot before.
 
 ## Tooling plan (done)
 

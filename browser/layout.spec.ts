@@ -220,9 +220,10 @@ for (const theme of ["document", "game"]) {
     test(`narrow: every slot's tooltip stays inside the panel (${theme}, ${name})`, async ({ page }) => {
       if (viewport) await page.setViewportSize(viewport);
       await page.goto(`/?${url}&fixture=full&theme=${theme}`);
-      const panel = await box(page, ".cs");
-      // Empty slots have no tooltip.
-      const faces = page.locator(".cs__body .cs-slot__face[aria-describedby]");
+      // In the window the panel is its equipment pane.
+      const panel = await box(page, viewport ? ".cs__equipment" : ".cs");
+      // The header's slots too; empty slots have no tooltip.
+      const faces = page.locator(".cs-slot__face[aria-describedby]");
       expect(await faces.count()).toBeGreaterThan(3);
       for (const face of await faces.all()) {
         await pointerAway(page);
