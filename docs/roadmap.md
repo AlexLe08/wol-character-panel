@@ -197,7 +197,7 @@
   also checks the playground under the `/next/` base.
 - The badge's limits (2026-11-18, the second of the beta.0 findings
   recorded in #36): `LIMITS.badge`, label and value 24 each, in place of
-  `pair`'s 40/80, which tooltip stats and items keep. Measured in Chromium
+  `pair`'s 40/80, which tooltip stats and items, and window rows, keep. Measured in Chromium
   on `edge-cases` in both views and themes: at 40/80 an at-limit badge
   covered 24% of the portrait wide and 46% at 22rem (six lines); at 24/24
   it is two lines, 12% and 16%. A 40-character label with a 24-character

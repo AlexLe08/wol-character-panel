@@ -140,7 +140,7 @@ describe("parseConfig", () => {
       expect(errors.map((error) => error.split(":")[0])).toEqual(["jobs.1.badge.label", "jobs.1.badge.value"]);
     });
 
-    it("keeps a tooltip's stat at pair.value, longer than a badge's value", () => {
+    it("keeps a tooltip's stat at pair.value after the badge's split from pair", () => {
       const stat = { label: "Stat", value: "9".repeat(LIMITS.pair.value) };
       const slots = { skills: { tooltip: { title: "Skills", stat }, action: { kind: "none" } } };
       expect(parseConfig(rawConfig({ jobs: [rawJob("web", { slots })] })).errors).toEqual([]);
