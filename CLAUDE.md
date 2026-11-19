@@ -106,8 +106,9 @@ that install in the site.
   and `../src/…`, except `scripts/smoke/`, which imports the package by
   name, its peers and `node:` modules (it runs against the tarball),
   and `scripts/preview.mjs` and `scripts/pr-media.mjs`, which import only
-  `node:` modules and `@playwright/test`; tests may also import `vitest` and `react-dom/server`;
-  `vitest.config.ts` only `vitest/config`; the playground may also
+  `node:` modules and `@playwright/test`; tests may also import `vitest`
+  and `react-dom/server`; `vitest.config.ts` only `vitest/config`; the
+  playground may also
   import `react-dom/client`, `react-dom/server`, Vite and `../src/…`;
   the browser tests and `playwright.config.ts` only `@playwright/test`,
   `@axe-core/playwright` and each other (they reach the panel through

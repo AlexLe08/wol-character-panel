@@ -10,10 +10,11 @@
 //
 //   import { chromium, startPlayground, open, shoot, recordingContext, step, saveVideo, frame }
 //     from "../../scripts/pr-media.mjs";
-//   const after = await startPlayground();
-//   const before = await startPlayground({ ref: "origin/main" });
 //   const browser = await chromium.launch();
+//   let before, after;
 //   try {
+//     after = await startPlayground();
+//     before = await startPlayground({ ref: "origin/main" });
 //     const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
 //     for (const [side, server] of [["before", before], ["after", after]]) {
 //       await open(page, server, "fixture=full&view=window&theme=game");
@@ -29,8 +30,8 @@
 //     await frame(browser, file, 2, "hover-demo-2s");   // a .webm can't be Read
 //   } finally {
 //     await browser.close();
-//     await before.stop();
-//     await after.stop();
+//     before?.stop();
+//     after?.stop();
 //   }
 //
 // Assert each state before a shot or step(), so a broken flow fails
@@ -77,17 +78,20 @@ function checkout(ref) {
   rmSync(dir, { recursive: true, force: true });
   mkdirSync(dir, { recursive: true });
   const archive = run("git", ["archive", "--format=tar", ref], { cwd: root, encoding: "buffer" });
-  run("tar", ["-x", "-C", dir], { input: archive.stdout });
+  run("tar", ["-x", "-f", "-", "-C", dir], { input: archive.stdout });
   run("npm", ["ci", "--loglevel=error", "--no-audit", "--no-fund"], { cwd: dir });
   return dir;
 }
 
+// The servers run in their own process groups, so they outlive this one
+// unless stopped: on a signal, and on any exit, an uncaught error included
+// (process.kill is synchronous, so it works in "exit").
 const servers = new Set();
+process.on("exit", () => {
+  for (const stop of servers) stop();
+});
 for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
-  process.on(signal, () => {
-    for (const stop of servers) stop();
-    process.exit(130);
-  });
+  process.on(signal, () => process.exit(130));
 }
 
 // The playground's dev server, on this worktree or on `ref` (fetch first
@@ -207,8 +211,8 @@ export async function step(page, text) {
 // .logs/pr-media/<name>.webm. Returns its path.
 export async function saveVideo(page, context, name) {
   const video = page.video();
-  await context.close();
   if (!video) throw new Error("this page isn't recording: make it from recordingContext()");
+  await context.close();
   const file = `${out}/${name}.webm`;
   renameSync(await video.path(), file);
   return checkSize(file);
@@ -220,13 +224,20 @@ export async function frame(browser, video, seconds, name) {
   const page = await browser.newPage();
   try {
     await page.goto(pathToFileURL(video).href);
+    // A broken file fires "error" instead, and Playwright's own timeout
+    // (30s) covers one that does neither.
     await page.evaluate(async (seconds) => {
       const player = document.querySelector("video");
+      const next = (event) =>
+        new Promise((resolve, reject) => {
+          player.addEventListener(event, resolve, { once: true });
+          player.addEventListener("error", () => reject(new Error(`video error waiting for ${event}`)), { once: true });
+        });
       player.pause();
       player.controls = false;
-      if (player.readyState < 2) await new Promise((r) => player.addEventListener("loadeddata", r, { once: true }));
+      if (player.readyState < 2) await next("loadeddata");
       player.currentTime = seconds;
-      await new Promise((r) => player.addEventListener("seeked", r, { once: true }));
+      await next("seeked");
     }, seconds);
     const file = `${out}/${name}.png`;
     await page.locator("video").screenshot({ path: file });

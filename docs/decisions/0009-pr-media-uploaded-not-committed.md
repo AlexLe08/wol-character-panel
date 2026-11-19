@@ -46,9 +46,10 @@ committed. The PR template asks for it.
   browser. A session asks for that and never handles credentials.
 - In this public repository, an uploaded file can be opened by anyone
   with its URL, posted or not. Media shows example data only.
-- Videos are `.webm` (Playwright's format, no ffmpeg on this machine).
-  GitHub recommends H.264 for compatibility, so some browsers may not
-  play them; the screenshots carry the before/after either way.
+- Videos are `.webm`: Playwright records only that, and an `.mp4` would
+  need a separate ffmpeg. GitHub recommends H.264 for compatibility, so
+  some browsers may not play them; the screenshots carry the before/after
+  either way.
 - The before is a `git archive` copy of `origin/main` with its own
   `npm ci`, so it costs one install per run, and works when a PR changes
   dependencies.
