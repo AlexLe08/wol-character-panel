@@ -164,7 +164,7 @@
   `SlotHover`, and everything works with JavaScript off. The playground and
   demo open on the window. Ships as `2.0.0-beta.N` betas first (next
   entry), then 2.0.0; the site takes it in an upgrade PR of its own (Next
-  up, item 6).
+  up, item 5).
 - Prereleases (2026-11-13): `release.yml` publishes a version with a `-`
   to npm's `next` dist-tag (npm 11 refuses a prerelease without `--tag`),
   the Demo deploy skips prerelease tags, and `/release-prep` proposes
@@ -238,7 +238,7 @@
   takes only squash-merged PRs with `check`, both `compat` jobs and
   `browser` green, and pushed release tags can't be moved or deleted.
   Admins can bypass the checks only through a PR.
-- Narrow tooltips stay inside the panel (2026-11-19, a finding from
+- Narrow tooltips stay inside the panel (2026-11-19, #44, a finding from
   trying beta.1 in `/next/`): in the narrow layout's rows of three, the
   middle column's tooltip opened from its slot's left edge and ran past
   the panel's right, scrolling a 390px or 320px page sideways. It is
@@ -283,21 +283,13 @@ Chromium, touch emulated as an iPhone at 390×844): hover, focus rings, Escape o
 focused and hovered tooltips, tab and page links with `aria-current` and
 Back, the detail window (Escape, Close and light dismiss return focus;
 the second Escape), the job menu by keyboard, a tap on a tooltip-only row,
-and no console errors over 52 loads. Not covered: a real phone (item 3),
+and no console errors over 52 loads. Not covered: a real phone (item 2),
 and Firefox, WebKit and screen readers, which stay gaps (the browser
-tests are Chromium only). It found the next two items.
+tests are Chromium only). It found the narrow middle-column tooltips
+running past the viewport (fixed in #44, Done; unreleased until beta.2)
+and the next item.
 
-1. **Middle-column slot tooltips overflow narrow viewports** (a bug,
-   WCAG 1.4.10 Reflow). The tooltip opens from the slot's left edge, so
-   at a 390px viewport Projects, Tools, TypeScript and GitHub (`full`,
-   window view) run about 58px past the right edge and the page scrolls
-   sideways while one is open; about 51px at 320px. Both themes, and
-   `edge-cases` too; right-column tooltips already stay inside, and
-   `width=22` on a wide screen is fine (the viewport has room). Phones
-   without hover never show slot tooltips. A CSS fix with a browser test
-   at 320px and 390px and a `Fixed` line under Unreleased, then beta.2;
-   it changes no API, so it doesn't restart the soak.
-2. **The job menu ignores Escape and outside clicks** (polish). It is a
+1. **The job menu ignores Escape and outside clicks** (polish). It is a
    plain `<details>`, as the README says, while the detail window closes
    both ways. Options: say so in the README's Behaviour "Job menu"
    bullet; make the list a `popover="auto"` of links, as the detail
@@ -306,20 +298,21 @@ tests are Chromium only). It found the next two items.
    client code, a second `"use client"` file or a new job for
    `SlotHover`, against the one-client-file rule. The lean is the README
    sentence, before 2.0.0.
-3. **Soak.** 2.0.0 once a beta has gone about a week without an API
+2. **Soak.** 2.0.0 once a beta has gone about a week without an API
    change ([decision 0004](decisions/0004-2.0-betas-on-next.md)): from
    beta.1 (2026-11-19), 2026-11-26 at the earliest; a new beta that
-   changes the API restarts the week. Meanwhile the owner tries `/next/`
+   changes the API restarts the week. beta.2 (owner, `/release-prep`)
+   ships the tooltip fix to `/next/` without restarting it. Meanwhile the owner tries `/next/`
    on a real phone (touch was only emulated): a tap on a tooltip-only row
    opens its tooltip, and a tap elsewhere closes it.
-4. **A packed release candidate in the site**, which the next demo doesn't
+3. **A packed release candidate in the site**, which the next demo doesn't
    cover: `npm pack` here, `npm install <tarball>` in the site's
    `frontend/` (not committed), server-rendered with the site's CSS
    around the panel.
-5. **2.0.0 (owner):** `/release-prep` with the API called settled (it
+4. **2.0.0 (owner):** `/release-prep` with the API called settled (it
    proposes `2.0.0`; the schema's `$id` becomes `@2`), merge, tag. The
    demo's `latest` then shows 2.0.0, and `/next/` falls back to it.
-6. **The site's upgrade PR**, in its own repository and session (it
+5. **The site's upgrade PR**, in its own repository and session (it
    depends on `^1`, so nothing reaches it before then):
    - bump to `^2` and run `npm run generate:character-schema` (the
      backend's copy must accept the new keys before the admin can save
