@@ -34,7 +34,8 @@ Betas are tried there instead of in the site, which stays on 1.x for now.
 The rest of 0004 stands: betas on `next`, and 2.0.0 once a beta has gone
 about a week without an API change.
 
-**Why:** TODO(Alex)
+**Why:**
+We should test and build without any particular project or site in mind at this time. Using betas with the portfolio site would result in recruiters seeing experimental work on a site tha t should ideally show stable elements, leaving experiments and failures on their own pages or described in case study texts.
 
 ## Consequences
 
