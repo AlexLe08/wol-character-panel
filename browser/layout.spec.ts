@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { slot } from "./helpers.ts";
+import { pointerAway, slot, tooltipOf } from "./helpers.ts";
 
 // Focus rings on everything focusable, and the container query's two
 // layouts.
@@ -204,6 +204,40 @@ for (const theme of ["document", "game"]) {
     expect(label.right).toBeLessThanOrEqual(column.right + 0.5);
     if (theme === "document") expect(await oneLine(page, ".cs__level-label")).toBe(true);
   });
+}
+
+// In the narrow layout every slot's tooltip stays inside the panel: the
+// first column's opens from its left edge, the last column's from its
+// right, the middle one's centred on it. On a phone-sized viewport the
+// panel is the page's width, so one that spilled out scrolled the page.
+for (const theme of ["document", "game"]) {
+  for (const [name, url, viewport] of [
+    ["22rem", "view=equipment&width=22", null],
+    ["18rem", "view=equipment&width=18", null],
+    ["390px viewport", "view=window", { width: 390, height: 844 }],
+    ["320px viewport", "view=window", { width: 320, height: 800 }],
+  ] as const) {
+    test(`narrow: every slot's tooltip stays inside the panel (${theme}, ${name})`, async ({ page }) => {
+      if (viewport) await page.setViewportSize(viewport);
+      await page.goto(`/?${url}&fixture=full&theme=${theme}`);
+      const panel = await box(page, ".cs");
+      // Empty slots have no tooltip.
+      const faces = page.locator(".cs__body .cs-slot__face[aria-describedby]");
+      expect(await faces.count()).toBeGreaterThan(3);
+      for (const face of await faces.all()) {
+        await pointerAway(page);
+        await face.hover();
+        const tip = await tooltipOf(face);
+        await expect(tip).toBeVisible();
+        const found = (await tip.boundingBox())!;
+        const label = await face.locator(".cs-slot__label").textContent();
+        expect(found.x, `${label}: left edge`).toBeGreaterThanOrEqual(panel.x);
+        expect(found.x + found.width, `${label}: right edge`).toBeLessThanOrEqual(panel.x + panel.width);
+        const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+        expect(overflow, `${label}: the page doesn't scroll sideways`).toBeLessThanOrEqual(0);
+      }
+    });
+  }
 }
 
 // The open job menu's list stays inside the panel, even at the limits on a
