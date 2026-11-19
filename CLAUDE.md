@@ -204,10 +204,13 @@ that install in the site.
 
 ## Workflow
 
-- `main` has no ruleset or branch protection (owner's choice), so the rule
-  is by convention: branch off `main`, PR, CI green, owner merges. Never
-  push to `main`. Keep PRs small, one change each; a large change is a
-  series of them, each passing the checks.
+- Rulesets protect `main` and `v*` tags
+  ([decision 0008](docs/decisions/0008-rulesets-on-main-and-tags.md)):
+  branch off `main`, PR, CI green (`check`, both `compat` jobs and
+  `browser` are required), owner merges. Direct pushes to `main` are
+  refused, and a pushed release tag can't be moved or deleted. Renaming
+  a CI job means updating the ruleset. Keep PRs small, one change each;
+  a large change is a series of them, each passing the checks.
 - PRs are squash-merged, the only merge the repository allows
   ([decision 0005](docs/decisions/0005-small-prs-squash-only.md)): the PR
   title and body become the one commit on `main`, so write the title like

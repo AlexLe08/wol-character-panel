@@ -23,3 +23,4 @@ later change can tell a deliberate choice from an accident.
 | [0005](0005-small-prs-squash-only.md) | Small PRs to `main`, squash-merged; `release/1.x` only if needed | Accepted · 2026-11-14 |
 | [0006](0006-tooling-freeze.md) | New tooling only for a real bug or real friction | Accepted · 2026-11-14 |
 | [0007](0007-next-demo-for-betas.md) | Betas are tried in a next demo at `/next/`, not the site | Accepted · 2026-11-18 |
+| [0008](0008-rulesets-on-main-and-tags.md) | Rulesets protect `main` (PR, CI green, squash) and `v*` tags (no move or delete) | Accepted · 2026-11-19 |
