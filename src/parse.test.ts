@@ -128,6 +128,24 @@ describe("parseConfig", () => {
       expect(errors).toEqual([expect.stringMatching(/^jobs\.1\.slots\.skills\.action\.name: /)]);
     });
 
+    it("holds a badge to LIMITS.badge, and drops a job over it", () => {
+      const badge = (over: number) => ({
+        label: "L".repeat(LIMITS.badge.label + over),
+        value: "9".repeat(LIMITS.badge.value + over),
+      });
+      const { config, errors } = parseConfig(
+        rawConfig({ jobs: [rawJob("web", { badge: badge(0) }), rawJob("data", { badge: badge(1) })] }),
+      );
+      expect(jobIds(config)).toEqual(["web"]);
+      expect(errors.map((error) => error.split(":")[0])).toEqual(["jobs.1.badge.label", "jobs.1.badge.value"]);
+    });
+
+    it("keeps a tooltip's stat at pair.value after the badge's split from pair", () => {
+      const stat = { label: "Stat", value: "9".repeat(LIMITS.pair.value) };
+      const slots = { skills: { tooltip: { title: "Skills", stat }, action: { kind: "none" } } };
+      expect(parseConfig(rawConfig({ jobs: [rawJob("web", { slots })] })).errors).toEqual([]);
+    });
+
     it("keeps a param action whose name only starts with a reserved one", () => {
       const slots = { skills: { tooltip: { title: "Skills" }, action: { kind: "param", name: "tabs", value: "x" } } };
       expect(parseConfig(rawConfig({ jobs: [rawJob("web", { slots })] })).errors).toEqual([]);

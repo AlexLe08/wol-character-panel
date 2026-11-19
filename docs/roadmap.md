@@ -218,6 +218,15 @@
   the corner, inside the plate. The plate hides a little more of the
   portrait, and at-limit badges far more: the badge's limits are #36's
   other finding.
+- The badge's limits (2026-11-18, the second of the beta.0 findings
+  recorded in #36): `LIMITS.badge`, label and value 24 each, in place of
+  `pair`'s 40/80, which tooltip stats and items, and window rows, keep.
+  Measured in Chromium on `edge-cases` in both views and themes: at 40/80
+  an at-limit badge covered 24% of the portrait wide and 46% at 22rem (six
+  lines); at 24/24 it is two lines, 12% and 16%. A 40-character label with
+  a 24-character value still made three lines at 22rem. The value matches
+  `row.figure`. A break, taken while 2.0.0 is in beta; the site's source
+  sets no badge.
 
 ## Tooling plan (done)
 
@@ -240,7 +249,8 @@ Feature work toward a stable 2.0.0; no new tooling meanwhile
    beta's findings ([decision 0007](decisions/0007-next-demo-for-betas.md);
    the site stays on 1.x for now). A first pass with `scripts/preview.mjs`
    (2026-11-18, every example, view, theme, layout and tab; no console or
-   parse errors) found two, both from 1.x:
+   parse errors) found two, both from 1.x, both since fixed (Done: "The
+   portrait badge meets contrast" and "The badge's limits"):
    - The portrait badge fails contrast. It has no background of its own,
      so it sits on the host's portrait. On the `full` example's portrait
      (`/portrait.svg`, `#b9c4d4` behind the figure) the game theme's label

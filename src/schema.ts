@@ -42,7 +42,11 @@ export const LIMITS = {
   slot: { label: 40, icon: 4, column: 6 },
   job: { name: 40, title: 80, icon: 4, levelLabel: 16, levelValue: 40, section: 10_000 },
   portrait: { src: 500, alt: 300 },
-  // A label/value pair: a job's badge, a tooltip's stat or item.
+  // A job's badge, in the portrait's corner: at both limits it stays two
+  // lines at 22rem, covering 16% of the portrait (40/80 covered 46%).
+  badge: { label: 24, value: 24 },
+  // A label/value pair: a tooltip's stat or item, and a window row's label
+  // and value (the gear set's and buttons' labels too).
   pair: { label: 40, value: 80 },
   // tags and items are counts; item is a plain line item's length.
   tooltip: { title: 80, tag: 24, tags: 3, subtitle: 60, item: 80, items: 5, note: 120 },
@@ -460,7 +464,10 @@ const jobSchema = z.object({
     value: text(LIMITS.job.levelValue),
   }),
   portrait: portraitSchema.optional(),
-  badge: pairSchema.optional().describe("A figure in the portrait's top corner."),
+  badge: z
+    .object({ label: text(LIMITS.badge.label), value: text(LIMITS.badge.value) })
+    .optional()
+    .describe("A figure in the portrait's top corner."),
   slots: z
     .record(id, slotContentSchema)
     .describe("Content per slot id. A slot without an entry renders empty."),

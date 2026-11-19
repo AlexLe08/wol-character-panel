@@ -18,6 +18,15 @@ A PR that changes what's published adds its line under Unreleased; the
 - README: the newest beta has a demo of its own,
   <https://alexle08.github.io/wol-character-panel/next/>.
 - `--cs-badge-bg`: the portrait badge's plate, the panel's colour by default.
+- `LIMITS.badge` (`label`, `value`): a job's badge has limits of its own;
+  `LIMITS.pair` still covers tooltip stats and items and the window's row
+  labels and values.
+
+### Changed (breaking)
+
+- Tighter limits: a job's `badge` label 40 → 24 and value 80 → 24 (an
+  at-limit badge covered 46% of the portrait at 22rem; now 16%, two
+  lines). A job over either fails to parse and is dropped.
 
 ### Fixed
 
