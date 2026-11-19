@@ -45,8 +45,9 @@ referenced from the body as local Markdown, and uploaded with
 `gh pr create` / `gh pr edit --attach` (the `pr-media` skill). Media is
 never committed. The PR template asks for it.
 
-**Why:** TODO(Alex)
+**Why:** 
 
+Images/videos for this project are likely to only be used for testing/validation sources to help explain what is being changed and why. We don't want to bloat the repo with these files that can already be referenced by its relevant PR. This also reduces the use of playwright signing into a new browser each time just for uploads. If we find that the images need width to them then we can use playwright as before for adding those images.
 
 ## Consequences
 
