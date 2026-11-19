@@ -260,22 +260,37 @@ hand, 2026-11-18); a `scripts/preview.mjs` pass over it (every example,
 view, theme, layout and tab; no console or parse errors) found the badge's
 contrast and limits, both fixed (Done) and shipped in beta.1.
 
-1. **The site's saved config against 2.0's rules (owner).** The admin
-   editor's saved config may differ from the site's bundled one, which PR 3
-   of the window checked. Each of these is already a break in the betas;
-   if the saved config trips one, either edit the config or loosen the
-   rule before 2.0.0 (loosening is a minor, but it changes the beta's API
-   and restarts the week), so check now, not at the upgrade: tooltip `items` 5, `note` 120, `subtitle` 60;
-   `job.levelLabel` 16; badge label and value 24 each; at most 6 slots per
-   side column (a seventh is dropped); no slot `param` action named
-   `tab` or `page` (the whole job is dropped). Run the saved config through
-   `parseConfig` from the beta and read its issues.
-2. **Try beta.1 where the screenshots don't reach**, in the deployed
-   `/wol-character-panel/next/`: hover, focus, Escape, tab and page links,
-   detail windows, and a real phone (touch: a tap on a tooltip-only row
-   opens its tooltip). Findings go here, then small PRs and further betas
-   ([decision 0007](decisions/0007-next-demo-for-betas.md); the site stays
-   on 1.x until 2.0.0).
+The site's saved config (2026-11-19), from its public
+`GET /character-sheet`, passes beta.1: `parseConfig` reports no issues
+and no unknown keys and keeps every slot and job, and the backend's
+`jsonschema` finds nothing against beta.1's schema (`$id` `@2`). Every
+value is under its new limit (`levelLabel` 9 of 16, tooltip `note` 98 of
+120, `subtitle` 24 of 60, `items` 3 of 5, no badge, the one `param` action
+named `stack`) but the side columns: 6 slots each, at the limit, so the
+site can't add one there under 2.0.
+
+beta.1 tried by hand in `/next/` (2026-11-19, Playwright in Chromium,
+touch emulated as an iPhone at 390×844): hover, focus rings, Escape on
+focused and hovered tooltips, tab and page links with `aria-current` and
+Back, the detail window (Escape, Close and light dismiss return focus;
+the second Escape), the job menu by keyboard, a tap on a tooltip-only row,
+and no console errors over 52 loads. Not covered: a real phone, Firefox
+and WebKit, screen readers. It found the next two items.
+
+1. **Middle-column slot tooltips overflow narrow viewports** (a bug,
+   WCAG 1.4.10 Reflow). The tooltip opens from the slot's left edge, so
+   at a 390px viewport Projects, Tools, TypeScript and GitHub (`full`,
+   window view) run about 58px past the right edge and the page scrolls
+   sideways while one is open; about 51px at 320px. Both themes, and
+   `edge-cases` too; right-column tooltips already stay inside, and
+   `width=22` on a wide screen is fine (the viewport has room). Phones
+   without hover never show slot tooltips. A CSS fix with a browser test
+   at 320px and 390px, then beta.2; it changes no API, so it doesn't
+   restart the soak.
+2. **The job menu ignores Escape and outside clicks** (polish). It is a
+   plain `<details>`, as the README says, while the detail window closes
+   both ways. Closing it needs client code beyond `SlotHover`; the lean is
+   to document it rather than add some, before 2.0.0.
 3. **Soak.** 2.0.0 once a beta has gone about a week without an API
    change ([decision 0004](decisions/0004-2.0-betas-on-next.md)): from
    beta.1 (2026-11-19), 2026-11-26 at the earliest; a new beta that
@@ -302,7 +317,10 @@ contrast and limits, both fixed (Done) and shipped in beta.1.
      CHANGELOG's 2.0.0-beta.N sections (among them `intent: "tab"`, the
      second Escape, `EquipmentPanelProps` and the default label);
    - switch the home page to `CharacterWindow`, and extend the admin
-     editor for the new fields, with its own save button as `gearSetEnd`.
+     editor for the new fields, with its own save button as `gearSetEnd`;
+   - point the saved config's `$schema` at the `@2` `$id`: it still names
+     `../components/character-sheet/character-sheet.schema.json`, from
+     before the extraction (an annotation only, so nothing fails on it).
 
 ## Later (candidates, unordered)
 
