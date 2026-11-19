@@ -580,8 +580,8 @@ git tag v1.0.1 && git push origin v1.0.1
 ```
 
 A ruleset keeps pushed `v*` tags from being moved or deleted, so check the
-commit before pushing the tag: a wrong one is fixed with the next patch
-version.
+commit before pushing the tag: a wrong one is fixed with the next version
+(the next patch, or the next `beta.N`).
 
 `.github/workflows/release.yml` checks the tag matches `package.json`, runs the
 checks, and publishes with npm trusted publishing (no npm token; provenance

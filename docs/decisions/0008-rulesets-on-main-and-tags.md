@@ -4,12 +4,13 @@ Status: Accepted · 2026-11-19
 
 ## Context
 
-Since the move to this repository (0001), `main` had no ruleset or branch
+Since the move to this repository
+([0001](0001-own-package-and-repository.md)), `main` had no ruleset or branch
 protection. CLAUDE.md recorded that as the owner's choice, and the
 workflow (branch off `main`, PR, CI green, owner merges, never push to
 `main`) held by convention only. On 2026-11-19 the owner found `main`
 unprotected after expecting it to be protected. The repository already
-allowed squash merges only and deleted head branches on merge (0005).
+allowed squash merges only and deleted head branches on merge ([0005](0005-small-prs-squash-only.md)).
 
 Claude Code sessions push with the owner's GitHub credentials, so GitHub
 can't tell them from the owner: a rule that lets an admin push directly
@@ -46,14 +47,17 @@ Two repository rulesets, created 2026-11-19:
 - When CI fails for a reason outside the repository (an apt outage, say),
   the owner can merge past the checks with the bypass. It is still a PR
   and one squash commit.
+- Merging, and merging past the checks with the bypass, isn't limited to
+  the owner either: a session with the owner's credentials could do both,
+  so only the owner merging stays a convention.
 - Branches needn't be up to date with `main` before merging. Two PRs that
   pass apart could fail together; CI on the push to `main` shows that
   after the merge. Dependabot PRs don't need updating after each merge.
 - Renaming, adding or removing a CI job means updating the ruleset too,
   or PRs wait on a check that never reports.
 - A pushed `v*` tag can't be moved or deleted. A tag on the wrong commit
-  is fixed with a new patch version, or by the owner disabling the
-  ruleset in Settings for that one change.
+  is fixed with the next version (patch, or `beta.N` for a prerelease),
+  or by the owner disabling the ruleset in Settings for that one change.
 - Creating tags isn't restricted: a restriction with an admin bypass
   couldn't tell a Claude session from the owner, so only the owner
   tagging stays a convention.

@@ -207,7 +207,8 @@ that install in the site.
 - Rulesets protect `main` and `v*` tags
   ([decision 0008](docs/decisions/0008-rulesets-on-main-and-tags.md)):
   branch off `main`, PR, CI green (`check`, both `compat` jobs and
-  `browser` are required), owner merges. Direct pushes to `main` are
+  `browser` are required), owner merges (by convention: the ruleset can't
+  tell a session from the owner). Direct pushes to `main` are
   refused, and a pushed release tag can't be moved or deleted. Renaming
   a CI job means updating the ruleset. Keep PRs small, one change each;
   a large change is a series of them, each passing the checks.
