@@ -207,6 +207,17 @@
   only `src/`, not the playground's Vite types) needed `src/css.d.ts` for
   the components' CSS import; it isn't emitted. `dist/`'s `.d.ts` files
   are unchanged and its `.js` loses only a few `//` comments before JSX.
+- The portrait badge meets contrast (2026-11-18, the first of the beta.0
+  findings recorded in #36): it had no background, so its text sat on the
+  host's portrait, on the playground's down to 1.00:1 in `game` and 3.62:1
+  at best. It now has an opaque plate, `--cs-badge-bg` (`--cs-panel`
+  by default): flat in `document`, with the radius and a rule border in
+  `game`. Over an image axe reports text as incomplete, so a browser test
+  asks it for a pass with nothing incomplete in both themes and on dark
+  host tokens; it failed on the bare badge. The text moves 0.4rem in from
+  the corner, inside the plate. The plate hides a little more of the
+  portrait, and at-limit badges far more: the badge's limits are #36's
+  other finding.
 
 ## Tooling plan (done)
 

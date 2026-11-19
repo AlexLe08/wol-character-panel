@@ -17,6 +17,14 @@ A PR that changes what's published adds its line under Unreleased; the
 
 - README: the newest beta has a demo of its own,
   <https://alexle08.github.io/wol-character-panel/next/>.
+- `--cs-badge-bg`: the portrait badge's plate, the panel's colour by default.
+
+### Fixed
+
+- The portrait badge's text failed contrast over a light portrait (on the
+  playground's, down to 1.00:1 in `game` and 3.62:1 at best, needing 4.5:1),
+  since it had no background of its own. It now sits on an opaque plate (`--cs-badge-bg`), flat in the
+  `document` theme and framed in `game`.
 
 ## [2.0.0-beta.0] - 2026-11-18
 
