@@ -227,6 +227,12 @@
   a 24-character value still made three lines at 22rem. The value matches
   `row.figure`. A break, taken while 2.0.0 is in beta; the site's source
   sets no badge.
+- 2.0.0-beta.1 (2026-11-19, #40): both badge fixes, on npm's `next`; the
+  Demo deploy put it at `/wol-character-panel/next/`.
+- One file for next tasks (2026-11-19): what the character window plan
+  left open, and the 2.0 checklist's remainder (none: its prerelease,
+  decision-record and workflow PRs are the Done entries above), folded
+  into Next up and Later below. The plan stays as the design record.
 
 ## Tooling plan (done)
 
@@ -239,45 +245,55 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 
 ## Next up: 2.0 betas, then 2.0.0
 
-Feature work toward a stable 2.0.0; no new tooling meanwhile
-([decision 0006](decisions/0006-tooling-freeze.md)).
+The one list of next tasks. The character window plan
+(`docs/character-window-plan.md`) is complete and kept as the design
+record; what it left open is here. Feature work toward a stable 2.0.0; no
+new tooling meanwhile ([decision 0006](decisions/0006-tooling-freeze.md)).
 
-1. Done 2026-11-18: the owner ran the Demo workflow by hand, so
-   2.0.0-beta.0 shows at `/wol-character-panel/next/` (its release ran
-   while the workflow still skipped betas).
-2. Trying the beta in the next demo; what it runs into goes here as the
-   beta's findings ([decision 0007](decisions/0007-next-demo-for-betas.md);
-   the site stays on 1.x for now). A first pass with `scripts/preview.mjs`
-   (2026-11-18, every example, view, theme, layout and tab; no console or
-   parse errors) found two, both from 1.x, both since fixed (Done: "The
-   portrait badge meets contrast" and "The badge's limits"):
-   - The portrait badge fails contrast. It has no background of its own,
-     so it sits on the host's portrait. On the `full` example's portrait
-     (`/portrait.svg`, `#b9c4d4` behind the figure) the game theme's label
-     (`--cs-muted`, `#a8a191`) is 1.46:1 and its value (`#6fd3d3`) 1.00:1;
-     the document theme's label (`#5b616b`) is 3.54:1 and its value
-     (`--cs-accent`, `#2f5fa3`) 3.62:1. All need 4.5:1. Axe can't see it
-     (text over an image). A backing plate behind the badge, in each
-     theme's rules, would fix it whatever the portrait; CSS only, so not a
-     break. In the document theme the plate is a flat fill, with no radius
-     or shadow (CLAUDE.md's theme rules).
-   - The badge's limits are the generic `pair` (label 40, value 80). At
-     those, `edge-cases`' badge covers about half the portrait wide and
-     nearly all of it at 22rem. `LIMITS.row.figure` (24) settled the same
-     for gauge, stat and progress values in the character window's PR 6
-     (`docs/character-window-plan.md`). Capping the badge's value (and
-     maybe its label) is a tighter limit, so a break: before 2.0.0 or not
-     until 3.0. The badge shares `pairSchema` with tooltip stats and items,
-     so it would get a schema of its own.
-     The site's source sets no badge; check its saved config first.
-   Not covered by screenshots: hover, focus, Escape, a real phone, and
-   the deployed `/next/` page itself.
-3. Those findings, as small PRs and further betas.
-4. 2.0.0, once a beta has gone about a week without an API change
-   ([decision 0004](decisions/0004-2.0-betas-on-next.md)). Before it, check
-   a packed release candidate in the site (server-rendered, with its CSS
-   around the panel), which the next demo doesn't cover; the site's
-   upgrade PR follows the release.
+Done so far: beta.0 in the next demo (the owner ran the Demo workflow by
+hand, 2026-11-18); a `scripts/preview.mjs` pass over it (every example,
+view, theme, layout and tab; no console or parse errors) found the badge's
+contrast and limits, both fixed (Done) and shipped in beta.1.
+
+1. **The site's saved config against 2.0's rules (owner).** The admin
+   editor's saved config may differ from the site's bundled one, which PR 3
+   of the window checked. Each of these is a break that has to land before
+   2.0.0 or wait for 3.0, so check before the week's clock runs out, not
+   at the upgrade: tooltip `items` 5, `note` 120, `subtitle` 60;
+   `job.levelLabel` 16; badge label and value 24 each; at most 6 slots per
+   side column (a seventh is dropped); no slot `param` action named
+   `tab` or `page` (the whole job is dropped). Run the saved config through
+   `parseConfig` from the beta and read its issues.
+2. **Try beta.1 where the screenshots don't reach**, in the deployed
+   `/wol-character-panel/next/`: hover, focus, Escape, tab and page links,
+   detail windows, and a real phone (touch: a tap on a tooltip-only row
+   opens its tooltip). Findings go here, then small PRs and further betas
+   ([decision 0007](decisions/0007-next-demo-for-betas.md); the site stays
+   on 1.x until 2.0.0).
+3. **Soak.** 2.0.0 once a beta has gone about a week without an API
+   change ([decision 0004](decisions/0004-2.0-betas-on-next.md)): from
+   beta.1 (2026-11-19), 2026-11-26 at the earliest; a new beta that
+   changes the API restarts the week.
+4. **A packed release candidate in the site**, which the next demo doesn't
+   cover: `npm pack` here, `npm install <tarball>` in the site's
+   `frontend/` (not committed), server-rendered with the site's CSS
+   around the panel.
+5. **2.0.0 (owner):** `/release-prep` with the API called settled (it
+   proposes `2.0.0`; the schema's `$id` becomes `@2`), merge, tag. The
+   demo's `latest` then shows 2.0.0, and `/next/` falls back to it.
+6. **The site's upgrade PR**, in its own repository and session (it
+   depends on `^1`, so nothing reaches it before then):
+   - bump to `^2` and run `npm run generate:character-schema` (the
+     backend's copy must accept the new keys before the admin can save
+     them);
+   - take the renames: `CharacterSheet` → `EquipmentPanel`, the config type
+     `CharacterPanelConfig`, `characterPanelConfigSchema`, the CSS and
+     schema paths (`character-panel.*`), and `parts` for
+     `showSockets`/`showToolbar`;
+   - restyle anything that assumed the job menu in the bar (it is in the
+     gear-set row now);
+   - switch the home page to `CharacterWindow`, and extend the admin
+     editor for the new fields, with its own save button as `gearSetEnd`.
 
 ## Later (candidates, unordered)
 
@@ -293,6 +309,11 @@ Feature work toward a stable 2.0.0; no new tooling meanwhile
   `install --with-deps`, with a check that the tag matches
   `@playwright/test`. apt retries wouldn't cover a minutes-long outage.
 - Themes beyond `document` and `game`.
+- From the character window plan, each only when a real config needs it:
+  more `iconName` drawings (adding a name is a minor, removing one a
+  major); a job hiding a shared block (today it can only replace one);
+  the decorative toolbar's round buttons toggling overlays on the
+  portrait (its decision 14).
 - CMS adapters, Contentful first (on its free plan), as `loadConfig`
   sources. The core never imports a CMS SDK: an adapter is its own entry
   or package, so the allowlist and peer dependencies stay as they are.
