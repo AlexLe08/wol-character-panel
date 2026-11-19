@@ -38,7 +38,7 @@ Two repository rulesets, created 2026-11-19:
 
 **Why:**
 
-After importing the code out of the portfolio sight, I was under the asumption the repo was already set with protection, when it wasn't. It was through good consistent practice that I continued to create features without breaking those unset rules I've been following across projects, but now there as some assurance with rulesets fully in place. There is still the risk of Claude doing unintended things on my behalf but it will be under close watch and personally reviewing PRs and code changes is still my unchanging task regardless of any rules set.
+After importing the code out of the portfolio site, I was under the assumption the repo was already set with protection, when it wasn't. It was through good consistent practice that I continued to create features without breaking those unset rules I've been following across projects, but now there is some assurance with rulesets fully in place. There is still the risk of Claude doing unintended things on my behalf but it will be under close watch and personally reviewing PRs and code changes is still my unchanging task regardless of any rules set.
 
 ## Consequences
 
