@@ -8,6 +8,17 @@ major: a host has to change something (a removed or renamed export or key,
 a new required field, a tighter limit, changed behaviour). Say what breaks.
 -->
 
+## Screenshots
+
+<!--
+A visible change: before/after screenshots, and a short video if it moves
+(hover, focus, menus, tabs), uploaded to GitHub, never committed (decision
+0009). Drag them into this description, or reference them as
+![alt](./after.png) and run `gh pr edit --attach ./after.png`;
+scripts/pr-media.mjs, or the `pr-media` skill in Claude Code, can make
+them. Otherwise "None: no visible change."
+-->
+
 ## Checklist
 
 - [ ] `scripts/check.sh` passes

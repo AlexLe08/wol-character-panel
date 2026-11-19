@@ -80,6 +80,7 @@ release again when no beta is newer).
 | `scripts/check.sh` | Runs every check CI runs, one line per step, full logs in `.logs/` |
 | `scripts/fill-edge-cases.mjs` | Rewrites the window's fields in `examples/edge-cases.json` at the current `LIMITS` |
 | `scripts/check-edge-cases.mjs` | Checks that `examples/edge-cases.json` reaches every window limit (exit 1 if not) |
+| `scripts/pr-media.mjs` | Helpers for a PR's before/after screenshots and videos: the playground on the branch and on `origin/main` side by side (the `pr-media` skill) |
 | `scripts/new-worktree.sh` | A new branch from `origin/main` in its own worktree under `.claude/worktrees/`, set up by `scripts/setup-worktree.sh` (`npm ci`) |
 | `scripts/cleanup-merged.sh` | After a merge: removes worktrees and local branches merged into `origin/main` whose remote branch is gone (dry run unless `--apply`) |
 | `eslint.config.mjs` | Lint rules (React, hooks, jsx-a11y, TypeScript) and the import allowlist (`npm run lint`) |
@@ -91,7 +92,7 @@ release again when no beta is newer).
 | `.github/workflows/release.yml` | Publishes to npm when a `v*` tag is pushed (its actions pinned by commit SHA) |
 | `.github/workflows/pages.yml` | Deploys the demos (the built playground) to GitHub Pages after each successful release, or by hand: npm's `latest` at the root and `next` under `/next/`, each built from its release tag (its actions pinned by commit SHA) |
 | `.github/dependabot.yml` | Weekly update PRs for dev dependencies and the workflows' actions (not the peer ranges), each release a week old first |
-| `.github/pull_request_template.md`, `.github/ISSUE_TEMPLATE/` | The PR checklist with its semver line; bug and feature forms |
+| `.github/pull_request_template.md`, `.github/ISSUE_TEMPLATE/` | The PR checklist with its semver line and Screenshots section; bug and feature forms |
 | `CHANGELOG.md` | What changed for hosts in each release |
 | `CONTRIBUTING.md`, `SECURITY.md` | How to send a change; how to report a vulnerability privately |
 | `.nvmrc` | Node 24 for development, as CI (the package supports 22.12+) |
@@ -554,6 +555,15 @@ tab) for every example, in both themes, wide and narrow (22rem), into
 `.logs/preview/`, and lists any console error or warning (exit 1 if there is
 one). `--fixture=full`, `--view=window` and `--theme=game` narrow it down. It starts its own dev server on port 5198 and
 needs Chromium (`npx playwright install chromium`).
+
+A PR with a visible change shows it in its body with before/after
+screenshots, and a short video when the change is behaviour
+([decision 0009](docs/decisions/0009-pr-media-uploaded-not-committed.md)).
+`scripts/pr-media.mjs` runs the playground on the branch and on a copy of
+`origin/main` side by side, each on a free port, and takes cropped shots
+and captioned `.webm` videos into `.logs/pr-media/`, from a short per-PR
+script there (usage in its header). The files are uploaded to the PR on
+GitHub, never committed.
 
 Relative imports name the source file (`./parse.ts`): the build rewrites them
 to `.js`, and Node can run the schema generator straight from `src/`. After
