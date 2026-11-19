@@ -233,12 +233,35 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 Feature work toward a stable 2.0.0; no new tooling meanwhile
 ([decision 0006](decisions/0006-tooling-freeze.md)).
 
-1. The owner runs the Demo workflow by hand once this merges, so
+1. Done 2026-11-18: the owner ran the Demo workflow by hand, so
    2.0.0-beta.0 shows at `/wol-character-panel/next/` (its release ran
    while the workflow still skipped betas).
 2. Trying the beta in the next demo; what it runs into goes here as the
    beta's findings ([decision 0007](decisions/0007-next-demo-for-betas.md);
-   the site stays on 1.x for now).
+   the site stays on 1.x for now). A first pass with `scripts/preview.mjs`
+   (2026-11-18, every example, view, theme, layout and tab; no console or
+   parse errors) found two, both from 1.x:
+   - The portrait badge fails contrast. It has no background of its own,
+     so it sits on the host's portrait. On the `full` example's portrait
+     (`/portrait.svg`, `#b9c4d4` behind the figure) the game theme's label
+     (`--cs-muted`, `#a8a191`) is 1.46:1 and its value (`#6fd3d3`) 1.00:1;
+     the document theme's label (`#5b616b`) is 3.54:1 and its value
+     (`--cs-accent`, `#2f5fa3`) 3.62:1. All need 4.5:1. Axe can't see it
+     (text over an image). A backing plate behind the badge, in each
+     theme's rules, would fix it whatever the portrait; CSS only, so not a
+     break. In the document theme the plate is a flat fill, with no radius
+     or shadow (CLAUDE.md's theme rules).
+   - The badge's limits are the generic `pair` (label 40, value 80). At
+     those, `edge-cases`' badge covers about half the portrait wide and
+     nearly all of it at 22rem. `LIMITS.row.figure` (24) settled the same
+     for gauge, stat and progress values in the character window's PR 6
+     (`docs/character-window-plan.md`). Capping the badge's value (and
+     maybe its label) is a tighter limit, so a break: before 2.0.0 or not
+     until 3.0. The badge shares `pairSchema` with tooltip stats and items,
+     so it would get a schema of its own.
+     The site's source sets no badge; check its saved config first.
+   Not covered by screenshots: hover, focus, Escape, a real phone, and
+   the deployed `/next/` page itself.
 3. Those findings, as small PRs and further betas.
 4. 2.0.0, once a beta has gone about a week without an API change
    ([decision 0004](decisions/0004-2.0-betas-on-next.md)). Before it, check
