@@ -238,6 +238,15 @@
   takes only squash-merged PRs with `check`, both `compat` jobs and
   `browser` green, and pushed release tags can't be moved or deleted.
   Admins can bypass the checks only through a PR.
+- Narrow tooltips stay inside the panel (2026-11-19, a finding from
+  trying beta.1 in `/next/`): in the narrow layout's rows of three, the
+  middle column's tooltip opened from its slot's left edge and ran past
+  the panel's right, scrolling a 390px or 320px page sideways. It is
+  centred on its slot now (the middle column's centre is the panel's).
+  A browser test hovers every slot with a tooltip, in both themes, at
+  22rem and 18rem and at 390px and 320px viewports, and checks each stays
+  inside the panel with no sideways scroll; it failed on the Projects
+  slot before.
 
 ## Tooling plan (done)
 

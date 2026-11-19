@@ -825,6 +825,15 @@ a.cs-slot__face:hover .cs-slot__square,
     right: 0;
   }
 
+  /* The middle column's centre is the panel's (equal columns), so a
+     tooltip centred on its slot stays inside; from the slot's left edge it
+     ran past the panel's right. */
+  .cs__body .cs__slots li:nth-child(3n + 2) .cs-tip {
+    left: 50%;
+    right: auto;
+    translate: -50% 0;
+  }
+
   .cs__header .cs-tip,
   .cs__header .cs__slots--header-end .cs-tip {
     top: calc(100% + 0.5rem);
