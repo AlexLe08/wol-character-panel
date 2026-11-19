@@ -163,8 +163,8 @@
   level-label and slot-column limits are tighter. Still no client code but
   `SlotHover`, and everything works with JavaScript off. The playground and
   demo open on the window. Ships as `2.0.0-beta.N` betas first (next
-  entry), then 2.0.0; the site takes it in an upgrade PR of its own (see
-  the plan's Work order).
+  entry), then 2.0.0; the site takes it in an upgrade PR of its own (Next
+  up, item 6).
 - Prereleases (2026-11-13): `release.yml` publishes a version with a `-`
   to npm's `next` dist-tag (npm 11 refuses a prerelease without `--tag`),
   the Demo deploy skips prerelease tags, and `/release-prep` proposes
@@ -230,9 +230,10 @@
 - 2.0.0-beta.1 (2026-11-19, #40): both badge fixes, on npm's `next`; the
   Demo deploy put it at `/wol-character-panel/next/`.
 - One file for next tasks (2026-11-19): what the character window plan
-  left open, and the 2.0 checklist's remainder (none: its prerelease,
-  decision-record and workflow PRs are the Done entries above), folded
-  into Next up and Later below. The plan stays as the design record.
+  left open, folded into Next up and Later below; the plan stays as the
+  design record. The owner's uncommitted 2.0 checklist (prereleases,
+  decision records, workflow rules) had nothing left: its PRs are the
+  Done entries above.
 
 ## Tooling plan (done)
 
@@ -257,9 +258,10 @@ contrast and limits, both fixed (Done) and shipped in beta.1.
 
 1. **The site's saved config against 2.0's rules (owner).** The admin
    editor's saved config may differ from the site's bundled one, which PR 3
-   of the window checked. Each of these is a break that has to land before
-   2.0.0 or wait for 3.0, so check before the week's clock runs out, not
-   at the upgrade: tooltip `items` 5, `note` 120, `subtitle` 60;
+   of the window checked. Each of these is already a break in the betas;
+   if the saved config trips one, either edit the config or loosen the
+   rule before 2.0.0 (loosening is a minor, but it changes the beta's API
+   and restarts the week), so check now, not at the upgrade: tooltip `items` 5, `note` 120, `subtitle` 60;
    `job.levelLabel` 16; badge label and value 24 each; at most 6 slots per
    side column (a seventh is dropped); no slot `param` action named
    `tab` or `page` (the whole job is dropped). Run the saved config through
@@ -292,6 +294,9 @@ contrast and limits, both fixed (Done) and shipped in beta.1.
      `showSockets`/`showToolbar`;
    - restyle anything that assumed the job menu in the bar (it is in the
      gear-set row now);
+   - handle every other break under "Changed (breaking)" in the
+     CHANGELOG's 2.0.0-beta.N sections (among them `intent: "tab"`, the
+     second Escape, `EquipmentPanelProps` and the default label);
    - switch the home page to `CharacterWindow`, and extend the admin
      editor for the new fields, with its own save button as `gearSetEnd`.
 
