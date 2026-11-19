@@ -1456,8 +1456,8 @@
         "value": "Value Long text that fills the field to."
       },
       "badge": {
-        "label": "Badge Long text that fills the field to.",
-        "value": "Value Long text that fills the field to its limit so overflow and wrapping show."
+        "label": "Badge Long text that fil",
+        "value": "Value Long text that fil"
       },
       "slots": {
         "header-start-1": {

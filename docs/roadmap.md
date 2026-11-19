@@ -195,6 +195,14 @@
   host ([decision 0007](decisions/0007-next-demo-for-betas.md), which
   supersedes 0004's "the site tries the betas"). `browser/demo.spec.ts`
   also checks the playground under the `/next/` base.
+- The badge's limits (2026-11-18, the second of the beta.0 findings
+  recorded in #36): `LIMITS.badge`, label and value 24 each, in place of
+  `pair`'s 40/80, which tooltip stats and items keep. Measured in Chromium
+  on `edge-cases` in both views and themes: at 40/80 an at-limit badge
+  covered 24% of the portrait wide and 46% at 22rem (six lines); at 24/24
+  it is two lines, 12% and 16%. A 40-character label with a 24-character
+  value still made three lines at 22rem. The value matches `row.figure`.
+  A break, taken while 2.0.0 is in beta; the site's source sets no badge.
 - Dependency majors (2026-11-11 to 11-18, dev only, no release).
   Dependabot's ESLint 10 (#14) and TypeScript 7 (#15) PRs failed `npm ci`
   on peer ranges: `eslint-plugin-jsx-a11y` 6.10.2 and `eslint-plugin-react`
