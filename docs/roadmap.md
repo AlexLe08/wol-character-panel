@@ -302,9 +302,9 @@ and the next item.
    change ([decision 0004](decisions/0004-2.0-betas-on-next.md)): from
    beta.1 (2026-11-19), 2026-11-26 at the earliest; a new beta that
    changes the API restarts the week. beta.2 (owner, `/release-prep`)
-   ships the tooltip fix to `/next/` without restarting it. Meanwhile the owner tries `/next/`
-   on a real phone (touch was only emulated): a tap on a tooltip-only row
-   opens its tooltip, and a tap elsewhere closes it.
+   ships the tooltip fix to `/next/` without restarting it. Meanwhile the
+   owner tries `/next/` on a real phone (touch was only emulated): a tap
+   on a tooltip-only row opens its tooltip, and a tap elsewhere closes it.
 3. **A packed release candidate in the site**, which the next demo doesn't
    cover: `npm pack` here, `npm install <tarball>` in the site's
    `frontend/` (not committed), server-rendered with the site's CSS
