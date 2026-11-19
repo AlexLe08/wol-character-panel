@@ -13,6 +13,14 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ## [Unreleased]
 
+### Fixed
+
+- In the narrow layout, the middle column's slot tooltips ran past the
+  panel's right edge, and on a phone-sized viewport scrolled the page
+  sideways (about 58px at 390px, 51px at 320px; WCAG 1.4.10). They are
+  centred on their slot now, as the outer columns' open from their own
+  edge.
+
 ## [2.0.0-beta.1] - 2026-11-19
 
 ### Added
