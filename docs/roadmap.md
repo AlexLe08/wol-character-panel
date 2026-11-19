@@ -234,6 +234,10 @@
   design record. The owner's uncommitted 2.0 checklist (prereleases,
   decision records, workflow rules) had nothing left: its PRs are the
   Done entries above.
+- Rulesets on `main` and `v*` tags (2026-11-19, decision 0008): `main`
+  takes only squash-merged PRs with `check`, both `compat` jobs and
+  `browser` green, and pushed release tags can't be moved or deleted.
+  Admins can bypass the checks only through a PR.
 
 ## Tooling plan (done)
 
