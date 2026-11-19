@@ -13,9 +13,10 @@ a new required field, a tighter limit, changed behaviour). Say what breaks.
 <!--
 A visible change: before/after screenshots, and a short video if it moves
 (hover, focus, menus, tabs), uploaded to GitHub, never committed (decision
-0009). Drag them into this description; scripts/pr-media.mjs, or the
-`pr-media` skill in Claude Code, can make them. Otherwise "None: no
-visible change."
+0009). Drag them into this description, or reference them as
+![alt](./after.png) and run `gh pr edit --attach ./after.png`;
+scripts/pr-media.mjs, or the `pr-media` skill in Claude Code, can make
+them. Otherwise "None: no visible change."
 -->
 
 ## Checklist

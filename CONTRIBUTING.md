@@ -35,8 +35,9 @@ the playground.
   README in the same PR.
 - A visible change shows before/after screenshots in the PR description
   (and a short video if it moves: hover, focus, menus), dragged into the
-  description, never committed. `scripts/pr-media.mjs` can make them;
-  any screenshot tool will do. Otherwise write "None: no visible change."
+  description or uploaded with `gh pr edit --attach` (gh 2.99.0+), never
+  committed. `scripts/pr-media.mjs` can make them; any screenshot tool
+  will do. Otherwise write "None: no visible change."
 
 The maintainer reviews, merges, and makes releases (see the README's
 Releasing section).

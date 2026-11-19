@@ -252,9 +252,10 @@
   before/after shots routine. The playground runs on the branch and on a
   `git archive` copy of `origin/main` side by side; a per-PR script in
   `.logs/` takes cropped shots and captioned `.webm` videos with a cursor
-  dot, and stills of each video to check it. The files go up through a PR
-  comment box in the Playwright MCP browser (GitHub has no upload API) and
-  into the body by URL, never committed. The PR template has a
+  dot, and stills of each video to check it. The body references them as
+  local Markdown and `gh pr edit --attach` (gh 2.99.0+) uploads them and
+  rewrites the references, so no browser sign-in; never committed. The
+  PR template has a
   Screenshots section. Tried on #44's fix: the before shows the tooltip
   past the panel's edge, the after shows it inside.
 

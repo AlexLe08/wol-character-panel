@@ -45,44 +45,41 @@ uploaded to GitHub, never committed.
 
 ## 3. Upload and embed
 
-GitHub has no API or `gh` command for attachments, so files go up through
-a comment box in the Playwright MCP browser, which turns them into
-`github.com/user-attachments/assets/…` URLs. The PR has to exist: push the
-branch and open it (a draft is fine) first.
+`gh` (v2.99.0 or later; `gh --version`) uploads with `--attach` on
+`gh pr create` and `gh pr edit`, using its own sign-in, and rewrites each
+local reference in the body to the file's
+`github.com/user-attachments/assets/…` URL. Tried on PR #46: only
+Markdown references are rewritten, in place, with their alt text kept;
+an HTML `<img src="./…">` or a bare `./file` line stays broken and the
+file is appended at the end of the body instead.
 
-1. Open the PR in the Playwright MCP browser. If it's signed out, open
-   `https://github.com/login?return_to=<PR path>` and ask the owner to sign
-   in. Never type, read or store credentials.
-2. Click the new comment's `role=button[name="Attach files"]`, then call
-   `browser_file_upload` with the absolute paths. Files under the main
-   checkout (worktrees included) upload directly; if the tool names other
-   allowed roots, copy the files there and delete the copies after. Don't
-   also catch the file chooser in `browser_run_code_unsafe`: that uploads
-   every file twice (PR #44).
-3. Read `#new_comment_field`'s value until it holds one URL per file
-   (`browser_wait_for` doesn't see textarea values). Then clear it with
-   `fill("")`. Never press Comment.
-4. Write the body to `.logs/pr-media/body.md` (start from
-   `gh pr view <n> --json body -q .body`) and fill its Screenshots
-   section:
+1. Write the body in `.logs/pr-media/body.md`, next to the media (paths in
+   a `--body-file` are relative to its directory). For a PR already open,
+   start from `gh pr view <n> --json body -q .body`. Fill its Screenshots
+   section with local references, Markdown only:
    - Screenshots in a before/after table, one row per theme or state:
-     `<img width="…" alt="…" src="…">`, the width being the shot's, so a
-     wide shot doesn't stretch the table. The alt text says what the image
-     shows ("Before, game theme: the GitHub tooltip runs past the panel's
-     right edge"), not "screenshot".
-   - A video as its bare URL on a line of its own (GitHub shows a
-     player), with a sentence above it on what it shows.
+     `![alt](./name.png)`. GitHub fits them to the table. The alt text
+     says what the image shows ("Before, game theme: the GitHub tooltip
+     runs past the panel's right edge"), not "screenshot".
+   - A video as `![what it shows](./name.webm)` on a line of its own: it
+     becomes the bare URL, which GitHub shows as a player. A sentence
+     above it says what it shows.
    - One line naming the query and viewport, so a reviewer can open the
      same state in `npm run dev` or the demo.
-5. `gh pr edit <n> --body-file .logs/pr-media/body.md`. Then check the PR
-   page shows the images and a `<video>`, and that
-   `gh pr view <n> --json comments` has no new comment.
+2. Pass the body and one `--attach` per referenced file (up to 50):
+   `gh pr create … --body-file .logs/pr-media/body.md --attach .logs/pr-media/a.png …`,
+   or `gh pr edit <n>` with the same flags. Every run uploads again, so
+   attach only what the body references, once.
+3. Check `gh pr view <n> --json body -q .body` has no `./` reference left
+   and nothing appended at the end, and that the PR page shows the images
+   and a `<video>`. A partial failure still updates the PR with what
+   uploaded and exits non-zero: rerun with the failed files.
 
 ## Rules
 
 - Never commit media, and don't use a gist (decision 0009).
 - The repository is public, so uploads can be opened by anyone with the
-  URL, even if the comment is never posted. The examples' made-up data is
+  URL, even after the body stops using them. The examples' made-up data is
   fine; nothing from a host's real config, the owner's machine or another
   site.
 - Screenshots and videos show a change; they don't verify it. Hover,

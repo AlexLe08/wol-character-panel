@@ -23,29 +23,42 @@ The options for where the files live:
 - A gist: a separate object to manage, and refused in auto mode (#44).
 - A CI artifact: not shown inline, needs a GitHub sign-in to download, and
   expires (90 days at most).
-- An upload through GitHub's comment box: shown inline in the body, no
-  bytes in the repository. GitHub has no API for it, so it takes a signed-in
-  browser. Limits: 10 MB for an image, and for a video on a free plan;
-  `.mp4`, `.mov` and `.webm`.
+- A GitHub attachment (`github.com/user-attachments/assets/…`): shown
+  inline in the body, no bytes in the repository. Limits: 10 MB for an
+  image, and for a video on a free plan; `.mp4`, `.mov` and `.webm`. Two
+  ways to upload one:
+  - a comment box in a signed-in browser (the Playwright MCP one, as in
+    #44), the comment never posted: clicks and a sign-in the session must
+    ask the owner for;
+  - `gh pr create` / `gh pr edit --attach <file>` (GitHub CLI v2.99.0,
+    2026-09-01), with `gh`'s own sign-in: it uploads and rewrites the
+    body's Markdown references to local files (`![alt](./after.png)`) to
+    the uploaded URLs. Tried on #46: HTML `<img>` and bare paths aren't
+    rewritten (the file is appended at the end instead).
 
 ## Decision
 
 A PR with a visible change shows it in its body: before/after
 screenshots, and a short video when the change is behaviour. They are
 made with `scripts/pr-media.mjs` from a per-PR script in `.logs/`,
-uploaded through a comment box in the Playwright MCP browser without
-posting, and embedded by URL (the `pr-media` skill). Media is never
-committed. The PR template asks for it.
+referenced from the body as local Markdown, and uploaded with
+`gh pr create` / `gh pr edit --attach` (the `pr-media` skill). Media is
+never committed. The PR template asks for it.
 
 **Why:** TODO(Alex)
+
 
 ## Consequences
 
 - `main` stays free of images; a PR's media lives with the PR on GitHub.
-- An upload needs the owner signed in to GitHub in the Playwright MCP
-  browser. A session asks for that and never handles credentials.
+- Uploading needs `gh` v2.99.0 or later, signed in as for any `gh pr`
+  command; no browser. Every `--attach` run uploads again, so a body is
+  edited with only the files it references.
+- Body images are Markdown, so they can't be given a width; GitHub fits
+  them to the table.
 - In this public repository, an uploaded file can be opened by anyone
-  with its URL, posted or not. Media shows example data only.
+  with its URL, even after the body stops using it. Media shows example
+  data only.
 - Videos are `.webm`: Playwright records only that, and an `.mp4` would
   need a separate ffmpeg. GitHub recommends H.264 for compatibility, so
   some browsers may not play them; the screenshots carry the before/after
@@ -57,5 +70,5 @@ committed. The PR template asks for it.
   tests are. A PR with no visible change says so and skips media.
 - New tooling under [0006](0006-tooling-freeze.md), for the friction of
   #44's hand-made before shots and upload.
-- Worth revisiting if GitHub adds an API for attachments, or if the
+- Worth revisiting if `gh --attach` changes what it rewrites, or if the
   repository moves to a plan or host where the limits differ.
