@@ -75,9 +75,10 @@ export default defineConfig([
     },
   },
   {
-    // The playground's screenshots (the `preview` skill) drive Chromium
-    // through Playwright; the other scripts stay plain Node.
-    files: ["scripts/preview.mjs"],
+    // The playground's screenshots (the `preview` skill) and a PR's
+    // screenshots and videos (the `pr-media` skill) drive Chromium through
+    // Playwright; the other scripts stay plain Node.
+    files: ["scripts/preview.mjs", "scripts/pr-media.mjs"],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -85,7 +86,7 @@ export default defineConfig([
           patterns: [
             {
               regex: onlyAllowed(["node:.+", "@playwright/test"]),
-              message: "The preview script imports only node: modules and @playwright/test.",
+              message: "The preview and pr-media scripts import only node: modules and @playwright/test.",
             },
           ],
         },
