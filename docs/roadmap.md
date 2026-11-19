@@ -260,22 +260,23 @@ hand, 2026-11-18); a `scripts/preview.mjs` pass over it (every example,
 view, theme, layout and tab; no console or parse errors) found the badge's
 contrast and limits, both fixed (Done) and shipped in beta.1.
 
-The site's saved config (2026-11-19), from its public
-`GET /character-sheet`, passes beta.1: `parseConfig` reports no issues
-and no unknown keys and keeps every slot and job, and the backend's
+Then: the site's saved config (2026-11-19), from its public
+`GET /character-sheet`, passes beta.1: `parseConfig` reports no issues,
+`findUnknownKeys` finds none, every slot and job is kept, and the backend's
 `jsonschema` finds nothing against beta.1's schema (`$id` `@2`). Every
 value is under its new limit (`levelLabel` 9 of 16, tooltip `note` 98 of
 120, `subtitle` 24 of 60, `items` 3 of 5, no badge, the one `param` action
 named `stack`) but the side columns: 6 slots each, at the limit, so the
 site can't add one there under 2.0.
 
-beta.1 tried by hand in `/next/` (2026-11-19, Playwright in Chromium,
-touch emulated as an iPhone at 390×844): hover, focus rings, Escape on
+And beta.1 tried in `/next/` (2026-11-19, with Playwright scripts in
+Chromium, touch emulated as an iPhone at 390×844): hover, focus rings, Escape on
 focused and hovered tooltips, tab and page links with `aria-current` and
 Back, the detail window (Escape, Close and light dismiss return focus;
 the second Escape), the job menu by keyboard, a tap on a tooltip-only row,
-and no console errors over 52 loads. Not covered: a real phone, Firefox
-and WebKit, screen readers. It found the next two items.
+and no console errors over 52 loads. Not covered: a real phone (item 3),
+and Firefox, WebKit and screen readers, which stay gaps (the browser
+tests are Chromium only). It found the next two items.
 
 1. **Middle-column slot tooltips overflow narrow viewports** (a bug,
    WCAG 1.4.10 Reflow). The tooltip opens from the slot's left edge, so
@@ -285,16 +286,23 @@ and WebKit, screen readers. It found the next two items.
    `edge-cases` too; right-column tooltips already stay inside, and
    `width=22` on a wide screen is fine (the viewport has room). Phones
    without hover never show slot tooltips. A CSS fix with a browser test
-   at 320px and 390px, then beta.2; it changes no API, so it doesn't
-   restart the soak.
+   at 320px and 390px and a `Fixed` line under Unreleased, then beta.2;
+   it changes no API, so it doesn't restart the soak.
 2. **The job menu ignores Escape and outside clicks** (polish). It is a
    plain `<details>`, as the README says, while the detail window closes
-   both ways. Closing it needs client code beyond `SlotHover`; the lean is
-   to document it rather than add some, before 2.0.0.
+   both ways. Options: say so in the README's Behaviour "Job menu"
+   bullet; make the list a `popover="auto"` of links, as the detail
+   windows are, which closes both ways with no script but changes
+   documented behaviour (README and `CLAUDE.md` say `<details>`); or
+   client code, a second `"use client"` file or a new job for
+   `SlotHover`, against the one-client-file rule. The lean is the README
+   sentence, before 2.0.0.
 3. **Soak.** 2.0.0 once a beta has gone about a week without an API
    change ([decision 0004](decisions/0004-2.0-betas-on-next.md)): from
    beta.1 (2026-11-19), 2026-11-26 at the earliest; a new beta that
-   changes the API restarts the week.
+   changes the API restarts the week. Meanwhile the owner tries `/next/`
+   on a real phone (touch was only emulated): a tap on a tooltip-only row
+   opens its tooltip, and a tap elsewhere closes it.
 4. **A packed release candidate in the site**, which the next demo doesn't
    cover: `npm pack` here, `npm install <tarball>` in the site's
    `frontend/` (not committed), server-rendered with the site's CSS
