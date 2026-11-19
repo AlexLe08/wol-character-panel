@@ -1,5 +1,11 @@
 # Character window plan
 
+**Status: complete** (all six PRs merged by 2026-11-13; shipped in the
+2.0.0 betas). Kept as the design record: the decisions, the API's shape
+and what each PR measured. What it left open (the site's upgrade PR, the
+"only if needed" ideas) is in `docs/roadmap.md`, the one list of next
+tasks; don't add tasks here.
+
 Drafted 2026-11-11 with the owner (answers to three rounds of open
 questions added 2026-11-12), from four screenshots of the reference
 game's character window (not committed: they are the game's art). This is
