@@ -60,6 +60,29 @@ for (const tokens of ["", "dark"]) {
   });
 }
 
+// The badge sits on the host's portrait. On the bare image its text was
+// down to 1.00:1 (game) and at best 3.62:1 on `full`'s, and axe reports text over an image as
+// incomplete, not failed; on its plate axe can measure it, so require a
+// pass with nothing left incomplete.
+for (const [theme, tokens] of [
+  ["document", ""],
+  ["document", "dark"],
+  ["game", ""],
+]) {
+  test(`the portrait badge meets contrast on its plate (${theme}${tokens ? ", dark host tokens" : ""})`, async ({ page }) => {
+    await page.goto(`/?view=equipment&fixture=full&theme=${theme}${tokens ? `&tokens=${tokens}` : ""}`);
+    await expect(page.locator(".cs .cs__portrait img")).toBeVisible();
+    const result = await new AxeBuilder({ page })
+      .include(".cs .cs__badge")
+      .withRules(["color-contrast"])
+      .analyze();
+    const targets = (list: typeof result.violations) => list.flatMap((r) => r.nodes.map((n) => n.target));
+    expect(targets(result.violations)).toEqual([]);
+    expect(targets(result.incomplete)).toEqual([]);
+    expect(targets(result.passes).length).toBeGreaterThan(0);
+  });
+}
+
 // axe can't measure text over the game theme's gradient (it reports those
 // squares incomplete, not passed), so pin the glyph to its label's colour,
 // --cs-muted, which clears 4.5:1 in both themes.

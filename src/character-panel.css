@@ -34,6 +34,8 @@
   --cs-square-bg: var(--cs-inset);
   --cs-portrait-bg: var(--cs-inset);
   --cs-tip-bg: var(--cs-panel);
+  /* The badge's plate. Opaque, since it sits on the host's portrait. */
+  --cs-badge-bg: var(--cs-panel);
   --cs-tip-shadow: none;
   --cs-panel-shadow: none;
   --cs-slot-size: 3.25rem;
@@ -408,10 +410,15 @@ button.cs__gear-button:hover,
   fill: var(--cs-rule);
 }
 
+/* On a plate, so its text keeps the panel's contrast whatever the
+   portrait behind it. */
 .cs__badge {
   position: absolute;
   top: 0.4rem;
   right: 0.55rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--cs-radius);
+  background: var(--cs-badge-bg);
   font-size: 0.75rem;
   color: var(--cs-muted);
   text-align: right;
@@ -1870,6 +1877,10 @@ span.cs-track__face[tabindex] .cs-track__label {
 .cs[data-cs-theme="game"] .cs__toolbar-button--lit {
   border-color: var(--cs-accent);
   box-shadow: 0 0 6px rgb(226 194 127 / 0.35);
+}
+
+.cs[data-cs-theme="game"] .cs__badge {
+  border: 1px solid var(--cs-rule);
 }
 
 .cs[data-cs-theme="game"] .cs__badge-value {
