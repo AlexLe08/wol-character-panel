@@ -8,6 +8,14 @@ major: a host has to change something (a removed or renamed export or key,
 a new required field, a tighter limit, changed behaviour). Say what breaks.
 -->
 
+## Screenshots
+
+<!--
+A visible change: before/after screenshots, and a short video if it moves
+(hover, focus, menus, tabs), uploaded to GitHub, never committed (decision
+0009; the `pr-media` skill makes them). Otherwise "None: no visible change."
+-->
+
 ## Checklist
 
 - [ ] `scripts/check.sh` passes

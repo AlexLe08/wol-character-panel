@@ -247,6 +247,16 @@
   22rem and 18rem and at 390px and 320px viewports, and checks each stays
   inside the panel with no sideways scroll; it failed on the Projects
   slot before.
+- Screenshots and videos in PRs (2026-11-19, decision 0009): the
+  `pr-media` skill and `scripts/pr-media.mjs` make #44's hand-made
+  before/after shots routine. The playground runs on the branch and on a
+  `git archive` copy of `origin/main` side by side; a per-PR script in
+  `.logs/` takes cropped shots and captioned `.webm` videos with a cursor
+  dot, and stills of each video to check it. The files go up through a PR
+  comment box in the Playwright MCP browser (GitHub has no upload API) and
+  into the body by URL, never committed. The PR template has a
+  Screenshots section. Tried on #44's fix: the before shows the tooltip
+  past the panel's edge, the after shows it inside.
 
 ## Tooling plan (done)
 

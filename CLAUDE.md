@@ -77,6 +77,12 @@ or the workflow, indexed in its `README.md`.
   5198 (a busy port fails), plus console errors and warnings, page
   errors and parseConfig reports; exit 1 on any. The `preview` skill
   runs it.
+- `scripts/pr-media.mjs`: helpers for a PR's before/after screenshots and
+  videos (the playground on this branch and on `origin/main`, side by
+  side), imported by a per-PR script in `.logs/pr-media/`; files land
+  there. The `pr-media` skill writes the script, uploads the files and
+  embeds them in the PR body
+  ([decision 0009](docs/decisions/0009-pr-media-uploaded-not-committed.md)).
 - `node scripts/fill-edge-cases.mjs`: rewrites the window's fields in
   `examples/edge-cases.json` at the current `LIMITS`;
   `node scripts/check-edge-cases.mjs` checks each window limit is
@@ -99,8 +105,8 @@ that install in the site.
   `eslint.config.mjs` enforces it. Scripts may also import `node:` modules
   and `../src/…`, except `scripts/smoke/`, which imports the package by
   name, its peers and `node:` modules (it runs against the tarball),
-  and `scripts/preview.mjs`, which imports only `node:` modules and
-  `@playwright/test`; tests may also import `vitest` and `react-dom/server`;
+  and `scripts/preview.mjs` and `scripts/pr-media.mjs`, which import only
+  `node:` modules and `@playwright/test`; tests may also import `vitest` and `react-dom/server`;
   `vitest.config.ts` only `vitest/config`; the playground may also
   import `react-dom/client`, `react-dom/server`, Vite and `../src/…`;
   the browser tests and `playwright.config.ts` only `@playwright/test`,
@@ -248,5 +254,9 @@ that install in the site.
   branch (never `--force`). The `reviewer` subagent (`.claude/agents/`)
   reviews the branch before the PR is opened; only the owner approves,
   merges, and pushes release tags.
+- A PR with a visible change (rendering, CSS, examples, hover or focus
+  behaviour) shows it in its body: before/after screenshots, and a short
+  video when it's behaviour, made and uploaded with the `pr-media` skill.
+  Media is never committed. Other PRs say "None: no visible change."
 - The roadmap's Done entry goes in the feature's own PR, not in a
   follow-up (no "add the PR number" commits after merging).
