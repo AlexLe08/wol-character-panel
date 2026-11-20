@@ -68,7 +68,8 @@ release again when no beta is newer).
 | `src/EquipmentBody.tsx` | The equipment pane's inside: the gear-set row, header and body (slots, tooltips, portrait). Private: no entry exports it |
 | `src/GearSet.tsx` | The gear-set row and the links its actions make. Private |
 | `src/icons.tsx` | The built-in drawings (`iconName`, the job menu's, the toolbar's) and the icon precedence. Private |
-| `src/SlotHover.tsx` | The only client code: Escape dismisses a tooltip. Private: no entry exports it |
+| `src/SlotHover.tsx` | Client code: Escape dismisses a tooltip. Private: no entry exports it |
+| `src/JobMenuFocus.tsx` | Client code: the job menu closes when focus lands outside it. Private: no entry exports it |
 | `src/character-panel.css` | Styles and themes; everything themable is a `--cs-*` variable |
 | `character-panel.schema.json` | Generated JSON Schema for editing a config file by hand |
 | `examples/` | Sample configs (`full`, `minimal`, `edge-cases` with every field at its limit); tests check each one parses cleanly and renders |
@@ -87,7 +88,7 @@ release again when no beta is newer).
 | `tsconfig.json` | Compiler options for editors and `npm run typecheck` (tests, the playground, the browser tests and both test configs included) |
 | `vitest.config.ts` | Which tests run (`src/**/*.test.{ts,tsx}`), and coverage: every source file in `src/` (not the tests or CSS), its thresholds, the report in `.logs/coverage/` |
 | `playwright.config.ts` | The browser tests: Chromium, the playground started on port 5199, the demo build on 5200 and the next demo's on 5201, the report in `.logs/playwright-report/` |
-| `tsconfig.build.json` | `npm run build`: one `.js` and `.d.ts` per source file in `dist/`, so `SlotHover.js` keeps its `"use client"` |
+| `tsconfig.build.json` | `npm run build`: one `.js` and `.d.ts` per source file in `dist/`, so `SlotHover.js` and `JobMenuFocus.js` keep their `"use client"` |
 | `.github/workflows/ci.yml` | On every pull request: `check` (lint, type-check, tests with coverage thresholds, the schema up to date, build, demo build, pack, package lint and the tarball smoke test), `compat` (type-check, tests and the smoke test on Node 22.12, and with the oldest peers) and `browser` (the Playwright tests) |
 | `.github/workflows/release.yml` | Publishes to npm when a `v*` tag is pushed (its actions pinned by commit SHA) |
 | `.github/workflows/pages.yml` | Deploys the demos (the built playground) to GitHub Pages after each successful release, or by hand: npm's `latest` at the root and `next` under `/next/`, each built from its release tag (its actions pinned by commit SHA) |
@@ -365,9 +366,17 @@ because something failed, which a host can tell visitors about.
     around the panel, closes on the next Escape, not with the tooltip.
   - On touch screens, a tap simply follows the slot's link.
 - **Job menu:** an icon button in the gear-set row (its name from
-  `gearSet.jobMenu.label`), opening a `<details>` list of job links. It needs
-  no JavaScript, works with the back button, and makes every job shareable.
-  It isn't drawn for a config with one job.
+  `gearSet.jobMenu.label`), opening a list of job links below the row. It
+  uses the Popover API (`popover="auto"`), so it needs no JavaScript: the
+  button opens and closes it, as do Escape and a click outside; Escape
+  from inside the list returns focus to the button. Tab moves from the
+  button into the list, and the list closes when focus lands outside the
+  menu, so it never stays over the slot focus moved to (WCAG 2.4.11).
+  That one needs JavaScript; without it, Escape closes the list from
+  wherever focus is. It works with the back button and makes every job
+  shareable.
+  It isn't drawn for a config with one job. Where the browser lacks CSS
+  anchor positioning, the list opens centred on the screen instead.
 - **Layout:** below a 26rem container width, the portrait moves on top. The
   columns become 3-column grids with the slot names showing, since touch
   screens get no tooltip. This is a container query, so it follows the
@@ -511,8 +520,8 @@ packed files. `test:pack` installs the tarball in a throwaway project and
 imports each entry by name: `.` and `/schema` with zod but no React
 installed, then `/react` server-rendered once React is added (its CSS import
 stubbed, as a bundler would handle it). It also checks `dist/SlotHover.js`
-still starts with `"use client"`. It needs the npm registry (or npm's cache)
-for the peers.
+and `dist/JobMenuFocus.js` still start with `"use client"`. It needs the
+npm registry (or npm's cache) for the peers.
 
 CI runs these in `check` (Node 24, latest peers), and in `compat`, with the
 tests, on Node 22.12 (the `engines` floor) and with the oldest peers the

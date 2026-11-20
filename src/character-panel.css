@@ -172,16 +172,11 @@
   font: 500 0.6875rem/1 var(--cs-font-technical);
   text-decoration: none;
   cursor: pointer;
-  list-style: none;
 }
 
 span.cs__gear-button {
   color: var(--cs-muted);
   cursor: default;
-}
-
-.cs__gear-button::-webkit-details-marker {
-  display: none;
 }
 
 .cs__gear-button .cs-icon {
@@ -192,7 +187,7 @@ span.cs__gear-button {
 a.cs__gear-button:hover,
 button.cs__gear-button:hover,
 .cs__jobs-toggle:hover,
-.cs__jobs[open] .cs__jobs-toggle {
+.cs__jobs:has(.cs__jobs-list:popover-open) .cs__jobs-toggle {
   border-color: var(--cs-accent);
 }
 
@@ -225,30 +220,51 @@ button.cs__gear-button:hover,
   margin-left: auto;
 }
 
-/* The job menu: a toggle in the row, its list opening below the row. The
-   list is placed against the row (.cs__gear), not the toggle, so it starts
-   at the row's left padding and never runs past the panel, however far in
-   the toggle sits. */
-.cs__gear {
-  position: relative;
-}
-
+/* The job menu: a toggle in the row, its list a popover opening below the
+   row. The popover is drawn in the top layer, so it is placed with anchor
+   positioning against the row (.cs__gear), not the toggle: it starts at
+   the row's left padding and never runs past the panel, however far in
+   the toggle sits. Only the row whose list is open takes the anchor name,
+   and one auto popover closes another, so two panels on a page never share
+   it. Without anchor positioning the list keeps the popover's own place,
+   centred on the screen, as a detail window is. */
 .cs__jobs {
   flex: none;
 }
 
 .cs__jobs-list {
-  position: absolute;
-  z-index: 3;
-  top: calc(100% + 0.35rem);
-  left: 0.75rem;
   width: max-content;
-  min-width: min(15rem, calc(100% - 1.5rem));
-  max-width: min(22rem, calc(100% - 1.5rem));
+  min-width: min(15rem, calc(100vw - 2rem));
+  max-width: min(22rem, calc(100vw - 2rem));
+  /* The popover's own centring, which the panel's margin reset on ul
+     would otherwise undo. */
+  margin: auto;
+  padding: 0;
   border: 1px solid var(--cs-rule-strong);
   border-radius: var(--cs-radius);
   background: var(--cs-tip-bg);
   box-shadow: var(--cs-tip-shadow);
+  color: var(--cs-ink);
+}
+
+@supports (top: anchor(bottom)) and (width: anchor-size(width)) {
+  .cs__gear:has(.cs__jobs-list:popover-open) {
+    anchor-name: --cs-gear;
+  }
+
+  /* 0.35rem below the row's padding, over its 1px bottom rule, and in by
+     its 0.75rem padding; as wide as its content within the row's padding.
+     The 1px and 0.75rem are .cs__gear's border-bottom and padding: change
+     them together. */
+  .cs__jobs-list {
+    position-anchor: --cs-gear;
+    inset: auto;
+    top: calc(anchor(bottom) + 0.35rem - 1px);
+    left: calc(anchor(left) + 0.75rem);
+    min-width: min(15rem, calc(anchor-size(width) - 1.5rem));
+    max-width: min(22rem, calc(anchor-size(width) - 1.5rem));
+    margin: 0;
+  }
 }
 
 .cs__jobs-list li + li {
@@ -1842,7 +1858,7 @@ span.cs-track__face[tabindex] .cs-track__label {
 .cs[data-cs-theme="game"] a.cs__gear-button:hover,
 .cs[data-cs-theme="game"] button.cs__gear-button:hover,
 .cs[data-cs-theme="game"] .cs__jobs-toggle:hover,
-.cs[data-cs-theme="game"] .cs__jobs[open] .cs__jobs-toggle,
+.cs[data-cs-theme="game"] .cs__jobs:has(.cs__jobs-list:popover-open) .cs__jobs-toggle,
 .cs[data-cs-theme="game"] .cs__gear-button[aria-current="true"] {
   border-color: var(--cs-accent);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 0 8px rgb(226 194 127 / 0.4);

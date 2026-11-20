@@ -4,7 +4,7 @@
 //   node scripts/smoke-pack.mjs --oldest-peers   # lowest peers in range
 // First with zod only (no React installed), running scripts/smoke/data.mjs:
 // "." and "/schema" import, the JSON Schema and CSS resolve, and
-// dist/SlotHover.js keeps "use client". Then with react and react-dom,
+// dist/SlotHover.js and dist/JobMenuFocus.js keep "use client". Then with react and react-dom,
 // running scripts/smoke/react.mjs, which server-renders "/react".
 // Needs the npm registry (or npm's cache) for the peers.
 import { execFileSync } from "node:child_process";

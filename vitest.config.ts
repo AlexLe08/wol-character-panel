@@ -21,7 +21,8 @@ export default defineConfig({
       // Just under the current numbers (raised 2026-11-12 with the window
       // component). Raise them when coverage goes up; lowering one is a
       // decision for review. SlotHover.tsx is the gap: its handlers only run
-      // in a browser.
+      // in a browser (as does JobMenuFocus.tsx's useEffect; what it calls,
+      // watchFocus, is tested).
       thresholds: { statements: 97, branches: 97, functions: 95, lines: 97 },
     },
   },

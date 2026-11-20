@@ -4,7 +4,7 @@ import { pointerAway, slot, tabTo, tooltipOf } from "./helpers.ts";
 // The panel as a host serves it, before hydration or with JavaScript off:
 // /static is server-rendered with no script (playground/static.tsx), and
 // these tests run with JavaScript disabled too. What must still work:
-// tooltips on hover and focus (CSS), the job menu (<details> of links),
+// tooltips on hover and focus (CSS), the job menu (a popover of links),
 // and the narrow layout (a container query). Escape needs the script to
 // hide a tooltip, so that isn't expected here (a detail window's Escape is
 // the browser's own).
@@ -41,12 +41,43 @@ test("the job menu opens and its links change the job", async ({ page }) => {
   await expect(toggle).toHaveAccessibleName("Change job");
   await toggle.click();
   await expect(healthcare).toBeVisible();
+  // Escape and a click outside close it with no script too.
+  await page.keyboard.press("Escape");
+  await expect(healthcare).toBeHidden();
+  await toggle.click();
+  await page.locator(".cs__bar").click();
+  await expect(healthcare).toBeHidden();
+  await toggle.click();
 
   await healthcare.click();
   await expect(page).toHaveURL(/[?&]job=healthcare/);
   await expect(page.locator(".cs__job-title")).toHaveText("Developer in healthcare");
   // The menu is closed again on the new page.
   await expect(page.getByRole("link", { name: /Healthcare/ })).toBeHidden();
+});
+
+// With no script, Tab moves on past the open list and leaves it open over
+// the slots below; Escape closes it from there, without going back to it
+// (WCAG 2.4.11).
+test("Escape closes the job menu from a slot it covers", async ({ page }) => {
+  await page.goto("/static?view=equipment&fixture=full");
+  const list = page.locator(".cs__jobs-list");
+  await page.locator(".cs__jobs-toggle").click();
+  await expect(list).toBeVisible();
+  const stack = slot(page, "Core stack");
+  await tabTo(page, stack);
+  await expect(list).toBeVisible();
+  const covered = () =>
+    stack.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      return !!document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)?.closest(".cs__jobs-list");
+    });
+  expect(await covered(), "the focused slot is under the list").toBe(true);
+
+  await page.keyboard.press("Escape");
+  await expect(list).toBeHidden();
+  await expect(stack, "focus stays where it was").toBeFocused();
+  expect(await covered()).toBe(false);
 });
 
 test("the narrow layout needs no script", async ({ page }) => {

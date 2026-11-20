@@ -136,13 +136,15 @@ that install in the site.
 - The JSON Schema closes every plain `z.object` (`additionalProperties:
   false`), so writers reject unknown keys while `parseConfig` strips them.
   An object meant to stay open uses `z.looseObject`.
-- `EquipmentPanel` is a Server Component. `src/SlotHover.tsx` is the only
-  `"use client"` file and no entry exports it; the build keeps its
-  directive because `tsc` emits one file per source file (don't add a
-  bundler).
+- `EquipmentPanel` is a Server Component. `src/SlotHover.tsx` and
+  `src/JobMenuFocus.tsx` are the only `"use client"` files, each adding to
+  behaviour that already works without JavaScript, and no entry exports
+  them; the build keeps their directive because `tsc` emits one file per
+  source file (don't add a bundler).
 - Behaviour that works without JavaScript stays that way: tooltips show on
-  hover and focus through CSS, the job menu is a `<details>` of links,
-  the layout is a container query. Escape dismisses a tooltip (WCAG
+  hover and focus through CSS, the job menu is a popover of links
+  ([decision 0010](docs/decisions/0010-job-menu-popover.md)), the layout
+  is a container query. Escape dismisses a tooltip (WCAG
   1.4.13). Keep `jsx-a11y` passing and every interactive element
   focusable with a visible `:focus-visible` ring.
 - Theming is `--cs-*` variables on `.cs`. The `document` theme (the one
@@ -163,8 +165,8 @@ that install in the site.
   playground: tooltips on hover and focus, Escape, focus rings, the
   container query, axe (WCAG 2.2 A/AA) on every example in both themes and
   layouts, and `/static` with JavaScript off. Coverage doesn't see these
-  (`SlotHover.tsx` stays low in Vitest's numbers). Still check a release
-  candidate in the site with a packed copy, since it renders on the server
+  (`SlotHover.tsx` and `JobMenuFocus.tsx` stay low in Vitest's numbers).
+  Still check a release candidate in the site with a packed copy, since it renders on the server
   with its own CSS around the panel.
 
 ## Versioning and releases

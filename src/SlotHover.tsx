@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from "react";
 
-// The panel's only client code. Showing the tooltip is pure CSS (hover, or
-// keyboard focus inside the slot), so it works before hydration and without
-// JavaScript. This adds what CSS can't: Escape hides the tooltip without
+// The tooltips' client code (JobMenuFocus.tsx is the job menu's). Showing
+// the tooltip is pure CSS (hover, or keyboard focus inside the slot), so it
+// works before hydration and without JavaScript. This adds what CSS can't: Escape hides the tooltip without
 // moving focus or the pointer (WCAG 1.4.13), until the pointer leaves or
 // focus moves on. That Escape is spent on the tooltip: it is cancelled, so
 // a detail window around the row (a popover, which closes on an Escape

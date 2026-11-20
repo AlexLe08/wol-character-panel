@@ -102,6 +102,7 @@ export function EquipmentBody({
           job={job}
           gearSet={gearSet}
           jobMenu={jobMenu}
+          idPrefix={idPrefix}
           end={end}
           basePath={basePath}
           jobParam={jobParam}

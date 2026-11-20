@@ -13,7 +13,26 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ## [Unreleased]
 
+### Changed (breaking)
+
+- The job menu is a `<button>` and a `popover="auto"` list in place of a
+  `<details>` and `<summary>`; the class names are unchanged, and the open
+  state is `.cs__jobs-list:popover-open` rather than `.cs__jobs[open]`. A
+  host styling the old elements or `[open]` needs to follow. The open list
+  is drawn in the top layer, so a host's `overflow` or `z-index` around
+  the panel no longer clips or covers it, and `.cs__gear` is no longer
+  `position: relative` (for a host's absolutely positioned `gearSetEnd`).
+
 ### Fixed
+
+- The open job menu could hide the slot keyboard focus moved on to (WCAG
+  2.4.11): Tab leaves it open over the job header, and nothing but its
+  own toggle closed it. It now closes when focus lands outside the
+  menu. Escape closes it from anywhere, returning focus to the button when
+  it was inside the list, and so does a click outside, both without
+  JavaScript. It opens where it did, below the
+  gear-set row; where CSS anchor positioning is missing, centred on the
+  screen.
 
 - In the narrow layout, the middle column's slot tooltips ran past the
   panel's right edge, and on a phone-sized viewport scrolled the page

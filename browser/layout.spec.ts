@@ -1,5 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
-import { pointerAway, slot, tooltipOf } from "./helpers.ts";
+import { expect, test, type Locator, type Page } from "@playwright/test";
+import { pointerAway, slot, tabTo, tooltipOf } from "./helpers.ts";
 
 // Focus rings on everything focusable, and the container query's two
 // layouts.
@@ -7,10 +7,13 @@ import { pointerAway, slot, tooltipOf } from "./helpers.ts";
 for (const theme of ["document", "game"]) {
   test(`every focusable element in the panel shows a focus ring (${theme})`, async ({ page }) => {
     await page.goto(`/?view=equipment&fixture=full&theme=${theme}`);
-    // Open the job menu so its links are in the tab order too, without
-    // moving focus: the walk starts from the top of the page.
-    await page.locator(".cs__jobs").evaluate((details: HTMLDetailsElement) => (details.open = true));
-    const focusable = await page.locator(".cs").locator("a, summary, [tabindex='0']").count();
+    // Count with the job menu open, so its links count too; the walk opens
+    // it from the keyboard when it reaches the toggle (focus landing outside
+    // the menu closes it, so it can't be opened ahead).
+    const list = page.locator(".cs__jobs-list");
+    await list.evaluate((element: HTMLElement) => element.showPopover());
+    const focusable = await page.locator(".cs").locator("a, button, [tabindex='0']").count();
+    await list.evaluate((element: HTMLElement) => element.hidePopover());
 
     const seen: string[] = [];
     let entered = false;
@@ -26,6 +29,7 @@ for (const theme of ["document", "game"]) {
           name: `${el.tagName.toLowerCase()} "${el.textContent?.trim().slice(0, 30)}"`,
           outline: style.outlineStyle,
           width: parseFloat(style.outlineWidth),
+          toggle: el.classList.contains("cs__jobs-toggle"),
         };
       });
       if (!focused) {
@@ -36,6 +40,10 @@ for (const theme of ["document", "game"]) {
       seen.push(focused.name);
       expect(focused.outline, `${focused.name} has an outline`).not.toBe("none");
       expect(focused.width, `${focused.name} outline width`).toBeGreaterThanOrEqual(2);
+      if (focused.toggle) {
+        await page.keyboard.press("Enter");
+        await expect(list).toBeVisible();
+      }
     }
     // Tab walked through the whole panel and out, reaching every link, the
     // menu toggle, and every tooltip-only slot.
@@ -255,3 +263,145 @@ for (const theme of ["document", "game"]) {
     });
   }
 }
+
+// The list is a popover in the top layer, placed by anchor positioning
+// where the <details> list was: below the gear-set row, from its left
+// padding. Were the anchor lost, it would sit centred on the screen.
+for (const theme of ["document", "game"]) {
+  for (const width of ["", "18"]) {
+    test(`the open job menu opens below the gear-set row, from its padding (${theme}, ${width || "wide"})`, async ({
+      page,
+    }) => {
+      await page.goto(`/?view=equipment&fixture=full&theme=${theme}${width && `&width=${width}`}`);
+      await page.locator(".cs__jobs-toggle").click();
+      const list = await box(page, ".cs__jobs-list");
+      const row = await box(page, ".cs__gear");
+      expect(list.x - row.x).toBeCloseTo(12, 0);
+      expect(list.y - (row.y + row.height)).toBeCloseTo(4.6, 0);
+    });
+  }
+}
+
+// A browser without anchor positioning skips the @supports block, so here
+// it is taken out of the stylesheet: the list falls back to the popover's
+// own place, centred on the screen (the panel's margin reset on ul must
+// not pin it to the top-left corner).
+test("without anchor positioning, the open job menu is centred on the screen", async ({ page }) => {
+  await page.goto("/?view=equipment&fixture=full");
+  const removed = await page.evaluate(() => {
+    let count = 0;
+    for (const sheet of document.styleSheets) {
+      const rules = sheet.cssRules;
+      for (let i = rules.length - 1; i >= 0; i--) {
+        const rule = rules[i];
+        if (rule instanceof CSSSupportsRule && rule.conditionText.includes("anchor(bottom)")) {
+          sheet.deleteRule(i);
+          count++;
+        }
+      }
+    }
+    return count;
+  });
+  expect(removed, "the anchor positioning block was found").toBe(1);
+  await page.locator(".cs__jobs-toggle").click();
+  const list = await box(page, ".cs__jobs-list");
+  const viewport = page.viewportSize()!;
+  expect(Math.abs(list.x + list.width / 2 - viewport.width / 2)).toBeLessThan(2);
+  expect(Math.abs(list.y + list.height / 2 - viewport.height / 2)).toBeLessThan(2);
+});
+
+// Escape, a click outside and the toggle close the list (the Popover API),
+// and so does focus moving on out of the menu (JobMenuFocus), so an open
+// list never stays over the slot focus moved to (WCAG 2.4.11). Without
+// JavaScript, Escape from anywhere does that job (no-js.spec.ts).
+test.describe("the job menu closes", () => {
+  const list = (page: Page) => page.locator(".cs__jobs-list");
+  const toggle = (page: Page) => page.locator(".cs__jobs-toggle");
+
+  // Whether any of the element's corners or its centre is under the list.
+  const covered = (face: Locator) =>
+    face.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      const points = [
+        [r.left + 2, r.top + 2],
+        [r.right - 2, r.top + 2],
+        [r.left + 2, r.bottom - 2],
+        [r.right - 2, r.bottom - 2],
+        [r.left + r.width / 2, r.top + r.height / 2],
+      ];
+      return points.some(([x, y]) => document.elementFromPoint(x, y)?.closest(".cs__jobs-list"));
+    });
+
+  test("when Tab moves on out of the menu, never over a focused slot", async ({ page }) => {
+    await page.goto("/?view=equipment&fixture=full");
+    await toggle(page).focus();
+    await page.keyboard.press("Enter");
+    await expect(list(page)).toBeVisible();
+    // Between the toggle and its links it stays open.
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("link", { name: /Front end/ })).toBeFocused();
+    await page.keyboard.press("Shift+Tab");
+    await expect(toggle(page)).toBeFocused();
+    await expect(list(page)).toBeVisible();
+
+    const stack = slot(page, "Core stack");
+    await tabTo(page, stack);
+    await expect(list(page)).toBeHidden();
+    expect(await covered(stack), "the focused slot is in view").toBe(false);
+  });
+
+  // As in Safari, where a click doesn't focus the button: focus never in
+  // the menu, then landing on a slot the list covers.
+  test("when focus lands outside without having been in the menu", async ({ page }) => {
+    await page.goto("/?view=equipment&fixture=full");
+    await list(page).evaluate((element: HTMLElement) => element.showPopover());
+    await expect(list(page)).toBeVisible();
+    const stack = slot(page, "Core stack");
+    await stack.focus();
+    await expect(list(page)).toBeHidden();
+    expect(await covered(stack)).toBe(false);
+  });
+
+  test("on Escape, after a hovered slot's tooltip", async ({ page }) => {
+    await page.goto("/?view=equipment&fixture=full");
+    await toggle(page).focus();
+    await page.keyboard.press("Enter");
+    await page.keyboard.press("Tab");
+    const skills = slot(page, "Skills");
+    await skills.hover();
+    const tip = await tooltipOf(skills);
+    await expect(tip).toBeVisible();
+
+    // The first Escape is spent on the slot's own tooltip, as everywhere.
+    await page.keyboard.press("Escape");
+    await expect(tip).toBeHidden();
+    await expect(list(page)).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(list(page)).toBeHidden();
+    await expect(toggle(page)).toBeFocused();
+  });
+
+  test("on Escape inside it, focus going back to the toggle", async ({ page }) => {
+    await page.goto("/?view=equipment&fixture=full");
+    await toggle(page).focus();
+    await page.keyboard.press("Enter");
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("link", { name: /Front end/ })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(list(page)).toBeHidden();
+    await expect(toggle(page)).toBeFocused();
+  });
+
+  test("on a click outside it, or on the toggle", async ({ page }) => {
+    await page.goto("/?view=equipment&fixture=full");
+    await toggle(page).click();
+    await expect(list(page)).toBeVisible();
+    await page.locator(".cs__bar").click();
+    await expect(list(page)).toBeHidden();
+
+    await toggle(page).click();
+    await expect(list(page)).toBeVisible();
+    await toggle(page).click();
+    await expect(list(page)).toBeHidden();
+  });
+});

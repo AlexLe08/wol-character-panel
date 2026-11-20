@@ -37,10 +37,12 @@ assert.ok(schema.$id.endsWith(`${pkg.name}@${major}/character-panel.schema.json`
 const css = readFileSync(new URL(import.meta.resolve("@solution-nine/wol-character-panel/character-panel.css")), "utf8");
 assert.match(css, /\.cs\b/);
 
-// The panel's only client file must keep its directive in the published
-// output (a bundler in the build would drop it). It isn't an entry, so it's
-// read through the package's location rather than imported.
-const slotHover = new URL("./SlotHover.js", import.meta.resolve("@solution-nine/wol-character-panel"));
-assert.match(readFileSync(slotHover, "utf8"), /^"use client";/);
+// The panel's client files must keep their directive in the published
+// output (a bundler in the build would drop it). They aren't entries, so
+// they're read through the package's location rather than imported.
+for (const file of ["SlotHover.js", "JobMenuFocus.js"]) {
+  const client = new URL(`./${file}`, import.meta.resolve("@solution-nine/wol-character-panel"));
+  assert.match(readFileSync(client, "utf8"), /^"use client";/, file);
+}
 
 console.log(`data entries ok (${pkg.name}@${pkg.version}, zod ${(await import("zod/package.json", { with: { type: "json" } })).default.version})`);

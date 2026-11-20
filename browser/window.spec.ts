@@ -222,6 +222,24 @@ test.describe("detail windows", () => {
     await expect(dialog).toBeHidden();
   });
 
+  // Both are auto popovers, so opening one closes the other.
+  test("opening it closes the job menu, and the job menu closes it", async ({ page }) => {
+    await page.goto(windowUrl("&tab=profile"));
+    const jobs = page.locator(".cs__jobs-list");
+    const dialog = page.getByRole("dialog", { name: "Titles" });
+    await page.locator(".cs__jobs-toggle").click();
+    await expect(jobs).toBeVisible();
+    await page.getByRole("button", { name: "All titles" }).click();
+    await expect(dialog).toBeVisible();
+    await expect(jobs).toBeHidden();
+
+    // The window covers the panel, so open the job menu from the keyboard.
+    await page.locator(".cs__jobs-toggle").focus();
+    await page.keyboard.press("Enter");
+    await expect(jobs).toBeVisible();
+    await expect(dialog).toBeHidden();
+  });
+
   test("its close button and Escape close it, focus going back to the button", async ({ page }) => {
     const { button, dialog } = await open(page);
     await dialog.getByRole("button", { name: "Close" }).click();
@@ -485,9 +503,13 @@ for (const [theme, tab] of [
 ]) {
   test(`every focusable element in the window shows a focus ring (${theme}, ${tab})`, async ({ page }) => {
     await page.goto(windowUrl(`&theme=${theme}&tab=${tab}`));
-    await page.locator(".cs__jobs").evaluate((details: HTMLDetailsElement) => (details.open = true));
+    // Counted with the job menu open; the walk opens it from the keyboard
+    // at its toggle, since focus landing outside the menu closes it.
+    const list = page.locator(".cs__jobs-list");
+    await list.evaluate((element: HTMLElement) => element.showPopover());
     // Visible ones only: a closed detail window's controls take no Tab stop.
     const focusable = await page.locator(".cs").locator("a, summary, button, [tabindex='0'] >> visible=true").count();
+    await list.evaluate((element: HTMLElement) => element.hidePopover());
     const seen: string[] = [];
     let entered = false;
     let left = false;
@@ -501,6 +523,7 @@ for (const [theme, tab] of [
           name: `${el.tagName.toLowerCase()} "${el.textContent?.trim().slice(0, 30)}"`,
           outline: style.outlineStyle,
           width: parseFloat(style.outlineWidth),
+          toggle: el.classList.contains("cs__jobs-toggle"),
         };
       });
       if (!focused) {
@@ -511,6 +534,10 @@ for (const [theme, tab] of [
       seen.push(focused.name);
       expect(focused.outline, `${focused.name} has an outline`).not.toBe("none");
       expect(focused.width, `${focused.name} outline width`).toBeGreaterThanOrEqual(2);
+      if (focused.toggle) {
+        await page.keyboard.press("Enter");
+        await expect(list).toBeVisible();
+      }
     }
     expect(left, "Tab left the window").toBe(true);
     expect(seen).toHaveLength(focusable);
