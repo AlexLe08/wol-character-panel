@@ -45,7 +45,9 @@ popoverTarget>`, anchored to the gear-set row where the `<details>` list
 was. Without anchor positioning it keeps the popover's own place, centred
 on the screen. It stays open on Tab-out.
 
-**Why:** TODO(Alex)
+**Why:** 
+
+In the spirit of the inspiration of this web component, I chose the method that would preserve the visual structure the most, followed by ensuring accessibility standards are maintained. This option was simply the best of it all.
 
 ## Consequences
 
