@@ -254,11 +254,14 @@
   `popover="auto"` list with a `popoverTarget` button now, as the detail
   windows are, anchored below the gear-set row with CSS anchor
   positioning: Escape from anywhere, a click outside, focus back on Escape
-  from inside, all without JavaScript. Its box and styles match the
+  from inside, all without JavaScript. A second client file,
+  `JobMenuFocus.tsx` (owner's call), closes it when focus moves on out of
+  the menu, as the APG example does. Its box and styles match the
   `<details>` list in both themes at every width measured; without anchor
   positioning it is centred on the screen. Browser tests: its place below
-  the row, centred with the anchor positioning block taken out, Escape on
-  a covered slot (after that slot's tooltip), Escape inside, a click
+  the row, centred with the anchor positioning block taken out, Tab-out,
+  Escape after a hovered slot's tooltip, Escape on a covered slot with
+  JavaScript off, Escape inside, a click
   outside, a detail window and the menu closing each other, and
   `/static`; the new close tests failed on
   the `<details>` menu. A markup break (`<details>`, `<summary>`,

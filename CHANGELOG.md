@@ -27,9 +27,10 @@ A PR that changes what's published adds its line under Unreleased; the
 
 - The open job menu could hide the slot keyboard focus moved on to (WCAG
   2.4.11): Tab leaves it open over the job header, and nothing but its
-  own toggle closed it. Escape now closes it from anywhere, returning
-  focus to the button when it was inside the list, and so does a click
-  outside, all without JavaScript. It opens where it did, below the
+  own toggle closed it. It now closes when focus moves on out of the
+  menu. Escape closes it from anywhere, returning focus to the button when
+  it was inside the list, and so does a click outside, both without
+  JavaScript. It opens where it did, below the
   gear-set row; where CSS anchor positioning is missing, centred on the
   screen.
 

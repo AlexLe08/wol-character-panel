@@ -43,7 +43,10 @@ The options:
 The list is a `popover="auto"` `<ul>` toggled by a `<button
 popoverTarget>`, anchored to the gear-set row where the `<details>` list
 was. Without anchor positioning it keeps the popover's own place, centred
-on the screen. It stays open on Tab-out.
+on the screen. A second client file, `JobMenuFocus.tsx`, closes the list
+when focus moves on out of the menu, as the APG example does; the
+one-client-file rule becomes "client files only add to behaviour that
+already works without JavaScript".
 
 **Why:** 
 
@@ -51,8 +54,14 @@ In the spirit of the inspiration of this web component, I chose the method that 
 
 ## Consequences
 
-- 2.4.11 is met with no client code, also with JavaScript off; the panel
-  has one popup model, the detail windows'.
+- 2.4.11 is met twice over: with JavaScript, the list never stays open
+  over the slot focus moves to; without it (or before hydration), Escape
+  closes the list from wherever focus is. The panel has one popup model,
+  the detail windows'.
+- Two client files instead of one. `JobMenuFocus` is a `<div>` with an
+  `onBlur` that hides the open list when focus lands outside the menu;
+  focus leaving the page (no next element) keeps it open, and a click
+  outside is the popover's own light dismiss.
 - The look is unchanged: in Chromium the open list's offset from the row,
   size, colours, border, radius and shadow match the `<details>` list in
   both themes, wide, at 22rem and at 18rem.
@@ -60,12 +69,9 @@ In the spirit of the inspiration of this web component, I chose the method that 
   `.cs__jobs[open]`; class names stay. Listed under 2.0.0's breaking
   changes.
 - An Escape spent on a slot's tooltip is cancelled (as for the detail
-  windows), so with focus on a slot whose tooltip shows, the list closes
-  on the second Escape.
+  windows), so with a hovered slot's tooltip showing, the list closes on
+  the second Escape.
 - Opening a detail window closes the list, and the other way round (one
   `auto` popover closes another).
 - Browsers without anchor positioning show the list centred, not below
   the row; worth revisiting only if a host reports one.
-- Unlike the APG example, Tab-out doesn't close the list. Revisit if
-  users find a list left open confusing; closing it on focus-out needs
-  client code.
