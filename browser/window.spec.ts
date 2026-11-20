@@ -503,9 +503,13 @@ for (const [theme, tab] of [
 ]) {
   test(`every focusable element in the window shows a focus ring (${theme}, ${tab})`, async ({ page }) => {
     await page.goto(windowUrl(`&theme=${theme}&tab=${tab}`));
-    await page.locator(".cs__jobs-list").evaluate((list: HTMLElement) => list.showPopover());
+    // Counted with the job menu open; the walk opens it from the keyboard
+    // at its toggle, since focus landing outside the menu closes it.
+    const list = page.locator(".cs__jobs-list");
+    await list.evaluate((element: HTMLElement) => element.showPopover());
     // Visible ones only: a closed detail window's controls take no Tab stop.
     const focusable = await page.locator(".cs").locator("a, summary, button, [tabindex='0'] >> visible=true").count();
+    await list.evaluate((element: HTMLElement) => element.hidePopover());
     const seen: string[] = [];
     let entered = false;
     let left = false;
@@ -519,6 +523,7 @@ for (const [theme, tab] of [
           name: `${el.tagName.toLowerCase()} "${el.textContent?.trim().slice(0, 30)}"`,
           outline: style.outlineStyle,
           width: parseFloat(style.outlineWidth),
+          toggle: el.classList.contains("cs__jobs-toggle"),
         };
       });
       if (!focused) {
@@ -529,6 +534,10 @@ for (const [theme, tab] of [
       seen.push(focused.name);
       expect(focused.outline, `${focused.name} has an outline`).not.toBe("none");
       expect(focused.width, `${focused.name} outline width`).toBeGreaterThanOrEqual(2);
+      if (focused.toggle) {
+        await page.keyboard.press("Enter");
+        await expect(list).toBeVisible();
+      }
     }
     expect(left, "Tab left the window").toBe(true);
     expect(seen).toHaveLength(focusable);

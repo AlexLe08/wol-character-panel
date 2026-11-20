@@ -7,10 +7,13 @@ import { pointerAway, slot, tabTo, tooltipOf } from "./helpers.ts";
 for (const theme of ["document", "game"]) {
   test(`every focusable element in the panel shows a focus ring (${theme})`, async ({ page }) => {
     await page.goto(`/?view=equipment&fixture=full&theme=${theme}`);
-    // Open the job menu so its links are in the tab order too, without
-    // moving focus: the walk starts from the top of the page.
-    await page.locator(".cs__jobs-list").evaluate((list: HTMLElement) => list.showPopover());
+    // Count with the job menu open, so its links count too; the walk opens
+    // it from the keyboard when it reaches the toggle (focus landing outside
+    // the menu closes it, so it can't be opened ahead).
+    const list = page.locator(".cs__jobs-list");
+    await list.evaluate((element: HTMLElement) => element.showPopover());
     const focusable = await page.locator(".cs").locator("a, button, [tabindex='0']").count();
+    await list.evaluate((element: HTMLElement) => element.hidePopover());
 
     const seen: string[] = [];
     let entered = false;
@@ -26,6 +29,7 @@ for (const theme of ["document", "game"]) {
           name: `${el.tagName.toLowerCase()} "${el.textContent?.trim().slice(0, 30)}"`,
           outline: style.outlineStyle,
           width: parseFloat(style.outlineWidth),
+          toggle: el.classList.contains("cs__jobs-toggle"),
         };
       });
       if (!focused) {
@@ -36,6 +40,10 @@ for (const theme of ["document", "game"]) {
       seen.push(focused.name);
       expect(focused.outline, `${focused.name} has an outline`).not.toBe("none");
       expect(focused.width, `${focused.name} outline width`).toBeGreaterThanOrEqual(2);
+      if (focused.toggle) {
+        await page.keyboard.press("Enter");
+        await expect(list).toBeVisible();
+      }
     }
     // Tab walked through the whole panel and out, reaching every link, the
     // menu toggle, and every tooltip-only slot.
@@ -340,6 +348,18 @@ test.describe("the job menu closes", () => {
     await tabTo(page, stack);
     await expect(list(page)).toBeHidden();
     expect(await covered(stack), "the focused slot is in view").toBe(false);
+  });
+
+  // As in Safari, where a click doesn't focus the button: focus never in
+  // the menu, then landing on a slot the list covers.
+  test("when focus lands outside without having been in the menu", async ({ page }) => {
+    await page.goto("/?view=equipment&fixture=full");
+    await list(page).evaluate((element: HTMLElement) => element.showPopover());
+    await expect(list(page)).toBeVisible();
+    const stack = slot(page, "Core stack");
+    await stack.focus();
+    await expect(list(page)).toBeHidden();
+    expect(await covered(stack)).toBe(false);
   });
 
   test("on Escape, after a hovered slot's tooltip", async ({ page }) => {

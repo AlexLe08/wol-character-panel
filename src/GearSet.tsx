@@ -71,7 +71,7 @@ export function GearSetRow({
           // over a focused slot can be dismissed without going back to it:
           // WCAG 2.4.11) and a click outside; Escape inside it returns focus
           // to the button. JobMenuFocus adds the one thing a popover can't
-          // do: close when focus moves on out of the menu. Keyed by job so
+          // do: close when focus lands outside the menu. Keyed by job so
           // the list closes after a job change, which re-renders the panel
           // without reloading the page.
           <JobMenuFocus key={job.id}>
