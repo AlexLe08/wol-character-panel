@@ -161,7 +161,8 @@
   `CharacterSheet` is `EquipmentPanel`, `parts` replaces the `show*`
   props, `tab` and `page` are reserved parameter names, and the tooltip,
   level-label and slot-column limits are tighter. Still no client code but
-  `SlotHover`, and everything works with JavaScript off. The playground and
+  `SlotHover` (and, later, the job menu's `JobMenuFocus`, decision 0010),
+  and everything works with JavaScript off. The playground and
   demo open on the window. Ships as `2.0.0-beta.N` betas first (next
   entry), then 2.0.0; the site takes it in an upgrade PR of its own (Next
   up, item 4).
@@ -247,15 +248,15 @@
   22rem and 18rem and at 390px and 320px viewports, and checks each stays
   inside the panel with no sideways scroll; it failed on the Projects
   slot before.
-- The job menu closes on Escape and outside clicks (2026-11-19, the other
-  finding from trying beta.1, decision 0010): the open `<details>` list
+- The job menu closes on Escape, outside clicks and focus-out (2026-11-19,
+  the other finding from trying beta.1, decision 0010): the open `<details>` list
   stayed open when Tab moved on, entirely over the next slot (WCAG 2.4.11),
   and only its toggle closed it, so a README sentence wouldn't do. It is a
   `popover="auto"` list with a `popoverTarget` button now, as the detail
   windows are, anchored below the gear-set row with CSS anchor
   positioning: Escape from anywhere, a click outside, focus back on Escape
   from inside, all without JavaScript. A second client file,
-  `JobMenuFocus.tsx` (owner's call), closes it when focus moves on out of
+  `JobMenuFocus.tsx` (owner's call), closes it when focus lands outside of
   the menu, as the APG example does. Its box and styles match the
   `<details>` list in both themes at every width measured; without anchor
   positioning it is centred on the screen. Browser tests: its place below

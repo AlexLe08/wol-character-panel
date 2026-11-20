@@ -165,8 +165,8 @@ that install in the site.
   playground: tooltips on hover and focus, Escape, focus rings, the
   container query, axe (WCAG 2.2 A/AA) on every example in both themes and
   layouts, and `/static` with JavaScript off. Coverage doesn't see these
-  (`SlotHover.tsx` and `JobMenuFocus.tsx` stay low in Vitest's numbers). Still check a release
-  candidate in the site with a packed copy, since it renders on the server
+  (`SlotHover.tsx` and `JobMenuFocus.tsx` stay low in Vitest's numbers).
+  Still check a release candidate in the site with a packed copy, since it renders on the server
   with its own CSS around the panel.
 
 ## Versioning and releases

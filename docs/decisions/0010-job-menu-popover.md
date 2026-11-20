@@ -44,7 +44,7 @@ The list is a `popover="auto"` `<ul>` toggled by a `<button
 popoverTarget>`, anchored to the gear-set row where the `<details>` list
 was. Without anchor positioning it keeps the popover's own place, centred
 on the screen. A second client file, `JobMenuFocus.tsx`, closes the list
-when focus moves on out of the menu, as the APG example does; the
+when focus lands anywhere outside the menu, as the APG example does; the
 one-client-file rule becomes "client files only add to behaviour that
 already works without JavaScript".
 
@@ -58,10 +58,13 @@ In the spirit of the inspiration of this web component, I chose the method that 
   over the slot focus moves to; without it (or before hydration), Escape
   closes the list from wherever focus is. The panel has one popup model,
   the detail windows'.
-- Two client files instead of one. `JobMenuFocus` is a `<div>` with an
-  `onBlur` that hides the open list when focus lands outside the menu;
-  focus leaving the page (no next element) keeps it open, and a click
-  outside is the popover's own light dismiss.
+- Two client files instead of one. `JobMenuFocus` listens for `focusin`
+  on the document and hides the open list when focus lands outside the
+  menu, however it got there: not the menu's own focus-out, since in
+  Safari a click doesn't focus the button, so Tab can reach a covered slot
+  without focus ever being in the menu. A click outside is the popover's
+  own light dismiss; a click on a non-focusable spot moves no focus and
+  keeps the list open.
 - The look is unchanged: in Chromium the open list's offset from the row,
   size, colours, border, radius and shadow match the `<details>` list in
   both themes, wide, at 22rem and at 18rem.
