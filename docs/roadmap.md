@@ -164,7 +164,7 @@
   `SlotHover`, and everything works with JavaScript off. The playground and
   demo open on the window. Ships as `2.0.0-beta.N` betas first (next
   entry), then 2.0.0; the site takes it in an upgrade PR of its own (Next
-  up, item 5).
+  up, item 4).
 - Prereleases (2026-11-13): `release.yml` publishes a version with a `-`
   to npm's `next` dist-tag (npm 11 refuses a prerelease without `--tag`),
   the Demo deploy skips prerelease tags, and `/release-prep` proposes
@@ -247,6 +247,20 @@
   22rem and 18rem and at 390px and 320px viewports, and checks each stays
   inside the panel with no sideways scroll; it failed on the Projects
   slot before.
+- The job menu closes on Escape and outside clicks (2026-11-19, the other
+  finding from trying beta.1, decision 0010): the open `<details>` list
+  stayed open when Tab moved on, entirely over the next slot (WCAG 2.4.11),
+  and only its toggle closed it, so a README sentence wouldn't do. It is a
+  `popover="auto"` list with a `popoverTarget` button now, as the detail
+  windows are, anchored below the gear-set row with CSS anchor
+  positioning: Escape from anywhere, a click outside, focus back on Escape
+  from inside, all without JavaScript. Its box and styles match the
+  `<details>` list in both themes at every width measured; without anchor
+  positioning it is centred on the screen. Browser tests: its place below
+  the row, Escape on a covered slot (after that slot's tooltip), Escape
+  inside, a click outside, and `/static`; the new close tests failed on
+  the `<details>` menu. A markup break (`<details>`, `<summary>`,
+  `[open]`), in the CHANGELOG's breaking changes.
 - Screenshots and videos in PRs (2026-11-19, decision 0009): the
   `pr-media` skill and `scripts/pr-media.mjs` make #44's hand-made
   before/after shots routine. The playground runs on the branch and on a
@@ -294,36 +308,31 @@ Chromium, touch emulated as an iPhone at 390×844): hover, focus rings, Escape o
 focused and hovered tooltips, tab and page links with `aria-current` and
 Back, the detail window (Escape, Close and light dismiss return focus;
 the second Escape), the job menu by keyboard, a tap on a tooltip-only row,
-and no console errors over 52 loads. Not covered: a real phone (item 2),
+and no console errors over 52 loads. Not covered: a real phone (item 1),
 and Firefox, WebKit and screen readers, which stay gaps (the browser
 tests are Chromium only). It found the narrow middle-column tooltips
 running past the viewport (fixed in #44, Done; unreleased until beta.2)
-and the next item.
+and the job menu ignoring Escape and outside clicks (fixed, Done;
+unreleased until beta.2).
 
-1. **The job menu ignores Escape and outside clicks** (polish). It is a
-   plain `<details>`, as the README says, while the detail window closes
-   both ways. Options: say so in the README's Behaviour "Job menu"
-   bullet; make the list a `popover="auto"` of links, as the detail
-   windows are, which closes both ways with no script but changes
-   documented behaviour (README and `CLAUDE.md` say `<details>`); or
-   client code, a second `"use client"` file or a new job for
-   `SlotHover`, against the one-client-file rule. The lean is the README
-   sentence, before 2.0.0.
-2. **Soak.** 2.0.0 once a beta has gone about a week without an API
+1. **Soak.** 2.0.0 once a beta has gone about a week without an API
    change ([decision 0004](decisions/0004-2.0-betas-on-next.md)): from
    beta.1 (2026-11-19), 2026-11-26 at the earliest; a new beta that
    changes the API restarts the week. beta.2 (owner, `/release-prep`)
-   ships the tooltip fix to `/next/` without restarting it. Meanwhile the
+   ships the tooltip fix and the job menu popover to `/next/`. The
+   tooltip fix doesn't restart the week; whether the job menu's markup
+   break (`<details>` to a popover, listed as breaking) does is the
+   owner's call at `/release-prep`. Meanwhile the
    owner tries `/next/` on a real phone (touch was only emulated): a tap
    on a tooltip-only row opens its tooltip, and a tap elsewhere closes it.
-3. **A packed release candidate in the site**, which the next demo doesn't
+2. **A packed release candidate in the site**, which the next demo doesn't
    cover: `npm pack` here, `npm install <tarball>` in the site's
    `frontend/` (not committed), server-rendered with the site's CSS
    around the panel.
-4. **2.0.0 (owner):** `/release-prep` with the API called settled (it
+3. **2.0.0 (owner):** `/release-prep` with the API called settled (it
    proposes `2.0.0`; the schema's `$id` becomes `@2`), merge, tag. The
    demo's `latest` then shows 2.0.0, and `/next/` falls back to it.
-5. **The site's upgrade PR**, in its own repository and session (it
+4. **The site's upgrade PR**, in its own repository and session (it
    depends on `^1`, so nothing reaches it before then):
    - bump to `^2` and run `npm run generate:character-schema` (the
      backend's copy must accept the new keys before the admin can save

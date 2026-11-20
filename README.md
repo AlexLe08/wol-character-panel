@@ -365,9 +365,15 @@ because something failed, which a host can tell visitors about.
     around the panel, closes on the next Escape, not with the tooltip.
   - On touch screens, a tap simply follows the slot's link.
 - **Job menu:** an icon button in the gear-set row (its name from
-  `gearSet.jobMenu.label`), opening a `<details>` list of job links. It needs
-  no JavaScript, works with the back button, and makes every job shareable.
-  It isn't drawn for a config with one job.
+  `gearSet.jobMenu.label`), opening a list of job links below the row. It
+  uses the Popover API (`popover="auto"`), so it needs no JavaScript: the
+  button opens and closes it, as do Escape and a click outside. Escape
+  works wherever focus is, so a list left open over a focused slot can be
+  closed without going back to it (WCAG 2.4.11); from inside the list it
+  returns focus to the button. Tab moves from the button into the list,
+  then on. It works with the back button and makes every job shareable.
+  It isn't drawn for a config with one job. Where the browser lacks CSS
+  anchor positioning, the list opens centred on the screen instead.
 - **Layout:** below a 26rem container width, the portrait moves on top. The
   columns become 3-column grids with the slot names showing, since touch
   screens get no tooltip. This is a container query, so it follows the

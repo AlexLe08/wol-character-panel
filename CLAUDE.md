@@ -141,8 +141,9 @@ that install in the site.
   directive because `tsc` emits one file per source file (don't add a
   bundler).
 - Behaviour that works without JavaScript stays that way: tooltips show on
-  hover and focus through CSS, the job menu is a `<details>` of links,
-  the layout is a container query. Escape dismisses a tooltip (WCAG
+  hover and focus through CSS, the job menu is a popover of links
+  ([decision 0010](docs/decisions/0010-job-menu-popover.md)), the layout
+  is a container query. Escape dismisses a tooltip (WCAG
   1.4.13). Keep `jsx-a11y` passing and every interactive element
   focusable with a visible `:focus-visible` ring.
 - Theming is `--cs-*` variables on `.cs`. The `document` theme (the one
