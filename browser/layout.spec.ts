@@ -274,6 +274,34 @@ for (const theme of ["document", "game"]) {
   }
 }
 
+// A browser without anchor positioning skips the @supports block, so here
+// it is taken out of the stylesheet: the list falls back to the popover's
+// own place, centred on the screen (the panel's margin reset on ul must
+// not pin it to the top-left corner).
+test("without anchor positioning, the open job menu is centred on the screen", async ({ page }) => {
+  await page.goto("/?view=equipment&fixture=full");
+  const removed = await page.evaluate(() => {
+    let count = 0;
+    for (const sheet of document.styleSheets) {
+      const rules = sheet.cssRules;
+      for (let i = rules.length - 1; i >= 0; i--) {
+        const rule = rules[i];
+        if (rule instanceof CSSSupportsRule && rule.conditionText.includes("anchor(bottom)")) {
+          sheet.deleteRule(i);
+          count++;
+        }
+      }
+    }
+    return count;
+  });
+  expect(removed, "the anchor positioning block was found").toBe(1);
+  await page.locator(".cs__jobs-toggle").click();
+  const list = await box(page, ".cs__jobs-list");
+  const viewport = page.viewportSize()!;
+  expect(Math.abs(list.x + list.width / 2 - viewport.width / 2)).toBeLessThan(2);
+  expect(Math.abs(list.y + list.height / 2 - viewport.height / 2)).toBeLessThan(2);
+});
+
 // Escape, a click outside and the toggle close the list (the Popover API,
 // no script of ours). An open list covers the slots below it, and Tab
 // moves on past it, so Escape has to work from wherever focus is: WCAG

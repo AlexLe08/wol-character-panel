@@ -18,7 +18,10 @@ A PR that changes what's published adds its line under Unreleased; the
 - The job menu is a `<button>` and a `popover="auto"` list in place of a
   `<details>` and `<summary>`; the class names are unchanged, and the open
   state is `.cs__jobs-list:popover-open` rather than `.cs__jobs[open]`. A
-  host styling the old elements or `[open]` needs to follow.
+  host styling the old elements or `[open]` needs to follow. The open list
+  is drawn in the top layer, so a host's `overflow` or `z-index` around
+  the panel no longer clips or covers it, and `.cs__gear` is no longer
+  `position: relative` (for a host's absolutely positioned `gearSetEnd`).
 
 ### Fixed
 

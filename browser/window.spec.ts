@@ -222,6 +222,24 @@ test.describe("detail windows", () => {
     await expect(dialog).toBeHidden();
   });
 
+  // Both are auto popovers, so opening one closes the other.
+  test("opening it closes the job menu, and the job menu closes it", async ({ page }) => {
+    await page.goto(windowUrl("&tab=profile"));
+    const jobs = page.locator(".cs__jobs-list");
+    const dialog = page.getByRole("dialog", { name: "Titles" });
+    await page.locator(".cs__jobs-toggle").click();
+    await expect(jobs).toBeVisible();
+    await page.getByRole("button", { name: "All titles" }).click();
+    await expect(dialog).toBeVisible();
+    await expect(jobs).toBeHidden();
+
+    // The window covers the panel, so open the job menu from the keyboard.
+    await page.locator(".cs__jobs-toggle").focus();
+    await page.keyboard.press("Enter");
+    await expect(jobs).toBeVisible();
+    await expect(dialog).toBeHidden();
+  });
+
   test("its close button and Escape close it, focus going back to the button", async ({ page }) => {
     const { button, dialog } = await open(page);
     await dialog.getByRole("button", { name: "Close" }).click();

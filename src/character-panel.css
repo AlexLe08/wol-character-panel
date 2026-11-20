@@ -236,6 +236,9 @@ button.cs__gear-button:hover,
   width: max-content;
   min-width: min(15rem, calc(100vw - 2rem));
   max-width: min(22rem, calc(100vw - 2rem));
+  /* The popover's own centring, which the panel's margin reset on ul
+     would otherwise undo. */
+  margin: auto;
   padding: 0;
   border: 1px solid var(--cs-rule-strong);
   border-radius: var(--cs-radius);
@@ -250,7 +253,9 @@ button.cs__gear-button:hover,
   }
 
   /* 0.35rem below the row's padding, over its 1px bottom rule, and in by
-     its 0.75rem padding; as wide as its content within the row's padding. */
+     its 0.75rem padding; as wide as its content within the row's padding.
+     The 1px and 0.75rem are .cs__gear's border-bottom and padding: change
+     them together. */
   .cs__jobs-list {
     position-anchor: --cs-gear;
     inset: auto;

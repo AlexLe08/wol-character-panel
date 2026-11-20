@@ -4,7 +4,7 @@ import { pointerAway, slot, tabTo, tooltipOf } from "./helpers.ts";
 // The panel as a host serves it, before hydration or with JavaScript off:
 // /static is server-rendered with no script (playground/static.tsx), and
 // these tests run with JavaScript disabled too. What must still work:
-// tooltips on hover and focus (CSS), the job menu (<details> of links),
+// tooltips on hover and focus (CSS), the job menu (a popover of links),
 // and the narrow layout (a container query). Escape needs the script to
 // hide a tooltip, so that isn't expected here (a detail window's Escape is
 // the browser's own).
