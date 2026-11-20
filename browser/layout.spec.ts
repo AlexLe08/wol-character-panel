@@ -1,5 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
-import { pointerAway, slot, tooltipOf } from "./helpers.ts";
+import { expect, test, type Locator, type Page } from "@playwright/test";
+import { pointerAway, slot, tabTo, tooltipOf } from "./helpers.ts";
 
 // Focus rings on everything focusable, and the container query's two
 // layouts.
@@ -9,8 +9,8 @@ for (const theme of ["document", "game"]) {
     await page.goto(`/?view=equipment&fixture=full&theme=${theme}`);
     // Open the job menu so its links are in the tab order too, without
     // moving focus: the walk starts from the top of the page.
-    await page.locator(".cs__jobs").evaluate((details: HTMLDetailsElement) => (details.open = true));
-    const focusable = await page.locator(".cs").locator("a, summary, [tabindex='0']").count();
+    await page.locator(".cs__jobs-list").evaluate((list: HTMLElement) => list.showPopover());
+    const focusable = await page.locator(".cs").locator("a, button, [tabindex='0']").count();
 
     const seen: string[] = [];
     let entered = false;
@@ -255,3 +255,92 @@ for (const theme of ["document", "game"]) {
     });
   }
 }
+
+// The list is a popover in the top layer, placed by anchor positioning
+// where the <details> list was: below the gear-set row, from its left
+// padding. Were the anchor lost, it would sit centred on the screen.
+for (const theme of ["document", "game"]) {
+  for (const width of ["", "18"]) {
+    test(`the open job menu opens below the gear-set row, from its padding (${theme}, ${width || "wide"})`, async ({
+      page,
+    }) => {
+      await page.goto(`/?view=equipment&fixture=full&theme=${theme}${width && `&width=${width}`}`);
+      await page.locator(".cs__jobs-toggle").click();
+      const list = await box(page, ".cs__jobs-list");
+      const row = await box(page, ".cs__gear");
+      expect(list.x - row.x).toBeCloseTo(12, 0);
+      expect(list.y - (row.y + row.height)).toBeCloseTo(4.6, 0);
+    });
+  }
+}
+
+// Escape, a click outside and the toggle close the list (the Popover API,
+// no script of ours). An open list covers the slots below it, and Tab
+// moves on past it, so Escape has to work from wherever focus is: WCAG
+// 2.4.11 asks that a focused item hidden by content the user opened can
+// be revealed without going back to that content.
+test.describe("the job menu closes", () => {
+  const list = (page: Page) => page.locator(".cs__jobs-list");
+  const toggle = (page: Page) => page.locator(".cs__jobs-toggle");
+
+  // Whether any of the element's corners or its centre is under the list.
+  const covered = (face: Locator) =>
+    face.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      const points = [
+        [r.left + 2, r.top + 2],
+        [r.right - 2, r.top + 2],
+        [r.left + 2, r.bottom - 2],
+        [r.right - 2, r.bottom - 2],
+        [r.left + r.width / 2, r.top + r.height / 2],
+      ];
+      return points.some(([x, y]) => document.elementFromPoint(x, y)?.closest(".cs__jobs-list"));
+    });
+
+  test("on Escape with focus on a slot the list covers, after the slot's tooltip", async ({ page }) => {
+    await page.goto("/?view=equipment&fixture=full");
+    await toggle(page).focus();
+    await page.keyboard.press("Enter");
+    await expect(list(page)).toBeVisible();
+    const stack = slot(page, "Core stack");
+    await tabTo(page, stack);
+    await expect(list(page), "Tab moves on and leaves the list open").toBeVisible();
+    expect(await covered(stack), "the focused slot is under the list").toBe(true);
+
+    // The first Escape is spent on the slot's own tooltip, as everywhere.
+    const tip = await tooltipOf(stack);
+    await expect(tip).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(tip).toBeHidden();
+    await expect(list(page)).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(list(page)).toBeHidden();
+    await expect(stack, "focus stays where it was").toBeFocused();
+    expect(await covered(stack)).toBe(false);
+  });
+
+  test("on Escape inside it, focus going back to the toggle", async ({ page }) => {
+    await page.goto("/?view=equipment&fixture=full");
+    await toggle(page).focus();
+    await page.keyboard.press("Enter");
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("link", { name: /Front end/ })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(list(page)).toBeHidden();
+    await expect(toggle(page)).toBeFocused();
+  });
+
+  test("on a click outside it, or on the toggle", async ({ page }) => {
+    await page.goto("/?view=equipment&fixture=full");
+    await toggle(page).click();
+    await expect(list(page)).toBeVisible();
+    await page.locator(".cs__bar").click();
+    await expect(list(page)).toBeHidden();
+
+    await toggle(page).click();
+    await expect(list(page)).toBeVisible();
+    await toggle(page).click();
+    await expect(list(page)).toBeHidden();
+  });
+});

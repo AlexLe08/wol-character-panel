@@ -160,12 +160,30 @@ describe("EquipmentPanel (server render)", () => {
       expect(html).not.toContain("Change job");
     });
 
-    it("is a details element in the gear-set row, so it opens without JavaScript", () => {
+    it("is a button and a popover list in the gear-set row, so it opens without JavaScript", () => {
       const html = render();
-      expect(html).toMatch(
-        /<div class="cs__gear"><div class="cs__gear-start"><details class="cs__jobs"><summary class="cs__jobs-toggle cs__gear-button">/,
+      expect(html).toMatch(/<div class="cs__gear"><div class="cs__gear-start"><div class="cs__jobs"><button /);
+      const [toggle] = withClass(html, "cs__jobs-toggle");
+      expect(toggle).toEqual({
+        name: "button",
+        attrs: { type: "button", class: "cs__jobs-toggle cs__gear-button", popoverTarget: expect.stringMatching(/jobs$/) },
+      });
+      expect(withClass(html, "cs__jobs-list")).toEqual([
+        { name: "ul", attrs: { class: "cs__jobs-list", id: toggle.attrs.popoverTarget, popover: "auto" } },
+      ]);
+      expect(html).toContain('<span class="cs-visually-hidden">Change job</span></button>');
+    });
+
+    it("gives each panel's list its own id, so two panels on a page open their own", () => {
+      const html = renderToStaticMarkup(
+        <>
+          <EquipmentPanel config={config} job={web} />
+          <EquipmentPanel config={config} job={web} />
+        </>,
       );
-      expect(html).toContain('<span class="cs-visually-hidden">Change job</span></summary>');
+      const targets = withClass(html, "cs__jobs-toggle").map((tag) => tag.attrs.popoverTarget);
+      expect(withClass(html, "cs__jobs-list").map((tag) => tag.attrs.id)).toEqual(targets);
+      expect(new Set(targets).size).toBe(2);
     });
 
     it("is no longer in the bar", () => {
@@ -174,7 +192,7 @@ describe("EquipmentPanel (server render)", () => {
     });
 
     it("draws a note as its toggle unless the config names another icon and label", () => {
-      const toggle = (html: string) => html.slice(html.indexOf("cs__jobs-toggle"), html.indexOf("</summary>"));
+      const toggle = (html: string) => html.slice(html.indexOf("cs__jobs-toggle"), html.indexOf("</button>"));
       expect(toggle(render())).toContain('<svg class="cs-icon"');
       const gearSet = { jobMenu: { label: "Switch persona", icon: "≡" } };
       const custom = toggle(render({ config: { ...config, gearSet } }));
@@ -490,7 +508,7 @@ describe("EquipmentPanel (server render)", () => {
       expect(links.map((tag) => tag.attrs["aria-current"])).toEqual([undefined, "true"]);
 
       const gone = render({ config: withGearSet({ links: [{ label: "Gone", action: { kind: "job", id: "gone" } }] }) });
-      expect(withClass(gone, "cs__gear-button").filter((tag) => tag.name !== "summary")).toEqual([
+      expect(withClass(gone, "cs__gear-button").filter((tag) => tag.name !== "button")).toEqual([
         { name: "span", attrs: { class: "cs__gear-button" } },
       ]);
     });

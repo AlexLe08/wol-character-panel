@@ -485,7 +485,7 @@ for (const [theme, tab] of [
 ]) {
   test(`every focusable element in the window shows a focus ring (${theme}, ${tab})`, async ({ page }) => {
     await page.goto(windowUrl(`&theme=${theme}&tab=${tab}`));
-    await page.locator(".cs__jobs").evaluate((details: HTMLDetailsElement) => (details.open = true));
+    await page.locator(".cs__jobs-list").evaluate((list: HTMLElement) => list.showPopover());
     // Visible ones only: a closed detail window's controls take no Tab stop.
     const focusable = await page.locator(".cs").locator("a, summary, button, [tabindex='0'] >> visible=true").count();
     const seen: string[] = [];

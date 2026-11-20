@@ -25,6 +25,7 @@ export function GearSetRow({
   job,
   gearSet,
   jobMenu,
+  idPrefix,
   end,
   basePath,
   jobParam,
@@ -38,6 +39,8 @@ export function GearSetRow({
   gearSet: GearSet | undefined;
   // Whether to draw the job menu (more than one job, and not turned off).
   jobMenu: boolean;
+  // Makes the job list's id unique, even with two panels on one page.
+  idPrefix: string;
   // The host's own control for the right end, in place of an end link.
   end?: ReactNode;
   basePath: string;
@@ -52,6 +55,7 @@ export function GearSetRow({
   const endLink = links.find((link) => link.position === "end");
   const action = { config, job, jobParam, ownParams, currentHref, renderLink, isParamActive };
   const menuLabel = gearSet?.jobMenu?.label ?? "Change job";
+  const menuId = `${idPrefix}jobs`;
 
   return (
     <div className="cs__gear">
@@ -60,16 +64,22 @@ export function GearSetRow({
           <GearLink key={link.id ?? index} link={link} {...action} />
         ))}
         {jobMenu && (
-          // Keyed by job so the menu closes after a job change, which
-          // re-renders the panel without reloading the page.
-          <details className="cs__jobs" key={job.id}>
-            <summary className="cs__jobs-toggle cs__gear-button">
+          // A button and its list, through the Popover API, as a detail
+          // window is: no script of ours, and it works with JavaScript off.
+          // The button opens and closes the list, as do Escape (from
+          // anywhere, so a list left open over a focused slot can be
+          // dismissed without going back to it: WCAG 2.4.11) and a click
+          // outside; Escape inside it returns focus to the button. Keyed by
+          // job so the list closes after a job change, which re-renders
+          // the panel without reloading the page.
+          <div className="cs__jobs" key={job.id}>
+            <button type="button" className="cs__jobs-toggle cs__gear-button" popoverTarget={menuId}>
               <span className="cs__gear-icon" aria-hidden="true">
                 <Icon {...gearSet?.jobMenu} fallback={<JobMenuIcon />} />
               </span>
               <span className="cs-visually-hidden">{menuLabel}</span>
-            </summary>
-            <ul className="cs__jobs-list">
+            </button>
+            <ul className="cs__jobs-list" id={menuId} popover="auto">
               {config.jobs.map((option) => (
                 <li key={option.id}>
                   {renderLink({
@@ -92,7 +102,7 @@ export function GearSetRow({
                 </li>
               ))}
             </ul>
-          </details>
+          </div>
         )}
       </div>
       {(gearSet?.label || gearSet?.value) && (

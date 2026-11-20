@@ -41,6 +41,13 @@ test("the job menu opens and its links change the job", async ({ page }) => {
   await expect(toggle).toHaveAccessibleName("Change job");
   await toggle.click();
   await expect(healthcare).toBeVisible();
+  // Escape and a click outside close it with no script too.
+  await page.keyboard.press("Escape");
+  await expect(healthcare).toBeHidden();
+  await toggle.click();
+  await page.locator(".cs__bar").click();
+  await expect(healthcare).toBeHidden();
+  await toggle.click();
 
   await healthcare.click();
   await expect(page).toHaveURL(/[?&]job=healthcare/);
