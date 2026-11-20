@@ -257,8 +257,10 @@
   from inside, all without JavaScript. Its box and styles match the
   `<details>` list in both themes at every width measured; without anchor
   positioning it is centred on the screen. Browser tests: its place below
-  the row, Escape on a covered slot (after that slot's tooltip), Escape
-  inside, a click outside, and `/static`; the new close tests failed on
+  the row, centred with the anchor positioning block taken out, Escape on
+  a covered slot (after that slot's tooltip), Escape inside, a click
+  outside, a detail window and the menu closing each other, and
+  `/static`; the new close tests failed on
   the `<details>` menu. A markup break (`<details>`, `<summary>`,
   `[open]`), in the CHANGELOG's breaking changes.
 - Screenshots and videos in PRs (2026-11-19, decision 0009): the
