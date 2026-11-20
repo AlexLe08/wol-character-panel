@@ -302,11 +302,10 @@ test("without anchor positioning, the open job menu is centred on the screen", a
   expect(Math.abs(list.y + list.height / 2 - viewport.height / 2)).toBeLessThan(2);
 });
 
-// Escape, a click outside and the toggle close the list (the Popover API,
-// no script of ours). An open list covers the slots below it, and Tab
-// moves on past it, so Escape has to work from wherever focus is: WCAG
-// 2.4.11 asks that a focused item hidden by content the user opened can
-// be revealed without going back to that content.
+// Escape, a click outside and the toggle close the list (the Popover API),
+// and so does focus moving on out of the menu (JobMenuFocus), so an open
+// list never stays over the slot focus moved to (WCAG 2.4.11). Without
+// JavaScript, Escape from anywhere does that job (no-js.spec.ts).
 test.describe("the job menu closes", () => {
   const list = (page: Page) => page.locator(".cs__jobs-list");
   const toggle = (page: Page) => page.locator(".cs__jobs-toggle");
@@ -325,27 +324,41 @@ test.describe("the job menu closes", () => {
       return points.some(([x, y]) => document.elementFromPoint(x, y)?.closest(".cs__jobs-list"));
     });
 
-  test("on Escape with focus on a slot the list covers, after the slot's tooltip", async ({ page }) => {
+  test("when Tab moves on out of the menu, never over a focused slot", async ({ page }) => {
     await page.goto("/?view=equipment&fixture=full");
     await toggle(page).focus();
     await page.keyboard.press("Enter");
     await expect(list(page)).toBeVisible();
+    // Between the toggle and its links it stays open.
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("link", { name: /Front end/ })).toBeFocused();
+    await page.keyboard.press("Shift+Tab");
+    await expect(toggle(page)).toBeFocused();
+    await expect(list(page)).toBeVisible();
+
     const stack = slot(page, "Core stack");
     await tabTo(page, stack);
-    await expect(list(page), "Tab moves on and leaves the list open").toBeVisible();
-    expect(await covered(stack), "the focused slot is under the list").toBe(true);
+    await expect(list(page)).toBeHidden();
+    expect(await covered(stack), "the focused slot is in view").toBe(false);
+  });
+
+  test("on Escape, after a hovered slot's tooltip", async ({ page }) => {
+    await page.goto("/?view=equipment&fixture=full");
+    await toggle(page).focus();
+    await page.keyboard.press("Enter");
+    await page.keyboard.press("Tab");
+    const skills = slot(page, "Skills");
+    await skills.hover();
+    const tip = await tooltipOf(skills);
+    await expect(tip).toBeVisible();
 
     // The first Escape is spent on the slot's own tooltip, as everywhere.
-    const tip = await tooltipOf(stack);
-    await expect(tip).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(tip).toBeHidden();
     await expect(list(page)).toBeVisible();
-
     await page.keyboard.press("Escape");
     await expect(list(page)).toBeHidden();
-    await expect(stack, "focus stays where it was").toBeFocused();
-    expect(await covered(stack)).toBe(false);
+    await expect(toggle(page)).toBeFocused();
   });
 
   test("on Escape inside it, focus going back to the toggle", async ({ page }) => {

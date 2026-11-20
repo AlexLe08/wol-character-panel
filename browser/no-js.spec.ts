@@ -56,6 +56,30 @@ test("the job menu opens and its links change the job", async ({ page }) => {
   await expect(page.getByRole("link", { name: /Healthcare/ })).toBeHidden();
 });
 
+// With no script, Tab moves on past the open list and leaves it open over
+// the slots below; Escape closes it from there, without going back to it
+// (WCAG 2.4.11).
+test("Escape closes the job menu from a slot it covers", async ({ page }) => {
+  await page.goto("/static?view=equipment&fixture=full");
+  const list = page.locator(".cs__jobs-list");
+  await page.locator(".cs__jobs-toggle").click();
+  await expect(list).toBeVisible();
+  const stack = slot(page, "Core stack");
+  await tabTo(page, stack);
+  await expect(list).toBeVisible();
+  const covered = () =>
+    stack.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      return !!document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)?.closest(".cs__jobs-list");
+    });
+  expect(await covered(), "the focused slot is under the list").toBe(true);
+
+  await page.keyboard.press("Escape");
+  await expect(list).toBeHidden();
+  await expect(stack, "focus stays where it was").toBeFocused();
+  expect(await covered()).toBe(false);
+});
+
 test("the narrow layout needs no script", async ({ page }) => {
   await page.goto("/static?view=equipment&fixture=full&width=22");
   const portrait = (await page.locator(".cs__portrait").boundingBox())!;

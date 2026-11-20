@@ -31,16 +31,19 @@ for (const fixture of ["full", "minimal", "edge-cases"]) {
 for (const theme of ["document", "game"]) {
   test(`no axe violations with a tooltip shown and the job menu open (${theme})`, async ({ page }) => {
     await page.goto(`/?view=equipment&fixture=full&theme=${theme}`);
-    await page.locator(".cs__jobs-toggle").click();
+    // Focus moving on closes the list, so open it once focus is there.
     await tabTo(page, slot(page, "Skills"));
+    await page.locator(".cs__jobs-list").evaluate((list: HTMLElement) => list.showPopover());
+    await expect(page.locator(".cs__jobs-list")).toBeVisible();
     expect(await violations(page)).toEqual([]);
   });
 }
 
 test("no axe violations on dark host tokens (document theme)", async ({ page }) => {
   await page.goto("/?view=equipment&fixture=full&tokens=dark");
-  await page.locator(".cs__jobs-toggle").click();
   await tabTo(page, slot(page, "Skills"));
+  await page.locator(".cs__jobs-list").evaluate((list: HTMLElement) => list.showPopover());
+  await expect(page.locator(".cs__jobs-list")).toBeVisible();
   expect(await violations(page)).toEqual([]);
 });
 

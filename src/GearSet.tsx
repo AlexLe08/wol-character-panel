@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import type { LinkRendererProps } from "./EquipmentBody.tsx";
 import { glyph, Icon, JobMenuIcon } from "./icons.tsx";
+import { JobMenuFocus } from "./JobMenuFocus.tsx";
 import { actionHref, isActionActive, jobHref } from "./resolve.ts";
 import { LIMITS } from "./schema.ts";
 import type { CharacterPanelConfig, GearSet, GearSetLink, Job, RowAction } from "./types.ts";
@@ -65,14 +66,15 @@ export function GearSetRow({
         ))}
         {jobMenu && (
           // A button and its list, through the Popover API, as a detail
-          // window is: no script of ours, and it works with JavaScript off.
-          // The button opens and closes the list, as do Escape (from
-          // anywhere, so a list left open over a focused slot can be
-          // dismissed without going back to it: WCAG 2.4.11) and a click
-          // outside; Escape inside it returns focus to the button. Keyed by
-          // job so the list closes after a job change, which re-renders
-          // the panel without reloading the page.
-          <div className="cs__jobs" key={job.id}>
+          // window is, so it works with JavaScript off. The button opens and
+          // closes the list, as do Escape (from anywhere, so a list left open
+          // over a focused slot can be dismissed without going back to it:
+          // WCAG 2.4.11) and a click outside; Escape inside it returns focus
+          // to the button. JobMenuFocus adds the one thing a popover can't
+          // do: close when focus moves on out of the menu. Keyed by job so
+          // the list closes after a job change, which re-renders the panel
+          // without reloading the page.
+          <JobMenuFocus key={job.id}>
             <button type="button" className="cs__jobs-toggle cs__gear-button" popoverTarget={menuId}>
               <span className="cs__gear-icon" aria-hidden="true">
                 <Icon {...gearSet?.jobMenu} fallback={<JobMenuIcon />} />
@@ -102,7 +104,7 @@ export function GearSetRow({
                 </li>
               ))}
             </ul>
-          </div>
+          </JobMenuFocus>
         )}
       </div>
       {(gearSet?.label || gearSet?.value) && (
