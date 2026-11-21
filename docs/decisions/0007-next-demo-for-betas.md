@@ -55,6 +55,9 @@ We should test and build without any particular project or site in mind at this 
   packed copy there) shows. That check moves to before 2.0.0, when the
   site upgrades.
 - The next demo looks like the stable one; nothing on the page says it's a
-  beta.
+  beta. *Note, 2026-11-21 (#57):* from the first beta built after #57, the
+  demo's header names the version it was built from, with an `@next`
+  install line when that version is a prerelease, so `/next/` says it's a
+  beta. The decision itself is unchanged.
 - When to revisit: when the site upgrades to 2.x, or if a beta needs
   checking in a real host before 2.0.0.
