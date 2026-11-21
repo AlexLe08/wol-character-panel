@@ -126,13 +126,10 @@ A config is plain JSON. This one is small: one slot and one job.
 
 Add `"$schema"` pointing at `character-panel.schema.json` for autocomplete
 and validation in your editor, either your installed copy or the published
-one:
+one, as the config's first key:
 
-```jsonc
-{
-  "$schema": "https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@2/character-panel.schema.json",
-  // …the rest of the config
-}
+```json
+"$schema": "https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@2/character-panel.schema.json",
 ```
 
 That URL (the schema's `$id`) resolves once 2.0.0 is released; until
