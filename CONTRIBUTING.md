@@ -14,8 +14,8 @@ npx playwright install chromium   # once, for the browser tests
 npm run dev                       # the playground on the configs in examples/
 ```
 
-The README's Development section covers the tests, the package checks and
-the playground.
+[docs/development.md](docs/development.md) covers the tests, the package
+checks, the playground and the repository's files.
 
 ## Pull requests
 
@@ -32,15 +32,15 @@ the playground.
 - Fill in the template's semver line, and add a line under Unreleased in
   `CHANGELOG.md` for anything a host can see.
 - Changes to entries, the config format, behaviour or theming update the
-  README in the same PR.
+  README, `docs/config.md` or `docs/behaviour.md` in the same PR.
 - A visible change shows before/after screenshots in the PR description
   (and a short video if it moves: hover, focus, menus), dragged into the
   description or uploaded with `gh pr edit --attach` (gh 2.99.0+), never
   committed. `scripts/pr-media.mjs` can make them; any screenshot tool
   will do. Otherwise write "None: no visible change."
 
-The maintainer reviews, merges, and makes releases (see the README's
-Releasing section).
+The maintainer reviews, merges, and makes releases (see
+[docs/releasing.md](docs/releasing.md)).
 
 ## Security
 
