@@ -17,9 +17,9 @@ The options for where a README image lives:
   reviewed in the PR's diff, replaced by a later commit. It adds its
   bytes to the history for good (the first two are about 200 KB).
 - A GitHub attachment (`user-attachments/assets/…`), uploaded through a
-  PR as 0009 does: no bytes in the repository, but the image isn't in
-  git, can't be regenerated against a commit, and a new one means
-  another upload and a new URL.
+  PR as 0009 does: no bytes in the repository, but the image isn't
+  tied to a commit or reviewed in a diff, and a new one means another
+  upload and a new URL.
 - Shipped in the npm package: every install downloads it, for a page
   only npmjs.com and GitHub show.
 
@@ -40,7 +40,11 @@ The README's screenshots are committed under `docs/media/`, which
 - The npm tarball doesn't grow; the repository does, by each version of
   each image.
 - The images come from `main`, so the npm page of an older release shows
-  the current screenshots, and a new image 404s until its PR merges.
+  the current screenshots, and a new image 404s until its PR merges (in
+  the PR and on the branch's README too).
+- Each published README keeps its URLs, so a file in `docs/media/` is
+  replaced under the same name, never renamed or removed, or every
+  release's npm page that shows it breaks.
 - They are `scripts/preview.mjs` shots (the window's first tab, wide):
   `adventurer` in `game`, `portfolio` in `document`. A change that alters
   how they look should take them again in the same PR.

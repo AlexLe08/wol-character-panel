@@ -264,7 +264,8 @@ that install in the site.
   behaviour) shows it in its body: before/after screenshots, and a short
   video when it's behaviour, made and uploaded with the `pr-media` skill.
   PR media is never committed; the README's screenshots are, in
-  `docs/media/` ([decision 0011](docs/decisions/0011-readme-screenshots-committed.md)).
+  `docs/media/` ([decision 0011](docs/decisions/0011-readme-screenshots-committed.md)),
+  retaken by a PR that changes how they look, under the same file names.
   Other PRs say "None: no visible change."
 - The roadmap's Done entry goes in the feature's own PR, not in a
   follow-up (no "add the PR number" commits after merging).
