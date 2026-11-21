@@ -53,7 +53,8 @@ function withPortrait(raw: unknown, src: string): unknown {
     ...config,
     jobs: config.jobs.map((job) => {
       const { framing } = (job.portrait ?? {}) as { framing?: unknown };
-      return { ...job, portrait: { src, alt: "The image you chose", framing: framing ?? "face" } };
+      // An example's framing is kept; without one, parseConfig's default.
+      return { ...job, portrait: { src, alt: "The image you chose", ...(framing === undefined ? {} : { framing }) } };
     }),
   };
 }
@@ -120,12 +121,12 @@ function App() {
   const [notice, setNotice] = useState<string | null>(null);
   const [portrait, setPortrait] = useState<string | null>(null);
   const portraitInput = useRef<HTMLInputElement>(null);
-  const choosePortrait = (file: File | undefined) => {
+  const replacePortrait = (src: string | null) => {
     if (portrait) URL.revokeObjectURL(portrait);
-    setPortrait(file ? URL.createObjectURL(file) : null);
+    setPortrait(src);
   };
   const removePortrait = () => {
-    choosePortrait(undefined);
+    replacePortrait(null);
     if (portraitInput.current) portraitInput.current.value = "";
   };
   const query = new URL(href, location.origin).searchParams;
@@ -280,7 +281,12 @@ function App() {
             type="file"
             accept="image/*"
             aria-describedby="pg-portrait-note"
-            onChange={(event) => choosePortrait(event.target.files?.[0])}
+            onChange={(event) => {
+              // A cancelled dialog can fire change with no file: only
+              // Remove takes the portrait away.
+              const file = event.target.files?.[0];
+              if (file) replacePortrait(URL.createObjectURL(file));
+            }}
           />
         </label>
         <button type="button" disabled={!portrait} onClick={removePortrait}>
