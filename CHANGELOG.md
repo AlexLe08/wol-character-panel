@@ -24,6 +24,9 @@ A PR that changes what's published adds its line under Unreleased; the
 - README: says the panel is modelled on a game's character screen but not
   a one-to-one copy, with examples of where it differs, and that the
   package isn't affiliated with the game's publisher.
+- README: says at the top that it describes 2.0 (on npm's `next` tag
+  until 2.0.0, while a bare install gets 1.0.4), installs `@next`, and
+  gives a complete Next.js App Router `app/page.tsx`.
 
 ## [2.0.0-beta.2] - 2026-11-21
 

@@ -325,6 +325,19 @@
   isn't affiliated with the game's publisher. The game stays unnamed (the
   trademark rule). Text only in the header, so the browser tests' Tab
   walk to the panel is unchanged.
+- The README says which version it describes, with a Next.js page
+  (2026-11-21, the first of the first-impressions docs items): a note at
+  the top that it describes 2.0, on `next` until 2.0.0, while a bare
+  install gets 1.0.4's `CharacterSheet` (its README linked at the
+  `v1.0.4` tag), and the install line uses `@next`. A complete App Router
+  `app/page.tsx` under Usage: the config parsed and `publicConfig`'d at
+  module level, awaited `searchParams`, `next/link` through `renderLink`
+  (`scroll={false}` for job switches), the CSS import. Checked by
+  `next build` and `next start` (Next 16.4.6, React 19.3, zod 4.6) in a
+  throwaway app on the packed beta.2 tarball, with the page copied out of
+  the README: it typechecks, renders, its links are `next/link`, and
+  `?job=` switches the job. The screenshot of both themes waits on the
+  owner (committing it isn't covered by decision 0009).
 
 ## Tooling plan (done)
 
@@ -380,12 +393,10 @@ upload are both Done (above).
    the README's `EquipmentPanel` and `CharacterWindow`. 2.0.0 ends that,
    and is also when most newcomers will first see the demo and the npm
    page, so these come before it, one small PR each:
-   - **docs:** a line at the top of the README saying which version it
-     describes (`@next` until 2.0.0); a complete Next.js App Router
-     `page.tsx` (awaited `searchParams`, `next/link` through
-     `renderLink`, the CSS import); a screenshot of both themes, which
-     npm shows (committing it is the owner's call: decision 0009 covers
-     PR media, not the README).
+   - **docs:** a screenshot of both themes in the README, which npm
+     shows (committing it is the owner's call: decision 0009 covers PR
+     media, not the README). The version note and the Next.js page are
+     Done (above).
    - **demo:** the "Fixture" label becomes "Example" (the `fixture`
      parameter stays, with the links, tests and scripts that use it);
      each example opens in its own theme (`portfolio` in `document`),
@@ -426,7 +437,9 @@ upload are both Done (above).
    around the panel.
 4. **2.0.0 (owner):** `/release-prep` with the API called settled (it
    proposes `2.0.0`; the schema's `$id` becomes `@2`), merge, tag. The
-   demo's `latest` then shows 2.0.0, and `/next/` falls back to it.
+   demo's `latest` then shows 2.0.0, and `/next/` falls back to it. The
+   release PR also takes out the README's version note and the `@next`
+   in its install line.
 5. **The site's upgrade PR**, in its own repository and session (it
    depends on `^1`, so nothing reaches it before then):
    - bump to `^2` and run `npm run generate:character-schema` (the

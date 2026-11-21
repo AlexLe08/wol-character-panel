@@ -1,5 +1,11 @@
 # Character panel (`@solution-nine/wol-character-panel`)
 
+> **This README describes 2.0**, on npm's `next` tag until 2.0.0 is
+> released: install `@solution-nine/wol-character-panel@next`. A bare
+> install still gets 1.0.4, whose component is `CharacterSheet` (no
+> `EquipmentPanel` or `CharacterWindow`); its README is at the
+> [`v1.0.4` tag](https://github.com/AlexLe08/wol-character-panel/tree/v1.0.4#readme).
+
 A panel modelled on an RPG character/equipment screen:
 
 ```
@@ -27,11 +33,8 @@ bundler or Node 22.12+. It runs the home page of
 started.
 
 ```sh
-npm install @solution-nine/wol-character-panel react zod
+npm install @solution-nine/wol-character-panel@next react zod
 ```
-
-Betas of the next major are on npm's `next` tag:
-`npm install @solution-nine/wol-character-panel@next`.
 
 Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 on the example configs, as of the latest release. The newest beta
@@ -155,6 +158,47 @@ import { CharacterWindow } from "@solution-nine/wol-character-panel/react";
 Both are Server Components, with two small client files inside for
 Escape and focus handling; they render in a plain client-side React app
 too.
+
+### In Next.js (App Router)
+
+A complete page, with the config beside it as `app/character-panel.json`:
+
+```tsx
+// app/page.tsx
+import Link from "next/link";
+import { parseConfig, publicConfig, resolveJob } from "@solution-nine/wol-character-panel";
+import { EquipmentPanel, type LinkRendererProps } from "@solution-nine/wol-character-panel/react";
+// The components import their own CSS; import it yourself (here or in
+// app/layout.tsx) only to place it before your own styles.
+import "@solution-nine/wol-character-panel/character-panel.css";
+import json from "./character-panel.json";
+
+const parsed = parseConfig(json);
+if (!parsed.config) throw new Error(parsed.errors.join("\n"));
+const config = publicConfig(parsed.config); // leaves out draft and hidden jobs
+
+// Switching jobs keeps the scroll position; other links scroll as usual.
+function PanelLink({ intent, ...props }: LinkRendererProps) {
+  return <Link {...props} scroll={intent !== "job"} />;
+}
+
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const { job } = await searchParams; // a Promise since Next.js 15
+  return (
+    <main>
+      <EquipmentPanel config={config} job={resolveJob(config, job)} renderLink={PanelLink} />
+    </main>
+  );
+}
+```
+
+`CharacterWindow` goes in the same way, with `tab` and `page` from the
+same `searchParams`. To send the portrait through `next/image`, pass
+`renderPortrait`.
 
 `loadConfig(sources, fallback)` tries each `{ name, load }` source in order,
 such as an admin API, a CMS adapter, or a remote JSON file. It uses the first
