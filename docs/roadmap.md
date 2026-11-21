@@ -308,6 +308,15 @@
   portrait loads it, across a job switch and on the no-portrait job, the
   URL unchanged, axe on the panel and the controls, and Remove and a
   reload each restoring the example's portrait.
+- README trimmed to a host's quick start (2026-11-21, the owner's
+  request; 641 lines to about 225): entries, a small config, usage with
+  `parts` and `gearSetEnd`, behaviour in brief, theming and versioning.
+  The rest moved verbatim into `docs/`: `config.md` (every field),
+  `behaviour.md`, `development.md` (checks, tests, playground, the Files
+  table) and `releasing.md`. The README links them by absolute GitHub
+  URL, since `docs/` doesn't ship and npm shows the README alone.
+  CLAUDE.md, CONTRIBUTING, the PR template, the reviewer agent and
+  release-prep point at the new files.
 
 ## Tooling plan (done)
 

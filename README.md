@@ -34,7 +34,7 @@ Betas of the next major are on npm's `next` tag:
 `npm install @solution-nine/wol-character-panel@next`.
 
 Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
-(below) on the example configs, as of the latest release. The newest beta
+on the example configs, as of the latest release. The newest beta
 is at <https://alexle08.github.io/wol-character-panel/next/> (the latest
 release again when no beta is newer).
 
@@ -52,8 +52,7 @@ release again when no beta is newer).
 
 ## Config
 
-A config is plain JSON. This one is the smallest that renders: one slot
-and one job.
+A config is plain JSON. This one is small: one slot and one job.
 
 ```json
 {
@@ -202,10 +201,10 @@ them gradients and its own tones.
 
 ## Versioning
 
-Semver, keyed to the config contract: a new optional field or a looser
-limit is a minor or patch release; a new required field, a tighter limit
-or a removed key or export is a major one, and moves the schema's `$id`
-to the new major. [CHANGELOG.md](https://github.com/AlexLe08/wol-character-panel/blob/main/CHANGELOG.md)
+Semver, keyed to the config contract: a new optional field, a looser
+limit or a new export is a minor or patch release; a new required field,
+a tighter limit, a removed key or export, or a change in behaviour hosts
+rely on is a major one, and moves the schema's `$id` to the new major. [CHANGELOG.md](https://github.com/AlexLe08/wol-character-panel/blob/main/CHANGELOG.md)
 lists what each release changed for hosts.
 
 ## More

@@ -3,7 +3,7 @@
 Project instructions for Claude Code. Personal working-style preferences
 live in `CLAUDE.local.md` (gitignored). Current status and next steps live
 in `docs/roadmap.md`. `README.md` is the host's quick start (entries,
-usage, theming, versioning), kept to what a host needs to get the panel
+a small config, usage, behaviour in brief, theming, versioning), kept to what a host needs to get the panel
 working; the detail lives in `docs/`: `config.md` (every config field),
 `behaviour.md`, `development.md` (checks, tests, playground, the
 repository's files) and `releasing.md`. Read the one that covers an area
