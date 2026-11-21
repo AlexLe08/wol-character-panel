@@ -10,7 +10,7 @@ title bar ............................ character name
 ```
 
 The two header slots sit either side of the job title (think main weapon and
-job stone), and the left and right columns hold up to 6 slots each. Above them, a
+job crystal), and the left and right columns hold up to 6 slots each. Above them, a
 gear-set row holds icon links, the job menu and a caption. Each slot shows a
 compact item-card tooltip on hover or keyboard focus. Clicking it goes to a page
 section, another page, or an external site. Changing the job (`?job=<id>`) swaps the slots, tooltips, and
