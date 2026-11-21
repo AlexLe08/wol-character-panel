@@ -19,7 +19,7 @@ for (const { name, origin, base } of DEMOS) {
     page.on("response", (response) => {
       if (response.status() >= 400) failed.push(`${response.status()} ${response.url()}`);
     });
-    await page.goto(`${demo}?fixture=full`, { waitUntil: "networkidle" });
+    await page.goto(`${demo}?fixture=portfolio`, { waitUntil: "networkidle" });
 
     const portrait = page.locator(".cs__portrait img");
     await expect(portrait).toHaveAttribute("src", `${base}portrait.svg`);
@@ -28,13 +28,13 @@ for (const { name, origin, base } of DEMOS) {
   });
 
   test(`${name}'s job links keep the base path and survive a reload`, async ({ page }) => {
-    await page.goto(`${demo}?theme=game`);
+    await page.goto(`${demo}?fixture=portfolio&theme=game`);
     await page.locator(".cs__jobs-toggle").click();
     const link = page.getByRole("link", { name: /Healthcare/ });
-    await expect(link).toHaveAttribute("href", `${base}?theme=game&job=healthcare`);
+    await expect(link).toHaveAttribute("href", `${base}?fixture=portfolio&theme=game&job=healthcare`);
 
     await link.click();
-    await expect(page).toHaveURL(`${demo}?theme=game&job=healthcare`);
+    await expect(page).toHaveURL(`${demo}?fixture=portfolio&theme=game&job=healthcare`);
     await page.reload();
     await expect(page.locator(".cs__job-title")).toHaveText("Developer in healthcare");
   });

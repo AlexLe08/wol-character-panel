@@ -6,7 +6,7 @@ import { pointerAway, slot, tabTo, tooltipOf } from "./helpers.ts";
 
 for (const theme of ["document", "game"]) {
   test(`every focusable element in the panel shows a focus ring (${theme})`, async ({ page }) => {
-    await page.goto(`/?view=equipment&fixture=full&theme=${theme}`);
+    await page.goto(`/?view=equipment&fixture=portfolio&theme=${theme}`);
     // Count with the job menu open, so its links count too; the walk opens
     // it from the keyboard when it reaches the toggle (focus landing outside
     // the menu closes it, so it can't be opened ahead).
@@ -60,7 +60,7 @@ async function box(page: Page, selector: string) {
 }
 
 test("wide: the portrait sits between the columns, slot names hidden", async ({ page }) => {
-  await page.goto("/?view=equipment&fixture=full");
+  await page.goto("/?view=equipment&fixture=portfolio&theme=document");
   const left = await box(page, ".cs__slots--left");
   const portrait = await box(page, ".cs__portrait");
   const right = await box(page, ".cs__slots--right");
@@ -74,7 +74,7 @@ test("wide: the portrait sits between the columns, slot names hidden", async ({ 
 });
 
 test("narrow (below 26rem): portrait on top, slots in rows of three with names", async ({ page }) => {
-  await page.goto("/?view=equipment&fixture=full&width=22");
+  await page.goto("/?view=equipment&fixture=portfolio&theme=document&width=22");
   const portrait = await box(page, ".cs__portrait");
   const left = await box(page, ".cs__slots--left");
   expect(portrait.y + portrait.height).toBeLessThanOrEqual(left.y);
@@ -92,7 +92,7 @@ test("narrow (below 26rem): portrait on top, slots in rows of three with names",
 test("the layout follows the container, not the viewport", async ({ page }) => {
   // A wide viewport with a narrow container still gets the narrow layout.
   await page.setViewportSize({ width: 1400, height: 900 });
-  await page.goto("/?view=equipment&fixture=full&width=22");
+  await page.goto("/?view=equipment&fixture=portfolio&theme=document&width=22");
   const portrait = await box(page, ".cs__portrait");
   const left = await box(page, ".cs__slots--left");
   expect(portrait.y + portrait.height).toBeLessThanOrEqual(left.y);
@@ -103,7 +103,7 @@ test("in a window, the slot layout follows the equipment pane, not the window", 
   // panel: the root gets cs--window (its container renamed cs-window) and
   // the header and body go into a .cs__equipment wrapper (the cs container).
   await page.setViewportSize({ width: 1400, height: 900 });
-  await page.goto("/?view=equipment&fixture=full");
+  await page.goto("/?view=equipment&fixture=portfolio&theme=document");
   await page.locator(".cs").evaluate((root: HTMLElement) => {
     root.classList.add("cs--window");
     root.style.maxWidth = "60rem";
@@ -129,7 +129,7 @@ test("in a window, the slot layout follows the equipment pane, not the window", 
 test("a cs--window root is not the cs container", async ({ page }) => {
   // At 22rem the root alone would get the narrow layout; renamed cs-window,
   // with no pane wrapper, the narrow rules don't apply.
-  await page.goto("/?view=equipment&fixture=full&width=22");
+  await page.goto("/?view=equipment&fixture=portfolio&theme=document&width=22");
   await page.locator(".cs").evaluate((root: HTMLElement) => root.classList.add("cs--window"));
   const left = await box(page, ".cs__slots--left");
   const portrait = await box(page, ".cs__portrait");
@@ -189,7 +189,7 @@ for (const theme of ["document", "game"]) {
 // The job menu sits in the gear-set row, above the job header, in both
 // layouts; the bar has none.
 test("the job menu is in the gear-set row, not the bar", async ({ page }) => {
-  await page.goto("/?view=equipment&fixture=full");
+  await page.goto("/?view=equipment&fixture=portfolio&theme=document");
   await expect(page.locator(".cs__bar .cs__jobs")).toHaveCount(0);
   const toggle = page.locator(".cs__gear .cs__jobs-toggle");
   await expect(toggle).toHaveAccessibleName("Change job");
@@ -227,7 +227,7 @@ for (const theme of ["document", "game"]) {
   ] as const) {
     test(`narrow: every slot's tooltip stays inside the panel (${theme}, ${name})`, async ({ page }) => {
       if (viewport) await page.setViewportSize(viewport);
-      await page.goto(`/?${url}&fixture=full&theme=${theme}`);
+      await page.goto(`/?${url}&fixture=portfolio&theme=${theme}`);
       // In the window the panel is its equipment pane.
       const panel = await box(page, viewport ? ".cs__equipment" : ".cs");
       // The header's slots too; empty slots have no tooltip.
@@ -272,7 +272,7 @@ for (const theme of ["document", "game"]) {
     test(`the open job menu opens below the gear-set row, from its padding (${theme}, ${width || "wide"})`, async ({
       page,
     }) => {
-      await page.goto(`/?view=equipment&fixture=full&theme=${theme}${width && `&width=${width}`}`);
+      await page.goto(`/?view=equipment&fixture=portfolio&theme=${theme}${width && `&width=${width}`}`);
       await page.locator(".cs__jobs-toggle").click();
       const list = await box(page, ".cs__jobs-list");
       const row = await box(page, ".cs__gear");
@@ -287,7 +287,7 @@ for (const theme of ["document", "game"]) {
 // own place, centred on the screen (the panel's margin reset on ul must
 // not pin it to the top-left corner).
 test("without anchor positioning, the open job menu is centred on the screen", async ({ page }) => {
-  await page.goto("/?view=equipment&fixture=full");
+  await page.goto("/?view=equipment&fixture=portfolio&theme=document");
   const removed = await page.evaluate(() => {
     let count = 0;
     for (const sheet of document.styleSheets) {
@@ -333,7 +333,7 @@ test.describe("the job menu closes", () => {
     });
 
   test("when Tab moves on out of the menu, never over a focused slot", async ({ page }) => {
-    await page.goto("/?view=equipment&fixture=full");
+    await page.goto("/?view=equipment&fixture=portfolio&theme=document");
     await toggle(page).focus();
     await page.keyboard.press("Enter");
     await expect(list(page)).toBeVisible();
@@ -353,7 +353,7 @@ test.describe("the job menu closes", () => {
   // As in Safari, where a click doesn't focus the button: focus never in
   // the menu, then landing on a slot the list covers.
   test("when focus lands outside without having been in the menu", async ({ page }) => {
-    await page.goto("/?view=equipment&fixture=full");
+    await page.goto("/?view=equipment&fixture=portfolio&theme=document");
     await list(page).evaluate((element: HTMLElement) => element.showPopover());
     await expect(list(page)).toBeVisible();
     const stack = slot(page, "Core stack");
@@ -363,7 +363,7 @@ test.describe("the job menu closes", () => {
   });
 
   test("on Escape, after a hovered slot's tooltip", async ({ page }) => {
-    await page.goto("/?view=equipment&fixture=full");
+    await page.goto("/?view=equipment&fixture=portfolio&theme=document");
     await toggle(page).focus();
     await page.keyboard.press("Enter");
     await page.keyboard.press("Tab");
@@ -382,7 +382,7 @@ test.describe("the job menu closes", () => {
   });
 
   test("on Escape inside it, focus going back to the toggle", async ({ page }) => {
-    await page.goto("/?view=equipment&fixture=full");
+    await page.goto("/?view=equipment&fixture=portfolio&theme=document");
     await toggle(page).focus();
     await page.keyboard.press("Enter");
     await page.keyboard.press("Tab");
@@ -393,7 +393,7 @@ test.describe("the job menu closes", () => {
   });
 
   test("on a click outside it, or on the toggle", async ({ page }) => {
-    await page.goto("/?view=equipment&fixture=full");
+    await page.goto("/?view=equipment&fixture=portfolio&theme=document");
     await toggle(page).click();
     await expect(list(page)).toBeVisible();
     await page.locator(".cs__bar").click();
