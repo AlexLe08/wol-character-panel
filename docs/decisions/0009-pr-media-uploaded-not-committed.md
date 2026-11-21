@@ -1,6 +1,6 @@
 # 0009: PR screenshots and videos are uploaded to GitHub, not committed
 
-Status: Accepted · 2026-11-19
+Status: Accepted · 2026-11-19 · superseded in part by 0011 (README screenshots are committed)
 
 ## Context
 
