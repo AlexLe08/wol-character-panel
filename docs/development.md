@@ -83,7 +83,10 @@ config in `examples/`. Its controls (view, fixture, theme, labels, sockets,
 toolbar, end control, container width, dark host tokens, drafts) are query
 parameters, so every state is a link, such as
 `/?fixture=edge-cases&theme=document&width=22`. It opens on the `adventurer`
-example in the game theme, and shows `CharacterWindow`;
+example in the game theme, and shows `CharacterWindow`. Each example opens
+in its own theme (`portfolio` in `document`, the others in `game`;
+`playground/example-themes.ts`), so choosing one drops `theme` from the
+URL, which leaves out a theme equal to the example's own;
 `view=equipment` shows `EquipmentPanel` alone. Like a host, it reads `?job=`,
 `?tab=`, `?page=` and the param actions' parameters from the URL and passes
 `isParamActive`; a `link` action shows where a host would go instead of
