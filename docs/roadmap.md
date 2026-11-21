@@ -386,22 +386,27 @@ upload are both Done (above).
      `renderLink`, the CSS import); a screenshot of both themes, which
      npm shows (committing it is the owner's call: decision 0009 covers
      PR media, not the README).
-   - **demo:** "Fixture" becomes "Example"; each example opens in its
-     own theme (`portfolio` in `document`); the intro follows the
-     example chosen; `edge-cases` goes last, labelled a stress test;
-     a "hover or focus a slot" hint; the install line as plain text in
-     the header (no links there: the browser tests reach the panel by
-     Tab).
+   - **demo:** the "Fixture" label becomes "Example" (the `fixture`
+     parameter stays, with the links, tests and scripts that use it);
+     each example opens in its own theme (`portfolio` in `document`),
+     the URL leaving out the example's own default rather than one
+     global one; the intro follows the example chosen; `edge-cases`
+     goes last, labelled a stress test; a "hover or focus a slot" hint;
+     the install line as plain text in the header (no links there: the
+     browser tests reach the panel by Tab), with `@next` in a `/next/`
+     build until 2.0.0, where a bare install still gets 1.0.4.
    - **demo:** a "Show config" disclosure under the panel with the
      example's JSON and the JSX for the current controls, since the
      pitch is "one JSON config" and the demo never shows one.
-   - **docs:** a short "Use it for" list (portfolio, game sheet, persona
-     card) and one line each for job, slot and host; the "not a copy"
-     paragraph cut to a line, in the README and the demo; the-portfolio-site
-     and the `--paper`/`--ink` tokens out of the opening; the
+   - **docs:** add a short "Use it for" list (portfolio, game sheet,
+     persona card) and one line each for job, slot and host; cut the
+     "not a copy" paragraph to a line, in the README and the demo; move
+     the-portfolio-site out of the README's opening; add the
      accessibility it is tested for (no JavaScript needed, keyboard, axe
-     on WCAG 2.2 A/AA); the `$schema` URL; the development and releasing
-     links out of the user-facing list.
+     on WCAG 2.2 A/AA), and the `$schema` URL (the jsDelivr `@2` `$id`)
+     beside the README's `$schema` line; move the development and
+     releasing links out of the user-facing list (CONTRIBUTING keeps
+     them).
 
    Then, optionally, a beta.3 (no API change) to see them in `/next/`
    before 2.0.0 puts them at the root.
