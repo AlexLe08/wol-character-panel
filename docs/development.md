@@ -161,6 +161,7 @@ npm install ../wol-character-panel/solution-nine-wol-character-panel-<version>.t
 | `examples/` | Sample configs (`adventurer`, a game character screen; `portfolio`, a résumé; `minimal`; `edge-cases` with every field at its limit); tests check each one parses cleanly and renders |
 | `playground/` | The local preview (`npm run dev`), and `/static`, the panel server-rendered with no script (`static.tsx`). Built for the demo site by `npm run build:demo`. Not published |
 | `browser/` | Browser tests (`npm run test:browser`): Playwright and axe against the playground |
+| `docs/media/` | The README's screenshots, `scripts/preview.mjs` shots shown by absolute URL from `main` ([decision 0011](decisions/0011-readme-screenshots-committed.md)). Not published |
 | `scripts/generate-schema.mjs` | Regenerates the JSON Schema (`npm run generate:schema`) |
 | `scripts/strip-dts-css-imports.mjs` | The build's last step: blanks the CSS import in the emitted `.d.ts` files, which TypeScript 6+ would reject in a host |
 | `scripts/smoke-pack.mjs` | Installs the packed tarball in a throwaway project and runs `scripts/smoke/` there (`npm run test:pack`) |

@@ -27,6 +27,9 @@ A PR that changes what's published adds its line under Unreleased; the
 - README: says at the top that it describes 2.0 (on npm's `next` tag
   until 2.0.0, while a bare install gets 1.0.4), installs `@next`, and
   gives a complete Next.js App Router `app/page.tsx`.
+- README: screenshots of both themes at the top (the `adventurer`
+  example in `game`, `portfolio` in `document`). The images aren't in the
+  package; the README shows them from the repository.
 
 ## [2.0.0-beta.2] - 2026-11-21
 

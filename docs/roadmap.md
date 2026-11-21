@@ -336,8 +336,12 @@
   `next build` and `next start` (Next 16.4.6, React 19.3, zod 4.6) in a
   throwaway app on the packed beta.2 tarball, with the page copied out of
   the README: it typechecks, renders, its links are `next/link`, and
-  `?job=` switches the job. The screenshot of both themes waits on the
-  owner (committing it isn't covered by decision 0009).
+  `?job=` switches the job. Screenshots of both themes at the top
+  (`adventurer` in `game`, `portfolio` in `document`, from
+  `scripts/preview.mjs`), committed under `docs/media/` (not published)
+  and shown by absolute URL from `main`, by the owner's call:
+  decision 0011, which supersedes 0009's "never committed" for the
+  README.
 
 ## Tooling plan (done)
 
@@ -394,10 +398,6 @@ upload are both Done (above).
    README's top). 2.0.0 ends that,
    and is also when most newcomers will first see the demo and the npm
    page, so these come before it, one small PR each:
-   - **docs:** a screenshot of both themes in the README, which npm
-     shows (committing it is the owner's call: decision 0009 covers PR
-     media, not the README). The version note and the Next.js page are
-     Done (above).
    - **demo:** the "Fixture" label becomes "Example" (the `fixture`
      parameter stays, with the links, tests and scripts that use it);
      each example opens in its own theme (`portfolio` in `document`),

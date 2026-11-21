@@ -7,6 +7,11 @@
 > `EquipmentPanel` or `CharacterWindow`); its README is at the
 > [`v1.0.4` tag](https://github.com/AlexLe08/wol-character-panel/tree/v1.0.4#readme).
 
+| `game` theme | `document` theme |
+| --- | --- |
+| ![The window in the game theme: a dark frame with gold accents, the Attributes tab's HP and MP gauges and stats on the left, and the equipment pane on the right, a portrait between two columns of six slots under a Paladin job title](https://raw.githubusercontent.com/AlexLe08/wol-character-panel/main/docs/media/readme-game.png) | ![The window in the document theme: plain paper and ink, the Attributes tab's gauges and stats on the left, and the equipment pane on the right, a portrait between two columns of slots under a Front-end developer job title](https://raw.githubusercontent.com/AlexLe08/wol-character-panel/main/docs/media/readme-document.png) |
+| The `adventurer` example | The `portfolio` example |
+
 A panel modelled on an RPG character/equipment screen:
 
 ```
