@@ -100,8 +100,8 @@ portrait; it stays in the tab (a `blob:` URL, not a query parameter), so
 nothing is uploaded and a reload clears it. "Show config", a closed
 `<details>` under the panel, shows the code a host would write for the
 current controls (imports, `parseConfig`, the component and its props, from
-`playground/host-code.ts`) and the example's file as written. It renders on the client, while
-hosts render the panel on the server; `/static?fixture=portfolio&theme=document&width=22` shows the server-rendered panel
+`playground/host-code.ts`) and the example's file as written (without
+a chosen portrait). It renders on the client, while hosts render the panel on the server; `/static?fixture=portfolio&theme=document&width=22` shows the server-rendered panel
 with no script (view, fixture, theme, labels, width, `job`, `tab` and `page`
 from the query; with no theme, the example's own).
 Check a release candidate in a host too (below).

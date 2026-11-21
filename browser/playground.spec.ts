@@ -165,7 +165,7 @@ for (const fixture of ["adventurer", "portfolio"]) {
   });
 }
 
-test("Show config opens from the keyboard after the panel, with a focus ring", async ({ page }) => {
+test("Show config opens from the keyboard, with a focus ring", async ({ page }) => {
   await page.goto("/?view=equipment&fixture=minimal");
   const summary = page.locator(".pg-config summary");
   await tabTo(page, summary);

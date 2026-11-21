@@ -376,7 +376,7 @@ function App() {
         <h2>The code</h2>
         <p>
           What a host writes for this view, with the controls above as props (<code>searchParams</code> is the
-          page&apos;s query, <code>SaveButton</code> your own control).
+          page&apos;s query, awaited first in Next.js 15 and later; <code>SaveButton</code> is your own control).
         </p>
         <pre>
           <code id="pg-config-jsx">
