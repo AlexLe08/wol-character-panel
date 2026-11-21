@@ -338,10 +338,11 @@
   the README: it typechecks, renders, its links are `next/link`, and
   `?job=` switches the job. Screenshots of both themes at the top
   (`adventurer` in `game`, `portfolio` in `document`, from
-  `scripts/preview.mjs`), committed under `docs/media/` (not published)
-  and shown by absolute URL from `main`, by the owner's call:
-  decision 0011, which supersedes 0009's "never committed" for the
-  README.
+  `scripts/preview.mjs`), committed under `docs/media/v2/` (not
+  published; a new major gets its own folder, so each major's npm pages
+  keep its look), compressed to palette PNGs (195 KB to 52 KB) and shown
+  by absolute URL from `main`, by the owner's call: decision 0011, which
+  supersedes 0009's "never committed" for the README.
 
 ## Tooling plan (done)
 

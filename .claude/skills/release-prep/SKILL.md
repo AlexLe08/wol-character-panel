@@ -76,7 +76,11 @@ you'll use.
    the `$id` moves to `@<major>`; then update the README, `docs/config.md`
    and examples wherever they name the old major (`grep -rn "@<old major>"
    README.md docs/config.md examples/`). Leave the CHANGELOG's history
-   and `package-lock.json` alone. (jsDelivr's `@<major>` range skips prereleases, so that URL
+   and `package-lock.json` alone. The README's screenshots move with it
+   (decision 0011): take them again into a new `docs/media/v<major>/`,
+   compressed as that record says, point the README at that folder, and
+   leave the old major's folder as it is, since its releases' npm pages
+   still link it. (jsDelivr's `@<major>` range skips prereleases, so that URL
    resolves only once the stable release is out.) The stable release
    after betas also removes the README's version note (at its top) and
    the `@next` in its install line, until the next major's betas; the
