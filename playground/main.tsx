@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { StrictMode, useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { StrictMode, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { findUnknownKeys, parseConfig, publicConfig, resolveJob, withQuery } from "../src/index.ts";
 import { CharacterWindow, EquipmentPanel, type LinkRendererProps } from "../src/react-entry.ts";
@@ -38,6 +38,25 @@ function underBase(value: unknown, key?: string): unknown {
     return Object.fromEntries(Object.entries(value).map(([name, item]) => [name, underBase(item, name)]));
   }
   return value;
+}
+
+// The demo's portrait upload: the chosen image as every job's portrait,
+// put in before parseConfig, as a host's editor would save a new URL. The
+// blob: URL lives in this tab only (any URL passes portrait.src): nothing
+// is uploaded or stored, it isn't a query parameter, and a reload clears
+// it. The alt text names it plainly, since the example's would describe
+// another picture, and width and height go with the old image.
+function withPortrait(raw: unknown, src: string): unknown {
+  if (!raw || typeof raw !== "object" || !Array.isArray((raw as { jobs?: unknown }).jobs)) return raw;
+  const config = raw as { jobs: Record<string, unknown>[] };
+  return {
+    ...config,
+    jobs: config.jobs.map((job) => {
+      const { framing } = (job.portrait ?? {}) as { framing?: unknown };
+      // An example's framing is kept; without one, parseConfig's default.
+      return { ...job, portrait: { src, alt: "The image you chose", ...(framing === undefined ? {} : { framing }) } };
+    }),
+  };
 }
 
 // The controls' query parameters, with their defaults. A fixture's param
@@ -100,13 +119,23 @@ function useLocation() {
 function App() {
   const { href, navigate } = useLocation();
   const [notice, setNotice] = useState<string | null>(null);
+  const [portrait, setPortrait] = useState<string | null>(null);
+  const portraitInput = useRef<HTMLInputElement>(null);
+  const replacePortrait = (src: string | null) => {
+    if (portrait) URL.revokeObjectURL(portrait);
+    setPortrait(src);
+  };
+  const removePortrait = () => {
+    replacePortrait(null);
+    if (portraitInput.current) portraitInput.current.value = "";
+  };
   const query = new URL(href, location.origin).searchParams;
   const control = (name: Control) => query.get(name) ?? CONTROLS[name];
   const setControl = (name: Control, value: string) =>
     navigate(withQuery(href, { [name]: value === CONTROLS[name] ? null : value }, location.hash.slice(1)), true);
 
   const fixtureName = Object.hasOwn(fixtures, control("fixture")) ? control("fixture") : CONTROLS.fixture;
-  const raw = fixtures[fixtureName];
+  const raw = portrait ? withPortrait(fixtures[fixtureName], portrait) : fixtures[fixtureName];
   const { config: parsed, errors } = parseConfig(raw);
   const unknownKeys = parsed && errors.length === 0 ? findUnknownKeys(raw, parsed) : [];
 
@@ -245,6 +274,28 @@ function App() {
           />{" "}
           <output>{width ? `${width}rem` : "auto"}</output>
         </label>
+        <label>
+          Portrait{" "}
+          <input
+            ref={portraitInput}
+            type="file"
+            accept="image/*"
+            aria-describedby="pg-portrait-note"
+            onChange={(event) => {
+              // A cancelled dialog can fire change with no file: only
+              // Remove takes the portrait away.
+              const file = event.target.files?.[0];
+              if (file) replacePortrait(URL.createObjectURL(file));
+            }}
+          />
+        </label>
+        <button type="button" disabled={!portrait} onClick={removePortrait}>
+          Remove portrait
+        </button>
+        <p id="pg-portrait-note" className="pg-note">
+          The portrait you choose stays in this tab: it isn&apos;t uploaded, stored or added to the link, and a
+          reload clears it.
+        </p>
       </form>
 
       {(errors.length > 0 || unknownKeys.length > 0) && (

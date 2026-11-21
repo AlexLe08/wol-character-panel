@@ -542,8 +542,10 @@ example in the game theme, and shows `CharacterWindow`;
 `view=equipment` shows `EquipmentPanel` alone. Like a host, it reads `?job=`,
 `?tab=`, `?page=` and the param actions' parameters from the URL and passes
 `isParamActive`; a `link` action shows where a host would go instead of
-leaving the page. It renders on the client, while hosts render the panel on
-the server; `/static?fixture=portfolio&theme=document&width=22` shows the server-rendered panel
+leaving the page. Portrait tries an image of your own as every job's
+portrait; it stays in the tab (a `blob:` URL, not a query parameter), so
+nothing is uploaded and a reload clears it. It renders on the client, while
+hosts render the panel on the server; `/static?fixture=portfolio&theme=document&width=22` shows the server-rendered panel
 with no script (view, fixture, theme, labels, width, `job`, `tab` and `page`
 from the query).
 Check a release candidate in a host too (below).
