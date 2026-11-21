@@ -225,6 +225,13 @@ function App() {
           is a résumé, meant for the document theme). The controls set the panel&apos;s props, and View switches
           between the whole character window and its equipment panel alone.
         </p>
+        <p>
+          It is modelled on a well-known game&apos;s character screen, not copied from it: the layout and behaviour
+          aren&apos;t one to one. Liberties were taken to make it a flexible web component whose parts a page can
+          include or leave out in ways the game wouldn&apos;t allow. For instance, the adventurer example has no
+          weapon slot on the job crystal&apos;s row (the main hand heads the left column), and its Classes/Jobs
+          tab gives DPS a page of its own, where the game lists tanks, healers and DPS together.
+        </p>
       </header>
 
       <form className="pg-controls" aria-label="Preview controls" onSubmit={(event) => event.preventDefault()}>

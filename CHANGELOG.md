@@ -13,6 +13,12 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ## [Unreleased]
 
+### Changed
+
+- README: says the panel is modelled on a game's character screen but not
+  a one-to-one copy, with examples of where it differs, and that the
+  package isn't affiliated with the game's publisher.
+
 ## [2.0.0-beta.2] - 2026-11-21
 
 ### Changed (breaking)
