@@ -1,4 +1,8 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { tabTo } from "./helpers.ts";
+
+const WCAG = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
 // The playground's controls and header: each example opens in its own
 // theme (playground/example-info.ts), and the URL leaves out a value equal
@@ -89,4 +93,83 @@ test("the header names the version and its install line, @next for a prerelease"
 test("a hint in the header says how to open a tooltip", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator(".pg-hint")).toHaveText("Hover over a slot or Tab to it to see its tooltip.");
+});
+
+// "Show config", under the panel: the example's file as written and the
+// code a host would write for the current controls.
+const config = (page: Page) => page.locator("details.pg-config");
+
+test("Show config is closed under the panel, and opens to the example's JSON", async ({ page }) => {
+  await page.goto("/?fixture=minimal");
+  await expect(config(page)).not.toHaveAttribute("open");
+  await expect(page.locator("#pg-config-json")).toBeHidden();
+  // Below the panel, so nothing above it moved.
+  const stage = await page.locator(".pg-stage").boundingBox();
+  const details = await config(page).boundingBox();
+  expect(details!.y).toBeGreaterThanOrEqual(stage!.y + stage!.height);
+
+  await page.getByText("Show config", { exact: true }).click();
+  const json = page.locator("#pg-config-json");
+  await expect(json).toBeVisible();
+  // The file as written: its own formatting, not re-serialised.
+  await expect(json).toContainText('"slots": [{ "id": "skills", "label": "Skills", "position": "left" }],');
+  expect(JSON.parse((await json.textContent()) ?? "")).toMatchObject({
+    $schema: "../character-panel.schema.json",
+    defaultJobId: "developer",
+    jobs: [{ id: "developer" }],
+  });
+
+  await page.getByLabel("Example").selectOption("portfolio");
+  await expect(page.locator(".pg-config h2").nth(1)).toHaveText("The config, examples/portfolio.json");
+  expect(JSON.parse((await json.textContent()) ?? "")).toMatchObject({ defaultJobId: "frontend" });
+});
+
+test("Show config's code follows the controls", async ({ page }) => {
+  await page.goto("/");
+  await page.getByText("Show config", { exact: true }).click();
+  const jsx = page.locator("#pg-config-jsx");
+  await expect(jsx).toContainText('import { CharacterWindow } from "@solution-nine/wol-character-panel/react";');
+  await expect(jsx).toContainText('import "@solution-nine/wol-character-panel/character-panel.css";');
+  await expect(jsx).toContainText('import json from "./adventurer.json";');
+  await expect(jsx).toContainText("const config = publicConfig(parsed.config);");
+  await expect(jsx).toContainText(
+    '<CharacterWindow\n  config={config}\n  job={resolveJob(config, searchParams.job)}\n  tab={searchParams.tab}\n  page={searchParams.page}\n  theme="game"\n/>',
+  );
+
+  // The select's accessible name takes in its options' text.
+  await page.locator(".pg-controls").getByLabel("View").selectOption("equipment");
+  await page.getByLabel("Theme").selectOption("document");
+  await page.getByLabel("Labels").selectOption("always");
+  await page.getByLabel("Sockets").check();
+  await page.getByLabel("End control").check();
+  await page.getByLabel("Drafts and hidden jobs").check();
+  await expect(jsx).toContainText('import { EquipmentPanel } from "@solution-nine/wol-character-panel/react";');
+  await expect(jsx).toContainText("const config = parsed.config;");
+  await expect(jsx).toContainText(
+    '<EquipmentPanel\n  config={config}\n  job={resolveJob(config, searchParams.job)}\n  theme="document"\n  labels="always"\n  parts={{ sockets: true }}\n  gearSetEnd={<SaveButton />}\n/>',
+  );
+
+  await page.goto("/?fixture=minimal&width=22");
+  await page.getByText("Show config", { exact: true }).click();
+  await expect(jsx).toContainText('import json from "./minimal.json";');
+  await expect(jsx).toContainText('<div style={{ width: "22rem" }}>\n  <CharacterWindow');
+});
+
+for (const fixture of ["adventurer", "portfolio"]) {
+  test(`no axe violations in Show config, open (${fixture}, its own theme)`, async ({ page }) => {
+    await page.goto(`/?fixture=${fixture}`);
+    await page.getByText("Show config", { exact: true }).click();
+    await expect(page.locator("#pg-config-json")).toBeVisible();
+    const found = await new AxeBuilder({ page }).include(".pg-config").withTags(WCAG).analyze();
+    expect(found.violations.map((v) => ({ rule: v.id, nodes: v.nodes.map((n) => n.target) }))).toEqual([]);
+  });
+}
+
+test("Show config opens from the keyboard after the panel, with a focus ring", async ({ page }) => {
+  await page.goto("/?view=equipment&fixture=minimal");
+  const summary = page.locator(".pg-config summary");
+  await tabTo(page, summary);
+  await expect(summary).toHaveCSS("outline-style", "solid");
+  await page.keyboard.press("Enter");
+  await expect(config(page)).toHaveAttribute("open");
 });
