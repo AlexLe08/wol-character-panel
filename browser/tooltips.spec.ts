@@ -5,7 +5,7 @@ import { pointerAway, slot, tabTo, tooltipOf } from "./helpers.ts";
 // without moving focus or the pointer (SlotHover.tsx, WCAG 1.4.13).
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/?view=equipment&fixture=full");
+  await page.goto("/?view=equipment&fixture=portfolio&theme=document");
 });
 
 test("hover shows a slot's tooltip, and leaving hides it", async ({ page }) => {

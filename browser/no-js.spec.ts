@@ -12,13 +12,13 @@ import { pointerAway, slot, tabTo, tooltipOf } from "./helpers.ts";
 test.use({ javaScriptEnabled: false });
 
 test("the page has no script", async ({ page }) => {
-  await page.goto("/static?view=equipment&fixture=full");
+  await page.goto("/static?view=equipment&fixture=portfolio&theme=document");
   await expect(page.locator(".cs")).toBeVisible();
   await expect(page.locator("script")).toHaveCount(0);
 });
 
 test("hover and keyboard focus show tooltips", async ({ page }) => {
-  await page.goto("/static?view=equipment&fixture=full");
+  await page.goto("/static?view=equipment&fixture=portfolio&theme=document");
   const skills = slot(page, "Skills");
   const tip = await tooltipOf(skills);
 
@@ -32,7 +32,7 @@ test("hover and keyboard focus show tooltips", async ({ page }) => {
 });
 
 test("the job menu opens and its links change the job", async ({ page }) => {
-  await page.goto("/static?view=equipment&fixture=full");
+  await page.goto("/static?view=equipment&fixture=portfolio&theme=document");
   await expect(page.locator(".cs__job-title")).toHaveText("Front-end developer");
 
   const healthcare = page.getByRole("link", { name: /Healthcare/ });
@@ -60,7 +60,7 @@ test("the job menu opens and its links change the job", async ({ page }) => {
 // the slots below; Escape closes it from there, without going back to it
 // (WCAG 2.4.11).
 test("Escape closes the job menu from a slot it covers", async ({ page }) => {
-  await page.goto("/static?view=equipment&fixture=full");
+  await page.goto("/static?view=equipment&fixture=portfolio&theme=document");
   const list = page.locator(".cs__jobs-list");
   await page.locator(".cs__jobs-toggle").click();
   await expect(list).toBeVisible();
@@ -81,7 +81,7 @@ test("Escape closes the job menu from a slot it covers", async ({ page }) => {
 });
 
 test("the narrow layout needs no script", async ({ page }) => {
-  await page.goto("/static?view=equipment&fixture=full&width=22");
+  await page.goto("/static?view=equipment&fixture=portfolio&theme=document&width=22");
   const portrait = (await page.locator(".cs__portrait").boundingBox())!;
   const left = (await page.locator(".cs__slots--left").boundingBox())!;
   expect(portrait.y + portrait.height).toBeLessThanOrEqual(left.y);
@@ -94,7 +94,7 @@ test("the narrow layout needs no script", async ({ page }) => {
 // The window, server-rendered: tabs and sub-tabs are links, so they work
 // with no script, and so do row tooltips (CSS).
 test("the window's tab and sub-tab links work", async ({ page }) => {
-  await page.goto("/static?view=window&fixture=full");
+  await page.goto("/static?view=window&fixture=portfolio&theme=document");
   const tabs = page.getByRole("navigation", { name: "Tabs" });
   await expect(tabs.getByRole("link", { name: "Attributes" })).toHaveAttribute("aria-current", "page");
 
@@ -109,7 +109,7 @@ test("the window's tab and sub-tab links work", async ({ page }) => {
 });
 
 test("changing job in the window keeps its tab", async ({ page }) => {
-  await page.goto("/static?view=window&fixture=full&tab=profile");
+  await page.goto("/static?view=window&fixture=portfolio&theme=document&tab=profile");
   await page.locator(".cs__jobs-toggle").click();
   await page.getByRole("link", { name: /Healthcare/ }).click();
   await expect(page).toHaveURL(/[?&]job=healthcare/);
@@ -118,7 +118,7 @@ test("changing job in the window keeps its tab", async ({ page }) => {
 });
 
 test("keyboard focus shows a row's tooltip", async ({ page }) => {
-  await page.goto("/static?view=window&fixture=full");
+  await page.goto("/static?view=window&fixture=portfolio&theme=document");
   const frontEnd = page.locator(".cs__content [role='group'][tabindex='0']").filter({ hasText: "Front end" });
   await tabTo(page, frontEnd);
   await expect(await tooltipOf(frontEnd)).toBeVisible();
@@ -127,7 +127,7 @@ test("keyboard focus shows a row's tooltip", async ({ page }) => {
 // Collapsible groups are <details>, and detail windows the Popover API:
 // both are HTML, so neither needs a script.
 test("a collapsible group opens", async ({ page }) => {
-  await page.goto("/static?view=window&fixture=full&tab=reputation");
+  await page.goto("/static?view=window&fixture=portfolio&theme=document&tab=reputation");
   const row = page.locator(".cs-track", { hasText: "Study group" });
   await expect(row).toBeHidden();
   await page.locator("summary", { hasText: "Earlier" }).click();
@@ -135,7 +135,7 @@ test("a collapsible group opens", async ({ page }) => {
 });
 
 test("a detail window opens and closes", async ({ page }) => {
-  await page.goto("/static?view=window&fixture=full&tab=profile");
+  await page.goto("/static?view=window&fixture=portfolio&theme=document&tab=profile");
   const dialog = page.getByRole("dialog", { name: "Titles" });
   await page.getByRole("button", { name: "All titles" }).click();
   await expect(dialog).toBeVisible();

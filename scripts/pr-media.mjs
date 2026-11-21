@@ -17,13 +17,13 @@
 //     before = await startPlayground({ ref: "origin/main" });
 //     const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
 //     for (const [side, server] of [["before", before], ["after", after]]) {
-//       await open(page, server, "fixture=full&view=window&theme=game");
+//       await open(page, server, "fixture=portfolio&view=window&theme=game");
 //       await page.getByRole("link", { name: "GitHub" }).hover();
 //       await shoot(page.locator(".cs"), `tooltip-game-${side}`);
 //     }
 //     const context = await recordingContext(browser);
 //     const video = await context.newPage();
-//     await open(video, after, "fixture=full");
+//     await open(video, after, "fixture=portfolio");
 //     await step(video, "1. Hover a slot: its tooltip opens");
 //     ...
 //     const file = await saveVideo(video, context, "hover-demo");
@@ -130,7 +130,7 @@ export async function startPlayground({ ref } = {}) {
   throw new Error(`the dev server didn't answer on ${url} within 30s:\n${errors}`);
 }
 
-// Opens the playground at `query` (its URL state, e.g. "fixture=full&
+// Opens the playground at `query` (its URL state, e.g. "fixture=portfolio&
 // theme=game&width=22") and waits for fonts, so a shot never catches a
 // fallback face. Fails on a parseConfig report or a missing panel.
 export async function open(page, server, query = "") {

@@ -5,7 +5,10 @@ import { pointerAway, tabTo, tooltipOf } from "./helpers.ts";
 // CharacterWindow in the playground (view=window): tab and sub-tab links,
 // row tooltips, focus rings, the two layouts, and axe on every tab.
 
-const windowUrl = (query = "") => `/?view=window&fixture=full${query}`;
+// The document theme unless the query names one: the page reads the first
+// `theme`, so a second one would be ignored.
+const windowUrl = (query = "") =>
+  `/?view=window&fixture=portfolio${query.includes("&theme=") ? "" : "&theme=document"}${query}`;
 
 async function box(page: Page, selector: string) {
   const found = await page.locator(selector).first().boundingBox();
@@ -295,7 +298,7 @@ test.describe("detail windows", () => {
       [800, 400], // under 45rem tall: inside the body, which scrolls to it
     ]) {
       await page.setViewportSize({ width, height });
-      await page.goto("/?view=window&fixture=edge-cases");
+      await page.goto("/?view=window&fixture=edge-cases&theme=document");
       await page.locator(".cs__content [popovertarget]").first().click();
       await pointerAway(page);
       const dialog = page.locator(".cs-detail:popover-open");
@@ -391,16 +394,16 @@ test.describe("layout", () => {
   });
 
   test("with no tabs the window is the panel's width", async ({ page }) => {
-    await page.goto("/?view=equipment&fixture=minimal");
+    await page.goto("/?view=equipment&fixture=minimal&theme=document");
     const panel = await box(page, ".cs");
-    await page.goto("/?view=window&fixture=minimal");
+    await page.goto("/?view=window&fixture=minimal&theme=document");
     await expect(page.locator(".cs__content")).toHaveCount(0);
     expect((await box(page, ".cs")).width).toBe(panel.width);
   });
 
   test("nothing in the window overflows sideways at the limits", async ({ page }) => {
     for (const width of ["", "40", "22", "18"]) {
-      await page.goto(`/?view=window&fixture=edge-cases${width && `&width=${width}`}`);
+      await page.goto(`/?view=window&fixture=edge-cases&theme=document${width && `&width=${width}`}`);
       for (const tab of await page.locator(".cs__tab").evaluateAll((links) => links.map((link) => link.getAttribute("href")!))) {
         await page.goto(tab);
         const overflow = await page.locator(".cs").evaluate((el) => el.scrollWidth - el.clientWidth);
@@ -411,7 +414,7 @@ test.describe("layout", () => {
 
   test("at the limits a gauge's or stat's label keeps 6rem; the value wraps under it", async ({ page }) => {
     for (const width of ["", "22"]) {
-      await page.goto(`/?view=window&fixture=edge-cases${width && `&width=${width}`}`);
+      await page.goto(`/?view=window&fixture=edge-cases&theme=document${width && `&width=${width}`}`);
       for (const [face, label, value] of [
         [".cs-gauge", ".cs-gauge__label", ".cs-gauge__value"],
         [".cs-stat", ".cs-stat__label", ".cs-stat__value"],
@@ -447,7 +450,7 @@ test.describe("layout", () => {
     // Two per line, the second gauge's tooltip opens from its right edge;
     // one per line, from the left, as the first's does.
     for (const [width, edge] of [["", "right"], ["22", "left"]] as const) {
-      await page.goto(`/?view=window&fixture=edge-cases${width && `&width=${width}`}`);
+      await page.goto(`/?view=window&fixture=edge-cases&theme=document${width && `&width=${width}`}`);
       const gauge = (await page.locator(".cs-gauge").nth(1).boundingBox())!;
       const face = row(page, "Gauge 2");
       await face.hover();
@@ -557,7 +560,7 @@ async function violations(page: Page) {
   return found.map((v) => ({ rule: v.id, help: v.help, nodes: v.nodes.map((n) => n.target) }));
 }
 
-for (const fixture of ["full", "minimal", "edge-cases"]) {
+for (const fixture of ["portfolio", "minimal", "edge-cases"]) {
   for (const theme of ["document", "game"]) {
     for (const width of ["", "22"]) {
       test(`no axe violations on any tab: ${fixture}, ${theme}, ${width ? "narrow" : "wide"}`, async ({ page }) => {

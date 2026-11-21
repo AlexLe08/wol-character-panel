@@ -1,7 +1,7 @@
 ---
 name: preview
 description: Screenshots the panel in the playground (each example, both themes, wide and narrow) and reports console errors and visual problems. Use after a change to rendering, CSS or examples, or when asked to show what the panel looks like.
-argument-hint: "[--fixture=full,minimal] [--theme=document|game]"
+argument-hint: "[--fixture=portfolio,minimal] [--theme=document|game]"
 allowed-tools: Bash(node scripts/preview.mjs*), Read
 ---
 

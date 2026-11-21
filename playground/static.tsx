@@ -21,7 +21,7 @@ const fixtures = Object.fromEntries(
 
 export function render(url: URL): string {
   const query = url.searchParams;
-  const raw = fixtures[query.get("fixture") ?? "full"] ?? fixtures.full;
+  const raw = fixtures[query.get("fixture") ?? "portfolio"] ?? fixtures.portfolio;
   const { config } = parseConfig(raw);
   let panel = "<p>This config has nothing to render.</p>";
   if (config) {

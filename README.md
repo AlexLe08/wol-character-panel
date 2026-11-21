@@ -72,7 +72,7 @@ release again when no beta is newer).
 | `src/JobMenuFocus.tsx` | Client code: the job menu closes when focus lands outside it. Private: no entry exports it |
 | `src/character-panel.css` | Styles and themes; everything themable is a `--cs-*` variable |
 | `character-panel.schema.json` | Generated JSON Schema for editing a config file by hand |
-| `examples/` | Sample configs (`full`, `minimal`, `edge-cases` with every field at its limit); tests check each one parses cleanly and renders |
+| `examples/` | Sample configs (`portfolio`, `minimal`, `edge-cases` with every field at its limit); tests check each one parses cleanly and renders |
 | `playground/` | The local preview (`npm run dev`), and `/static`, the panel server-rendered with no script (`static.tsx`). Built for the demo site by `npm run build:demo`. Not published |
 | `browser/` | Browser tests (`npm run test:browser`): Playwright and axe against the playground |
 | `scripts/generate-schema.mjs` | Regenerates the JSON Schema (`npm run generate:schema`) |
@@ -542,7 +542,7 @@ parameters, so every state is a link, such as
 `?tab=`, `?page=` and the param actions' parameters from the URL and passes
 `isParamActive`; a `link` action shows where a host would go instead of
 leaving the page. It renders on the client, while hosts render the panel on
-the server; `/static?fixture=full&width=22` shows the server-rendered panel
+the server; `/static?fixture=portfolio&width=22` shows the server-rendered panel
 with no script (view, fixture, theme, labels, width, `job`, `tab` and `page`
 from the query).
 Check a release candidate in a host too (below).
@@ -562,7 +562,7 @@ npm run build:demo && npx vite preview playground --base /wol-character-panel/
 `node scripts/preview.mjs` screenshots the panel and the window (once per
 tab) for every example, in both themes, wide and narrow (22rem), into
 `.logs/preview/`, and lists any console error or warning (exit 1 if there is
-one). `--fixture=full`, `--view=window` and `--theme=game` narrow it down. It starts its own dev server on port 5198 and
+one). `--fixture=portfolio`, `--view=window` and `--theme=game` narrow it down. It starts its own dev server on port 5198 and
 needs Chromium (`npx playwright install chromium`).
 
 A PR with a visible change shows it in its body with before/after

@@ -45,7 +45,7 @@ function underBase(value: unknown, key?: string): unknown {
 const CONTROLS = {
   // "window": CharacterWindow, tabs and all; "equipment": EquipmentPanel.
   view: "window",
-  fixture: "full",
+  fixture: "portfolio",
   theme: "document",
   labels: "narrow",
   sockets: "",

@@ -1,7 +1,7 @@
 // Screenshots the playground in Chromium, for a look at a change without
 // opening a browser (the `preview` skill runs it):
 //   node scripts/preview.mjs                          # every example
-//   node scripts/preview.mjs --fixture=full --theme=game --view=window
+//   node scripts/preview.mjs --fixture=portfolio --theme=game --view=window
 // Each example in examples/, in each view (equipment: EquipmentPanel;
 // window: CharacterWindow), each theme, wide (as wide as the page allows)
 // and narrow (22rem, below the 26rem container query): the component
