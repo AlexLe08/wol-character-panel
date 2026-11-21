@@ -165,7 +165,7 @@
   and everything works with JavaScript off. The playground and
   demo open on the window. Ships as `2.0.0-beta.N` betas first (next
   entry), then 2.0.0; the site takes it in an upgrade PR of its own (Next
-  up, item 4).
+  up, item 5).
 - Prereleases (2026-11-13): `release.yml` publishes a version with a `-`
   to npm's `next` dist-tag (npm 11 refuses a prerelease without `--tag`),
   the Demo deploy skips prerelease tags, and `/release-prep` proposes
@@ -361,7 +361,7 @@ Chromium, touch emulated as an iPhone at 390×844): hover, focus rings, Escape o
 focused and hovered tooltips, tab and page links with `aria-current` and
 Back, the detail window (Escape, Close and light dismiss return focus;
 the second Escape), the job menu by keyboard, a tap on a tooltip-only row,
-and no console errors over 52 loads. Not covered: a real phone (item 1),
+and no console errors over 52 loads. Not covered: a real phone (item 2),
 and Firefox, WebKit and screen readers, which stay gaps (the browser
 tests are Chromium only). It found the narrow middle-column tooltips
 running past the viewport (fixed in #44, Done; unreleased until beta.2)
@@ -372,7 +372,45 @@ Demo work the owner wanted before the release, playground only (no API
 change, so the soak runs on): the game-styled default and the portrait
 upload are both Done (above).
 
-1. **Soak.** 2.0.0 once a beta has gone about a week without an API
+1. **First impressions** (2026-11-21, a review of the demo and the root
+   docs as a newcomer reads them; docs and playground only, no API
+   change, so the soak runs on). npm's `latest` is 1.0.4 and the demo's
+   root is built from it, while the README on GitHub describes 2.0: its
+   bare `npm install` gets 1.0.4, which has `CharacterSheet` rather than
+   the README's `EquipmentPanel` and `CharacterWindow`. 2.0.0 ends that,
+   and is also when most newcomers will first see the demo and the npm
+   page, so these come before it, one small PR each:
+   - **docs:** a line at the top of the README saying which version it
+     describes (`@next` until 2.0.0); a complete Next.js App Router
+     `page.tsx` (awaited `searchParams`, `next/link` through
+     `renderLink`, the CSS import); a screenshot of both themes, which
+     npm shows (committing it is the owner's call: decision 0009 covers
+     PR media, not the README).
+   - **demo:** the "Fixture" label becomes "Example" (the `fixture`
+     parameter stays, with the links, tests and scripts that use it);
+     each example opens in its own theme (`portfolio` in `document`),
+     the URL leaving out the example's own default rather than one
+     global one; the intro follows the example chosen; `edge-cases`
+     goes last, labelled a stress test; a "hover or focus a slot" hint;
+     the install line as plain text in the header (no links there: the
+     browser tests reach the panel by Tab), with `@next` in a `/next/`
+     build until 2.0.0, where a bare install still gets 1.0.4.
+   - **demo:** a "Show config" disclosure under the panel with the
+     example's JSON and the JSX for the current controls, since the
+     pitch is "one JSON config" and the demo never shows one.
+   - **docs:** add a short "Use it for" list (portfolio, game sheet,
+     persona card) and one line each for job, slot and host; cut the
+     "not a copy" paragraph to a line, in the README and the demo; move
+     the-portfolio-site out of the README's opening; add the
+     accessibility it is tested for (no JavaScript needed, keyboard, axe
+     on WCAG 2.2 A/AA), and the `$schema` URL (the jsDelivr `@2` `$id`)
+     beside the README's `$schema` line; move the development and
+     releasing links out of the user-facing list (CONTRIBUTING keeps
+     them).
+
+   Then, optionally, a beta.3 (no API change) to see them in `/next/`
+   before 2.0.0 puts them at the root.
+2. **Soak.** 2.0.0 once a beta has gone about a week without an API
    change ([decision 0004](decisions/0004-2.0-betas-on-next.md)): from
    beta.1 (2026-11-19), 2026-11-26 at the earliest; a new beta that
    changes the API restarts the week. beta.2 (owner, `/release-prep`)
@@ -382,14 +420,14 @@ upload are both Done (above).
    owner's call at `/release-prep`. Meanwhile the
    owner tries `/next/` on a real phone (touch was only emulated): a tap
    on a tooltip-only row opens its tooltip, and a tap elsewhere closes it.
-2. **A packed release candidate in the site**, which the next demo doesn't
+3. **A packed release candidate in the site**, which the next demo doesn't
    cover: `npm pack` here, `npm install <tarball>` in the site's
    `frontend/` (not committed), server-rendered with the site's CSS
    around the panel.
-3. **2.0.0 (owner):** `/release-prep` with the API called settled (it
+4. **2.0.0 (owner):** `/release-prep` with the API called settled (it
    proposes `2.0.0`; the schema's `$id` becomes `@2`), merge, tag. The
    demo's `latest` then shows 2.0.0, and `/next/` falls back to it.
-4. **The site's upgrade PR**, in its own repository and session (it
+5. **The site's upgrade PR**, in its own repository and session (it
    depends on `^1`, so nothing reaches it before then):
    - bump to `^2` and run `npm run generate:character-schema` (the
      backend's copy must accept the new keys before the admin can save
