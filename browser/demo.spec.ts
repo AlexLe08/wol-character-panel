@@ -27,6 +27,12 @@ for (const { name, origin, base } of DEMOS) {
     expect(failed, "no failed requests").toEqual([]);
   });
 
+  test(`${name} opens on the adventurer example in the game theme`, async ({ page }) => {
+    await page.goto(demo);
+    await expect(page.locator(".cs__bar-name")).toHaveText("Wren Ashvale");
+    await expect(page.locator("[data-cs-theme]").first()).toHaveAttribute("data-cs-theme", "game");
+  });
+
   test(`${name}'s job links keep the base path and survive a reload`, async ({ page }) => {
     await page.goto(`${demo}?fixture=portfolio&theme=game`);
     await page.locator(".cs__jobs-toggle").click();

@@ -17,6 +17,12 @@ test("the page has no script", async ({ page }) => {
   await expect(page.locator("script")).toHaveCount(0);
 });
 
+test("with no query it shows the main page's default: the adventurer example in the game theme", async ({ page }) => {
+  await page.goto("/static");
+  await expect(page.locator(".cs__bar-name")).toHaveText("Wren Ashvale");
+  await expect(page.locator("[data-cs-theme]").first()).toHaveAttribute("data-cs-theme", "game");
+});
+
 test("hover and keyboard focus show tooltips", async ({ page }) => {
   await page.goto("/static?view=equipment&fixture=portfolio&theme=document");
   const skills = slot(page, "Skills");

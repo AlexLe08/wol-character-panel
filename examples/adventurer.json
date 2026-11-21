@@ -1,0 +1,520 @@
+{
+  "$schema": "../character-panel.schema.json",
+  "title": "Character",
+  "characterName": "Wren Ashvale",
+  "defaultJobId": "paladin",
+  "gearSet": {
+    "label": "Gear Set 1",
+    "value": "Avg. Item Level 730",
+    "jobMenu": { "label": "Change Job", "iconName": "list" },
+    "links": [
+      { "id": "glamour", "label": "Glamour", "iconName": "star", "action": { "kind": "anchor", "target": "glamour" } },
+      { "id": "save", "label": "Save gear set", "iconName": "save", "position": "end", "action": { "kind": "anchor", "target": "gear-set" } }
+    ]
+  },
+  "tabs": [
+    {
+      "id": "attributes",
+      "label": "Attributes",
+      "iconName": "crest",
+      "blocks": [
+        {
+          "type": "gauges",
+          "id": "vitals",
+          "rows": [
+            { "label": "HP", "value": "152,836", "fill": 100, "tone": "primary" },
+            { "label": "MP", "value": "10,000", "fill": 100, "tone": "secondary" }
+          ]
+        },
+        {
+          "type": "stats",
+          "id": "core",
+          "groups": [
+            {
+              "label": "Attributes",
+              "iconName": "star",
+              "rows": [
+                {
+                  "label": "Strength",
+                  "value": "6,108",
+                  "tone": "highlight",
+                  "tooltip": { "title": "Strength", "note": "Raises the damage of physical attacks. A Paladin's main attribute." }
+                },
+                { "label": "Dexterity", "value": "412" },
+                { "label": "Vitality", "value": "6,754" },
+                { "label": "Intelligence", "value": "245", "tone": "muted" },
+                { "label": "Mind", "value": "402", "tone": "muted" }
+              ]
+            },
+            {
+              "label": "Offensive Properties",
+              "iconName": "sword",
+              "column": "start",
+              "rows": [
+                {
+                  "label": "Critical Hit",
+                  "value": "3,120",
+                  "tooltip": { "title": "Critical Hit", "note": "Raises the chance and damage of critical hits." }
+                },
+                { "label": "Determination", "value": "2,355" },
+                { "label": "Direct Hit Rate", "value": "1,470" }
+              ]
+            },
+            {
+              "label": "Defensive Properties",
+              "iconName": "shield",
+              "column": "end",
+              "rows": [
+                { "label": "Defense", "value": "8,412" },
+                { "label": "Magic Defense", "value": "8,412" }
+              ]
+            },
+            {
+              "label": "Physical Properties",
+              "iconName": "bow",
+              "column": "start",
+              "rows": [
+                { "label": "Attack Power", "value": "6,108" },
+                { "label": "Skill Speed", "value": "420" }
+              ]
+            },
+            {
+              "label": "Mental Properties",
+              "iconName": "wand",
+              "column": "end",
+              "rows": [
+                { "label": "Attack Magic Potency", "value": "245" },
+                { "label": "Healing Magic Potency", "value": "402" },
+                { "label": "Spell Speed", "value": "420" }
+              ]
+            },
+            {
+              "label": "Role",
+              "iconName": "shield",
+              "rows": [{ "label": "Tenacity", "value": "1,038" }]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "profile",
+      "label": "Profile",
+      "iconName": "person",
+      "blocks": [
+        {
+          "type": "fields",
+          "rows": [
+            {
+              "label": "Title",
+              "value": "Keeper of the Lantern",
+              "iconName": "crest",
+              "detail": {
+                "label": "All titles",
+                "iconName": "list",
+                "title": "Titles",
+                "blocks": [
+                  {
+                    "type": "stats",
+                    "groups": [
+                      {
+                        "rows": [
+                          { "label": "Keeper of the Lantern", "value": "Current", "tone": "highlight" },
+                          {
+                            "label": "the Unbroken Shield",
+                            "value": "Earned",
+                            "tooltip": { "title": "the Unbroken Shield", "note": "Held the line through every trial of the Lantern Road." }
+                          },
+                          { "label": "Novice Adventurer", "value": "Earned", "tone": "muted" }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            { "label": "Nameday", "value": "3rd Sun of the 4th Moon", "iconName": "star" },
+            { "label": "Guardian", "value": "The Lantern-Bearer", "overline": "Patron of travellers", "iconName": "heart" },
+            { "label": "Home city", "value": "Ardenmoor", "iconName": "flag" },
+            { "label": "Allegiance", "value": "Order of the Silver Gale", "caption": "Second Lieutenant", "iconName": "crest" },
+            { "label": "Free Company", "value": "Hearthwatch", "caption": "Founded by friends, open to all", "iconName": "leaf" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jobs",
+      "label": "Classes/Jobs",
+      "iconName": "hammer",
+      "pages": [
+        {
+          "id": "tank-healer",
+          "label": "Tank/Healer",
+          "iconName": "shield",
+          "blocks": [
+            {
+              "type": "levels",
+              "groups": [
+                {
+                  "label": "Tank",
+                  "column": "start",
+                  "rows": [
+                    {
+                      "label": "Paladin",
+                      "level": "100",
+                      "fill": 100,
+                      "tone": "highlight",
+                      "iconName": "shield",
+                      "action": { "kind": "job", "id": "paladin" }
+                    },
+                    { "label": "Warrior", "level": "100", "fill": 100, "iconName": "hammer" },
+                    { "label": "Dark Knight", "level": "92", "fill": 92, "iconName": "sword" },
+                    { "label": "Gunbreaker", "level": "84", "fill": 84, "iconName": "gear" }
+                  ]
+                },
+                {
+                  "label": "Healer",
+                  "column": "end",
+                  "rows": [
+                    {
+                      "label": "White Mage",
+                      "level": "100",
+                      "fill": 100,
+                      "iconName": "cross",
+                      "action": { "kind": "job", "id": "white-mage" },
+                      "tooltip": { "title": "White Mage", "subtitle": "Switches the panel to this job" }
+                    },
+                    { "label": "Scholar", "level": "90", "fill": 90, "iconName": "note" },
+                    { "label": "Astrologian", "level": "76", "fill": 76, "iconName": "star" },
+                    { "label": "Sage", "level": "64", "fill": 64, "iconName": "leaf" }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "dps",
+          "label": "DPS",
+          "iconName": "sword",
+          "blocks": [
+            {
+              "type": "levels",
+              "groups": [
+                {
+                  "label": "Melee",
+                  "column": "start",
+                  "rows": [
+                    { "label": "Monk", "level": "80", "fill": 80, "iconName": "person" },
+                    { "label": "Dragoon", "level": "90", "fill": 90, "iconName": "sword" },
+                    { "label": "Ninja", "level": "70", "fill": 70, "iconName": "star" },
+                    { "label": "Samurai", "level": "100", "fill": 100, "iconName": "sword" },
+                    { "label": "Reaper", "level": "50", "fill": 50, "iconName": "leaf" },
+                    { "label": "Viper", "level": "100", "fill": 100, "iconName": "sword" }
+                  ]
+                },
+                {
+                  "label": "Ranged",
+                  "column": "end",
+                  "rows": [
+                    { "label": "Bard", "level": "86", "fill": 86, "iconName": "bow" },
+                    { "label": "Machinist", "level": "60", "fill": 60, "iconName": "gear" },
+                    { "label": "Dancer", "level": "72", "fill": 72, "iconName": "heart" }
+                  ]
+                },
+                {
+                  "label": "Magic",
+                  "rows": [
+                    {
+                      "label": "Black Mage",
+                      "level": "100",
+                      "fill": 100,
+                      "iconName": "wand",
+                      "action": { "kind": "job", "id": "black-mage" },
+                      "tooltip": { "title": "Black Mage", "subtitle": "Switches the panel to this job" }
+                    },
+                    { "label": "Summoner", "level": "82", "fill": 82, "iconName": "crest" },
+                    { "label": "Red Mage", "level": "94", "fill": 94, "iconName": "wand" },
+                    { "label": "Pictomancer", "level": "40", "fill": 40, "iconName": "note" }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "crafting",
+          "label": "Crafting/Gathering",
+          "iconName": "hammer",
+          "blocks": [
+            {
+              "type": "levels",
+              "groups": [
+                {
+                  "label": "Crafting",
+                  "column": "start",
+                  "rows": [
+                    { "label": "Carpenter", "level": "60", "fill": 60, "iconName": "hammer" },
+                    { "label": "Blacksmith", "level": "100", "fill": 100, "iconName": "hammer" },
+                    { "label": "Armorer", "level": "90", "fill": 90, "iconName": "shield" },
+                    { "label": "Goldsmith", "level": "54", "fill": 54, "iconName": "star" },
+                    { "label": "Leatherworker", "level": "48", "fill": 48, "iconName": "note" },
+                    { "label": "Weaver", "level": "52", "fill": 52, "iconName": "list" },
+                    { "label": "Alchemist", "level": "70", "fill": 70, "iconName": "wand" },
+                    { "label": "Culinarian", "level": "100", "fill": 100, "iconName": "heart" }
+                  ]
+                },
+                {
+                  "label": "Gathering",
+                  "column": "end",
+                  "rows": [
+                    { "label": "Miner", "level": "100", "fill": 100, "iconName": "hammer" },
+                    { "label": "Botanist", "level": "88", "fill": 88, "iconName": "leaf" },
+                    { "label": "Fisher", "level": "35", "fill": 35, "iconName": "flag" }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reputation",
+      "label": "Reputation",
+      "iconName": "heart",
+      "blocks": [
+        {
+          "type": "progress",
+          "label": "Allied Peoples",
+          "iconName": "flag",
+          "groups": [
+            {
+              "label": "Current",
+              "collapsible": "open",
+              "rows": [
+                { "label": "The Mossfolk", "fill": 70, "caption": "Honored", "value": "5,040 / 7,200", "iconName": "leaf" },
+                { "label": "Tidewardens", "fill": 35, "caption": "Trusted", "value": "1,890 / 5,400", "iconName": "flag" }
+              ]
+            },
+            {
+              "label": "Complete",
+              "collapsible": "closed",
+              "rows": [
+                { "label": "The Emberkin", "fill": 100, "caption": "Sworn", "value": "Max rank", "iconName": "star" }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "progress",
+          "label": "Allegiance",
+          "iconName": "crest",
+          "groups": [
+            {
+              "rows": [
+                { "label": "Order of the Silver Gale", "fill": 45, "caption": "Second Lieutenant", "value": "Seals 45,000 / 100,000", "iconName": "crest" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "slots": [
+    { "id": "crystal", "label": "Job Crystal", "position": "header-end", "icon": "◇" },
+    { "id": "main-hand", "label": "Main Hand", "position": "left", "icon": "Mh" },
+    { "id": "head", "label": "Head", "position": "left", "icon": "Hd" },
+    { "id": "body", "label": "Body", "position": "left", "icon": "Bd" },
+    { "id": "hands", "label": "Hands", "position": "left", "icon": "Hn" },
+    { "id": "legs", "label": "Legs", "position": "left", "icon": "Lg" },
+    { "id": "feet", "label": "Feet", "position": "left", "icon": "Ft" },
+    { "id": "off-hand", "label": "Off Hand", "position": "right", "icon": "Oh" },
+    { "id": "earrings", "label": "Earrings", "position": "right", "icon": "Ea" },
+    { "id": "necklace", "label": "Necklace", "position": "right", "icon": "Nk" },
+    { "id": "bracelets", "label": "Bracelets", "position": "right", "icon": "Br" },
+    { "id": "ring-1", "label": "Ring", "position": "right", "icon": "Rg" },
+    { "id": "ring-2", "label": "Ring", "position": "right", "icon": "Rg" }
+  ],
+  "jobs": [
+    {
+      "id": "paladin",
+      "name": "Paladin",
+      "title": "Paladin",
+      "icon": "Pld",
+      "level": { "label": "Lv.", "value": "100" },
+      "portrait": { "src": "/portrait.svg", "alt": "Illustrated portrait of the adventurer", "framing": "face" },
+      "badge": { "label": "Item Level", "value": "730" },
+      "slots": {
+        "crystal": {
+          "tooltip": { "title": "Paladin's Crystal", "subtitle": "Job crystal", "note": "Lets a Gladiator take up the Paladin's arts." },
+          "action": { "kind": "none" }
+        },
+        "main-hand": {
+          "tooltip": {
+            "title": "Lanternfall Sword",
+            "tags": ["Paladin's Arm"],
+            "stat": { "label": "Item Level", "value": "730" },
+            "items": [
+              { "label": "Physical Damage", "value": "146" },
+              { "label": "Strength", "value": "+528" },
+              { "label": "Vitality", "value": "+571" },
+              { "label": "Critical Hit", "value": "+324" },
+              { "label": "Determination", "value": "+227" }
+            ],
+            "note": "Lv. 100 · Paladin"
+          },
+          "action": { "kind": "none" }
+        },
+        "off-hand": {
+          "tooltip": {
+            "title": "Lanternfall Shield",
+            "tags": ["Shield"],
+            "stat": { "label": "Item Level", "value": "730" },
+            "items": [
+              { "label": "Block Strength", "value": "1,322" },
+              { "label": "Block Rate", "value": "1,322" },
+              { "label": "Vitality", "value": "+171" }
+            ],
+            "note": "Lv. 100 · Paladin"
+          },
+          "action": { "kind": "none" }
+        },
+        "head": {
+          "tooltip": {
+            "title": "Ironwood Helm of Fending",
+            "tags": ["Head"],
+            "stat": { "label": "Item Level", "value": "730" },
+            "items": [
+              { "label": "Defense", "value": "1,041" },
+              { "label": "Magic Defense", "value": "1,041" },
+              { "label": "Strength", "value": "+275" },
+              { "label": "Direct Hit Rate", "value": "+187" }
+            ]
+          },
+          "action": { "kind": "none" }
+        },
+        "body": {
+          "tooltip": {
+            "title": "Ironwood Cuirass of Fending",
+            "tags": ["Body"],
+            "stat": { "label": "Item Level", "value": "730" },
+            "items": [
+              { "label": "Defense", "value": "1,819" },
+              { "label": "Magic Defense", "value": "1,819" },
+              { "label": "Strength", "value": "+436" },
+              { "label": "Critical Hit", "value": "+301" }
+            ]
+          },
+          "action": { "kind": "none" }
+        },
+        "hands": {
+          "tooltip": { "title": "Ironwood Gauntlets of Fending", "tags": ["Hands"], "stat": { "label": "Item Level", "value": "730" } },
+          "action": { "kind": "none" }
+        },
+        "legs": {
+          "tooltip": { "title": "Ironwood Cuisses of Fending", "tags": ["Legs"], "stat": { "label": "Item Level", "value": "730" } },
+          "action": { "kind": "none" }
+        },
+        "feet": {
+          "tooltip": { "title": "Ironwood Sabatons of Fending", "tags": ["Feet"], "stat": { "label": "Item Level", "value": "730" } },
+          "action": { "kind": "none" }
+        },
+        "earrings": {
+          "tooltip": { "title": "Emberglass Earrings of Fending", "tags": ["Earrings"], "stat": { "label": "Item Level", "value": "730" } },
+          "action": { "kind": "none" }
+        },
+        "necklace": {
+          "tooltip": { "title": "Emberglass Choker of Fending", "tags": ["Necklace"], "stat": { "label": "Item Level", "value": "730" } },
+          "action": { "kind": "none" }
+        },
+        "bracelets": {
+          "tooltip": { "title": "Emberglass Bracelet of Fending", "tags": ["Bracelets"], "stat": { "label": "Item Level", "value": "730" } },
+          "action": { "kind": "none" }
+        },
+        "ring-1": {
+          "tooltip": { "title": "Emberglass Ring of Fending", "tags": ["Ring"], "stat": { "label": "Item Level", "value": "730" } },
+          "action": { "kind": "none" }
+        },
+        "ring-2": {
+          "tooltip": { "title": "Lantern-Bearer's Ring", "tags": ["Ring"], "stat": { "label": "Item Level", "value": "720" } },
+          "action": { "kind": "none" }
+        }
+      },
+      "sections": {
+        "glamour": "A host page could list the glamour this gear set wears here.",
+        "gear-set": "A host could save the current gear set here."
+      }
+    },
+    {
+      "id": "white-mage",
+      "name": "White Mage",
+      "title": "White Mage",
+      "icon": "Whm",
+      "level": { "label": "Lv.", "value": "100" },
+      "portrait": { "src": "/portrait.svg", "alt": "Illustrated portrait of the adventurer", "framing": "full" },
+      "badge": { "label": "Item Level", "value": "725" },
+      "slots": {
+        "crystal": {
+          "tooltip": { "title": "White Mage's Crystal", "subtitle": "Job crystal" },
+          "action": { "kind": "none" }
+        },
+        "main-hand": {
+          "tooltip": {
+            "title": "Dawnbloom Cane",
+            "tags": ["White Mage's Arm"],
+            "stat": { "label": "Item Level", "value": "725" },
+            "items": [
+              { "label": "Magic Damage", "value": "144" },
+              { "label": "Mind", "value": "+528" },
+              { "label": "Vitality", "value": "+496" },
+              { "label": "Spell Speed", "value": "+324" }
+            ],
+            "note": "Lv. 100 · White Mage"
+          },
+          "action": { "kind": "none" }
+        },
+        "body": {
+          "tooltip": { "title": "Dawnbloom Robe of Healing", "tags": ["Body"], "stat": { "label": "Item Level", "value": "725" } },
+          "action": { "kind": "none" }
+        }
+      },
+      "gearSet": { "label": "Gear Set 2", "value": "Avg. Item Level 725" },
+      "blocks": {
+        "vitals": {
+          "type": "gauges",
+          "rows": [
+            { "label": "HP", "value": "98,410", "fill": 100, "tone": "primary" },
+            { "label": "MP", "value": "10,000", "fill": 100, "tone": "secondary" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "black-mage",
+      "name": "Black Mage",
+      "title": "Black Mage",
+      "icon": "Blm",
+      "level": { "label": "Lv.", "value": "100" },
+      "portrait": { "src": "/portrait.svg", "alt": "Illustrated portrait of the adventurer", "framing": "face" },
+      "badge": { "label": "Item Level", "value": "710" },
+      "slots": {
+        "main-hand": {
+          "tooltip": {
+            "title": "Cinderstar Rod",
+            "tags": ["Black Mage's Arm"],
+            "stat": { "label": "Item Level", "value": "710" },
+            "items": [
+              { "label": "Magic Damage", "value": "141" },
+              { "label": "Intelligence", "value": "+512" },
+              { "label": "Determination", "value": "+290" }
+            ],
+            "note": "Lv. 100 · Black Mage"
+          },
+          "action": { "kind": "none" }
+        }
+      },
+      "gearSet": { "label": "Gear Set 3", "value": "Avg. Item Level 710" }
+    }
+  ]
+}

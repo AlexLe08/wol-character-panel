@@ -45,8 +45,10 @@ function underBase(value: unknown, key?: string): unknown {
 const CONTROLS = {
   // "window": CharacterWindow, tabs and all; "equipment": EquipmentPanel.
   view: "window",
-  fixture: "portfolio",
-  theme: "document",
+  // A visitor lands on a familiar game's character screen: the adventurer
+  // example in the game theme.
+  fixture: "adventurer",
+  theme: "game",
   labels: "narrow",
   sockets: "",
   toolbar: "",
@@ -144,7 +146,7 @@ function App() {
       config,
       job,
       basePath,
-      theme: control("theme") === "game" ? "game" : "document",
+      theme: control("theme") === "document" ? "document" : "game",
       labels: control("labels") === "always" ? "always" : "narrow",
       parts: { sockets: Boolean(control("sockets")), toolbar: Boolean(control("toolbar")) },
       gearSetEnd: control("end") ? (
@@ -189,9 +191,10 @@ function App() {
       <header className="pg-header">
         <h1>wol-character-panel</h1>
         <p>
-          A React panel modelled on an RPG character screen, driven by one JSON config. Below are the
-          package&apos;s example configs; the controls set the panel&apos;s props, and View switches between
-          the whole character window and its equipment panel alone.
+          A React panel modelled on an RPG character screen, driven by one JSON config. Below is the
+          adventurer example in the game theme; Fixture switches to the package&apos;s other examples (portfolio
+          is a résumé, meant for the document theme). The controls set the panel&apos;s props, and View switches
+          between the whole character window and its equipment panel alone.
         </p>
       </header>
 
