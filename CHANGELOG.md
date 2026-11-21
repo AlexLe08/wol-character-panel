@@ -6,7 +6,7 @@ ships, and shows on npm). Repository-only changes (tests, CI, tooling)
 aren't listed. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [semver](https://semver.org/) keyed to the config contract (see the README's
-Config section).
+Versioning section).
 
 A PR that changes what's published adds its line under Unreleased; the
 `release:` PR turns Unreleased into the new version.
@@ -15,6 +15,12 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ### Changed
 
+- README: trimmed to a host's quick start (entries, a minimal config,
+  usage, behaviour in brief, theming, versioning). The full config
+  reference and behaviour moved to `docs/config.md` and
+  `docs/behaviour.md` on GitHub, linked from the README; the development
+  notes, the repository's files and the release steps to
+  `docs/development.md` and `docs/releasing.md`.
 - README: says the panel is modelled on a game's character screen but not
   a one-to-one copy, with examples of where it differs, and that the
   package isn't affiliated with the game's publisher.
