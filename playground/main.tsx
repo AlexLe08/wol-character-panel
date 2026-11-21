@@ -3,6 +3,7 @@ import { StrictMode, useEffect, useRef, useState, type CSSProperties, type React
 import { createRoot } from "react-dom/client";
 import { findUnknownKeys, parseConfig, publicConfig, resolveJob, withQuery } from "../src/index.ts";
 import { CharacterWindow, EquipmentPanel, type LinkRendererProps } from "../src/react-entry.ts";
+import { exampleTheme } from "./example-themes.ts";
 import "./playground.css";
 
 // `npm run dev`: the panel straight from src/, with hot reload, on the
@@ -65,9 +66,11 @@ const CONTROLS = {
   // "window": CharacterWindow, tabs and all; "equipment": EquipmentPanel.
   view: "window",
   // A visitor lands on a familiar game's character screen: the adventurer
-  // example in the game theme.
+  // example, in the game theme.
   fixture: "adventurer",
-  theme: "game",
+  // Empty: the example's own theme (example-themes.ts), so each example
+  // opens in it and choosing an example drops the parameter.
+  theme: "",
   labels: "narrow",
   sockets: "",
   toolbar: "",
@@ -130,11 +133,21 @@ function App() {
     if (portraitInput.current) portraitInput.current.value = "";
   };
   const query = new URL(href, location.origin).searchParams;
-  const control = (name: Control) => query.get(name) ?? CONTROLS[name];
+  const fixtureName = Object.hasOwn(fixtures, query.get("fixture") ?? "") ? query.get("fixture")! : CONTROLS.fixture;
+  const defaultOf = (name: Control): string => (name === "theme" ? exampleTheme(fixtureName) : CONTROLS[name]);
+  const control = (name: Control) => query.get(name) ?? defaultOf(name);
+  // A value equal to its default leaves the URL. Choosing an example also
+  // drops the theme, so it opens in its own.
   const setControl = (name: Control, value: string) =>
-    navigate(withQuery(href, { [name]: value === CONTROLS[name] ? null : value }, location.hash.slice(1)), true);
+    navigate(
+      withQuery(
+        href,
+        { [name]: value === defaultOf(name) ? null : value, ...(name === "fixture" && { theme: null }) },
+        location.hash.slice(1),
+      ),
+      true,
+    );
 
-  const fixtureName = Object.hasOwn(fixtures, control("fixture")) ? control("fixture") : CONTROLS.fixture;
   const raw = portrait ? withPortrait(fixtures[fixtureName], portrait) : fixtures[fixtureName];
   const { config: parsed, errors } = parseConfig(raw);
   const unknownKeys = parsed && errors.length === 0 ? findUnknownKeys(raw, parsed) : [];
@@ -221,9 +234,9 @@ function App() {
         <h1>wol-character-panel</h1>
         <p>
           A React panel modelled on an RPG character screen, driven by one JSON config. Below is the
-          adventurer example in the game theme; Fixture switches to the package&apos;s other examples (portfolio
-          is a résumé, meant for the document theme). The controls set the panel&apos;s props, and View switches
-          between the whole character window and its equipment panel alone.
+          adventurer example in the game theme; Fixture switches to the package&apos;s other examples, each in
+          its own theme (portfolio is a résumé, in the document theme). The controls set the panel&apos;s props,
+          and View switches between the whole character window and its equipment panel alone.
         </p>
         <p>
           It isn&apos;t a one-to-one copy of a well-known game&apos;s character screen, in layout or behaviour: it is a

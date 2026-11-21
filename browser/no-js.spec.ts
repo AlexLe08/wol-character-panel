@@ -23,6 +23,13 @@ test("with no query it shows the main page's default: the adventurer example in 
   await expect(page.locator("[data-cs-theme]").first()).toHaveAttribute("data-cs-theme", "game");
 });
 
+test("with no theme in the query an example opens in its own, as on the main page", async ({ page }) => {
+  await page.goto("/static?fixture=portfolio");
+  await expect(page.locator("[data-cs-theme]").first()).toHaveAttribute("data-cs-theme", "document");
+  await page.goto("/static?fixture=minimal");
+  await expect(page.locator("[data-cs-theme]").first()).toHaveAttribute("data-cs-theme", "game");
+});
+
 test("hover and keyboard focus show tooltips", async ({ page }) => {
   await page.goto("/static?view=equipment&fixture=portfolio&theme=document");
   const skills = slot(page, "Skills");

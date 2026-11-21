@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { parseConfig, publicConfig, resolveJob } from "../src/index.ts";
 import { CharacterWindow, EquipmentPanel } from "../src/react-entry.ts";
 import panelCss from "../src/character-panel.css?raw";
+import { exampleTheme } from "./example-themes.ts";
 import playgroundCss from "./playground.css?raw";
 
 // /static: the panel rendered on the server, as a host serves it before
@@ -21,7 +22,10 @@ const fixtures = Object.fromEntries(
 
 export function render(url: URL): string {
   const query = url.searchParams;
-  const raw = fixtures[query.get("fixture") ?? "adventurer"] ?? fixtures.adventurer;
+  const fixture = Object.hasOwn(fixtures, query.get("fixture") ?? "") ? query.get("fixture")! : "adventurer";
+  const raw = fixtures[fixture];
+  // With no theme in the query, the example's own, as on the main page.
+  const theme = query.get("theme") ?? exampleTheme(fixture);
   const { config } = parseConfig(raw);
   let panel = "<p>This config has nothing to render.</p>";
   if (config) {
@@ -32,7 +36,7 @@ export function render(url: URL): string {
       config: visible,
       job: resolveJob(visible, query.get("job") ?? undefined),
       basePath,
-      theme: query.get("theme") === "document" ? "document" : "game",
+      theme: theme === "document" ? "document" : "game",
       labels: query.get("labels") === "always" ? "always" : "narrow",
     } as const;
     panel = renderToStaticMarkup(

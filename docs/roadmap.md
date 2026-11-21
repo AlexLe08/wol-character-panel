@@ -343,6 +343,16 @@
   keep its look), compressed to palette PNGs (195 KB to 52 KB) and shown
   by absolute URL from `main`, by the owner's call: decision 0011, which
   supersedes 0009's "never committed" for the README.
+- Each demo example opens in its own theme (2026-11-21, the first of the
+  first-impressions demo items; playground only, no API change):
+  `portfolio`, a résumé, in `document`, the others in `game`, from one
+  map in `playground/example-themes.ts` that the main page and `/static`
+  both read. The Theme control's default is the example's own, so the
+  URL leaves out a theme equal to it, and choosing an example drops
+  `theme`, so it opens in its own rather than keeping the last one.
+  `browser/playground.spec.ts` checks both, and `no-js.spec.ts` checks
+  `/static` with no theme; the existing tests name their theme, so none
+  changed.
 
 ## Tooling plan (done)
 
@@ -401,9 +411,8 @@ upload are both Done (above).
    page, so these come before it, one small PR each:
    - **demo:** the "Fixture" label becomes "Example" (the `fixture`
      parameter stays, with the links, tests and scripts that use it);
-     each example opens in its own theme (`portfolio` in `document`),
-     the URL leaving out the example's own default rather than one
-     global one; the intro follows the example chosen; `edge-cases`
+     each example in its own theme is Done (above); the intro follows
+     the example chosen; `edge-cases`
      goes last, labelled a stress test; a "hover or focus a slot" hint;
      the install line as plain text in the header (no links there: the
      browser tests reach the panel by Tab), with `@next` in a `/next/`
