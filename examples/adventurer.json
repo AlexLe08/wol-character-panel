@@ -333,8 +333,8 @@
     { "id": "earrings", "label": "Earrings", "position": "right", "icon": "Ea" },
     { "id": "necklace", "label": "Necklace", "position": "right", "icon": "Nk" },
     { "id": "bracelets", "label": "Bracelets", "position": "right", "icon": "Br" },
-    { "id": "ring-1", "label": "Ring", "position": "right", "icon": "Rg" },
-    { "id": "ring-2", "label": "Ring", "position": "right", "icon": "Rg" }
+    { "id": "ring-1", "label": "Left Ring", "position": "right", "icon": "Rg" },
+    { "id": "ring-2", "label": "Right Ring", "position": "right", "icon": "Rg" }
   ],
   "jobs": [
     {
@@ -487,6 +487,70 @@
             { "label": "HP", "value": "98,410", "fill": 100, "tone": "primary" },
             { "label": "MP", "value": "10,000", "fill": 100, "tone": "secondary" }
           ]
+        },
+        "core": {
+          "type": "stats",
+          "groups": [
+            {
+              "label": "Attributes",
+              "iconName": "star",
+              "rows": [
+                { "label": "Strength", "value": "260", "tone": "muted" },
+                { "label": "Dexterity", "value": "398" },
+                { "label": "Vitality", "value": "5,920" },
+                { "label": "Intelligence", "value": "412", "tone": "muted" },
+                {
+                  "label": "Mind",
+                  "value": "6,180",
+                  "tone": "highlight",
+                  "tooltip": { "title": "Mind", "note": "Raises the potency of healing magic. A White Mage's main attribute." }
+                }
+              ]
+            },
+            {
+              "label": "Offensive Properties",
+              "iconName": "sword",
+              "column": "start",
+              "rows": [
+                { "label": "Critical Hit", "value": "3,010" },
+                { "label": "Determination", "value": "2,620" },
+                { "label": "Direct Hit Rate", "value": "1,320" }
+              ]
+            },
+            {
+              "label": "Defensive Properties",
+              "iconName": "shield",
+              "column": "end",
+              "rows": [
+                { "label": "Defense", "value": "5,120" },
+                { "label": "Magic Defense", "value": "8,960" }
+              ]
+            },
+            {
+              "label": "Physical Properties",
+              "iconName": "bow",
+              "column": "start",
+              "rows": [
+                { "label": "Attack Power", "value": "260" },
+                { "label": "Skill Speed", "value": "420" }
+              ]
+            },
+            {
+              "label": "Mental Properties",
+              "iconName": "wand",
+              "column": "end",
+              "rows": [
+                { "label": "Attack Magic Potency", "value": "6,180" },
+                { "label": "Healing Magic Potency", "value": "6,180" },
+                { "label": "Spell Speed", "value": "1,104" }
+              ]
+            },
+            {
+              "label": "Role",
+              "iconName": "cross",
+              "rows": [{ "label": "Piety", "value": "890" }]
+            }
+          ]
         }
       }
     },
@@ -514,7 +578,75 @@
           "action": { "kind": "none" }
         }
       },
-      "gearSet": { "label": "Gear Set 3", "value": "Avg. Item Level 710" }
+      "gearSet": { "label": "Gear Set 3", "value": "Avg. Item Level 710" },
+      "blocks": {
+        "vitals": {
+          "type": "gauges",
+          "rows": [
+            { "label": "HP", "value": "91,250", "fill": 100, "tone": "primary" },
+            { "label": "MP", "value": "10,000", "fill": 100, "tone": "secondary" }
+          ]
+        },
+        "core": {
+          "type": "stats",
+          "groups": [
+            {
+              "label": "Attributes",
+              "iconName": "star",
+              "rows": [
+                { "label": "Strength", "value": "248", "tone": "muted" },
+                { "label": "Dexterity", "value": "390" },
+                { "label": "Vitality", "value": "5,410" },
+                {
+                  "label": "Intelligence",
+                  "value": "6,240",
+                  "tone": "highlight",
+                  "tooltip": { "title": "Intelligence", "note": "Raises the damage of attack magic. A Black Mage's main attribute." }
+                },
+                { "label": "Mind", "value": "402", "tone": "muted" }
+              ]
+            },
+            {
+              "label": "Offensive Properties",
+              "iconName": "sword",
+              "column": "start",
+              "rows": [
+                { "label": "Critical Hit", "value": "3,180" },
+                { "label": "Determination", "value": "2,240" },
+                { "label": "Direct Hit Rate", "value": "1,560" }
+              ]
+            },
+            {
+              "label": "Defensive Properties",
+              "iconName": "shield",
+              "column": "end",
+              "rows": [
+                { "label": "Defense", "value": "4,980" },
+                { "label": "Magic Defense", "value": "8,720" }
+              ]
+            },
+            {
+              "label": "Physical Properties",
+              "iconName": "bow",
+              "column": "start",
+              "rows": [
+                { "label": "Attack Power", "value": "248" },
+                { "label": "Skill Speed", "value": "420" }
+              ]
+            },
+            {
+              "label": "Mental Properties",
+              "iconName": "wand",
+              "column": "end",
+              "rows": [
+                { "label": "Attack Magic Potency", "value": "6,240" },
+                { "label": "Healing Magic Potency", "value": "402" },
+                { "label": "Spell Speed", "value": "1,860" }
+              ]
+            }
+          ]
+        }
+      }
     }
   ]
 }

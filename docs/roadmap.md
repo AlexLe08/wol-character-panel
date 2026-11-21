@@ -278,8 +278,8 @@
   PR template has a
   Screenshots section. Tried on #44's fix: the before shows the tooltip
   past the panel's edge, the after shows it inside.
-- The demo opens on a game character screen (2026-11-20, #48 and this
-  PR, the owner's request): a new `adventurer` example, in the game
+- The demo opens on a game character screen (2026-11-20, the owner's
+  request): a new `adventurer` example, in the game
   theme, is the playground's and demo's default, so a visitor recognises
   the kind of screen at once. It uses the genre's vocabulary and the
   familiar job names (Paladin, Dragoon, Gunbreaker…: the owner's call,
@@ -288,7 +288,8 @@
   the game's attribute groups; every proper noun (character, gear,
   guardian, city, allegiance, allied peoples) is invented, and the game
   isn't named (the trademark rule). Three playable jobs (Paladin fully
-  geared, White Mage, Black Mage) show the job menu and per-job blocks.
+  geared, White Mage, Black Mage) show the job menu and per-job blocks
+  (each its own vitals and attributes).
   `full` became `portfolio` (#48), and every browser test names its theme
   and fixture, so the new defaults changed no test. Still a playground
   example: shipping it as a preset hosts can start from is a later minor

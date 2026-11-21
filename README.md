@@ -543,7 +543,7 @@ example in the game theme, and shows `CharacterWindow`;
 `?tab=`, `?page=` and the param actions' parameters from the URL and passes
 `isParamActive`; a `link` action shows where a host would go instead of
 leaving the page. It renders on the client, while hosts render the panel on
-the server; `/static?fixture=portfolio&width=22` shows the server-rendered panel
+the server; `/static?fixture=portfolio&theme=document&width=22` shows the server-rendered panel
 with no script (view, fixture, theme, labels, width, `job`, `tab` and `page`
 from the query).
 Check a release candidate in a host too (below).
