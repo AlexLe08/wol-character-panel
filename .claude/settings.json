@@ -20,5 +20,9 @@
       "Bash(git push * v*)",
       "Bash(git push * --tags*)"
     ]
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
   }
 }
