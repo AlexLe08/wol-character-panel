@@ -294,6 +294,20 @@
   and fixture, so the new defaults changed no test. Still a playground
   example: shipping it as a preset hosts can start from is a later minor
   (Later).
+- A portrait upload on the demo (2026-11-20, the owner's request; playground
+  only, no API change): a Portrait file input and a Remove portrait button
+  in the controls. The chosen image becomes a `blob:` URL in React state,
+  set as every job's portrait before `parseConfig`, including jobs without
+  one; the example's `framing` is kept, `width` and `height` go with the
+  old image, and the alt text is "The image you chose", since the
+  example's would describe another picture. Nothing is uploaded, stored or
+  put in the page's URL, so it survives job and fixture switches but not a
+  reload, as a note under the controls (the input's description) says.
+  The old URL is revoked on a new choice or Remove. A browser test
+  (`browser/portrait-upload.spec.ts`) chooses a file and checks the
+  portrait loads it, across a job switch and on the no-portrait job, the
+  URL unchanged, axe on the panel and the controls, and Remove and a
+  reload each restoring the example's portrait.
 
 ## Tooling plan (done)
 
@@ -337,15 +351,9 @@ running past the viewport (fixed in #44, Done; unreleased until beta.2)
 and the job menu ignoring Escape and outside clicks (fixed, Done;
 unreleased until beta.2).
 
-Demo work the owner wants before the release, playground only (no API
-change, so the soak runs on): the game-styled default is Done (above);
-left is **a portrait upload on the demo**, in its own session. A labelled
-file input and a Remove button in the controls; the chosen image becomes a
-`blob:` URL (`URL.createObjectURL`) swapped into every job's portrait
-before `parseConfig` (any URL passes `portrait.src`), so nothing is
-uploaded, stored or put in the page's URL, and a reload clears it; a line
-on the page says so. A browser test uploads a file and checks the portrait
-shows it, axe included.
+Demo work the owner wanted before the release, playground only (no API
+change, so the soak runs on): the game-styled default and the portrait
+upload are both Done (above).
 
 1. **Soak.** 2.0.0 once a beta has gone about a week without an API
    change ([decision 0004](decisions/0004-2.0-betas-on-next.md)): from

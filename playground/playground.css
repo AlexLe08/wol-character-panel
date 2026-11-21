@@ -49,6 +49,12 @@ body {
   outline-offset: 2px;
 }
 
+.pg-note {
+  flex-basis: 100%;
+  margin: 0;
+  color: #5b616b;
+}
+
 .pg-report {
   padding: 0.5rem 0.75rem;
   border-left: 3px solid #b3261e;
