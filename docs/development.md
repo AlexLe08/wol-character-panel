@@ -97,7 +97,10 @@ place are in `playground/example-info.ts`;
 `isParamActive`; a `link` action shows where a host would go instead of
 leaving the page. Portrait tries an image of your own as every job's
 portrait; it stays in the tab (a `blob:` URL, not a query parameter), so
-nothing is uploaded and a reload clears it. It renders on the client, while
+nothing is uploaded and a reload clears it. "Show config", a closed
+`<details>` under the panel, shows the code a host would write for the
+current controls (imports, `parseConfig`, the component and its props, from
+`playground/host-code.ts`) and the example's file as written. It renders on the client, while
 hosts render the panel on the server; `/static?fixture=portfolio&theme=document&width=22` shows the server-rendered panel
 with no script (view, fixture, theme, labels, width, `job`, `tab` and `page`
 from the query; with no theme, the example's own).
