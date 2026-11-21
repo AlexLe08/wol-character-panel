@@ -19,7 +19,7 @@ for (const { name, origin, base } of DEMOS) {
     page.on("response", (response) => {
       if (response.status() >= 400) failed.push(`${response.status()} ${response.url()}`);
     });
-    await page.goto(`${demo}?fixture=portfolio`, { waitUntil: "networkidle" });
+    await page.goto(`${demo}?fixture=portfolio&theme=document`, { waitUntil: "networkidle" });
 
     const portrait = page.locator(".cs__portrait img");
     await expect(portrait).toHaveAttribute("src", `${base}portrait.svg`);
