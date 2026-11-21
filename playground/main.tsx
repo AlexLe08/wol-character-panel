@@ -234,9 +234,9 @@ function App() {
         <h1>wol-character-panel</h1>
         <p>
           A React panel modelled on an RPG character screen, driven by one JSON config. Below is the
-          adventurer example in the game theme; Fixture switches to the package&apos;s other examples, each in its
-          own theme (portfolio is a résumé, in the document theme). The controls set the panel&apos;s props, and View switches
-          between the whole character window and its equipment panel alone.
+          adventurer example in the game theme; Fixture switches to the package&apos;s other examples, each in
+          its own theme (portfolio is a résumé, in the document theme). The controls set the panel&apos;s props,
+          and View switches between the whole character window and its equipment panel alone.
         </p>
         <p>
           It isn&apos;t a one-to-one copy of a well-known game&apos;s character screen, in layout or behaviour: it is a
