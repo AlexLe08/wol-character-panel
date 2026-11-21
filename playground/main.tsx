@@ -226,11 +226,12 @@ function App() {
           between the whole character window and its equipment panel alone.
         </p>
         <p>
-          It is modelled on a well-known game&apos;s character screen, not copied from it: the layout and behaviour
-          aren&apos;t one to one. Liberties were taken to make it a flexible web component whose parts a page can
-          include or leave out in ways the game wouldn&apos;t allow. For instance, the adventurer example has no
-          weapon slot on the job crystal&apos;s row (the main hand heads the left column), and its Classes/Jobs
-          tab gives DPS a page of its own, where the game lists tanks, healers and DPS together.
+          It isn&apos;t a one-to-one copy of a well-known game&apos;s character screen, in layout or behaviour: it is a
+          flexible React component, so a page can include or leave out parts in combinations the game&apos;s own
+          screen doesn&apos;t have. For instance, the adventurer example has no weapon slot on the job crystal&apos;s
+          row (the main hand heads the left column), and its Classes/Jobs tab gives DPS a page of its own, where
+          the game lists tanks, healers and DPS together. The package isn&apos;t affiliated with or endorsed by that
+          game&apos;s publisher.
         </p>
       </header>
 
