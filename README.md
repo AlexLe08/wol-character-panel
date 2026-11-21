@@ -25,10 +25,10 @@ JSON config. Use it for:
 Three words recur below:
 
 - **Job**: one version of the character, with its own title, level,
-  portrait and slot contents. The page shows one at a time (`?job=<id>`),
-  and the job menu switches between them.
+  portrait and slot contents. The page shows one at a time, and the job
+  menu switches between them.
 - **Slot**: one square in the layout, in a side column or beside the job
-  title, with an item-card tooltip and a link.
+  title, with an item-card tooltip and usually a link.
 - **Host**: your app, which renders the panel and provides React and zod.
 
 ```
@@ -67,8 +67,9 @@ Accessibility, as the browser tests check it (Playwright, Chromium only):
 - **No JavaScript needed:** tooltips, the job menu, tabs and detail
   windows work in the server-rendered panel with scripts off.
 - **Keyboard:** Tab reaches every link and button, each with a visible
-  focus ring; a tooltip shows on focus, and Escape hides it or closes the
-  job menu.
+  focus ring (walked through the `portfolio` example); a tooltip shows on
+  focus, and Escape closes the job menu, or hides a tooltip once the
+  script has loaded.
 - **axe:** no WCAG 2.2 A or AA violations in any example, in both themes,
   wide and narrow. Automated checks cover only part of WCAG.
 
@@ -127,8 +128,11 @@ Add `"$schema"` pointing at `character-panel.schema.json` for autocomplete
 and validation in your editor, either your installed copy or the published
 one:
 
-```json
-"$schema": "https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@2/character-panel.schema.json"
+```jsonc
+{
+  "$schema": "https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@2/character-panel.schema.json",
+  // …the rest of the config
+}
 ```
 
 That URL (the schema's `$id`) resolves once 2.0.0 is released; until

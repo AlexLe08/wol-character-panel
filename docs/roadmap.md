@@ -382,7 +382,7 @@
   every example, theme and layout), with Firefox, WebKit and screen
   readers named as untested. The "not a copy" paragraph is one line, in
   the README and in the demo's header (shorter, so the panel moves up).
-  the-portfolio-site moved to the README's end, and the development and
+  The line on the-portfolio-site moved to the README's end, and the development and
   releasing links out of its More list (CONTRIBUTING links both). The
   `$schema` line shows the `$id` URL; jsDelivr's `@2` skips prereleases
   (404 today), so the README says to use `@next` until 2.0.0, and
