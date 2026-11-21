@@ -77,7 +77,7 @@ test("the intro follows the example chosen, and describes the Example control", 
 test("the header names the version and its install line, @next for a prerelease", async ({ page }) => {
   await page.goto("/");
   const install = page.locator(".pg-install");
-  const version = /This demo shows version (\S+)\./.exec((await install.textContent()) ?? "")?.[1] ?? "";
+  const version = /^Install (\S+) with/.exec((await install.textContent()) ?? "")?.[1] ?? "";
   expect(version).toMatch(/^\d+\.\d+\.\d+/);
   await expect(install.locator("code")).toHaveText(
     `npm install @solution-nine/wol-character-panel${version.includes("-") ? "@next" : ""} react zod`,
@@ -86,7 +86,7 @@ test("the header names the version and its install line, @next for a prerelease"
   await expect(page.locator(".pg-header a")).toHaveCount(0);
 });
 
-test("a hint above the panel says how to open a tooltip", async ({ page }) => {
+test("a hint in the header says how to open a tooltip", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator(".pg-hint")).toHaveText("Hover over a slot or Tab to it to see its tooltip.");
 });

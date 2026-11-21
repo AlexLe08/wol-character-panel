@@ -68,13 +68,8 @@ body {
 
 .pg-report p,
 .pg-report ul,
-.pg-hint,
 .pg-status {
   margin: 0;
-}
-
-.pg-hint {
-  color: #5b616b;
 }
 
 .pg-status {

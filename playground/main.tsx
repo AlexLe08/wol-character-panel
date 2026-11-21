@@ -241,15 +241,16 @@ function App() {
           order, and the browser tests walk to it with Tab. */}
       <header className="pg-header">
         <h1>wol-character-panel</h1>
+        {/* One paragraph, no longer than the one it replaced, so the panel
+            doesn't move down: the browser tests hover slots in a 720px-high
+            viewport, and a bottom-row tooltip there has little room. */}
         <p>
-          A React panel modelled on an RPG character screen, driven by one JSON config. Example switches between
-          the package&apos;s examples, each in its own theme; the other controls set the panel&apos;s props, and View
-          switches between the whole character window and its equipment panel alone.
-        </p>
-        <p id="pg-example-intro">{exampleIntro(fixtureName)}</p>
-        <p className="pg-install">
-          This demo shows version {version}. Install it with <code>{INSTALL}</code>
-          {PRERELEASE && " (a bare install still gets the latest stable version)"}.
+          A React panel modelled on an RPG character screen, driven by one JSON config.{" "}
+          <span id="pg-example-intro">{exampleIntro(fixtureName)}</span>{" "}
+          <span className="pg-hint">Hover over a slot or Tab to it to see its tooltip.</span>{" "}
+          <span className="pg-install">
+            Install {version} with <code>{INSTALL}</code>
+          </span>
         </p>
         <p>
           It isn&apos;t a one-to-one copy of a well-known game&apos;s character screen, in layout or behaviour: it is a
@@ -348,7 +349,6 @@ function App() {
           </ul>
         </div>
       )}
-      <p className="pg-hint">Hover over a slot or Tab to it to see its tooltip.</p>
       <p className="pg-status" role="status">
         {notice ?? (hostParams.length > 0 ? `Host parameters: ${new URLSearchParams(hostParams)}` : " ")}
       </p>

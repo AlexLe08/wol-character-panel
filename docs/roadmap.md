@@ -364,9 +364,12 @@
   than the `/next/` base, since after 2.0.0 `/next/` falls back to
   `latest`'s build while npm's `next` still names a beta; the playground's
   allowlist takes `../package.json` for it, and Vite bundles only
-  `version`; the line matches the README's, peers included. A line above
-  the panel says to hover over a slot or Tab to it (not tap: on touch a
-  slot's tap follows its link).
+  `version`; the line matches the README's, peers included. The header
+  says to hover over a slot or Tab to it (not tap: on touch a slot's tap
+  follows its link). All of it is one paragraph, shorter than the one it
+  replaced: as separate lines it moved the panel about 65px down, and CI's
+  hoverable-tooltip test, moving the pointer onto a bottom-row tooltip in
+  a 720px-high viewport, lost it below the fold.
   Each example's theme, intro and place are in
   `playground/example-info.ts` (was `example-themes.ts`). New tests in
   `browser/playground.spec.ts`; its "Fixture" locators follow the label.
