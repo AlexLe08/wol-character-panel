@@ -79,14 +79,19 @@ npm run dev         # http://localhost:5173
 ```
 
 The playground renders the panel straight from `src/` with hot reload, on any
-config in `examples/`. Its controls (view, fixture, theme, labels, sockets,
+config in `examples/`. Its controls (view, example, theme, labels, sockets,
 toolbar, end control, container width, dark host tokens, drafts) are query
 parameters, so every state is a link, such as
-`/?fixture=edge-cases&theme=document&width=22`. It opens on the `adventurer`
+`/?fixture=edge-cases&theme=document&width=22` (the Example control's
+parameter is `fixture`). It opens on the `adventurer`
 example in the game theme, and shows `CharacterWindow`. Each example opens
-in its own theme (`portfolio` in `document`, the others in `game`;
-`playground/example-themes.ts`), so choosing one drops `theme` from the
-URL, which leaves out a theme equal to the example's own;
+in its own theme (`portfolio` in `document`, the others in `game`), so
+choosing one drops `theme` from the
+URL, which leaves out a theme equal to the example's own. The header shows
+an intro for the chosen example and the install line for the version the
+page was built from (`@next` for a prerelease), and the Example control
+lists `edge-cases` last, as a stress test; each example's theme, intro and
+place are in `playground/example-info.ts`;
 `view=equipment` shows `EquipmentPanel` alone. Like a host, it reads `?job=`,
 `?tab=`, `?page=` and the param actions' parameters from the URL and passes
 `isParamActive`; a `link` action shows where a host would go instead of

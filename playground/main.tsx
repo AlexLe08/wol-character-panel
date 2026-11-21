@@ -3,7 +3,8 @@ import { StrictMode, useEffect, useRef, useState, type CSSProperties, type React
 import { createRoot } from "react-dom/client";
 import { findUnknownKeys, parseConfig, publicConfig, resolveJob, withQuery } from "../src/index.ts";
 import { CharacterWindow, EquipmentPanel, type LinkRendererProps } from "../src/react-entry.ts";
-import { exampleTheme } from "./example-themes.ts";
+import { version } from "../package.json";
+import { exampleIntro, exampleLabel, exampleOrder, exampleTheme } from "./example-info.ts";
 import "./playground.css";
 
 // `npm run dev`: the panel straight from src/, with hot reload, on the
@@ -20,6 +21,12 @@ import "./playground.css";
 // than the site root; BASE_URL is that path there and "/" in dev.
 
 const BASE = import.meta.env.BASE_URL;
+
+// The install line for the version this page was built from: each demo is
+// built from its release tag, so a beta's (the next demo's, while one is
+// ahead of latest) needs @next, since a bare install gets npm's latest.
+// Vite bundles only this field of package.json.
+const INSTALL = `npm install @solution-nine/wol-character-panel${version.includes("-") ? "@next" : ""}`;
 
 const examples = import.meta.glob<unknown>("../examples/*.json", { eager: true, import: "default" });
 const fixtures = Object.fromEntries(
@@ -233,10 +240,14 @@ function App() {
       <header className="pg-header">
         <h1>wol-character-panel</h1>
         <p>
-          A React panel modelled on an RPG character screen, driven by one JSON config. Below is the
-          adventurer example in the game theme; Fixture switches to the package&apos;s other examples, each in
-          its own theme (portfolio is a résumé, in the document theme). The controls set the panel&apos;s props,
-          and View switches between the whole character window and its equipment panel alone.
+          A React panel modelled on an RPG character screen, driven by one JSON config. Example switches between
+          the package&apos;s examples, each in its own theme; the other controls set the panel&apos;s props, and View
+          switches between the whole character window and its equipment panel alone.
+        </p>
+        <p id="pg-example-intro">{exampleIntro(fixtureName)}</p>
+        <p className="pg-install">
+          This demo shows version {version}. Install it with <code>{INSTALL}</code>
+          {version.includes("-") && " (a bare install still gets the latest stable version)"}.
         </p>
         <p>
           It isn&apos;t a one-to-one copy of a well-known game&apos;s character screen, in layout or behaviour: it is a
@@ -257,10 +268,16 @@ function App() {
           </select>
         </label>
         <label>
-          Fixture{" "}
-          <select value={fixtureName} onChange={(event) => setControl("fixture", event.target.value)}>
-            {Object.keys(fixtures).map((name) => (
-              <option key={name}>{name}</option>
+          Example{" "}
+          <select
+            value={fixtureName}
+            aria-describedby="pg-example-intro"
+            onChange={(event) => setControl("fixture", event.target.value)}
+          >
+            {exampleOrder(Object.keys(fixtures)).map((name) => (
+              <option key={name} value={name}>
+                {exampleLabel(name)}
+              </option>
             ))}
           </select>
         </label>
@@ -329,6 +346,7 @@ function App() {
           </ul>
         </div>
       )}
+      <p className="pg-hint">Hover over a slot, Tab to it or tap it to see its tooltip.</p>
       <p className="pg-status" role="status">
         {notice ?? (hostParams.length > 0 ? `Host parameters: ${new URLSearchParams(hostParams)}` : " ")}
       </p>

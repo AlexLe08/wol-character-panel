@@ -22,6 +22,11 @@ body {
   color: #5b616b;
 }
 
+.pg-header code {
+  color: #1c1e22;
+  overflow-wrap: anywhere;
+}
+
 .pg-footer {
   display: flex;
   flex-wrap: wrap;
@@ -63,8 +68,13 @@ body {
 
 .pg-report p,
 .pg-report ul,
+.pg-hint,
 .pg-status {
   margin: 0;
+}
+
+.pg-hint {
+  color: #5b616b;
 }
 
 .pg-status {

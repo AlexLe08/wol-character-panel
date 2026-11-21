@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { parseConfig, publicConfig, resolveJob } from "../src/index.ts";
 import { CharacterWindow, EquipmentPanel } from "../src/react-entry.ts";
 import panelCss from "../src/character-panel.css?raw";
-import { exampleTheme } from "./example-themes.ts";
+import { exampleTheme } from "./example-info.ts";
 import playgroundCss from "./playground.css?raw";
 
 // /static: the panel rendered on the server, as a host serves it before

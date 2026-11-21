@@ -353,6 +353,21 @@
   `browser/playground.spec.ts` checks both, and `no-js.spec.ts` checks
   `/static` with no theme; the existing tests name their theme, so none
   changed.
+- The demo's example picker and header (2026-11-21, the rest of the first
+  first-impressions demo item; playground only, no API change): the
+  "Fixture" control is "Example" (`?fixture=` stays, with the links,
+  tests and scripts that use it), listing `adventurer`, `portfolio`,
+  `minimal`, then "edge-cases (stress test)"; the header has an intro
+  for the chosen example (also the control's description), and the
+  version the page was built from with its install line as plain text,
+  `@next` when that version is a prerelease. Keyed to the version rather
+  than the `/next/` base, since after 2.0.0 `/next/` falls back to
+  `latest`'s build while npm's `next` still names a beta; the playground's
+  allowlist takes `../package.json` for it, and Vite bundles only
+  `version`. A line above the panel says to hover, Tab to or tap a slot.
+  Each example's theme, intro and place are in
+  `playground/example-info.ts` (was `example-themes.ts`). New tests in
+  `browser/playground.spec.ts`; its "Fixture" locators follow the label.
 
 ## Tooling plan (done)
 
@@ -409,14 +424,8 @@ upload are both Done (above).
    README's top). 2.0.0 ends that,
    and is also when most newcomers will first see the demo and the npm
    page, so these come before it, one small PR each:
-   - **demo:** the "Fixture" label becomes "Example" (the `fixture`
-     parameter stays, with the links, tests and scripts that use it);
-     each example in its own theme is Done (above); the intro follows
-     the example chosen; `edge-cases`
-     goes last, labelled a stress test; a "hover or focus a slot" hint;
-     the install line as plain text in the header (no links there: the
-     browser tests reach the panel by Tab), with `@next` in a `/next/`
-     build until 2.0.0, where a bare install still gets 1.0.4.
+   - **demo:** the example picker and header: Done (above), with each
+     example in its own theme.
    - **demo:** a "Show config" disclosure under the panel with the
      example's JSON and the JSX for the current controls, since the
      pitch is "one JSON config" and the demo never shows one.
