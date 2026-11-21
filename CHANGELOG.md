@@ -6,12 +6,21 @@ ships, and shows on npm). Repository-only changes (tests, CI, tooling)
 aren't listed. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [semver](https://semver.org/) keyed to the config contract (see the README's
-Config section).
+Versioning section).
 
 A PR that changes what's published adds its line under Unreleased; the
 `release:` PR turns Unreleased into the new version.
 
 ## [Unreleased]
+
+### Changed
+
+- README: trimmed to a host's quick start (entries, a minimal config,
+  usage, behaviour in brief, theming, versioning). The full config
+  reference and behaviour moved to `docs/config.md` and
+  `docs/behaviour.md` on GitHub, linked from the README; the development
+  notes, the repository's files and the release steps to
+  `docs/development.md` and `docs/releasing.md`.
 
 ## [2.0.0-beta.2] - 2026-11-21
 

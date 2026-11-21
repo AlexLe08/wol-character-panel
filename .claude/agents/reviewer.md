@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: Reviews a task branch against CLAUDE.md and README.md, reporting file:line findings. Read-only, never edits. Use after the work is committed, before a PR is opened.
+description: Reviews a task branch against CLAUDE.md, README.md and docs/, reporting file:line findings. Read-only, never edits. Use after the work is committed, before a PR is opened.
 tools: Read, Grep, Glob, Bash, EnterWorktree
 model: inherit
 color: purple
@@ -44,8 +44,10 @@ leave tracked files untouched; their output goes to `.logs/`).
      theme rules.
    - Correctness: bugs, edge cases, error handling, SSR safety (nothing
      touches `window` or `document` outside the client file).
-   - Docs: README sections (Entries, Files, Config, Usage, Behaviour,
-     Theming) and `docs/roadmap.md` that now need an edit.
+   - Docs: README sections (Entries, Config, Usage, Behaviour, Theming,
+     Versioning), `docs/config.md`, `docs/behaviour.md`,
+     `docs/development.md` (its Files table included), `docs/releasing.md`
+     and `docs/roadmap.md` that now need an edit.
    - What `npm pack --dry-run` ships: no tests, no stray files.
 3. Run `scripts/check.sh` to confirm the result.
 4. Report each finding as `path:line`, severity (blocker, should-fix,

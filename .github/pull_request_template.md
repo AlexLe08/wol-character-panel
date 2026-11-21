@@ -23,7 +23,7 @@ them. Otherwise "None: no visible change."
 
 - [ ] `scripts/check.sh` passes
 - [ ] A host-visible change has its line under Unreleased in `CHANGELOG.md`
-- [ ] README updated if entries, the config format, behaviour or theming changed
+- [ ] README or `docs/` updated if entries, the config format, behaviour or theming changed
 - [ ] `npm run generate:schema` run and committed if `src/schema.ts` changed
 
 ## Not verified

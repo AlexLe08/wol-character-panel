@@ -6,7 +6,7 @@ disable-model-invocation: true
 ---
 
 Prepare the `release: X.Y.Z` PR described in CLAUDE.md (Versioning and
-releases) and the README's Releasing section. A version given as an
+releases) and `docs/releasing.md`. A version given as an
 argument ($ARGUMENTS) is the owner's proposal: check it against the diff
 like any other, and say so if it is the wrong size.
 
@@ -41,10 +41,10 @@ release PR's squash commit and `release.yml` publishes.
      scripts/strip-dts-css-imports.mjs` and `package.json`'s `build`
      script change what ships in `dist/` (1.0.2 was such a fix). Compare
      `npm pack --dry-run` file lists if unsure.
-   - `README.md` ships and shows on npm: a correction to a host-facing
-     section (Entries, Files, Config, Usage, Behaviour, Theming) is a
-     patch; Development and Releasing are repository notes and count as
-     none, like other tooling (the CHANGELOG doesn't list them).
+   - `README.md` ships and shows on npm: a correction to it is a patch.
+     `docs/` doesn't ship, so changes there alone count as none;
+     `docs/development.md` and `docs/releasing.md` are repository notes,
+     like other tooling (the CHANGELOG doesn't list them).
    - The Unreleased section of `CHANGELOG.md`.
 3. If nothing a host can see changed, say a release isn't needed and stop.
 
@@ -73,10 +73,10 @@ you'll use.
 2. `npm version X.Y.Z --no-git-tag-version` (`package.json` and
    `package-lock.json`, no commit, no tag).
 3. A new major (its first beta included): `npm run generate:schema`, so
-   the `$id` moves to `@<major>`; then update the README and examples
-   wherever they name the old major (`grep -rn "@<old major>" README.md
-   examples/`). Leave the CHANGELOG's history and `package-lock.json`
-   alone. (jsDelivr's `@<major>` range skips prereleases, so that URL
+   the `$id` moves to `@<major>`; then update the README, `docs/config.md`
+   and examples wherever they name the old major (`grep -rn "@<old major>"
+   README.md docs/config.md examples/`). Leave the CHANGELOG's history
+   and `package-lock.json` alone. (jsDelivr's `@<major>` range skips prereleases, so that URL
    resolves only once the stable release is out.) The stable release
    after betas also removes the README's `@next` install line, until the
    next major's betas; the sentence on the next demo (`/next/`) stays,
