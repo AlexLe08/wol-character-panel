@@ -80,7 +80,7 @@ test("the header names the version and its install line, @next for a prerelease"
   const version = /This demo shows version (\S+)\./.exec((await install.textContent()) ?? "")?.[1] ?? "";
   expect(version).toMatch(/^\d+\.\d+\.\d+/);
   await expect(install.locator("code")).toHaveText(
-    `npm install @solution-nine/wol-character-panel${version.includes("-") ? "@next" : ""}`,
+    `npm install @solution-nine/wol-character-panel${version.includes("-") ? "@next" : ""} react zod`,
   );
   // Plain text: links there would come before the panel in the tab order.
   await expect(page.locator(".pg-header a")).toHaveCount(0);
@@ -88,5 +88,5 @@ test("the header names the version and its install line, @next for a prerelease"
 
 test("a hint above the panel says how to open a tooltip", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator(".pg-hint")).toHaveText("Hover over a slot, Tab to it or tap it to see its tooltip.");
+  await expect(page.locator(".pg-hint")).toHaveText("Hover over a slot or Tab to it to see its tooltip.");
 });

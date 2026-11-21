@@ -26,7 +26,9 @@ const BASE = import.meta.env.BASE_URL;
 // built from its release tag, so a beta's (the next demo's, while one is
 // ahead of latest) needs @next, since a bare install gets npm's latest.
 // Vite bundles only this field of package.json.
-const INSTALL = `npm install @solution-nine/wol-character-panel${version.includes("-") ? "@next" : ""}`;
+// The peers as in the README's install line.
+const PRERELEASE = version.includes("-");
+const INSTALL = `npm install @solution-nine/wol-character-panel${PRERELEASE ? "@next" : ""} react zod`;
 
 const examples = import.meta.glob<unknown>("../examples/*.json", { eager: true, import: "default" });
 const fixtures = Object.fromEntries(
@@ -75,7 +77,7 @@ const CONTROLS = {
   // A visitor lands on a familiar game's character screen: the adventurer
   // example, in the game theme.
   fixture: "adventurer",
-  // Empty: the example's own theme (example-themes.ts), so each example
+  // Empty: the example's own theme (example-info.ts), so each example
   // opens in it and choosing an example drops the parameter.
   theme: "",
   labels: "narrow",
@@ -247,7 +249,7 @@ function App() {
         <p id="pg-example-intro">{exampleIntro(fixtureName)}</p>
         <p className="pg-install">
           This demo shows version {version}. Install it with <code>{INSTALL}</code>
-          {version.includes("-") && " (a bare install still gets the latest stable version)"}.
+          {PRERELEASE && " (a bare install still gets the latest stable version)"}.
         </p>
         <p>
           It isn&apos;t a one-to-one copy of a well-known game&apos;s character screen, in layout or behaviour: it is a
@@ -346,7 +348,7 @@ function App() {
           </ul>
         </div>
       )}
-      <p className="pg-hint">Hover over a slot, Tab to it or tap it to see its tooltip.</p>
+      <p className="pg-hint">Hover over a slot or Tab to it to see its tooltip.</p>
       <p className="pg-status" role="status">
         {notice ?? (hostParams.length > 0 ? `Host parameters: ${new URLSearchParams(hostParams)}` : " ")}
       </p>
