@@ -21,7 +21,7 @@ const fixtures = Object.fromEntries(
 
 export function render(url: URL): string {
   const query = url.searchParams;
-  const raw = fixtures[query.get("fixture") ?? "portfolio"] ?? fixtures.portfolio;
+  const raw = fixtures[query.get("fixture") ?? "adventurer"] ?? fixtures.adventurer;
   const { config } = parseConfig(raw);
   let panel = "<p>This config has nothing to render.</p>";
   if (config) {
@@ -32,7 +32,7 @@ export function render(url: URL): string {
       config: visible,
       job: resolveJob(visible, query.get("job") ?? undefined),
       basePath,
-      theme: query.get("theme") === "game" ? "game" : "document",
+      theme: query.get("theme") === "document" ? "document" : "game",
       labels: query.get("labels") === "always" ? "always" : "narrow",
     } as const;
     panel = renderToStaticMarkup(

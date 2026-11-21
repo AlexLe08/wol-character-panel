@@ -278,6 +278,22 @@
   PR template has a
   Screenshots section. Tried on #44's fix: the before shows the tooltip
   past the panel's edge, the after shows it inside.
+- The demo opens on a game character screen (2026-11-20, the owner's
+  request): a new `adventurer` example, in the game
+  theme, is the playground's and demo's default, so a visitor recognises
+  the kind of screen at once. It uses the genre's vocabulary and the
+  familiar job names (Paladin, Dragoon, Gunbreaker…: the owner's call,
+  including names first coined for that game), the 6+6 gear columns
+  (Main Hand to Feet, Off Hand to the rings), Item Level as the badge and
+  the game's attribute groups; every proper noun (character, gear,
+  guardian, city, allegiance, allied peoples) is invented, and the game
+  isn't named (the trademark rule). Three playable jobs (Paladin fully
+  geared, White Mage, Black Mage) show the job menu and per-job blocks
+  (each its own vitals and attributes).
+  `full` became `portfolio` (#48), and every browser test names its theme
+  and fixture, so the new defaults changed no test. Still a playground
+  example: shipping it as a preset hosts can start from is a later minor
+  (Later).
 
 ## Tooling plan (done)
 
@@ -320,6 +336,16 @@ tests are Chromium only). It found the narrow middle-column tooltips
 running past the viewport (fixed in #44, Done; unreleased until beta.2)
 and the job menu ignoring Escape and outside clicks (fixed, Done;
 unreleased until beta.2).
+
+Demo work the owner wants before the release, playground only (no API
+change, so the soak runs on): the game-styled default is Done (above);
+left is **a portrait upload on the demo**, in its own session. A labelled
+file input and a Remove button in the controls; the chosen image becomes a
+`blob:` URL (`URL.createObjectURL`) swapped into every job's portrait
+before `parseConfig` (any URL passes `portrait.src`), so nothing is
+uploaded, stored or put in the page's URL, and a reload clears it; a line
+on the page says so. A browser test uploads a file and checks the portrait
+shows it, axe included.
 
 1. **Soak.** 2.0.0 once a beta has gone about a week without an API
    change ([decision 0004](decisions/0004-2.0-betas-on-next.md)): from
@@ -372,6 +398,10 @@ unreleased until beta.2).
   `install --with-deps`, with a check that the tag matches
   `@playwright/test`. apt retries wouldn't cover a minutes-long outage.
 - Themes beyond `document` and `game`.
+- The `adventurer` example as a preset hosts can import and edit (for
+  example a `presets/` file in the `exports` map): a new export, so a
+  minor, once real users are in sight. Gear-like slot icons (images
+  through `iconSrc`) would make it closer to the real screen.
 - From the character window plan, each only when a real config needs it:
   more `iconName` drawings (adding a name is a minor, removing one a
   major); a job hiding a shared block (today it can only replace one);

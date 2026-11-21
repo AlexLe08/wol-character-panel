@@ -560,7 +560,7 @@ async function violations(page: Page) {
   return found.map((v) => ({ rule: v.id, help: v.help, nodes: v.nodes.map((n) => n.target) }));
 }
 
-for (const fixture of ["portfolio", "minimal", "edge-cases"]) {
+for (const fixture of ["adventurer", "portfolio", "minimal", "edge-cases"]) {
   for (const theme of ["document", "game"]) {
     for (const width of ["", "22"]) {
       test(`no axe violations on any tab: ${fixture}, ${theme}, ${width ? "narrow" : "wide"}`, async ({ page }) => {

@@ -72,7 +72,7 @@ release again when no beta is newer).
 | `src/JobMenuFocus.tsx` | Client code: the job menu closes when focus lands outside it. Private: no entry exports it |
 | `src/character-panel.css` | Styles and themes; everything themable is a `--cs-*` variable |
 | `character-panel.schema.json` | Generated JSON Schema for editing a config file by hand |
-| `examples/` | Sample configs (`portfolio`, `minimal`, `edge-cases` with every field at its limit); tests check each one parses cleanly and renders |
+| `examples/` | Sample configs (`adventurer`, a game character screen; `portfolio`, a résumé; `minimal`; `edge-cases` with every field at its limit); tests check each one parses cleanly and renders |
 | `playground/` | The local preview (`npm run dev`), and `/static`, the panel server-rendered with no script (`static.tsx`). Built for the demo site by `npm run build:demo`. Not published |
 | `browser/` | Browser tests (`npm run test:browser`): Playwright and axe against the playground |
 | `scripts/generate-schema.mjs` | Regenerates the JSON Schema (`npm run generate:schema`) |
@@ -537,12 +537,13 @@ The playground renders the panel straight from `src/` with hot reload, on any
 config in `examples/`. Its controls (view, fixture, theme, labels, sockets,
 toolbar, end control, container width, dark host tokens, drafts) are query
 parameters, so every state is a link, such as
-`/?fixture=edge-cases&theme=game&width=22`. It shows `CharacterWindow`;
+`/?fixture=edge-cases&theme=document&width=22`. It opens on the `adventurer`
+example in the game theme, and shows `CharacterWindow`;
 `view=equipment` shows `EquipmentPanel` alone. Like a host, it reads `?job=`,
 `?tab=`, `?page=` and the param actions' parameters from the URL and passes
 `isParamActive`; a `link` action shows where a host would go instead of
 leaving the page. It renders on the client, while hosts render the panel on
-the server; `/static?fixture=portfolio&width=22` shows the server-rendered panel
+the server; `/static?fixture=portfolio&theme=document&width=22` shows the server-rendered panel
 with no script (view, fixture, theme, labels, width, `job`, `tab` and `page`
 from the query).
 Check a release candidate in a host too (below).
