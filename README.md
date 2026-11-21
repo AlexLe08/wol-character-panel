@@ -1,7 +1,8 @@
 # Character panel (`@solution-nine/wol-character-panel`)
 
 > **This README describes 2.0**, on npm's `next` tag until 2.0.0 is
-> released: install `@solution-nine/wol-character-panel@next`. A bare
+> released: install `@solution-nine/wol-character-panel@next`, and try
+> it in the [`/next/` demo](https://alexle08.github.io/wol-character-panel/next/). A bare
 > install still gets 1.0.4, whose component is `CharacterSheet` (no
 > `EquipmentPanel` or `CharacterWindow`); its README is at the
 > [`v1.0.4` tag](https://github.com/AlexLe08/wol-character-panel/tree/v1.0.4#readme).
@@ -175,7 +176,7 @@ import json from "./character-panel.json";
 
 const parsed = parseConfig(json);
 if (!parsed.config) throw new Error(parsed.errors.join("\n"));
-const config = publicConfig(parsed.config); // leaves out draft and hidden jobs
+const config = publicConfig(parsed.config); // leaves out drafts and anything hidden
 
 // Switching jobs keeps the scroll position; other links scroll as usual.
 function PanelLink({ intent, ...props }: LinkRendererProps) {

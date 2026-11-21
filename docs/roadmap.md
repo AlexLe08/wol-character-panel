@@ -390,7 +390,8 @@ upload are both Done (above).
    change, so the soak runs on). npm's `latest` is 1.0.4 and the demo's
    root is built from it, while the README on GitHub describes 2.0: its
    bare `npm install` gets 1.0.4, which has `CharacterSheet` rather than
-   the README's `EquipmentPanel` and `CharacterWindow`. 2.0.0 ends that,
+   the README's `EquipmentPanel` and `CharacterWindow` (now said at the
+   README's top). 2.0.0 ends that,
    and is also when most newcomers will first see the demo and the npm
    page, so these come before it, one small PR each:
    - **docs:** a screenshot of both themes in the README, which npm
