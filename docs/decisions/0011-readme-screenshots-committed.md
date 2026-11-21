@@ -46,7 +46,7 @@ says: uploaded, never committed.
 
 **Why:** 
 
-For this case, I believe images should be included as a sample for users to take and reference with as a possible offline copy when otehr options fail to load URLs or such. 
+For this case, I believe images should be included as a sample for users to take and reference with as a possible offline copy when other options fail to load URLs or such. With the media folder using different versioning folders, we can also view the journey this project went from early versions to the latest.
 
 ## Consequences
 
