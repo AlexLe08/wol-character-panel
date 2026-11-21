@@ -83,7 +83,9 @@ you'll use.
    still link it. (jsDelivr's `@<major>` range skips prereleases, so that URL
    resolves only once the stable release is out.) The stable release
    after betas also removes the README's version note (at its top) and
-   the `@next` in its install line, until the next major's betas; the
+   the `@next` in its install line, and the sentence under Config that
+   says to put `@next` in place of `@<major>` in the `$schema` URL, until
+   the next major's betas; the
    sentence on the next demo (`/next/`) stays,
    since that page falls back to the latest release.
 4. `CHANGELOG.md`: the Unreleased entries become `## [X.Y.Z] - <today,
