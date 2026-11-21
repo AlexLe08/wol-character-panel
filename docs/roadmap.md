@@ -317,6 +317,14 @@
   URL, since `docs/` doesn't ship and npm shows the README alone.
   CLAUDE.md, CONTRIBUTING, the PR template, the reviewer agent and
   release-prep point at the new files.
+- "Modelled on, not copied from" (2026-11-21, the owner's request): a
+  paragraph in the demo's header and in the README saying the panel isn't
+  a one-to-one copy of the game's character screen, with two of the
+  adventurer example's differences (no weapon slot on the job crystal's
+  row; DPS on a page of its own in Classes/Jobs), and that the package
+  isn't affiliated with the game's publisher. The game stays unnamed (the
+  trademark rule). Text only in the header, so the browser tests' Tab
+  walk to the panel is unchanged.
 
 ## Tooling plan (done)
 

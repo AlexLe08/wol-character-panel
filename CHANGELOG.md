@@ -21,6 +21,9 @@ A PR that changes what's published adds its line under Unreleased; the
   `docs/behaviour.md` on GitHub, linked from the README; the development
   notes, the repository's files and the release steps to
   `docs/development.md` and `docs/releasing.md`.
+- README: says the panel is modelled on a game's character screen but not
+  a one-to-one copy, with examples of where it differs, and that the
+  package isn't affiliated with the game's publisher.
 
 ## [2.0.0-beta.2] - 2026-11-21
 

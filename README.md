@@ -10,7 +10,7 @@ title bar ............................ character name
 ```
 
 The two header slots sit either side of the job title (think main weapon and
-job stone), and the left and right columns hold up to 6 slots each. Above them, a
+job crystal), and the left and right columns hold up to 6 slots each. Above them, a
 gear-set row holds icon links, the job menu and a caption. Each slot shows a
 compact item-card tooltip on hover or keyboard focus. Clicking it goes to a page
 section, another page, or an external site. Changing the job (`?job=<id>`) swaps the slots, tooltips, and
@@ -37,6 +37,17 @@ Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
 on the example configs, as of the latest release. The newest beta
 is at <https://alexle08.github.io/wol-character-panel/next/> (the latest
 release again when no beta is newer).
+
+**Modelled on, not copied from.** The panel recalls a well-known game's
+character screen, but its layout and behaviour aren't a one-to-one copy.
+It is a reusable React component first: the config decides which slots,
+tabs, blocks and gear-set links exist, and `parts` turns pieces off, in
+combinations the game's own screen doesn't have. In the demo's
+[`adventurer` example](https://github.com/AlexLe08/wol-character-panel/blob/main/examples/adventurer.json),
+for instance, no weapon slot shares the job crystal's row (the main hand
+heads the left column), and the Classes/Jobs tab gives DPS a page of its
+own, where the game lists tanks, healers and DPS together. The package isn't affiliated with or
+endorsed by that game's publisher.
 
 ## Entries
 
