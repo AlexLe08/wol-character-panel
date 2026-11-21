@@ -21,6 +21,8 @@ const PLAYGROUND_ALLOWED = [
   "vite",
   "@vitejs/plugin-react",
   String.raw`\.\./src/(?!.*\.\.).+`,
+  // The demo's version, for its install line.
+  String.raw`\.\./package\.json`,
 ];
 // The smoke test's consumers run inside a throwaway project with the packed
 // tarball installed: the package by name, never ../src. react.mjs loads
@@ -132,7 +134,8 @@ export default defineConfig([
           patterns: [
             {
               regex: onlyAllowed(PLAYGROUND_ALLOWED),
-              message: "The playground may also import react-dom/client, react-dom/server, Vite and ../src/….",
+              message:
+                "The playground may also import react-dom/client, react-dom/server, Vite, ../src/… and ../package.json.",
             },
           ],
         },

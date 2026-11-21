@@ -22,6 +22,11 @@ body {
   color: #5b616b;
 }
 
+.pg-header code {
+  color: #1c1e22;
+  overflow-wrap: anywhere;
+}
+
 .pg-footer {
   display: flex;
   flex-wrap: wrap;

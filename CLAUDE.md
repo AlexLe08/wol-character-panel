@@ -112,7 +112,8 @@ that install in the site.
   `node:` modules and `@playwright/test`; tests may also import `vitest`
   and `react-dom/server`; `vitest.config.ts` only `vitest/config`; the
   playground may also
-  import `react-dom/client`, `react-dom/server`, Vite and `../src/…`;
+  import `react-dom/client`, `react-dom/server`, Vite, `../src/…` and
+  `../package.json` (the demo's version);
   the browser tests and `playwright.config.ts` only `@playwright/test`,
   `@axe-core/playwright` and each other (they reach the panel through
   the page). Adding a runtime
