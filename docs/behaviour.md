@@ -11,7 +11,11 @@ rows, detail windows and the layouts. The
   - Escape hides them (WCAG 1.4.13). An Escape that hides a tooltip is
     cancelled (`preventDefault`), so a detail window, or a host's own dialog
     around the panel, closes on the next Escape, not with the tooltip.
-  - On touch screens, a tap simply follows the slot's link.
+  - On touch screens, a tap on a slot with a link simply follows it, so a
+    linked slot's tooltip can't be seen there (a known limit; the narrow
+    layout shows its name). A tap on a slot with no link (a `none`
+    action) shows its tooltip, and a tap elsewhere hides it, through CSS
+    too, as a tooltip-only row's does.
 - **Job menu:** an icon button in the gear-set row (its name from
   `gearSet.jobMenu.label`), opening a list of job links below the row. It
   uses the Popover API (`popover="auto"`), so it needs no JavaScript: the
@@ -26,7 +30,7 @@ rows, detail windows and the layouts. The
   anchor positioning, the list opens centred on the screen instead.
 - **Layout:** below a 26rem container width, the portrait moves on top. The
   columns become 3-column grids with the slot names showing, since touch
-  screens get no tooltip. This is a container query, so it follows the
+  screens get no tooltip on a linked slot. This is a container query, so it follows the
   panel's width, not the viewport.
 
 - **Tabs (`CharacterWindow`):** a navigation list of links (`?tab=<id>`),
