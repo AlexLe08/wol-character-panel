@@ -420,6 +420,21 @@
 - 2.0.0-beta.3 (2026-11-22, #60): the first-impressions README and demo
   work and the badges (#61), no API change, on npm's `next`; provenance
   confirmed by the owner, and the `/next/` demo's bundle reports it.
+- Tooltip-only slots open on a tap (2026-11-22, the owner's phone test of
+  beta.3's `/next/`, Firefox on Android): a tap on an adventurer slot
+  opened nothing, though its rows' tooltips opened and closed as meant.
+  Every adventurer slot has a tooltip and a `none` action, so its item
+  cards couldn't be seen on a phone. A tap focuses without
+  `:focus-visible`, and the `(hover: none)` rule that shows a focused
+  row's tooltip was scoped to the content pane. It now covers any
+  tooltip-only face (the `tabindex` span, never a link), CSS only. Chosen
+  over a first tap that shows and a second that follows (needs
+  JavaScript) and over documenting the gap; linked slots stay name-only
+  on touch, a known limit in `docs/behaviour.md`. Browser tests tap a
+  tooltip-only slot open and closed, check a linked slot's tap still
+  navigates, and tap every adventurer slot on a phone-sized window,
+  checking each card stays inside the pane's width. A fix, not an API change, so
+  it doesn't restart the soak; a beta.4 takes it to the phone again.
 
 ## Tooling plan (done)
 
@@ -492,9 +507,13 @@ upload are both Done (above).
    doesn't restart the week; whether the job menu's markup break
    (`<details>` to a popover, listed as breaking) does is the owner's
    call, not yet recorded. beta.3 (2026-11-22) changed only the
-   README and the demo, so it doesn't restart the week. Meanwhile the
-   owner tries `/next/` on a real phone (touch was only emulated): a tap
-   on a tooltip-only row opens its tooltip, and a tap elsewhere closes it.
+   README and the demo, so it doesn't restart the week. On a real phone
+   (2026-11-22, Firefox on Android, beta.3's `/next/`), a tap on a
+   tooltip-only row opened its tooltip and a tap elsewhere closed it,
+   but a tap on a tooltip-only slot opened nothing; fixed (Done, above),
+   not an API change, so the week stands. A beta.4 (owner,
+   `/release-prep`) takes the fix to `/next/`, and the owner taps the
+   adventurer's slots on the phone again.
 3. **A packed release candidate in the site**, which the next demo doesn't
    cover: `npm pack` here, `npm install <tarball>` in the site's
    `frontend/` (not committed), server-rendered with the site's CSS

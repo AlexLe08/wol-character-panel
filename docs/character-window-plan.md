@@ -684,7 +684,8 @@ example in both themes and layouts, so no `role="img"` fallback. A
 tooltip-only row could not be reached on a touch screen (in touch emulation a tap
 focuses it without `:focus-visible`, and there is no hover), so under
 `(hover: none)` a focused content-pane row shows its tooltip: a tap opens
-it, a tap elsewhere closes it; slots keep showing their names instead. A
+it, a tap elsewhere closes it; slots keep showing their names instead
+(tooltip-only slots open on a tap too since 2026-11-22). A
 right-column slot's tooltip (17rem) stays inside the 30rem pane, so it
 never reaches the content pane; the crossing that happens is a row's
 tooltip dropping over the stacked equipment pane, which works because the
