@@ -48,7 +48,41 @@ body {
   background: #fff;
 }
 
+/* "Show config": the code and the example's JSON, closed until asked for.
+   The text wraps rather than scrolling inside a box, so there is no
+   scrollable region to reach by keyboard. */
+.pg-config {
+  padding: 0.75rem;
+  border: 1px solid #c9cdd3;
+  background: #fff;
+}
+
+.pg-config summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.pg-config h2 {
+  margin: 1rem 0 0.25rem;
+  font-size: 1rem;
+}
+
+.pg-config p {
+  margin: 0;
+  color: #5b616b;
+}
+
+.pg-config pre {
+  margin: 0.5rem 0 0;
+  padding: 0.75rem;
+  background: #f4f4f1;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.8rem;
+}
+
 .pg-controls :focus-visible,
+.pg-config :focus-visible,
 .pg-footer :focus-visible {
   outline: 2px solid #2f5fa3;
   outline-offset: 2px;
