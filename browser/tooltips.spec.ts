@@ -99,3 +99,53 @@ for (const theme of ["document", "game"]) {
     expect((await tip.boundingBox())!.height).toBeLessThanOrEqual(720);
   });
 }
+
+// Touch screens have no hover, and a tap focuses without :focus-visible:
+// a slot with no link (a `none` action) shows its card while it has any
+// focus, so a tap opens it and a tap elsewhere closes it. A linked slot's
+// tap just follows the link.
+test.describe("on a touch screen", () => {
+  test.use({ hasTouch: true, isMobile: true, viewport: { width: 412, height: 915 } });
+
+  test("a tap shows a tooltip-only slot's card, and a tap elsewhere hides it", async ({ page }) => {
+    await page.goto("/?view=equipment&fixture=adventurer&theme=game");
+    expect(await page.evaluate(() => matchMedia("(hover: none)").matches)).toBe(true);
+    const mainHand = slot(page, "Main Hand");
+    await expect(mainHand).toHaveAttribute("role", "group");
+    const tip = await tooltipOf(mainHand);
+    await expect(tip).toBeHidden();
+    await mainHand.tap();
+    await expect(tip).toBeVisible();
+    await expect(tip).toContainText("Lanternfall Sword");
+    await page.locator(".pg-header").tap();
+    await expect(tip).toBeHidden();
+  });
+
+  test("a tap on a linked slot follows its link without showing its card", async ({ page }) => {
+    const skills = slot(page, "Skills");
+    const tip = await tooltipOf(skills);
+    await skills.tap();
+    await expect(page).toHaveURL(/#skills$/);
+    await expect(tip).toBeHidden();
+  });
+
+  test("on a phone, every slot's card opened by a tap stays inside the panel", async ({ page }) => {
+    await page.goto("/?view=window&fixture=adventurer&theme=game");
+    const panel = (await page.locator(".cs__equipment").boundingBox())!;
+    // The gear-set row's Job Crystal too.
+    const faces = page.locator(".cs-slot__face[aria-describedby]");
+    expect(await faces.count()).toBeGreaterThan(10);
+    for (const face of await faces.all()) {
+      const label = await face.locator(".cs-slot__label").textContent();
+      await face.tap();
+      const tip = await tooltipOf(face);
+      await expect(tip, `${label}: shown`).toBeVisible();
+      const found = (await tip.boundingBox())!;
+      expect(found.x, `${label}: left edge`).toBeGreaterThanOrEqual(panel.x);
+      expect(found.x + found.width, `${label}: right edge`).toBeLessThanOrEqual(panel.x + panel.width);
+      // Closed again, so it covers no slot tapped next.
+      await page.locator(".pg-header").tap();
+      await expect(tip, `${label}: hidden`).toBeHidden();
+    }
+  });
+});
