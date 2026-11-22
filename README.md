@@ -1,5 +1,11 @@
 # Character panel (`@solution-nine/wol-character-panel`)
 
+[![CI status on main](https://github.com/AlexLe08/wol-character-panel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/AlexLe08/wol-character-panel/actions/workflows/ci.yml)
+[![Version on npm's next tag](https://img.shields.io/npm/v/@solution-nine/wol-character-panel/next)](https://www.npmjs.com/package/@solution-nine/wol-character-panel)
+[![License: MIT](https://img.shields.io/npm/l/@solution-nine/wol-character-panel)](https://github.com/AlexLe08/wol-character-panel/blob/main/LICENSE)
+[![Node version required](https://img.shields.io/node/v/@solution-nine/wol-character-panel/next)](https://github.com/AlexLe08/wol-character-panel/blob/main/package.json)
+[![Demo of the next release](https://img.shields.io/badge/demo-next-blue)](https://alexle08.github.io/wol-character-panel/next/)
+
 > **This README describes 2.0**, on npm's `next` tag until 2.0.0 is
 > released: install `@solution-nine/wol-character-panel@next`, and try
 > it in the [`/next/` demo](https://alexle08.github.io/wol-character-panel/next/). A bare
