@@ -410,8 +410,10 @@
   `/next/` demo, each with alt text. Left out: coverage (a Codecov-style
   service is new tooling, decision 0006; Vitest's thresholds already fail
   CI), bundle size, downloads, and a self-made WCAG badge (it would read
-  as a certification). At 2.0.0 the version badge moves to `latest` and
-  the demo badge to the root (release-prep step 3).
+  as a certification). The version and Node badges read the `next` tag;
+  at 2.0.0 they and the demo badge move to `latest` and the root
+  (release-prep step 3). npm's page shows `latest`'s README, so the
+  badges reach npm only with 2.0.0; until then they show on GitHub.
 
 ## Tooling plan (done)
 
@@ -496,8 +498,8 @@ upload are both Done (above).
    release PR also takes out the README's version note, the `@next`
    in its install line and the "`@next` in place of `@2`" sentence under
    Config (check the `@2` `$schema` URL resolves once 2.0.0 is out),
-   and points the version badge at `latest` and the demo badge at the
-   root.
+   and moves the README's badges off `next` (the exact values are in
+   release-prep step 3).
 5. **The site's upgrade PR**, in its own repository and session (it
    depends on `^1`, so nothing reaches it before then):
    - bump to `^2` and run `npm run generate:character-schema` (the
