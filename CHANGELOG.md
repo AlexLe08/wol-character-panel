@@ -13,6 +13,8 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ## [Unreleased]
 
+## [2.0.0-beta.4] - 2026-11-22
+
 ### Fixed
 
 - On touch screens, a tap on a slot with no link (a `none` action, or a
@@ -251,7 +253,8 @@ First release, extracted from
 - `character-sheet.css` and `character-sheet.schema.json`, its `$id` on
   `@1`.
 
-[Unreleased]: https://github.com/AlexLe08/wol-character-panel/compare/v2.0.0-beta.3...HEAD
+[Unreleased]: https://github.com/AlexLe08/wol-character-panel/compare/v2.0.0-beta.4...HEAD
+[2.0.0-beta.4]: https://github.com/AlexLe08/wol-character-panel/compare/v2.0.0-beta.3...v2.0.0-beta.4
 [2.0.0-beta.3]: https://github.com/AlexLe08/wol-character-panel/compare/v2.0.0-beta.2...v2.0.0-beta.3
 [2.0.0-beta.2]: https://github.com/AlexLe08/wol-character-panel/compare/v2.0.0-beta.1...v2.0.0-beta.2
 [2.0.0-beta.1]: https://github.com/AlexLe08/wol-character-panel/compare/v2.0.0-beta.0...v2.0.0-beta.1
