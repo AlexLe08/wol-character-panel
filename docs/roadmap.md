@@ -308,6 +308,9 @@
   portrait loads it, across a job switch and on the no-portrait job, the
   URL unchanged, axe on the panel and the controls, and Remove and a
   reload each restoring the example's portrait.
+- 2.0.0-beta.2 (2026-11-21, #51): the job menu popover (#47, a markup
+  and CSS break) and the narrow tooltip fix (#44), on npm's `next`; the
+  owner confirmed the `/next/` demo.
 - README trimmed to a host's quick start (2026-11-21, the owner's
   request; 641 lines to about 225): entries, a small config, usage with
   `parts` and `gearSetEnd`, behaviour in brief, theming and versioning.
@@ -414,6 +417,9 @@
   at 2.0.0 they and the demo badge move to `latest` and the root
   (release-prep step 3). npm's page shows `latest`'s README, so the
   badges reach npm only with 2.0.0; until then they show on GitHub.
+- 2.0.0-beta.3 (2026-11-22, #60): the first-impressions README and demo
+  work and the badges (#61), no API change, on npm's `next`; provenance
+  confirmed by the owner, and the `/next/` demo's bundle reports it.
 
 ## Tooling plan (done)
 
@@ -476,16 +482,17 @@ upload are both Done (above).
    - **docs:** the README's opening (what it's for, job, slot and host,
      the tested accessibility, the `$schema` URL): Done (above).
 
-   Then, optionally, a beta.3 (no API change) to see them in `/next/`
-   before 2.0.0 puts them at the root.
+   Then beta.3 shipped them to `/next/` (Done), to be seen there before
+   2.0.0 puts them at the root.
 2. **Soak.** 2.0.0 once a beta has gone about a week without an API
    change ([decision 0004](decisions/0004-2.0-betas-on-next.md)): from
    beta.1 (2026-11-19), 2026-11-26 at the earliest; a new beta that
-   changes the API restarts the week. beta.2 (owner, `/release-prep`)
-   ships the tooltip fix and the job menu popover to `/next/`. The
-   tooltip fix doesn't restart the week; whether the job menu's markup
-   break (`<details>` to a popover, listed as breaking) does is the
-   owner's call at `/release-prep`. Meanwhile the
+   changes the API restarts the week. beta.2 (2026-11-21) shipped the
+   tooltip fix and the job menu popover to `/next/`. The tooltip fix
+   doesn't restart the week; whether the job menu's markup break
+   (`<details>` to a popover, listed as breaking) does is the owner's
+   call, not yet recorded. beta.3 (2026-11-22) changed only the
+   README and the demo, so it doesn't restart the week. Meanwhile the
    owner tries `/next/` on a real phone (touch was only emulated): a tap
    on a tooltip-only row opens its tooltip, and a tap elsewhere closes it.
 3. **A packed release candidate in the site**, which the next demo doesn't
@@ -493,13 +500,13 @@ upload are both Done (above).
    `frontend/` (not committed), server-rendered with the site's CSS
    around the panel.
 4. **2.0.0 (owner):** `/release-prep` with the API called settled (it
-   proposes `2.0.0`; the schema's `$id` becomes `@2`), merge, tag. The
-   demo's `latest` then shows 2.0.0, and `/next/` falls back to it. The
-   release PR also takes out the README's version note, the `@next`
-   in its install line and the "`@next` in place of `@2`" sentence under
-   Config (check the `@2` `$schema` URL resolves once 2.0.0 is out),
-   and moves the README's badges off `next` (the exact values are in
-   release-prep step 3).
+   proposes `2.0.0`; the schema's `$id` has named `@2` since beta.0),
+   merge, tag. The demo's `latest` then shows 2.0.0, and `/next/` falls
+   back to it. The release PR also takes out the README's version note,
+   the `@next` in its install line and the "`@next` in place of `@2`"
+   sentence under Config (check the `@2` `$schema` URL resolves once
+   2.0.0 is out), and moves the README's badges off `next` (the exact
+   values are in release-prep step 3).
 5. **The site's upgrade PR**, in its own repository and session (it
    depends on `^1`, so nothing reaches it before then):
    - bump to `^2` and run `npm run generate:character-schema` (the
