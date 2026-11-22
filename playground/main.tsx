@@ -5,6 +5,7 @@ import { findUnknownKeys, parseConfig, publicConfig, resolveJob, withQuery } fro
 import { CharacterWindow, EquipmentPanel, type LinkRendererProps } from "../src/react-entry.ts";
 import { version } from "../package.json";
 import { exampleIntro, exampleLabel, exampleOrder, exampleTheme } from "./example-info.ts";
+import { hostCode } from "./host-code.ts";
 import "./playground.css";
 
 // `npm run dev`: the panel straight from src/, with hot reload, on the
@@ -33,6 +34,13 @@ const INSTALL = `npm install @solution-nine/wol-character-panel${PRERELEASE ? "@
 const examples = import.meta.glob<unknown>("../examples/*.json", { eager: true, import: "default" });
 const fixtures = Object.fromEntries(
   Object.entries(examples).map(([path, raw]) => [path.replace(/^.*\/(.+)\.json$/, "$1"), underBase(raw)]),
+);
+// Each example's file as written, for the "Show config" disclosure: its
+// own formatting, and its image paths without the base path.
+const exampleFiles = Object.fromEntries(
+  Object.entries(
+    import.meta.glob<string>("../examples/*.json", { eager: true, query: "?raw", import: "default" }),
+  ).map(([path, text]) => [path.replace(/^.*\/(.+)\.json$/, "$1"), text]),
 );
 
 // The examples point at images from the site root (/portrait.svg), as a
@@ -356,6 +364,43 @@ function App() {
       >
         {panel}
       </div>
+
+      {/* Under the panel, so the browser tests' Tab walk to it and its
+          place in the viewport don't change. */}
+      <details className="pg-config">
+        <summary>Show config</summary>
+        <h2>The code</h2>
+        <p>
+          What a host writes for this view, with the controls above as props (<code>searchParams</code> is the
+          page&apos;s query, awaited first in Next.js 15 and later; <code>SaveButton</code> is your own control).
+        </p>
+        <pre>
+          <code id="pg-config-jsx">
+            {hostCode({
+              fixture: fixtureName,
+              view: control("view") === "window" ? "window" : "equipment",
+              theme: control("theme") === "document" ? "document" : "game",
+              labels: control("labels") === "always" ? "always" : "narrow",
+              sockets: Boolean(control("sockets")),
+              toolbar: Boolean(control("toolbar")),
+              end: Boolean(control("end")),
+              width,
+              darkTokens: control("tokens") === "dark",
+              drafts: Boolean(control("drafts")),
+            })}
+          </code>
+        </pre>
+        <h2>
+          The config, <code>examples/{fixtureName}.json</code>
+        </h2>
+        <p>
+          The whole example, one JSON file as it is in the repository. Its <code>$schema</code> gives an editor the
+          package&apos;s JSON Schema; <code>parseConfig</code> checks it when the page renders.
+        </p>
+        <pre>
+          <code id="pg-config-json">{exampleFiles[fixtureName]}</code>
+        </pre>
+      </details>
 
       <footer className="pg-footer">
         <a href="https://github.com/AlexLe08/wol-character-panel">Source on GitHub</a>

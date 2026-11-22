@@ -373,6 +373,22 @@
   Each example's theme, intro and place are in
   `playground/example-info.ts` (was `example-themes.ts`). New tests in
   `browser/playground.spec.ts`; its "Fixture" locators follow the label.
+- "Show config" on the demo (2026-11-21, the second first-impressions
+  demo item; playground only, no API change), since the pitch is "one
+  JSON config" and the demo never showed one: a native `<details>`,
+  closed, under the panel. It holds the code a host would write for the
+  current controls (the imports with the CSS line, `parseConfig` and
+  `publicConfig` as in the README's Next.js page, or the whole config
+  with Drafts on, and the component with the props the controls set,
+  defaults left out but `theme`; a width becomes a wrapper `<div>`) from
+  `playground/host-code.ts`, and the example's file as written (Vite's
+  `?raw`, so its own formatting and `$schema`). Under the panel so the
+  Tab walk to it and its place in CI's 720px viewport don't change; the
+  text wraps rather than scrolling in a box. Not on `/static`, which is
+  for the panel's no-JavaScript tests and isn't in the demo. New tests
+  in `browser/playground.spec.ts`: closed and below the panel, the JSON
+  per example, the code following the controls, keyboard and focus
+  ring, and axe on it open.
 - The README's opening says what the panel is for (2026-11-21, the last
   first-impressions docs item; docs and the demo's header text, no API
   change): a "Use it for" list (a portfolio, a game character sheet, a
@@ -445,9 +461,7 @@ upload are both Done (above).
    page, so these come before it, one small PR each:
    - **demo:** the example picker and header: Done (above), with each
      example in its own theme.
-   - **demo:** a "Show config" disclosure under the panel with the
-     example's JSON and the JSX for the current controls, since the
-     pitch is "one JSON config" and the demo never shows one.
+   - **demo:** a "Show config" disclosure: Done (above).
    - **docs:** the README's opening (what it's for, job, slot and host,
      the tested accessibility, the `$schema` URL): Done (above).
 
