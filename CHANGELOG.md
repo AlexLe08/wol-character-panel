@@ -39,6 +39,9 @@ A PR that changes what's published adds its line under Unreleased; the
   gives the schema's jsDelivr URL for `"$schema"` (`@next` until 2.0.0).
   The development and releasing notes are linked from CONTRIBUTING, not
   the README.
+- README: badges under the title for CI on `main`, the version on npm's
+  `next` tag, the license, the Node versions `engines` allows, and the
+  `/next/` demo. The images load from GitHub and shields.io.
 
 ## [2.0.0-beta.2] - 2026-11-21
 
