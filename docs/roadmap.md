@@ -476,8 +476,10 @@ upload are both Done (above).
    - **docs:** the README's opening (what it's for, job, slot and host,
      the tested accessibility, the `$schema` URL): Done (above).
 
-   Then, optionally, a beta.3 (no API change) to see them in `/next/`
-   before 2.0.0 puts them at the root.
+   Then beta.3 (2026-11-22, #60; no API change) shipped them, with the
+   README badges (#61), to `/next/` and npm's `next` tag, to be seen there
+   before 2.0.0 puts them at the root. It was published with provenance, and
+   the `/next/` demo's bundle reports 2.0.0-beta.3.
 2. **Soak.** 2.0.0 once a beta has gone about a week without an API
    change ([decision 0004](decisions/0004-2.0-betas-on-next.md)): from
    beta.1 (2026-11-19), 2026-11-26 at the earliest; a new beta that
@@ -485,7 +487,8 @@ upload are both Done (above).
    ships the tooltip fix and the job menu popover to `/next/`. The
    tooltip fix doesn't restart the week; whether the job menu's markup
    break (`<details>` to a popover, listed as breaking) does is the
-   owner's call at `/release-prep`. Meanwhile the
+   owner's call at `/release-prep`. beta.3 (2026-11-22) changed only the
+   README and the demo, so it doesn't restart the week. Meanwhile the
    owner tries `/next/` on a real phone (touch was only emulated): a tap
    on a tooltip-only row opens its tooltip, and a tap elsewhere closes it.
 3. **A packed release candidate in the site**, which the next demo doesn't
