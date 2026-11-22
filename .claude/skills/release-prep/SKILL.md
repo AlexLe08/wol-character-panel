@@ -85,7 +85,9 @@ you'll use.
    after betas also removes the README's version note (at its top) and
    the `@next` in its install line, and the sentence under Config that
    says to put `@next` in place of `@<major>` in the `$schema` URL, until
-   the next major's betas; the
+   the next major's betas. It also points the version badge under the
+   title at `latest` (drop `/next` from its shields.io URL and "next tag"
+   from its alt text) and the demo badge at the demo's root; the
    sentence on the next demo (`/next/`) stays,
    since that page falls back to the latest release.
 4. `CHANGELOG.md`: the Unreleased entries become `## [X.Y.Z] - <today,

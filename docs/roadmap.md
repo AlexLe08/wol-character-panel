@@ -403,6 +403,15 @@
   `$schema` line shows the `$id` URL; jsDelivr's `@2` skips prereleases
   (404 today), so the README says to use `@next` until 2.0.0, and
   release-prep's notes take that sentence out with the version note.
+- README badges (2026-11-22, the owner's request while preparing beta.3,
+  merged before it so beta.3 ships them): CI on `main` (GitHub's own
+  badge), the version on npm's `next` tag, the license and the Node
+  versions from `engines` (shields.io, read from the registry), and the
+  `/next/` demo, each with alt text. Left out: coverage (a Codecov-style
+  service is new tooling, decision 0006; Vitest's thresholds already fail
+  CI), bundle size, downloads, and a self-made WCAG badge (it would read
+  as a certification). At 2.0.0 the version badge moves to `latest` and
+  the demo badge to the root (release-prep step 3).
 
 ## Tooling plan (done)
 
@@ -486,7 +495,9 @@ upload are both Done (above).
    demo's `latest` then shows 2.0.0, and `/next/` falls back to it. The
    release PR also takes out the README's version note, the `@next`
    in its install line and the "`@next` in place of `@2`" sentence under
-   Config (check the `@2` `$schema` URL resolves once 2.0.0 is out).
+   Config (check the `@2` `$schema` URL resolves once 2.0.0 is out),
+   and points the version badge at `latest` and the demo badge at the
+   root.
 5. **The site's upgrade PR**, in its own repository and session (it
    depends on `^1`, so nothing reaches it before then):
    - bump to `^2` and run `npm run generate:character-schema` (the
