@@ -308,6 +308,9 @@
   portrait loads it, across a job switch and on the no-portrait job, the
   URL unchanged, axe on the panel and the controls, and Remove and a
   reload each restoring the example's portrait.
+- 2.0.0-beta.2 (2026-11-21, #51): the job menu popover (#47, a markup
+  and CSS break) and the narrow tooltip fix (#44), on npm's `next`; the
+  owner confirmed the `/next/` demo.
 - README trimmed to a host's quick start (2026-11-21, the owner's
   request; 641 lines to about 225): entries, a small config, usage with
   `parts` and `gearSetEnd`, behaviour in brief, theming and versioning.
@@ -497,13 +500,13 @@ upload are both Done (above).
    `frontend/` (not committed), server-rendered with the site's CSS
    around the panel.
 4. **2.0.0 (owner):** `/release-prep` with the API called settled (it
-   proposes `2.0.0`; the schema's `$id` becomes `@2`), merge, tag. The
-   demo's `latest` then shows 2.0.0, and `/next/` falls back to it. The
-   release PR also takes out the README's version note, the `@next`
-   in its install line and the "`@next` in place of `@2`" sentence under
-   Config (check the `@2` `$schema` URL resolves once 2.0.0 is out),
-   and moves the README's badges off `next` (the exact values are in
-   release-prep step 3).
+   proposes `2.0.0`; the schema's `$id` has named `@2` since beta.0),
+   merge, tag. The demo's `latest` then shows 2.0.0, and `/next/` falls
+   back to it. The release PR also takes out the README's version note,
+   the `@next` in its install line and the "`@next` in place of `@2`"
+   sentence under Config (check the `@2` `$schema` URL resolves once
+   2.0.0 is out), and moves the README's badges off `next` (the exact
+   values are in release-prep step 3).
 5. **The site's upgrade PR**, in its own repository and session (it
    depends on `^1`, so nothing reaches it before then):
    - bump to `^2` and run `npm run generate:character-schema` (the
