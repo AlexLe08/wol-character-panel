@@ -261,12 +261,8 @@ function App() {
           </span>
         </p>
         <p>
-          It isn&apos;t a one-to-one copy of a well-known game&apos;s character screen, in layout or behaviour: it is a
-          flexible React component, so a page can include or leave out parts in combinations the game&apos;s own
-          screen doesn&apos;t have. For instance, the adventurer example has no weapon slot on the job crystal&apos;s
-          row (the main hand heads the left column), and its Classes/Jobs tab gives DPS a page of its own, where
-          the game lists tanks, healers and DPS together. The package isn&apos;t affiliated with or endorsed by that
-          game&apos;s publisher.
+          It recalls a well-known game&apos;s character screen without copying it (the config decides which parts
+          exist), and isn&apos;t affiliated with or endorsed by that game&apos;s publisher.
         </p>
       </header>
 

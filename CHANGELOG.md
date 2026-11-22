@@ -21,15 +21,22 @@ A PR that changes what's published adds its line under Unreleased; the
   `docs/behaviour.md` on GitHub, linked from the README; the development
   notes, the repository's files and the release steps to
   `docs/development.md` and `docs/releasing.md`.
-- README: says the panel is modelled on a game's character screen but not
-  a one-to-one copy, with examples of where it differs, and that the
-  package isn't affiliated with the game's publisher.
+- README: says in one line that the panel recalls a game's character
+  screen without copying it, and that the package isn't affiliated with
+  the game's publisher.
 - README: says at the top that it describes 2.0 (on npm's `next` tag
   until 2.0.0, while a bare install gets 1.0.4), installs `@next`, and
   gives a complete Next.js App Router `app/page.tsx`.
 - README: screenshots of both themes at the top (the `adventurer`
   example in `game`, `portfolio` in `document`). The images aren't in the
   package; the README shows them from the repository.
+- README: its opening says what the panel is for (a portfolio, a game
+  character sheet, a persona card), what a job, a slot and a host are,
+  and the accessibility its browser tests check (no JavaScript needed,
+  keyboard, axe on WCAG 2.2 A/AA; Chromium only). The Config section
+  gives the schema's jsDelivr URL for `"$schema"` (`@next` until 2.0.0).
+  The development and releasing notes are linked from CONTRIBUTING, not
+  the README.
 
 ## [2.0.0-beta.2] - 2026-11-21
 

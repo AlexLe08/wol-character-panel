@@ -12,7 +12,24 @@
 | ![The window in the game theme: a dark frame with gold accents, the Attributes tab's HP and MP gauges and stats on the left, and the equipment pane on the right, a portrait between two columns of six slots under a Paladin job title](https://raw.githubusercontent.com/AlexLe08/wol-character-panel/main/docs/media/v2/readme-game.png) | ![The window in the document theme: plain paper and ink, the Attributes tab's gauges and stats on the left, and the equipment pane on the right, a portrait between two columns of slots under a Front-end developer job title](https://raw.githubusercontent.com/AlexLe08/wol-character-panel/main/docs/media/v2/readme-document.png) |
 | The `adventurer` example | The `portfolio` example |
 
-A panel modelled on an RPG character/equipment screen:
+A React panel modelled on an RPG character/equipment screen, driven by one
+JSON config. Use it for:
+
+- **A portfolio**: skills, projects and contact details as gear, with a job
+  for each role you want to show (the `portfolio` example).
+- **A game character sheet**: a tabletop or fan character's gear, stats
+  and jobs (the `adventurer` example).
+- **A persona card**: a product persona or a team member, with what they
+  carry and do.
+
+Three words recur below:
+
+- **Job**: one version of the character, with its own title, level,
+  portrait and slot contents. The page shows one at a time, and the job
+  menu switches between them.
+- **Slot**: one square in the layout, in a side column or beside the job
+  title, with an item-card tooltip and usually a link.
+- **Host**: your app, which renders the panel and provides React and zod.
 
 ```
 title bar ............................ character name
@@ -34,9 +51,7 @@ beside the equipment pane.
 
 Its only dependencies are React 19 and zod 4, which the host provides. It
 ships as ES modules with type declarations (no CommonJS build), so it needs a
-bundler or Node 22.12+. It runs the home page of
-[the-portfolio-site](https://github.com/AlexLe08/the-portfolio-site), where it
-started.
+bundler or Node 22.12+.
 
 ```sh
 npm install @solution-nine/wol-character-panel@next react zod
@@ -47,16 +62,22 @@ on the example configs, as of the latest release. The newest beta
 is at <https://alexle08.github.io/wol-character-panel/next/> (the latest
 release again when no beta is newer).
 
-**Modelled on, not copied from.** The panel recalls a well-known game's
-character screen, but its layout and behaviour aren't a one-to-one copy.
-It is a reusable React component first: the config decides which slots,
-tabs, blocks and gear-set links exist, and `parts` turns pieces off, in
-combinations the game's own screen doesn't have. In the demo's
-[`adventurer` example](https://github.com/AlexLe08/wol-character-panel/blob/main/examples/adventurer.json),
-for instance, no weapon slot shares the job crystal's row (the main hand
-heads the left column), and the Classes/Jobs tab gives DPS a page of its
-own, where the game lists tanks, healers and DPS together. The package isn't affiliated with or
-endorsed by that game's publisher.
+Accessibility, as the browser tests check it (Playwright, Chromium only):
+
+- **No JavaScript needed:** tooltips, the job menu, tabs and detail
+  windows work in the server-rendered panel with scripts off.
+- **Keyboard:** Tab reaches every link and button, each with a visible
+  focus ring (walked through the `portfolio` example); a tooltip shows on
+  focus, and Escape closes the job menu, or hides a tooltip once the
+  script has loaded.
+- **axe:** no WCAG 2.2 A or AA violations in any example, in both themes,
+  wide and narrow. Automated checks cover only part of WCAG.
+
+Firefox, WebKit and screen readers aren't tested yet.
+
+It recalls a well-known game's character screen without copying it (the
+config decides which parts exist), and isn't affiliated with or endorsed
+by that game's publisher.
 
 ## Entries
 
@@ -104,7 +125,15 @@ A config is plain JSON. This one is small: one slot and one job.
   and a caption) and `tabs` of blocks for `CharacterWindow`.
 
 Add `"$schema"` pointing at `character-panel.schema.json` for autocomplete
-and validation in your editor. The JSON Schema rejects unknown keys, while
+and validation in your editor, either your installed copy or the published
+one, as the config's first key:
+
+```json
+"$schema": "https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@2/character-panel.schema.json",
+```
+
+That URL (the schema's `$id`) resolves once 2.0.0 is released; until
+then, put `@next` in place of `@2`. The JSON Schema rejects unknown keys, while
 `parseConfig` strips them (`findUnknownKeys` lists them). Jobs can be
 `draft` or `hidden`: pass the config through `publicConfig()` before
 rendering it for visitors.
@@ -274,11 +303,11 @@ lists what each release changed for hosts.
   every field, its limits and how bad ones are reported.
 - [Behaviour](https://github.com/AlexLe08/wol-character-panel/blob/main/docs/behaviour.md):
   tooltips, menus, tabs, rows, detail windows and the layouts.
-- [Development](https://github.com/AlexLe08/wol-character-panel/blob/main/docs/development.md):
-  the checks, tests, playground and the repository's files.
-- [Releasing](https://github.com/AlexLe08/wol-character-panel/blob/main/docs/releasing.md):
-  how a version is published.
 - [Contributing](https://github.com/AlexLe08/wol-character-panel/blob/main/CONTRIBUTING.md)
+  (with the development and releasing notes)
   and [security](https://github.com/AlexLe08/wol-character-panel/blob/main/SECURITY.md).
+
+It started in, and runs the home page of,
+[the-portfolio-site](https://github.com/AlexLe08/the-portfolio-site).
 
 MIT licensed.

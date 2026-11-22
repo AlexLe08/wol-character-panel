@@ -389,6 +389,20 @@
   in `browser/playground.spec.ts`: closed and below the panel, the JSON
   per example, the code following the controls, keyboard and focus
   ring, and axe on it open.
+- The README's opening says what the panel is for (2026-11-21, the last
+  first-impressions docs item; docs and the demo's header text, no API
+  change): a "Use it for" list (a portfolio, a game character sheet, a
+  persona card), a line each for job, slot and host, and the
+  accessibility the browser tests check, in Chromium only (no JavaScript
+  needed, keyboard with focus rings and Escape, axe on WCAG 2.2 A/AA in
+  every example, theme and layout), with Firefox, WebKit and screen
+  readers named as untested. The "not a copy" paragraph is one line, in
+  the README and in the demo's header (shorter, so the panel moves up).
+  The line on the-portfolio-site moved to the README's end, and the development and
+  releasing links out of its More list (CONTRIBUTING links both). The
+  `$schema` line shows the `$id` URL; jsDelivr's `@2` skips prereleases
+  (404 today), so the README says to use `@next` until 2.0.0, and
+  release-prep's notes take that sentence out with the version note.
 
 ## Tooling plan (done)
 
@@ -448,15 +462,8 @@ upload are both Done (above).
    - **demo:** the example picker and header: Done (above), with each
      example in its own theme.
    - **demo:** a "Show config" disclosure: Done (above).
-   - **docs:** add a short "Use it for" list (portfolio, game sheet,
-     persona card) and one line each for job, slot and host; cut the
-     "not a copy" paragraph to a line, in the README and the demo; move
-     the-portfolio-site out of the README's opening; add the
-     accessibility it is tested for (no JavaScript needed, keyboard, axe
-     on WCAG 2.2 A/AA), and the `$schema` URL (the jsDelivr `@2` `$id`)
-     beside the README's `$schema` line; move the development and
-     releasing links out of the user-facing list (CONTRIBUTING keeps
-     them).
+   - **docs:** the README's opening (what it's for, job, slot and host,
+     the tested accessibility, the `$schema` URL): Done (above).
 
    Then, optionally, a beta.3 (no API change) to see them in `/next/`
    before 2.0.0 puts them at the root.
@@ -477,8 +484,9 @@ upload are both Done (above).
 4. **2.0.0 (owner):** `/release-prep` with the API called settled (it
    proposes `2.0.0`; the schema's `$id` becomes `@2`), merge, tag. The
    demo's `latest` then shows 2.0.0, and `/next/` falls back to it. The
-   release PR also takes out the README's version note and the `@next`
-   in its install line.
+   release PR also takes out the README's version note, the `@next`
+   in its install line and the "`@next` in place of `@2`" sentence under
+   Config (check the `@2` `$schema` URL resolves once 2.0.0 is out).
 5. **The site's upgrade PR**, in its own repository and session (it
    depends on `^1`, so nothing reaches it before then):
    - bump to `^2` and run `npm run generate:character-schema` (the
