@@ -132,8 +132,9 @@ test.describe("on a touch screen", () => {
   test("on a phone, every slot's card opened by a tap stays inside the panel", async ({ page }) => {
     await page.goto("/?view=window&fixture=adventurer&theme=game");
     const panel = (await page.locator(".cs__equipment").boundingBox())!;
-    // The gear-set row's Job Crystal too.
-    const faces = page.locator(".cs-slot__face[aria-describedby]");
+    // Every tooltip-only face (a link would navigate), the gear-set row's
+    // Job Crystal too.
+    const faces = page.locator('.cs-slot__face[tabindex="0"]');
     expect(await faces.count()).toBeGreaterThan(10);
     for (const face of await faces.all()) {
       const label = await face.locator(".cs-slot__label").textContent();

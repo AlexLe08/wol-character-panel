@@ -433,7 +433,7 @@
   on touch, a known limit in `docs/behaviour.md`. Browser tests tap a
   tooltip-only slot open and closed, check a linked slot's tap still
   navigates, and tap every adventurer slot on a phone-sized window,
-  checking each card stays inside the pane. A fix, not an API change, so
+  checking each card stays inside the pane's width. A fix, not an API change, so
   it doesn't restart the soak; a beta.4 takes it to the phone again.
 
 ## Tooling plan (done)

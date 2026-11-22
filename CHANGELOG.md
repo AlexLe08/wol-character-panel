@@ -15,8 +15,8 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ### Fixed
 
-- On touch screens, a tap on a slot with no link (a `none` action) now
-  shows its tooltip, and a tap elsewhere hides it, as on a tooltip-only
+- On touch screens, a tap on a slot with no link (a `none` action, or a
+  `param` one drawn without a link) now shows its tooltip, and a tap elsewhere hides it, as on a tooltip-only
   row. Before, its item card couldn't be seen on a phone at all. CSS only,
   so it still works without JavaScript; a tap on a linked slot still just
   follows the link.
