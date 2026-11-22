@@ -13,7 +13,7 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ## [Unreleased]
 
-## [2.0.0-beta.3] - 2026-11-21
+## [2.0.0-beta.3] - 2026-11-22
 
 ### Changed
 
