@@ -434,7 +434,11 @@
   tooltip-only slot open and closed, check a linked slot's tap still
   navigates, and tap every adventurer slot on a phone-sized window,
   checking each card stays inside the pane's width. A fix, not an API change, so
-  it doesn't restart the soak; a beta.4 takes it to the phone again.
+  it doesn't restart the soak; beta.4 took it to the phone again, where it
+  passed (below).
+- 2.0.0-beta.4 (2026-11-22, #64): the tooltip-only slot tap fix (#63), no
+  API change, on npm's `next`. On a real phone (2026-11-23, Chrome and
+  Firefox), a tap opened a tooltip and a tap elsewhere closed it.
 
 ## Tooling plan (done)
 
@@ -506,8 +510,7 @@ upload are both Done (above).
    tooltip fix and the job menu popover to `/next/`. The tooltip fix
    doesn't restart the week, and neither does the job menu's markup
    break (`<details>` to a popover, listed as breaking): the owner's
-   call (2026-11-23), so the week still counts from beta.1 and ends
-   2026-11-26 at the earliest. beta.3 (2026-11-22) changed only the
+   call (2026-11-23), so the week still counts from beta.1. beta.3 (2026-11-22) changed only the
    README and the demo, so it doesn't restart the week. On a real phone
    (2026-11-22, Firefox on Android, beta.3's `/next/`), a tap on a
    tooltip-only row opened its tooltip and a tap elsewhere closed it,
