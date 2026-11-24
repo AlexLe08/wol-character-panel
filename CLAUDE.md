@@ -92,6 +92,14 @@ or the workflow, indexed in its `README.md`.
   `node scripts/check-edge-cases.mjs` checks each window limit is
   reached (exit 1 if not). Run both after changing a window limit; the
   slot, job and tooltip limits are still filled by hand.
+- `node scripts/compare-markup.mjs [--base=<ref>]`: for a refactor,
+  server-renders every example (each job, tab, page, theme, `parts` and
+  `isParamActive` case, parsed and through `publicConfig`) from `src/` and
+  from the base ref's `src/` (default `origin/main`) and compares the HTML,
+  attributes sorted; exit 1 on a difference, with the first printed and
+  the rest in `.logs/compare-markup/`. Not in `check.sh` (a PR that
+  changes the markup on purpose differs by design); a refactor PR says
+  how many renders it compared.
 - `scripts/new-worktree.sh <branch>`: the next task's worktree (see
   Workflow); `scripts/setup-worktree.sh` (`npm ci`) runs inside it.
 - `scripts/cleanup-merged.sh [--apply]`: after a merge, lists (or with
@@ -110,7 +118,9 @@ that install in the site.
   and `../src/…`, except `scripts/smoke/`, which imports the package by
   name, its peers and `node:` modules (it runs against the tarball),
   and `scripts/preview.mjs` and `scripts/pr-media.mjs`, which import only
-  `node:` modules and `@playwright/test`; tests may also import `vitest`
+  `node:` modules and `@playwright/test`, and `scripts/compare-markup.mjs`,
+  which imports only `node:` modules, `vite`, `react` and
+  `react-dom/server` (it loads both copies of `src/` through Vite); tests may also import `vitest`
   and `react-dom/server`; `vitest.config.ts` only `vitest/config`; the
   playground may also
   import `react-dom/client`, `react-dom/server`, Vite, `../src/…` and

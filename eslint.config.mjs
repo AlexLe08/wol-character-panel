@@ -96,6 +96,25 @@ export default defineConfig([
     },
   },
   {
+    // The markup comparison renders src/ and a base ref's copy of it
+    // through Vite's SSR loader (it compiles their TypeScript and JSX), so
+    // it imports Vite and React rather than ../src/… directly.
+    files: ["scripts/compare-markup.mjs"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex: onlyAllowed(["node:.+", "vite", "react", "react-dom/server"]),
+              message: "The compare-markup script imports only node: modules, vite, react and react-dom/server.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     // scripts/smoke-pack.mjs copies these into a project that installs the
     // packed tarball, so they import the package the way a host does.
     files: ["scripts/smoke/**"],

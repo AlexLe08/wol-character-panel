@@ -489,6 +489,18 @@
   uses beside its own `tabs` and `equipment`. Every example's
   server-rendered HTML, under ten `parts` values from none to several
   off (7,620 renders), is the same as `main`'s. No API change.
+- `scripts/compare-markup.mjs` (2026-11-24, the owner's request after
+  #68 and #69): the throwaway comparison those two PRs ran, kept as a
+  script. The friction (decision 0006): a refactor has to show that
+  nothing a host sees changed, and the unit tests check chosen
+  attributes, not whole renders. It server-renders every example from
+  `src/` and from a base ref's `src/` (`git archive`, default
+  `origin/main`) through Vite's SSR loader and compares the HTML with
+  attributes sorted, exit 1 on a difference. Its own allowlist entry
+  (`node:`, `vite`, `react`, `react-dom/server`). Not in `check.sh`, since
+  a markup change on purpose differs by design. Tried on `main`: 7,620
+  renders, 0 differ against `origin/main` and against `035493a` (before
+  the three refactors); with one string changed, 2,454 differ.
 
 ## Tooling plan (done)
 
