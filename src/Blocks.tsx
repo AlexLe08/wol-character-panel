@@ -1,5 +1,5 @@
-import type { ComponentProps, ReactNode } from "react";
-import { ActionLink } from "./GearSet.tsx";
+import type { ReactNode } from "react";
+import { ActionLink, UnlinkedFace, type LinkContext } from "./ActionLink.tsx";
 import { CloseIcon, CollapseIcon, DetailIcon, glyph, hasIcon, Icon } from "./icons.tsx";
 import { SlotHover } from "./SlotHover.tsx";
 import { TooltipCard } from "./Tooltip.tsx";
@@ -29,13 +29,7 @@ import type {
 // or group is a group named by its label instead. Rows may carry the slot
 // tooltip (all but fields), shown as a slot's is.
 
-// What a row's action needs to become a link (see ActionLink).
-export type ActionContext = Omit<
-  ComponentProps<typeof ActionLink>,
-  "action" | "className" | "face" | "naming"
->;
-
-export function BlockList({ blocks, idPrefix, context }: { blocks: Block[]; idPrefix: string; context: ActionContext }) {
+export function BlockList({ blocks, idPrefix, context }: { blocks: Block[]; idPrefix: string; context: LinkContext }) {
   return (
     <>
       {blocks.map((block, index) => {
@@ -204,7 +198,7 @@ function RowFace({
   rowId: string;
   tooltip: Tooltip | undefined;
   action?: RowAction;
-  context?: ActionContext;
+  context?: LinkContext;
   // The ids whose text names the row (its label and value).
   labelledBy: string;
   icon: ReactNode;
@@ -212,27 +206,15 @@ function RowFace({
   children: ReactNode;
 }) {
   const tipId = tooltip && `${rowId}-tip`;
-  let face: ReactNode;
-  if (action && context) {
-    face = (
-      <ActionLink
-        action={action}
-        className={className}
-        face={children}
-        naming={{ labelledBy, tipId }}
-        {...context}
-      />
-    );
-  } else if (tooltip) {
-    face = (
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- focus shows the tooltip it's described by
-      <span className={className} role="group" aria-labelledby={labelledBy} aria-describedby={tipId} tabIndex={0}>
+  const naming = { labelledBy, tipId };
+  const face =
+    action && context ? (
+      <ActionLink action={action} className={className} face={children} naming={naming} context={context} />
+    ) : (
+      <UnlinkedFace className={className} naming={naming}>
         {children}
-      </span>
+      </UnlinkedFace>
     );
-  } else {
-    face = <span className={className}>{children}</span>;
-  }
   if (!tooltip || !tipId) return face;
   return (
     <SlotHover>
@@ -333,7 +315,7 @@ function Stats({ block, id }: { block: StatsBlock; id: string }) {
   );
 }
 
-function Fields({ block, id, context }: { block: FieldsBlock; id: string; context: ActionContext }) {
+function Fields({ block, id, context }: { block: FieldsBlock; id: string; context: LinkContext }) {
   return (
     <BlockFrame block={block} id={id}>
       <dl className="cs-fields">
@@ -357,7 +339,7 @@ function Fields({ block, id, context }: { block: FieldsBlock; id: string; contex
               <dt className="cs-field__label">{row.label}</dt>
               <dd className="cs-field__body">
                 {row.action ? (
-                  <ActionLink action={row.action} className="cs-field__line" face={face} {...context} />
+                  <ActionLink action={row.action} className="cs-field__line" face={face} context={context} />
                 ) : (
                   <span className="cs-field__line">{face}</span>
                 )}
@@ -378,7 +360,7 @@ function Fields({ block, id, context }: { block: FieldsBlock; id: string; contex
 // focus goes back to the button. It is all in the HTML, so it works with
 // JavaScript off. Its blocks can't hold another detail (the schema refuses
 // one), so windows don't nest.
-function DetailWindow({ detail, id, context }: { detail: Detail; id: string; context: ActionContext }) {
+function DetailWindow({ detail, id, context }: { detail: Detail; id: string; context: LinkContext }) {
   const titleId = `${id}-title`;
   return (
     <>
@@ -406,7 +388,7 @@ function DetailWindow({ detail, id, context }: { detail: Detail; id: string; con
   );
 }
 
-function Levels({ block, id, context }: { block: LevelsBlock; id: string; context: ActionContext }) {
+function Levels({ block, id, context }: { block: LevelsBlock; id: string; context: LinkContext }) {
   return (
     <BlockFrame block={block} id={id}>
       <Groups
@@ -452,7 +434,7 @@ function Levels({ block, id, context }: { block: LevelsBlock; id: string; contex
   );
 }
 
-function Progress({ block, id, context }: { block: ProgressBlock; id: string; context: ActionContext }) {
+function Progress({ block, id, context }: { block: ProgressBlock; id: string; context: LinkContext }) {
   return (
     <BlockFrame block={block} id={id}>
       <Groups

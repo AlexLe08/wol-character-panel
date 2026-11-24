@@ -464,6 +464,24 @@
   lands where it was aimed. A fix, not an
   API change, so it doesn't restart the soak; a beta.5 takes it to the
   phone.
+- Limits in the schema's descriptions come from `LIMITS` (2026-11-24, the
+  first of a pre-2.0.0 refactor review): four `.describe()` texts wrote
+  their limit as a number ("up to 6 each", "Up to 4 characters", "up to
+  2 … 1"), which could drift from what parsing enforces. The generated
+  `character-panel.schema.json` is byte-identical, so no API change.
+- One `ActionLink` (2026-11-24, from a pre-2.0.0 refactor review): a
+  slot's link was a second copy of `ActionLink`'s branches (the own-param
+  guard, intents, `aria-current`, "(opens in a new tab)"), and a row's
+  focusable tooltip-only face a third copy of its unlinked span.
+  `src/ActionLink.tsx` now holds `ActionLink` (out of `GearSet.tsx`, which
+  `Blocks.tsx` imported it from), `UnlinkedFace`, and `LinkContext`, the
+  seven props an action needs, passed as one in place of five hand-written
+  lists. A slot passes the `active` it already asked for, so the host's
+  `isParamActive` is still asked once per slot. Every example's
+  server-rendered HTML (each job, tab, page, theme, with and without
+  `publicConfig`, 762 renders) is the same as `main`'s with attributes
+  sorted: React writes them in prop order, which moved for slots. No API
+  change.
 - One top bar and one set of `parts` defaults (2026-11-24, from a
   pre-2.0.0 refactor review): `EquipmentPanel` and `CharacterWindow` each
   drew the bar and spelled out the six defaults. `EquipmentPanel.tsx` now
