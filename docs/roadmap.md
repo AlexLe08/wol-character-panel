@@ -498,9 +498,9 @@
   loaded by Vite's SSR loader, each side with its own code: `parseConfig`
   and `publicConfig` compared as JSON (keys sorted), then the server
   renders compared as HTML (attributes sorted); exit 1 on a difference,
-  2 on a setup error or a throw (the reviewer found a crash first read as
-  a difference, and the first version compared renders of one side's
-  parsed config only). Its own allowlist entry (`node:`, `vite`, `react`,
+  2 on a setup error or a throw (after review: a crash used to exit 1
+  like a difference, and the first version rendered only the current
+  side's parsed config on both sides). Its own allowlist entry (`node:`, `vite`, `react`,
   `react-dom/server`). Not in `check.sh`, since a markup change on
   purpose differs by design. Against `origin/main` and against `035493a`
   (before the three refactors): 7,620 renders, 0 differ. Caught: one

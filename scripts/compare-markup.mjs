@@ -180,14 +180,15 @@ function compareExample(file, sides) {
 
 // Vite compiles the TypeScript and JSX of both copies; React comes from
 // node_modules for both, so the two render with the same React.
-const server = await createServer({
-  configFile: false,
-  logLevel: "error",
-  appType: "custom",
-  server: { middlewareMode: true, hmr: false, watch: null },
-});
+let server;
 let examples = [];
 try {
+  server = await createServer({
+    configFile: false,
+    logLevel: "error",
+    appType: "custom",
+    server: { middlewareMode: true, hmr: false, watch: null },
+  });
   const load = async (name, root) => {
     const side = {
       name,
@@ -206,12 +207,21 @@ try {
   examples = readdirSync("examples").filter((name) => name.endsWith(".json")).sort();
   for (const file of examples) compareExample(file, sides);
 } catch (error) {
-  await server.close();
+  // A failed close mustn't turn the setup error into an exit 1.
+  await server?.close().catch(() => {});
   fail(error instanceof Error ? error.message : String(error));
 }
-await server.close();
+await server.close().catch(() => {});
 
-console.log(`compare-markup: ${renders} renders of ${examples.length} examples against ${base}, ${diffs.length} differ`);
+// Differences by step: a parse or publicConfig difference skips that
+// example's renders, so it lowers the render count too.
+const bySteps = Object.entries(Object.groupBy(diffs, (diff) => diff.step))
+  .map(([step, list]) => `${step} ${list.length}`)
+  .join(", ");
+console.log(
+  `compare-markup: ${renders} renders of ${examples.length} examples against ${base}, ` +
+    `${diffs.length} differ${diffs.length > 0 ? ` (${bySteps})` : ""}`,
+);
 if (diffs.length > 0) {
   writeFileSync(`${out}/diffs.json`, `${JSON.stringify(diffs.slice(0, 20), null, 2)}\n`);
   const { base: was, current: now, ...where } = diffs[0];
