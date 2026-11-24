@@ -1,5 +1,11 @@
 import { useId, type ReactNode } from "react";
-import { defaultLink, defaultPortrait, EquipmentBody, type LinkRendererProps } from "./EquipmentBody.tsx";
+import {
+  defaultLink,
+  defaultPortrait,
+  EquipmentBody,
+  type EquipmentParts,
+  type LinkRendererProps,
+} from "./EquipmentBody.tsx";
 import { jobHref } from "./resolve.ts";
 import type { CharacterPanelConfig, Job, Portrait, Theme } from "./types.ts";
 import "./character-panel.css";
@@ -31,6 +37,40 @@ export type EquipmentPanelParts = {
   toolbar?: boolean; // default false
   sockets?: boolean; // default false
 };
+
+// The parts with their defaults, for EquipmentPanel and CharacterWindow
+// alike (not exported by an entry): the bar's two, and the equipment
+// pane's four, as EquipmentBody takes them.
+export function resolveParts({
+  bar = true,
+  characterName = true,
+  jobMenu = true,
+  gearSet = true,
+  toolbar = false,
+  sockets = false,
+}: EquipmentPanelParts): { bar: boolean; characterName: boolean; body: EquipmentParts } {
+  return { bar, characterName, body: { gearSet, jobMenu, toolbar, sockets } };
+}
+
+// The top bar, in the panel and the window: the config's title (else the
+// landmark's label), and the character's name at the right.
+export function Bar({
+  config,
+  label,
+  characterName,
+}: {
+  config: CharacterPanelConfig;
+  label: string;
+  // Whether to draw the character's name (parts.characterName).
+  characterName: boolean;
+}) {
+  return (
+    <div className="cs__bar">
+      <p className="cs__bar-title">{config.title ?? label}</p>
+      {characterName && config.characterName && <p className="cs__bar-name">{config.characterName}</p>}
+    </div>
+  );
+}
 
 export type EquipmentPanelProps = {
   config: CharacterPanelConfig;
@@ -78,16 +118,11 @@ export function EquipmentPanel({
   const idPrefix = useId();
   // This job's own URL, which a param action adds its parameter to.
   const currentHref = jobHref(config, job.id, basePath, jobParam);
-  const { bar = true, characterName = true, jobMenu = true, gearSet = true, toolbar = false, sockets = false } = parts;
+  const { bar, characterName, body } = resolveParts(parts);
 
   return (
     <section className="cs" data-cs-theme={theme} data-cs-labels={labels} aria-label={label}>
-      {bar && (
-        <div className="cs__bar">
-          <p className="cs__bar-title">{config.title ?? label}</p>
-          {characterName && config.characterName && <p className="cs__bar-name">{config.characterName}</p>}
-        </div>
-      )}
+      {bar && <Bar config={config} label={label} characterName={characterName} />}
 
       <EquipmentBody
         config={config}
@@ -96,7 +131,7 @@ export function EquipmentPanel({
         basePath={basePath}
         currentHref={currentHref}
         jobParam={jobParam}
-        parts={{ gearSet, jobMenu, toolbar, sockets }}
+        parts={body}
         gearSetEnd={gearSetEnd}
         renderLink={renderLink}
         renderPortrait={renderPortrait}

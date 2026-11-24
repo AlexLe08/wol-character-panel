@@ -1,7 +1,7 @@
 import { useId, type ReactNode } from "react";
 import { BlockList } from "./Blocks.tsx";
 import { defaultLink, defaultPortrait, EquipmentBody, type LinkRendererProps } from "./EquipmentBody.tsx";
-import type { EquipmentPanelParts, EquipmentPanelProps } from "./EquipmentPanel.tsx";
+import { Bar, resolveParts, type EquipmentPanelParts, type EquipmentPanelProps } from "./EquipmentPanel.tsx";
 import { hasIcon, Icon, TabMarkerIcon } from "./icons.tsx";
 import { jobHref, resolveBlocks, resolveTab, tabHref, visiblePages, visibleTabs } from "./resolve.ts";
 import type { Tab, TabPage } from "./types.ts";
@@ -58,16 +58,8 @@ export function CharacterWindow({
   isParamActive,
 }: CharacterWindowProps) {
   const idPrefix = useId();
-  const {
-    bar = true,
-    characterName = true,
-    jobMenu = true,
-    gearSet = true,
-    toolbar = false,
-    sockets = false,
-    tabs = true,
-    equipment = true,
-  } = parts;
+  const { tabs = true, equipment = true, ...panelParts } = parts;
+  const { bar, characterName, body } = resolveParts(panelParts);
 
   // The tabs this placement leaves out go from the config itself, so
   // resolveTab and tabHref agree on which tab comes first.
@@ -98,12 +90,7 @@ export function CharacterWindow({
       data-cs-labels={labels}
       aria-label={label}
     >
-      {bar && (
-        <div className="cs__bar">
-          <p className="cs__bar-title">{config.title ?? label}</p>
-          {characterName && config.characterName && <p className="cs__bar-name">{config.characterName}</p>}
-        </div>
-      )}
+      {bar && <Bar config={config} label={label} characterName={characterName} />}
 
       <div className="cs__panes">
         {active && tabList.length > 1 && (
@@ -162,7 +149,7 @@ export function CharacterWindow({
               currentHref={currentHref}
               jobParam={jobParam}
               ownParams={ownParams}
-              parts={{ gearSet, jobMenu, toolbar, sockets }}
+              parts={body}
               gearSetEnd={gearSetEnd}
               renderLink={renderLink}
               renderPortrait={renderPortrait}

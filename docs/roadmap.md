@@ -464,6 +464,13 @@
   lands where it was aimed. A fix, not an
   API change, so it doesn't restart the soak; a beta.5 takes it to the
   phone.
+- One top bar and one set of `parts` defaults (2026-11-24, from a
+  pre-2.0.0 refactor review): `EquipmentPanel` and `CharacterWindow` each
+  drew the bar and spelled out the six defaults. `EquipmentPanel.tsx` now
+  has `Bar` and `resolveParts` (no entry exports them), which the window
+  uses beside its own `tabs` and `equipment`. Every example's
+  server-rendered HTML, under ten `parts` values from none to several
+  off (7,620 renders), is the same as `main`'s. No API change.
 
 ## Tooling plan (done)
 
