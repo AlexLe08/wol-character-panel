@@ -464,6 +464,11 @@
   lands where it was aimed. A fix, not an
   API change, so it doesn't restart the soak; a beta.5 takes it to the
   phone.
+- Limits in the schema's descriptions come from `LIMITS` (2026-11-24, the
+  first of a pre-2.0.0 refactor review): four `.describe()` texts wrote
+  their limit as a number ("up to 6 each", "Up to 4 characters", "up to
+  2 … 1"), which could drift from what parsing enforces. The generated
+  `character-panel.schema.json` is byte-identical, so no API change.
 
 ## Tooling plan (done)
 

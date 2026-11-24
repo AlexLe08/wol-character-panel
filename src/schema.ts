@@ -7,9 +7,10 @@ import { z } from "zod";
 //
 // Imports nothing but zod, so plain Node (scripts/generate-schema.mjs) can
 // run it: Node only resolves relative imports with a .ts extension, which
-// the host's tsconfig doesn't allow, so LIMITS lives here too. Public: LIMITS
-// and ID_PATTERN (from "."), characterPanelConfigSchema (from "/schema", see
-// schema-entry.ts). The parts are internal.
+// the host's tsconfig doesn't allow, so LIMITS lives here too. Public: LIMITS,
+// ID_PATTERN and PARAM_NAME_PATTERN (from "."), characterPanelConfigSchema
+// (from "/schema", see schema-entry.ts). The parts are internal. The
+// descriptions name limits through LIMITS too, so they can't drift either.
 //
 // Unknown keys: these zod objects strip them, so a reader keeps a config
 // with an extra key instead of dropping the job (or the whole config). The
@@ -79,7 +80,7 @@ const text = (max: number) => z.string().trim().min(1).max(max);
 // difference is for the editor: not live yet, or taken down.
 export const JOB_STATUSES = ["published", "draft", "hidden"] as const;
 
-export const SLOT_POSITIONS =["header-start", "left", "right", "header-end"] as const;
+export const SLOT_POSITIONS = ["header-start", "left", "right", "header-end"] as const;
 
 export const slotDefSchema = z.object({
   id: id.describe("Stable id; jobs fill slots by this id."),
@@ -87,11 +88,11 @@ export const slotDefSchema = z.object({
   position: z
     .enum(SLOT_POSITIONS)
     .describe(
-      "left/right: the columns beside the portrait (up to 6 each). header-start/header-end: one slot each, either side of the job name.",
+      `left/right: the columns beside the portrait (up to ${LIMITS.slot.column} each). header-start/header-end: one slot each, either side of the job name.`,
     ),
   icon: text(LIMITS.slot.icon)
     .optional()
-    .describe("Up to 4 characters drawn in the square. Defaults to the label's first two letters."),
+    .describe(`Up to ${LIMITS.slot.icon} characters drawn in the square. Defaults to the label's first two letters.`),
 });
 
 export const pairSchema = z.object({ label: text(LIMITS.pair.label), value: text(LIMITS.pair.value) });
@@ -201,7 +202,7 @@ const iconNameSchema = z.enum(ICON_NAMES);
 // The three ways to give a tab, heading, row or link an icon, spread into
 // each object that has one. Always decorative: the label names the thing.
 const iconFields = {
-  icon: text(LIMITS.slot.icon).optional().describe("Up to 4 characters drawn as the icon."),
+  icon: text(LIMITS.slot.icon).optional().describe(`Up to ${LIMITS.slot.icon} characters drawn as the icon.`),
   iconSrc: z
     .string()
     .min(1)
@@ -439,7 +440,9 @@ const gearSetSchema = z.object({
         position: z
           .enum(["start", "end"])
           .optional()
-          .describe("start (the default): before the job menu, up to 2. end: at the row's right end, 1."),
+          .describe(
+            `start (the default): before the job menu, up to ${LIMITS.gearSet.startLinks}. end: at the row's right end, ${LIMITS.gearSet.endLinks}.`,
+          ),
         action: rowActionSchema,
       }),
     )
