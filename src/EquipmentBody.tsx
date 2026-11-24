@@ -1,7 +1,8 @@
 import type { AnchorHTMLAttributes, ReactNode } from "react";
+import { ActionLink, type LinkContext, type RenderLink } from "./ActionLink.tsx";
 import { GearSetRow, gearSetFor } from "./GearSet.tsx";
 import { glyph, TOOLBAR_ICONS } from "./icons.tsx";
-import { actionHref, isActionActive } from "./resolve.ts";
+import { isActionActive } from "./resolve.ts";
 import { LIMITS } from "./schema.ts";
 import { SlotHover } from "./SlotHover.tsx";
 import { TooltipCard } from "./Tooltip.tsx";
@@ -30,8 +31,6 @@ export type LinkRendererProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
 // The parts of the equipment pane a placement can leave out, each already
 // resolved from the component's `parts` prop and its default.
 export type EquipmentParts = { gearSet: boolean; jobMenu: boolean; toolbar: boolean; sockets: boolean };
-
-type RenderLink = (props: LinkRendererProps) => ReactNode;
 
 export function defaultLink({ intent, ...props }: LinkRendererProps) {
   void intent; // a plain link has no use for it
@@ -77,16 +76,8 @@ export function EquipmentBody({
   isParamActive?: (name: string, value: string) => boolean;
 }) {
   const framing = job.portrait?.framing ?? "face";
-  const column = {
-    job,
-    idPrefix,
-    renderLink,
-    showSockets: parts.sockets,
-    slots: config.slots,
-    currentHref,
-    ownParams,
-    isParamActive,
-  };
+  const context: LinkContext = { config, job, jobParam, ownParams, currentHref, renderLink, isParamActive };
+  const column = { context, idPrefix, showSockets: parts.sockets };
   const gearSet = gearSetFor(config, job);
   const jobMenu = parts.jobMenu && config.jobs.length > 1;
   // The row is drawn whenever it has something to hold.
@@ -98,18 +89,12 @@ export function EquipmentBody({
     <>
       {gearSetRow && (
         <GearSetRow
-          config={config}
-          job={job}
+          context={context}
           gearSet={gearSet}
           jobMenu={jobMenu}
           idPrefix={idPrefix}
           end={end}
           basePath={basePath}
-          jobParam={jobParam}
-          ownParams={ownParams}
-          currentHref={currentHref}
-          renderLink={renderLink}
-          isParamActive={isParamActive}
         />
       )}
       <div className="cs__header">
@@ -149,29 +134,19 @@ export function EquipmentBody({
 
 function SlotList({
   position,
-  slots,
-  job,
+  context,
   idPrefix,
-  renderLink,
   showSockets,
-  currentHref,
-  ownParams,
-  isParamActive,
 }: {
   position: SlotPosition;
-  slots: SlotDef[];
-  job: Job;
+  context: LinkContext;
   idPrefix: string;
-  renderLink: RenderLink;
   showSockets: boolean;
-  currentHref: string;
-  ownParams: readonly string[];
-  isParamActive?: (name: string, value: string) => boolean;
 }) {
   // One slot each side of the job title, and LIMITS.slot.column in each
   // side column; parseConfig reports any extras.
   const header = position === "header-start" || position === "header-end";
-  const here = slots.filter((slot) => slot.position === position).slice(0, header ? 1 : LIMITS.slot.column);
+  const here = context.config.slots.filter((slot) => slot.position === position).slice(0, header ? 1 : LIMITS.slot.column);
   const className = `cs__slots cs__slots--${position}`;
   if (here.length === 0) return <div className={className} />;
 
@@ -181,14 +156,11 @@ function SlotList({
         <Slot
           key={slot.id}
           slot={slot}
-          content={job.slots[slot.id]}
+          content={context.job.slots[slot.id]}
           tipId={`${idPrefix}tip-${slot.id}`}
           labelId={`${idPrefix}label-${slot.id}`}
-          renderLink={renderLink}
+          context={context}
           showSockets={showSockets}
-          currentHref={currentHref}
-          ownParams={ownParams}
-          isParamActive={isParamActive}
         />
       ))}
     </ul>
@@ -208,21 +180,15 @@ function Slot({
   content,
   tipId,
   labelId,
-  renderLink,
+  context,
   showSockets,
-  currentHref,
-  ownParams,
-  isParamActive,
 }: {
   slot: SlotDef;
   content: SlotContent | undefined;
   tipId: string;
   labelId: string;
-  renderLink: RenderLink;
+  context: LinkContext;
   showSockets: boolean;
-  currentHref: string;
-  ownParams: readonly string[];
-  isParamActive?: (name: string, value: string) => boolean;
 }) {
   const face = (
     <>
@@ -253,53 +219,23 @@ function Slot({
   }
 
   const { action } = content;
-  // A param action may not set the component's own parameters (the schema
-  // refuses "job", "tab" and "page", but a host can rename them); that one
-  // renders tooltip-only, like none.
-  const href = action.kind === "param" && ownParams.includes(action.name) ? null : actionHref(action, currentHref);
   // The page is showing what this slot links to (its filter is on).
-  const active = isActionActive(action, isParamActive, ownParams);
-  const common = { className: "cs-slot__face", "aria-describedby": tipId };
-
-  let trigger: ReactNode;
-  if (href === null) {
-    // Nothing to open, but still focusable so keyboard users get the tooltip.
-    // A named group, not a button: a button would promise an action.
-    trigger = (
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- focus shows the tooltip it's described by
-      <span {...common} role="group" aria-labelledby={labelId} tabIndex={0}>
-        {face}
-      </span>
-    );
-  } else if (action.kind === "link") {
-    trigger = renderLink({ ...common, href, intent: "page", children: face });
-  } else if (action.kind === "param") {
-    trigger = renderLink({
-      ...common,
-      href,
-      intent: "param",
-      "aria-current": active ? "true" : undefined,
-      children: face,
-    });
-  } else if (action.kind === "external" && action.newTab) {
-    trigger = (
-      <a {...common} href={href} target="_blank" rel="noopener noreferrer">
-        {face}
-        <span className="cs-visually-hidden"> (opens in a new tab)</span>
-      </a>
-    );
-  } else {
-    trigger = (
-      <a {...common} href={href}>
-        {face}
-      </a>
-    );
-  }
+  const active = isActionActive(action, context.isParamActive, context.ownParams);
 
   return (
     <li className={`cs-slot cs-slot--${action.kind}${active ? " cs-slot--active" : ""}`}>
       <SlotHover>
-        {trigger}
+        {/* With nothing to open (none, or a param naming one of the
+            component's own parameters), a focusable group, so keyboard
+            users still get the tooltip. */}
+        <ActionLink
+          action={action}
+          className="cs-slot__face"
+          face={face}
+          naming={{ labelledBy: labelId, tipId }}
+          active={active}
+          context={context}
+        />
         <TooltipCard
           id={tipId}
           tooltip={content.tooltip}
