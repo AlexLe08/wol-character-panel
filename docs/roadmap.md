@@ -438,7 +438,8 @@
   passed (below).
 - 2.0.0-beta.4 (2026-11-22, #64): the tooltip-only slot tap fix (#63), no
   API change, on npm's `next`. On a real phone (2026-11-23, Chrome and
-  Firefox), a tap opened a tooltip and a tap elsewhere closed it.
+  Firefox on Android), a tap on any of the adventurer's slots or rows
+  opened its tooltip and a tap elsewhere closed it.
 
 ## Tooling plan (done)
 
@@ -517,7 +518,8 @@ upload are both Done (above).
    but a tap on a tooltip-only slot opened nothing; fixed (Done, above),
    not an API change, so the week stands. beta.4 (2026-11-22) took the
    fix to `/next/`, and on a real phone again (2026-11-23, Chrome and
-   Firefox) a tap opened a tooltip and a tap elsewhere closed it.
+   Firefox on Android) a tap on any of the adventurer's slots or rows
+   opened its tooltip and a tap elsewhere closed it.
 3. **A packed release candidate in the site**, which the next demo doesn't
    cover: `npm pack` here, `npm install <tarball>` in the site's
    `frontend/` (not committed), server-rendered with the site's CSS
