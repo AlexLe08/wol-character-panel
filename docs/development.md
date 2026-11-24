@@ -158,7 +158,7 @@ npm install ../wol-character-panel/solution-nine-wol-character-panel-<version>.t
 | `src/parse.ts` | `parseConfig` (drops invalid jobs, tabs and blocks, reports errors) and `loadConfig` (fallback chain of sources) |
 | `src/resolve.ts` | `publicConfig`, `resolveJob`, `resolveTab`, `withQuery`, and the links built on it: `jobHref`, `tabHref`, `actionHref` |
 | `src/react-entry.ts` | The `/react` entry (re-exports only) |
-| `src/EquipmentPanel.tsx` | The panel (a Server Component): the section and the bar around `EquipmentBody` |
+| `src/EquipmentPanel.tsx` | The panel (a Server Component): the section and the bar around `EquipmentBody`; also `Bar` and `resolveParts` (the `parts` defaults), which the window shares |
 | `src/CharacterWindow.tsx` | The window (a Server Component): the section, the bar, the tab strip and sub-tabs, the content pane, and `EquipmentBody` as the equipment pane |
 | `src/Blocks.tsx` | The content pane's blocks and their rows. Private |
 | `src/Tooltip.tsx` | The tooltip card slots and rows share. Private |
