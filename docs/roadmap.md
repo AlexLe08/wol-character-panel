@@ -440,8 +440,20 @@
   API change, on npm's `next`. On a real phone (2026-11-23, Chrome and
   Firefox on Android), a tap on any of the adventurer's slots or rows
   opened its tooltip and a tap elsewhere closed it. An open slot card
-  covers the neighbouring slots, so reaching one of them takes a tap to
-  close the card first (a known limit in `docs/behaviour.md`).
+  covered the neighbouring slots, so reaching one took a second tap (the
+  first closed the card); fixed (next entry).
+- A tap on a slot under an open card reaches it (2026-11-24, from the
+  beta.4 phone test): on touch screens (`(hover: none)`) an open tooltip
+  takes `pointer-events: none`, so the tap lands on the slot or row it
+  covers, whose focus opens its own tooltip and closes the first. CSS
+  only; the card holds no controls, and without hover it needn't be
+  hoverable (WCAG 1.4.13 is about hover), so mouse users are unchanged.
+  Chosen over moving each card clear of its neighbours (no room on a
+  phone) and over a script that closes and opens on the same tap (needs
+  JavaScript for what CSS does). A browser test opens a card that covers
+  another slot and taps that slot's centre (fails before the fix). A
+  fix, not an API change, so it doesn't restart the soak; a beta.5 takes
+  it to the phone.
 
 ## Tooling plan (done)
 
@@ -522,8 +534,10 @@ upload are both Done (above).
    fix to `/next/`, and on a real phone again (2026-11-23, Chrome and
    Firefox on Android) a tap on any of the adventurer's slots or rows
    opened its tooltip and a tap elsewhere closed it. An open slot card
-   covers the neighbouring slots, so reaching one takes a second tap
-   (the first closes the card).
+   covered the neighbouring slots, so reaching one took a second tap;
+   fixed (Done, above), not an API change, so the week stands. A beta.5
+   (owner, `/release-prep`) takes the fix to `/next/`, and the owner taps
+   a slot under an open card on the phone.
 3. **A packed release candidate in the site**, which the next demo doesn't
    cover: `npm pack` here, `npm install <tarball>` in the site's
    `frontend/` (not committed), server-rendered with the site's CSS

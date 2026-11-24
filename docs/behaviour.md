@@ -16,8 +16,8 @@ rows, detail windows and the layouts. The
     layout shows its name). A tap on a slot with no link (a `none`
     action, or a `param` one drawn without a link) shows its tooltip, and
     a tap elsewhere hides it, through CSS too, as a tooltip-only row's
-    does. An open slot card can cover the neighbouring slots, so reaching
-    one of them takes two taps: the first hides the card (a known limit).
+    does. An open tooltip lets taps through, so a tap on a slot or row it
+    covers opens that one's tooltip and hides the first.
 - **Job menu:** an icon button in the gear-set row (its name from
   `gearSet.jobMenu.label`), opening a list of job links below the row. It
   uses the Popover API (`popover="auto"`), so it needs no JavaScript: the

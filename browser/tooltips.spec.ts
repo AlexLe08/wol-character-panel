@@ -149,4 +149,32 @@ test.describe("on a touch screen", () => {
       await expect(tip, `${label}: hidden`).toBeHidden();
     }
   });
+
+  test("a tap on a slot under an open card opens that slot's card in one tap", async ({ page }) => {
+    await page.goto("/?view=window&fixture=adventurer&theme=game");
+    const faces = await page.locator('.cs-slot__face[tabindex="0"]').all();
+    // The first open card that covers another slot's centre, and that slot.
+    let pair: { open: (typeof faces)[number]; under: (typeof faces)[number]; at: { x: number; y: number } } | undefined;
+    for (const open of faces) {
+      await open.tap();
+      const card = (await (await tooltipOf(open)).boundingBox())!;
+      for (const under of faces) {
+        if (under === open) continue;
+        const box = (await under.boundingBox())!;
+        const at = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+        if (at.x > card.x && at.x < card.x + card.width && at.y > card.y && at.y < card.y + card.height) {
+          pair = { open, under, at };
+          break;
+        }
+      }
+      if (pair) break;
+      await page.locator(".pg-header").tap();
+    }
+    expect(pair, "an open card covers another slot").toBeDefined();
+    const { open, under, at } = pair!;
+    // A finger lands on whatever is on top, so tap the point, not the slot.
+    await page.touchscreen.tap(at.x, at.y);
+    await expect(await tooltipOf(under)).toBeVisible();
+    await expect(await tooltipOf(open)).toBeHidden();
+  });
 });

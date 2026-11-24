@@ -13,6 +13,14 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ## [Unreleased]
 
+### Fixed
+
+- On touch screens, an open tooltip no longer catches taps: a tap on a
+  slot or row it covers opens that one's tooltip and closes the first, in
+  one tap. Before, the first tap only closed the open card. CSS only
+  (`pointer-events: none` on `.cs-tip` under `(hover: none)`), so mouse
+  hover is unchanged.
+
 ## [2.0.0-beta.4] - 2026-11-22
 
 ### Fixed
