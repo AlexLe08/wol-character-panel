@@ -434,7 +434,36 @@
   tooltip-only slot open and closed, check a linked slot's tap still
   navigates, and tap every adventurer slot on a phone-sized window,
   checking each card stays inside the pane's width. A fix, not an API change, so
-  it doesn't restart the soak; a beta.4 takes it to the phone again.
+  it doesn't restart the soak; beta.4 took it to the phone again, where it
+  passed (below).
+- 2.0.0-beta.4 (2026-11-22, #64): the tooltip-only slot tap fix (#63), no
+  API change, on npm's `next`. On a real phone (2026-11-23, Chrome and
+  Firefox on Android), a tap on any of the adventurer's slots or rows
+  opened its tooltip and a tap elsewhere closed it. An open slot card
+  covered the neighbouring slots, so reaching one took a second tap (the
+  first closed the card); fixed (next entry).
+- A tap on a slot under an open card reaches it (2026-11-24, from the
+  beta.4 phone test): on touch screens, `SlotHover.tsx` hands a tap
+  (`pointerup`, touch, `(hover: none)`) on an open tooltip to the
+  tooltip-only slot or row under it, by focusing it, so its tooltip opens
+  and the first closes in one tap. A link or button under the tooltip
+  isn't reached: the tap only closes the tooltip, as before. Without
+  JavaScript, two taps still work. Chosen over `pointer-events: none` on
+  the open tooltip under `(hover: none)` (tried first, CSS only): the
+  reviewer found it sends a tap meant to close the card to any link or
+  button under it, and the `portfolio` example's Tools card covers five
+  links (the React link was followed in a test). Also chosen over moving
+  each card clear of its neighbours (no room on a phone). Browser tests
+  tap a slot under an open card (`adventurer`) and a row under an open
+  tooltip (`edge-cases`; both fail without the hand-off), and a link
+  under one, in the panel (`portfolio`) and in a detail window
+  (`edge-cases`; both fail with the CSS-only rule). Not covered: a row
+  under a row's tooltip inside a detail window, which no example has at
+  phone width. Only a `role="group"` face takes the tap, so a host's link
+  given a tabindex doesn't, and the focus doesn't scroll, so the tap
+  lands where it was aimed. A fix, not an
+  API change, so it doesn't restart the soak; a beta.5 takes it to the
+  phone.
 
 ## Tooling plan (done)
 
@@ -504,16 +533,21 @@ upload are both Done (above).
    beta.1 (2026-11-19), 2026-11-26 at the earliest; a new beta that
    changes the API restarts the week. beta.2 (2026-11-21) shipped the
    tooltip fix and the job menu popover to `/next/`. The tooltip fix
-   doesn't restart the week; whether the job menu's markup break
-   (`<details>` to a popover, listed as breaking) does is the owner's
-   call, not yet recorded. beta.3 (2026-11-22) changed only the
+   doesn't restart the week, and neither does the job menu's markup
+   break (`<details>` to a popover, listed as breaking): the owner's
+   call (2026-11-23), so the week still counts from beta.1. beta.3 (2026-11-22) changed only the
    README and the demo, so it doesn't restart the week. On a real phone
    (2026-11-22, Firefox on Android, beta.3's `/next/`), a tap on a
    tooltip-only row opened its tooltip and a tap elsewhere closed it,
    but a tap on a tooltip-only slot opened nothing; fixed (Done, above),
-   not an API change, so the week stands. A beta.4 (owner,
-   `/release-prep`) takes the fix to `/next/`, and the owner taps the
-   adventurer's slots on the phone again.
+   not an API change, so the week stands. beta.4 (2026-11-22) took the
+   fix to `/next/`, and on a real phone again (2026-11-23, Chrome and
+   Firefox on Android) a tap on any of the adventurer's slots or rows
+   opened its tooltip and a tap elsewhere closed it. An open slot card
+   covered the neighbouring slots, so reaching one took a second tap;
+   fixed (Done, above), not an API change, so the week stands. A beta.5
+   (owner, `/release-prep`) takes the fix to `/next/`, and the owner taps
+   a slot under an open card on the phone.
 3. **A packed release candidate in the site**, which the next demo doesn't
    cover: `npm pack` here, `npm install <tarball>` in the site's
    `frontend/` (not committed), server-rendered with the site's CSS

@@ -13,6 +13,16 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ## [Unreleased]
 
+### Fixed
+
+- On touch screens, a tap on an open tooltip over a slot or row with no
+  link opens that one's tooltip and closes the first, in one tap. Before,
+  the tap only closed the open tooltip, so a covered slot took two taps.
+  A link or button under an open tooltip still isn't reached through it:
+  the tap just closes the tooltip. This needs JavaScript (the client part
+  of the tooltips); without it, two taps still work. Mouse hover is
+  unchanged.
+
 ## [2.0.0-beta.4] - 2026-11-22
 
 ### Fixed
