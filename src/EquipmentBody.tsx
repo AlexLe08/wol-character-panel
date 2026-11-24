@@ -67,7 +67,7 @@ export function EquipmentBody({
   jobParam: string;
   // The query parameters the component owns (jobParam, and the window's
   // tabParam and pageParam): a param action naming one renders without a
-  // link, so a slot can't clobber them.
+  // link, so a slot, row or gear-set link can't clobber them.
   ownParams?: readonly string[];
   parts: EquipmentParts;
   gearSetEnd?: ReactNode;

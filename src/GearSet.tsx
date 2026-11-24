@@ -107,7 +107,6 @@ export function GearSetRow({
   );
 }
 
-
 // An icon button: a link named by its label. With no link to make (kind
 // "none", or a job the config doesn't have) the icon stays, not focusable.
 function GearLink({ link, context }: { link: GearSetLink; context: LinkContext }) {
