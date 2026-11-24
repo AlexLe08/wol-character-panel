@@ -504,16 +504,17 @@ upload are both Done (above).
    beta.1 (2026-11-19), 2026-11-26 at the earliest; a new beta that
    changes the API restarts the week. beta.2 (2026-11-21) shipped the
    tooltip fix and the job menu popover to `/next/`. The tooltip fix
-   doesn't restart the week; whether the job menu's markup break
-   (`<details>` to a popover, listed as breaking) does is the owner's
-   call, not yet recorded. beta.3 (2026-11-22) changed only the
+   doesn't restart the week, and neither does the job menu's markup
+   break (`<details>` to a popover, listed as breaking): the owner's
+   call (2026-11-23), so the week still counts from beta.1 and ends
+   2026-11-26 at the earliest. beta.3 (2026-11-22) changed only the
    README and the demo, so it doesn't restart the week. On a real phone
    (2026-11-22, Firefox on Android, beta.3's `/next/`), a tap on a
    tooltip-only row opened its tooltip and a tap elsewhere closed it,
    but a tap on a tooltip-only slot opened nothing; fixed (Done, above),
-   not an API change, so the week stands. A beta.4 (owner,
-   `/release-prep`) takes the fix to `/next/`, and the owner taps the
-   adventurer's slots on the phone again.
+   not an API change, so the week stands. beta.4 (2026-11-22) took the
+   fix to `/next/`, and on a real phone again (2026-11-23, Chrome and
+   Firefox) a tap opened a tooltip and a tap elsewhere closed it.
 3. **A packed release candidate in the site**, which the next demo doesn't
    cover: `npm pack` here, `npm install <tarball>` in the site's
    `frontend/` (not committed), server-rendered with the site's CSS
