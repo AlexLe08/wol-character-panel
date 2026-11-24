@@ -493,14 +493,21 @@
   #68 and #69): the throwaway comparison those two PRs ran, kept as a
   script. The friction (decision 0006): a refactor has to show that
   nothing a host sees changed, and the unit tests check chosen
-  attributes, not whole renders. It server-renders every example from
-  `src/` and from a base ref's `src/` (`git archive`, default
-  `origin/main`) through Vite's SSR loader and compares the HTML with
-  attributes sorted, exit 1 on a difference. Its own allowlist entry
-  (`node:`, `vite`, `react`, `react-dom/server`). Not in `check.sh`, since
-  a markup change on purpose differs by design. Tried on `main`: 7,620
-  renders, 0 differ against `origin/main` and against `035493a` (before
-  the three refactors); with one string changed, 2,454 differ.
+  attributes, not whole renders. It runs every example through `src/`
+  and through a base ref's `src/` (`git archive`, default `origin/main`),
+  loaded by Vite's SSR loader, each side with its own code: `parseConfig`
+  and `publicConfig` compared as JSON (keys sorted), then the server
+  renders compared as HTML (attributes sorted); exit 1 on a difference,
+  2 on a setup error or a throw (the reviewer found a crash first read as
+  a difference, and the first version compared renders of one side's
+  parsed config only). Its own allowlist entry (`node:`, `vite`, `react`,
+  `react-dom/server`). Not in `check.sh`, since a markup change on
+  purpose differs by design. Against `origin/main` and against `035493a`
+  (before the three refactors): 7,620 renders, 0 differ. Caught: one
+  string changed (2,454 renders differ), a `publicConfig` change, and a
+  tighter slot column limit (at `parseConfig`). Not reported: a
+  key-order-only change in `parseConfig`. A base without
+  `CharacterWindow` exits 2.
 
 ## Tooling plan (done)
 

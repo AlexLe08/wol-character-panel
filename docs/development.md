@@ -135,17 +135,23 @@ GitHub, never committed.
 
 A refactor shows the opposite: that nothing a host sees changed. The unit
 tests check chosen elements and attributes, not whole renders, so
-`node scripts/compare-markup.mjs` server-renders every example from `src/`
-and from `origin/main`'s `src/` (`--base=<ref>` for another) and compares
-the HTML: each job, theme, tab and page, parsed and through
-`publicConfig`, with `isParamActive` true, false and absent, and ten
-`parts` values, as `EquipmentPanel` and `CharacterWindow` (7,620 renders
-today). Each link's intent is written into the HTML, and attributes are
-sorted within each tag, since React writes them in prop order. It exits 1
+`node scripts/compare-markup.mjs` runs every example through `src/` and
+through `origin/main`'s `src/` (`--base=<ref>` for another), each side
+with its own code. Their `parseConfig` results (config and errors) and
+`publicConfig` results must match as JSON, keys sorted; then each side
+server-renders its own configs, compared as HTML: each job, theme, tab
+and page, parsed and public, with `isParamActive` true, false and absent,
+and ten `parts` values, as `EquipmentPanel` and `CharacterWindow` (the
+count is printed on each run). Each link's intent is written into the
+HTML, and attributes are sorted within each tag, since React writes them
+in prop order. Ids come from `useId`, so a component added or removed
+above the panel changes them, and that counts as a difference. It exits 1
 on a difference, printing the first and writing up to 20 to
-`.logs/compare-markup/diffs.json`. It isn't part of `scripts/check.sh`: a
-PR that changes the markup on purpose differs by design. A refactor PR
-says how many renders it compared.
+`.logs/compare-markup/diffs.json`, and 2 on a setup error or when either
+side throws (a base too old to have `CharacterWindow`, say), so a crash
+never reads as a difference. It runs from any folder. It isn't part of
+`scripts/check.sh`: a PR that changes the markup on purpose differs by
+design. A refactor PR says how many renders it compared.
 
 Relative imports name the source file (`./parse.ts`): the build rewrites them
 to `.js`, and Node can run the schema generator straight from `src/`. After
@@ -195,7 +201,7 @@ npm install ../wol-character-panel/solution-nine-wol-character-panel-<version>.t
 | `scripts/fill-edge-cases.mjs` | Rewrites the window's fields in `examples/edge-cases.json` at the current `LIMITS` |
 | `scripts/check-edge-cases.mjs` | Checks that `examples/edge-cases.json` reaches every window limit (exit 1 if not) |
 | `scripts/pr-media.mjs` | Helpers for a PR's before/after screenshots and videos: the playground on the branch and on `origin/main` side by side (the `pr-media` skill) |
-| `scripts/compare-markup.mjs` | For a refactor: every example's server-rendered HTML from `src/` against a base ref's (default `origin/main`), exit 1 on a difference |
+| `scripts/compare-markup.mjs` | For a refactor: every example parsed and server-rendered by `src/` against a base ref's (default `origin/main`), exit 1 on a difference |
 | `scripts/new-worktree.sh` | A new branch from `origin/main` in its own worktree under `.claude/worktrees/`, set up by `scripts/setup-worktree.sh` (`npm ci`) |
 | `scripts/cleanup-merged.sh` | After a merge: removes worktrees and local branches merged into `origin/main` whose remote branch is gone (dry run unless `--apply`) |
 | `eslint.config.mjs` | Lint rules (React, hooks, jsx-a11y, TypeScript) and the import allowlist (`npm run lint`) |
