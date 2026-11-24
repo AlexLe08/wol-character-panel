@@ -163,7 +163,8 @@ npm install ../wol-character-panel/solution-nine-wol-character-panel-<version>.t
 | `src/Blocks.tsx` | The content pane's blocks and their rows. Private |
 | `src/Tooltip.tsx` | The tooltip card slots and rows share. Private |
 | `src/EquipmentBody.tsx` | The equipment pane's inside: the gear-set row, header and body (slots, tooltips, portrait). Private: no entry exports it |
-| `src/GearSet.tsx` | The gear-set row and the links its actions make. Private |
+| `src/GearSet.tsx` | The gear-set row: its links, the job menu, the caption and the end control. Private |
+| `src/ActionLink.tsx` | An action as a link, for slots, block rows and gear-set links alike (intents, `aria-current`, new-tab text), or a face with no link. Private |
 | `src/icons.tsx` | The built-in drawings (`iconName`, the job menu's, the toolbar's) and the icon precedence. Private |
 | `src/SlotHover.tsx` | Client code: Escape dismisses a tooltip. Private: no entry exports it |
 | `src/JobMenuFocus.tsx` | Client code: the job menu closes when focus lands outside it. Private: no entry exports it |
