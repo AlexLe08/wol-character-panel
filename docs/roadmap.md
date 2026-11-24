@@ -489,6 +489,25 @@
   uses beside its own `tabs` and `equipment`. Every example's
   server-rendered HTML, under ten `parts` values from none to several
   off (7,620 renders), is the same as `main`'s. No API change.
+- `scripts/compare-markup.mjs` (2026-11-24, the owner's request after
+  #68 and #69): the throwaway comparison those two PRs ran, kept as a
+  script. The friction (decision 0006): a refactor has to show that
+  nothing a host sees changed, and the unit tests check chosen
+  attributes, not whole renders. It runs every example through `src/`
+  and through a base ref's `src/` (`git archive`, default `origin/main`),
+  loaded by Vite's SSR loader, each side with its own code: `parseConfig`
+  and `publicConfig` compared as JSON (keys sorted), then the server
+  renders compared as HTML (attributes sorted); exit 1 on a difference,
+  2 on a setup error or a throw (after review: a crash used to exit 1
+  like a difference, and the first version rendered only the current
+  side's parsed config on both sides). Its own allowlist entry (`node:`, `vite`, `react`,
+  `react-dom/server`). Not in `check.sh`, since a markup change on
+  purpose differs by design. Against `origin/main` and against `035493a`
+  (before the three refactors): 7,620 renders, 0 differ. Caught: one
+  string changed (2,454 renders differ), a `publicConfig` change, and a
+  tighter slot column limit (at `parseConfig`). Not reported: a
+  key-order-only change in `parseConfig`. A base without
+  `CharacterWindow` exits 2.
 
 ## Tooling plan (done)
 
