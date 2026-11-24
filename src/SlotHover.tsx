@@ -77,17 +77,20 @@ export function tapThrough(
   if (event.pointerType !== "touch" || !view.matchMedia("(hover: none)").matches) return;
   const tip = (event.target as Element).closest(".cs-tip");
   if (!tip || !(event.currentTarget as Element).contains(tip)) return;
-  faceUnder(tip, view.document.elementsFromPoint(event.clientX, event.clientY))?.focus();
+  // No scroll, so the tap's mousedown lands on the face chosen here.
+  faceUnder(tip, view.document.elementsFromPoint(event.clientX, event.clientY))?.focus({ preventScroll: true });
 }
 
 // The slot or row to focus for a tap on an open tooltip: the topmost of
 // the elements at the tap's point (`atPoint`, topmost first, as
 // elementsFromPoint gives them) that is neither inside the tooltip nor
 // around it, when it is, or is inside, a tooltip-only face (the
-// `tabindex="0"` child of a `.cs-slot__hover`). A link or button gives
-// null, so it isn't reached through the tooltip.
+// `tabindex="0"` `role="group"` child of a `.cs-slot__hover`). A link or
+// button gives null, so it isn't reached through the tooltip, even one a
+// host's `renderLink` gives a tabindex.
 export function faceUnder(tip: Element, atPoint: readonly Element[]): HTMLElement | null {
   const under = atPoint.find((el) => !tip.contains(el) && !el.contains(tip));
   const face = under?.closest<HTMLElement>('[tabindex="0"]');
-  return face?.parentElement?.classList.contains("cs-slot__hover") ? face : null;
+  if (!face?.matches('[role="group"]') || !face.parentElement?.classList.contains("cs-slot__hover")) return null;
+  return face;
 }

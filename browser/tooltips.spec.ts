@@ -150,12 +150,14 @@ test.describe("on a touch screen", () => {
     }
   });
 
-  // Opens each tooltip-only slot or row's tooltip in turn until one covers
-  // the centre (inside the viewport) of an element matching `under`, and
-  // leaves that tooltip open. A finger lands on whatever is on top, so the
-  // tests tap that point, not the element.
-  async function openOneCovering(page: Page, under: string) {
-    const faces = await page.locator('.cs .cs-slot__hover > [tabindex="0"]').all();
+  // Opens each tooltip-only slot or row's tooltip (in `within`) in turn
+  // until one covers the centre (inside the viewport) of an element
+  // matching `under`, and leaves that tooltip open. A finger lands on
+  // whatever is on top, so the tests tap that point, not the element.
+  // Between tries focus is dropped by script, not a tap elsewhere, which
+  // would close a detail window.
+  async function openOneCovering(page: Page, under: string, within = ".cs") {
+    const faces = await page.locator(`${within} .cs-slot__hover > [tabindex="0"]`).all();
     const below = await page.locator(under).all();
     const viewport = page.viewportSize()!;
     for (const open of faces) {
@@ -171,7 +173,7 @@ test.describe("on a touch screen", () => {
         const covered = at.x > card.x && at.x < card.x + card.width && at.y > card.y && at.y < card.y + card.height;
         if (covered && at.y > 0 && at.y < viewport.height) return { open, target, at };
       }
-      await page.locator(".pg-header").tap();
+      await open.blur();
       await expect(tip).toBeHidden();
     }
     throw new Error(`no open tooltip covers ${under}`);
@@ -193,6 +195,23 @@ test.describe("on a touch screen", () => {
     await expect(await tooltipOf(open)).toBeHidden();
   });
 
+  test("in a detail window, a tap on an open tooltip over a link closes only the tooltip", async ({ page }) => {
+    // Its rows' tooltips are anchored and fixed, in the top layer. No
+    // example has a row's tooltip over another row in one at phone width.
+    await page.goto("/?view=window&fixture=edge-cases&theme=game");
+    await page.locator(".cs__content [popovertarget]").first().tap();
+    const dialog = ".cs-detail:popover-open";
+    await expect(page.locator(dialog)).toBeVisible();
+    const url = page.url();
+    const { open, at } = await openOneCovering(page, `${dialog} a[href]`, dialog);
+    await page.touchscreen.tap(at.x, at.y);
+    await expect(await tooltipOf(open)).toBeHidden();
+    await expect(page.locator(dialog)).toBeVisible();
+    // As below: nothing to wait for but time.
+    await page.waitForTimeout(500);
+    expect(page.url()).toBe(url);
+  });
+
   test("a tap on an open card over a link closes the card without following the link", async ({ page }) => {
     await page.goto("/?view=window&fixture=portfolio&theme=game");
     const url = page.url();
@@ -201,6 +220,8 @@ test.describe("on a touch screen", () => {
     page.context().on("page", (popup) => popups.push(popup));
     await page.touchscreen.tap(at.x, at.y);
     await expect(await tooltipOf(open)).toBeHidden();
+    // Checking that nothing happens has no event to wait for: give a
+    // navigation or a new tab time to start.
     await page.waitForTimeout(500);
     expect(page.url()).toBe(url);
     expect(popups).toHaveLength(0);

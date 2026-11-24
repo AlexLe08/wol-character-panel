@@ -7,12 +7,13 @@ import { faceUnder, tapThrough } from "./SlotHover.tsx";
 
 type Fake = HTMLElement & { parentElement: Fake | null; focus: ReturnType<typeof vi.fn> };
 
-// A stand-in element: `classes` and `focusable` (tabindex="0") are all
-// `closest` and `classList` look at.
-function el(parent: Fake | null, { classes = [] as string[], focusable = false } = {}): Fake {
+// A stand-in element: `classes`, `focusable` (tabindex="0") and `group`
+// (role="group") are all `closest`, `matches` and `classList` look at.
+function el(parent: Fake | null, { classes = [] as string[], focusable = false, group = false } = {}): Fake {
   const matches = (at: Fake, selector: string) => {
-    const own = at as unknown as { classes: string[]; focusable: boolean };
+    const own = at as unknown as { classes: string[]; focusable: boolean; group: boolean };
     if (selector === '[tabindex="0"]') return own.focusable;
+    if (selector === '[role="group"]') return own.group;
     if (selector.startsWith(".")) return own.classes.includes(selector.slice(1));
     throw new Error(`unexpected selector ${selector}`);
   };
@@ -20,7 +21,9 @@ function el(parent: Fake | null, { classes = [] as string[], focusable = false }
     parentElement: parent,
     classes,
     focusable,
+    group,
     focus: vi.fn(),
+    matches: (selector: string) => matches(node, selector),
     classList: { contains: (name: string) => classes.includes(name) },
     contains(other: Fake | null): boolean {
       for (let at = other; at; at = at.parentElement) if (at === node) return true;
@@ -34,18 +37,21 @@ function el(parent: Fake | null, { classes = [] as string[], focusable = false }
   return node;
 }
 
-// A list of slots: the open one's tooltip, a slot beside it, and a link.
+// A list of slots: the open one's tooltip, a slot beside it, a link, and
+// a linked slot whose host link renderer gave its link a tabindex.
 function slots() {
   const list = el(null);
   const openHover = el(list, { classes: ["cs-slot__hover"] });
-  const openFace = el(openHover, { focusable: true });
+  const openFace = el(openHover, { focusable: true, group: true });
   const tip = el(openHover, { classes: ["cs-tip"] });
   const tipText = el(tip);
   const nextHover = el(list, { classes: ["cs-slot__hover"] });
-  const nextFace = el(nextHover, { focusable: true });
+  const nextFace = el(nextHover, { focusable: true, group: true });
   const nextLabel = el(nextFace);
   const link = el(list, { focusable: true });
-  return { list, openHover, openFace, tip, tipText, nextHover, nextFace, nextLabel, link };
+  const linkedHover = el(list, { classes: ["cs-slot__hover"] });
+  const tabbedLink = el(linkedHover, { focusable: true });
+  return { list, openHover, openFace, tip, tipText, nextHover, nextFace, nextLabel, link, linkedHover, tabbedLink };
 }
 
 describe("faceUnder", () => {
@@ -63,6 +69,11 @@ describe("faceUnder", () => {
     // A link isn't the child of a .cs-slot__hover.
     const { tip, link, list } = slots();
     expect(faceUnder(tip, [tip, link, list])).toBeNull();
+  });
+
+  it("gives null for a linked slot's link, even with a tabindex from the host", () => {
+    const { tip, tabbedLink, linkedHover, list } = slots();
+    expect(faceUnder(tip, [tip, tabbedLink, linkedHover, list])).toBeNull();
   });
 
   it("gives null when nothing focusable is under the tooltip", () => {
@@ -87,6 +98,8 @@ describe("tapThrough", () => {
     const { nextFace, elementsFromPoint } = tap();
     expect(elementsFromPoint).toHaveBeenCalledWith(10, 20);
     expect(nextFace.focus).toHaveBeenCalledOnce();
+    // No scroll, so the tap's mousedown lands on this face.
+    expect(nextFace.focus).toHaveBeenCalledWith({ preventScroll: true });
   });
 
   it("does nothing for a mouse or pen", () => {

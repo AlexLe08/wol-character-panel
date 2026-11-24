@@ -456,7 +456,12 @@
   each card clear of its neighbours (no room on a phone). Browser tests
   tap a slot under an open card (`adventurer`) and a row under an open
   tooltip (`edge-cases`; both fail without the hand-off), and a link
-  under one (`portfolio`; it fails with the CSS-only rule). A fix, not an
+  under one, in the panel (`portfolio`) and in a detail window
+  (`edge-cases`; both fail with the CSS-only rule). Not covered: a row
+  under a row's tooltip inside a detail window, which no example has at
+  phone width. Only a `role="group"` face takes the tap, so a host's link
+  given a tabindex doesn't, and the focus doesn't scroll, so the tap
+  lands where it was aimed. A fix, not an
   API change, so it doesn't restart the soak; a beta.5 takes it to the
   phone.
 
