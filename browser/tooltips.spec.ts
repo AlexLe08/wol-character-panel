@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { pointerAway, slot, tabTo, tooltipOf } from "./helpers.ts";
 
 // Tooltips show on hover and keyboard focus (CSS), and Escape hides them
@@ -150,31 +150,59 @@ test.describe("on a touch screen", () => {
     }
   });
 
+  // Opens each tooltip-only slot or row's tooltip in turn until one covers
+  // the centre (inside the viewport) of an element matching `under`, and
+  // leaves that tooltip open. A finger lands on whatever is on top, so the
+  // tests tap that point, not the element.
+  async function openOneCovering(page: Page, under: string) {
+    const faces = await page.locator('.cs .cs-slot__hover > [tabindex="0"]').all();
+    const below = await page.locator(under).all();
+    const viewport = page.viewportSize()!;
+    for (const open of faces) {
+      if (!(await open.isVisible())) continue;
+      await open.tap();
+      const tip = await tooltipOf(open);
+      await expect(tip).toBeVisible();
+      const card = (await tip.boundingBox())!;
+      for (const target of below) {
+        if ((await target.evaluate((el, face) => el === face, await open.elementHandle())) || !(await target.isVisible())) continue;
+        const box = (await target.boundingBox())!;
+        const at = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+        const covered = at.x > card.x && at.x < card.x + card.width && at.y > card.y && at.y < card.y + card.height;
+        if (covered && at.y > 0 && at.y < viewport.height) return { open, target, at };
+      }
+      await page.locator(".pg-header").tap();
+      await expect(tip).toBeHidden();
+    }
+    throw new Error(`no open tooltip covers ${under}`);
+  }
+
   test("a tap on a slot under an open card opens that slot's card in one tap", async ({ page }) => {
     await page.goto("/?view=window&fixture=adventurer&theme=game");
-    const faces = await page.locator('.cs-slot__face[tabindex="0"]').all();
-    // The first open card that covers another slot's centre, and that slot.
-    let pair: { open: (typeof faces)[number]; under: (typeof faces)[number]; at: { x: number; y: number } } | undefined;
-    for (const open of faces) {
-      await open.tap();
-      const card = (await (await tooltipOf(open)).boundingBox())!;
-      for (const under of faces) {
-        if (under === open) continue;
-        const box = (await under.boundingBox())!;
-        const at = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
-        if (at.x > card.x && at.x < card.x + card.width && at.y > card.y && at.y < card.y + card.height) {
-          pair = { open, under, at };
-          break;
-        }
-      }
-      if (pair) break;
-      await page.locator(".pg-header").tap();
-    }
-    expect(pair, "an open card covers another slot").toBeDefined();
-    const { open, under, at } = pair!;
-    // A finger lands on whatever is on top, so tap the point, not the slot.
+    const { open, target, at } = await openOneCovering(page, '.cs-slot__face[tabindex="0"]');
     await page.touchscreen.tap(at.x, at.y);
-    await expect(await tooltipOf(under)).toBeVisible();
+    await expect(await tooltipOf(target)).toBeVisible();
     await expect(await tooltipOf(open)).toBeHidden();
+  });
+
+  test("a tap on a row under an open tooltip opens that row's tooltip in one tap", async ({ page }) => {
+    await page.goto("/?view=window&fixture=edge-cases&theme=game");
+    const { open, target, at } = await openOneCovering(page, '.cs__content .cs-slot__hover > [tabindex="0"]');
+    await page.touchscreen.tap(at.x, at.y);
+    await expect(await tooltipOf(target)).toBeVisible();
+    await expect(await tooltipOf(open)).toBeHidden();
+  });
+
+  test("a tap on an open card over a link closes the card without following the link", async ({ page }) => {
+    await page.goto("/?view=window&fixture=portfolio&theme=game");
+    const url = page.url();
+    const { open, at } = await openOneCovering(page, ".cs a[href]");
+    const popups: unknown[] = [];
+    page.context().on("page", (popup) => popups.push(popup));
+    await page.touchscreen.tap(at.x, at.y);
+    await expect(await tooltipOf(open)).toBeHidden();
+    await page.waitForTimeout(500);
+    expect(page.url()).toBe(url);
+    expect(popups).toHaveLength(0);
   });
 });

@@ -443,17 +443,22 @@
   covered the neighbouring slots, so reaching one took a second tap (the
   first closed the card); fixed (next entry).
 - A tap on a slot under an open card reaches it (2026-11-24, from the
-  beta.4 phone test): on touch screens (`(hover: none)`) an open tooltip
-  takes `pointer-events: none`, so the tap lands on the slot or row it
-  covers, whose focus opens its own tooltip and closes the first. CSS
-  only; the card holds no controls, and without hover it needn't be
-  hoverable (WCAG 1.4.13 is about hover), so mouse users are unchanged.
-  Chosen over moving each card clear of its neighbours (no room on a
-  phone) and over a script that closes and opens on the same tap (needs
-  JavaScript for what CSS does). A browser test opens a card that covers
-  another slot and taps that slot's centre (fails before the fix). A
-  fix, not an API change, so it doesn't restart the soak; a beta.5 takes
-  it to the phone.
+  beta.4 phone test): on touch screens, `SlotHover.tsx` hands a tap
+  (`pointerup`, touch, `(hover: none)`) on an open tooltip to the
+  tooltip-only slot or row under it, by focusing it, so its tooltip opens
+  and the first closes in one tap. A link or button under the tooltip
+  isn't reached: the tap only closes the tooltip, as before. Without
+  JavaScript, two taps still work. Chosen over `pointer-events: none` on
+  the open tooltip under `(hover: none)` (tried first, CSS only): the
+  reviewer found it sends a tap meant to close the card to any link or
+  button under it, and the `portfolio` example's Tools card covers five
+  links (the React link was followed in a test). Also chosen over moving
+  each card clear of its neighbours (no room on a phone). Browser tests
+  tap a slot under an open card (`adventurer`) and a row under an open
+  tooltip (`edge-cases`; both fail without the hand-off), and a link
+  under one (`portfolio`; it fails with the CSS-only rule). A fix, not an
+  API change, so it doesn't restart the soak; a beta.5 takes it to the
+  phone.
 
 ## Tooling plan (done)
 

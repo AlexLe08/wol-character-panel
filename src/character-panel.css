@@ -1760,19 +1760,13 @@ span.cs-track__face[tabindex] .cs-track__label {
    :focus-visible, so the tooltip of one with no link (an item card or a
    row's text, shown nowhere else) shows while it has any focus: a tap
    opens it, a tap elsewhere closes it. It matches the tabindex span, never
-   a link, so a linked slot's tap still just follows the link. An open
-   tooltip lets taps through (it holds no controls, and without hover it
-   needn't be hoverable), so a tap on a slot or row it covers reaches that
-   one: its tooltip opens and the first closes, in one tap. */
+   a link, so a linked slot's tap still just follows the link. A tap on
+   an open tooltip closes it; SlotHover.tsx hands that tap to a
+   tooltip-only slot or row under it. */
 @media (hover: none) {
   .cs-slot__hover:not([data-dismissed]):has(> [tabindex="0"]:focus) .cs-tip {
     display: block;
-  }
-
-  .cs-tip {
-    pointer-events: none;
-  }
-}
+  }}
 
 /* ---------------------------------------------------------------------
    Game theme
