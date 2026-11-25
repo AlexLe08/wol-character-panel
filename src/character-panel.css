@@ -1766,7 +1766,8 @@ span.cs-track__face[tabindex] .cs-track__label {
 @media (hover: none) {
   .cs-slot__hover:not([data-dismissed]):has(> [tabindex="0"]:focus) .cs-tip {
     display: block;
-  }}
+  }
+}
 
 /* ---------------------------------------------------------------------
    Game theme
