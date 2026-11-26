@@ -515,6 +515,14 @@
   the equipment pane. CSS only; no API change. The README's two
   screenshots in `docs/media/v2/` are retaken (decision 0011), since
   both show the wide layout.
+- The header in an inset box, game theme (2026-11-26, the owner's
+  request): the equipment pane's header (`.cs__header`: its slots, level
+  and job title) takes the gauges' darker, rounded inset box, from the
+  same rule, so the two sides of the window match, in place of its faint
+  gradient and bottom line. Its margin, border and padding add up to the
+  body's 0.75rem, so the header's slots stay over the slot columns. Game
+  theme only, as the gauges' box is; CSS only, no API change. The
+  README's game screenshot is retaken.
 
 ## Tooling plan (done)
 

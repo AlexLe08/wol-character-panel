@@ -18,6 +18,10 @@ A PR that changes what's published adds its line under Unreleased; the
 - In the window's wide layout, the content pane and the equipment pane
   beside it are no longer split by a vertical line. When the panes stack
   (below a 46rem container width), the line between them is unchanged.
+- In the `game` theme, the equipment pane's header (its slots, the level
+  and the job title) sits in the same darker, rounded inset box as the
+  gauges, in place of its faint gradient and bottom line. The document
+  theme is unchanged.
 
 ## [2.0.0-beta.5] - 2026-11-24
 
