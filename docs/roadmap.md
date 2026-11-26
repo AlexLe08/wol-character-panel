@@ -543,7 +543,8 @@
   a row gap would also fall inside each gauge. Every example, theme and
   width from 20 to 60rem (486 layouts) compared with `main`: the 10
   misaligned ones line up, and nothing else moves. Browser tests: both
-  wrap cases, and a secondary line under one gauge only.
+  wrap cases, and a wrapped gauge beside one with a secondary line (the
+  third row, empty for a gauge with none, adds no space).
 - Slot names with `labels="always"` (2026-11-26, from #72's review): a
   name may be 1.5rem wider than its square, and a long one widened its
   slot, so at full width its square and rail sat out of line with the

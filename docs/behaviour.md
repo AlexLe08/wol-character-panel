@@ -60,8 +60,7 @@ rows, detail windows and the layouts. The
   name. A gauge's or stat's label keeps at least 6rem; a longer value wraps
   under it, still right-aligned. Gauges are two per line, one per line in a
   pane narrower than 22rem. The gauges on a line share their rows, so
-  their bars stay level when one value wraps and the other doesn't, or
-  only one has a secondary line. Levels line up down a group, at its widest
+  their bars stay level when one value wraps and the other doesn't. Levels line up down a group, at its widest
   level's width.
 - **Groups:** a two-column run is two stacks, each with its own row
   heights; when the pane is narrower than 22rem they become one column, the

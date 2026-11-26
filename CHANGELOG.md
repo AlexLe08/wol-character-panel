@@ -33,9 +33,10 @@ A PR that changes what's published adds its line under Unreleased; the
 
 - Two gauges on a line keep their bars level when one value wraps under
   its label and the other doesn't (in `adventurer`, HP's 152,836 beside
-  MP's 10,000, at some window widths), or when only one has a secondary
-  line. Before, the wrapped gauge's bar sat a line lower. Spacing is
-  otherwise unchanged.
+  MP's 10,000, at some window widths). Before, the wrapped gauge's bar
+  sat a line lower. Where the bars were already level, nothing moves;
+  where they weren't, the shorter gauge's face (its focus ring and hover
+  area) now fills the line's height, as its neighbour's does.
 - With `labels="always"`, a slot name wider than its square no longer
   widens the slot, so squares and rails stay in line down each column,
   each name centred under its square. Before, a long name ("Accessibility")

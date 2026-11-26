@@ -121,6 +121,8 @@ for (const theme of ["document", "game"]) {
     const columns = await page.locator(".cs__slots").evaluateAll((lists) =>
       lists.map((list) => ({
         column: list.className,
+        // The header or body row the column is in.
+        row: list.parentElement!.getBoundingClientRect().toJSON(),
         slots: [...list.querySelectorAll(".cs-slot")].map((item) => {
           const square = item.querySelector(".cs-slot__square")!.getBoundingClientRect();
           const label = item.querySelector(".cs-slot__label")!.getBoundingClientRect();
@@ -131,11 +133,14 @@ for (const theme of ["document", "game"]) {
     // The case under test: a name wider than its square.
     const squareWidth = await page.locator(".cs-slot__square").first().evaluate((el) => el.getBoundingClientRect().width);
     expect(columns.some((c) => c.slots.some((s) => s.label.width > squareWidth + 1))).toBe(true);
-    for (const { column, slots } of columns) {
+    for (const { column, row, slots } of columns) {
       for (const slot of slots) {
         expect(Math.abs(slot.squareLeft - slots[0].squareLeft), column).toBeLessThan(0.5);
         expect(slot.label.width, `${column}: name shown`).toBeGreaterThan(1);
         expect(Math.abs(slot.label.left + slot.label.width / 2 - slot.squareCentre), column).toBeLessThan(0.6);
+        // The overhang stays inside the row (its padding, at most).
+        expect(slot.label.left, `${column}: name inside its row`).toBeGreaterThanOrEqual(row.left - 0.5);
+        expect(slot.label.right, `${column}: name inside its row`).toBeLessThanOrEqual(row.right + 0.5);
       }
     }
   });

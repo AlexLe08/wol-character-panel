@@ -487,11 +487,14 @@ test.describe("layout", () => {
     });
   }
 
-  test("gauges on a line keep their meters level when only one has a secondary line", async ({ page }) => {
+  // A gauge's third row is its secondary line, empty for a gauge without
+  // one: with HP wrapped and a secondary line under it, MP's meter still
+  // shares HP's row, and its empty third row adds nothing above it.
+  test("gauges on a line keep their meters level when one head wraps and only it has a secondary line", async ({ page }) => {
     await page.goto("/?view=window&fixture=adventurer&theme=document");
     const before = await page.locator(".cs-gauge .cs-meter").evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
     expect(Math.abs(before[0] - before[1])).toBeLessThan(1);
-    // A secondary line under HP only, then a longer value for HP than fits.
+    // A secondary line under HP only, and a longer value for HP than fits.
     await page.locator(".cs-gauge__face").first().evaluate((face) => {
       const secondary = document.createElement("span");
       secondary.className = "cs-gauge__secondary";
