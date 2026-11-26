@@ -512,7 +512,9 @@
   the wide layout drew a 1px rule on the equipment pane's left edge,
   between it and the content pane. It's gone, with the two rules that only
   turned it off (one pane, and stacked). Stacked panes keep the rule above
-  the equipment pane. CSS only; no API change.
+  the equipment pane. CSS only; no API change. The README's two
+  screenshots in `docs/media/v2/` are retaken (decision 0011), since
+  both show the wide layout.
 
 ## Tooling plan (done)
 
