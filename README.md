@@ -1,17 +1,10 @@
 # Character panel (`@solution-nine/wol-character-panel`)
 
 [![CI status on main](https://github.com/AlexLe08/wol-character-panel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/AlexLe08/wol-character-panel/actions/workflows/ci.yml)
-[![Version on npm's next tag](https://img.shields.io/npm/v/@solution-nine/wol-character-panel/next)](https://www.npmjs.com/package/@solution-nine/wol-character-panel)
+[![Version on npm](https://img.shields.io/npm/v/@solution-nine/wol-character-panel)](https://www.npmjs.com/package/@solution-nine/wol-character-panel)
 [![License: MIT](https://img.shields.io/npm/l/@solution-nine/wol-character-panel)](https://github.com/AlexLe08/wol-character-panel/blob/main/LICENSE)
-[![Node version required](https://img.shields.io/node/v/@solution-nine/wol-character-panel/next)](https://github.com/AlexLe08/wol-character-panel/blob/main/package.json)
-[![Demo of the next release](https://img.shields.io/badge/demo-next-blue)](https://alexle08.github.io/wol-character-panel/next/)
-
-> **This README describes 2.0**, on npm's `next` tag until 2.0.0 is
-> released: install `@solution-nine/wol-character-panel@next`, and try
-> it in the [`/next/` demo](https://alexle08.github.io/wol-character-panel/next/). A bare
-> install still gets 1.0.4, whose component is `CharacterSheet` (no
-> `EquipmentPanel` or `CharacterWindow`); its README is at the
-> [`v1.0.4` tag](https://github.com/AlexLe08/wol-character-panel/tree/v1.0.4#readme).
+[![Node version required](https://img.shields.io/node/v/@solution-nine/wol-character-panel)](https://github.com/AlexLe08/wol-character-panel/blob/main/package.json)
+[![Demo](https://img.shields.io/badge/demo-latest-blue)](https://alexle08.github.io/wol-character-panel/)
 
 | `game` theme | `document` theme |
 | --- | --- |
@@ -60,7 +53,7 @@ ships as ES modules with type declarations (no CommonJS build), so it needs a
 bundler or Node 22.12+.
 
 ```sh
-npm install @solution-nine/wol-character-panel@next react zod
+npm install @solution-nine/wol-character-panel react zod
 ```
 
 Try it at <https://alexle08.github.io/wol-character-panel/>: the playground
@@ -138,11 +131,9 @@ one, as the config's first key:
 "$schema": "https://cdn.jsdelivr.net/npm/@solution-nine/wol-character-panel@2/character-panel.schema.json",
 ```
 
-That URL (the schema's `$id`) resolves once 2.0.0 is released; until
-then, put `@next` in place of `@2`. The JSON Schema rejects unknown keys, while
-`parseConfig` strips them (`findUnknownKeys` lists them). Jobs can be
-`draft` or `hidden`: pass the config through `publicConfig()` before
-rendering it for visitors.
+The JSON Schema rejects unknown keys, while `parseConfig` strips them
+(`findUnknownKeys` lists them). Jobs can be `draft` or `hidden`: pass the
+config through `publicConfig()` before rendering it for visitors.
 
 The [config reference](https://github.com/AlexLe08/wol-character-panel/blob/main/docs/config.md)
 lists every field, its limits and what `parseConfig` does with a bad one.
