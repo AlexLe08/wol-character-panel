@@ -28,6 +28,8 @@ A PR that changes what's published adds its line under Unreleased; the
   column's start, so the rail sits between the square and the portrait.
   Below a 26rem width, where slots have no rails, each row's slots now
   line up at the top in the left grid as well as the right.
+- README: the closing line no longer links to the site the panel started
+  in.
 
 ### Fixed
 

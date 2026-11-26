@@ -1,6 +1,8 @@
 # 0007: Betas are tried in a next demo, not the site
 
-Status: Accepted · 2026-11-18
+Status: Accepted · 2026-11-18 · superseded in part by
+[0012](0012-developed-and-tested-on-its-own.md) (a release candidate is
+checked in this repository, not in the site)
 
 ## Context
 

@@ -104,7 +104,9 @@ current controls (imports, `parseConfig`, the component and its props, from
 a chosen portrait). It renders on the client, while hosts render the panel on the server; `/static?fixture=portfolio&theme=document&width=22` shows the server-rendered panel
 with no script (view, fixture, theme, labels, width, `job`, `tab` and `page`
 from the query; with no theme, the example's own).
-Check a release candidate in a host too (below).
+A release candidate is checked here, not in a host
+([decision 0012](decisions/0012-developed-and-tested-on-its-own.md)); to
+try a change in a host anyway, see below.
 
 The demo site is this page built with Vite (`npm run build:demo`, into
 `playground/dist/`), served from `/wol-character-panel/`: the panel's links
@@ -156,8 +158,8 @@ design. A refactor PR says how many renders it compared.
 Relative imports name the source file (`./parse.ts`): the build rewrites them
 to `.js`, and Node can run the schema generator straight from `src/`. After
 changing `src/schema.ts`, run `npm run generate:schema` and commit the JSON
-Schema with it. A host that keeps its own copy (like the portfolio site's
-backend) copies it from the installed package.
+Schema with it. A host that keeps its own copy (a backend that validates
+saves, say) copies it from the installed package.
 
 To try a change in a host before releasing it, install a packed copy rather
 than linking (`npm link` can load two copies of React):

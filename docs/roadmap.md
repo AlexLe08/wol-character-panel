@@ -553,6 +553,15 @@
   column with names centred, and rails stay beside squares, with
   `labels="always"`. Below 26rem only the header slots change (body
   slots are pixel-identical to `main`'s). CSS only, no API change.
+- Developed and tested on its own (2026-11-26, the owner's request):
+  [decision 0012](decisions/0012-developed-and-tested-on-its-own.md). No
+  check depends on the portfolio site: a release candidate, 2.0.0
+  included, is checked here (`check.sh`, `test:pack`, `/static`) in place
+  of a packed copy in the site, and the site's upgrade to 2.x moves out of
+  this roadmap to its own repository. `CLAUDE.md`, the README's closing
+  line, `docs/development.md` and the release-prep skill no longer name
+  the site; history (decision records, past CHANGELOG sections, Done
+  entries, the character window plan) still does. Docs only.
 
 ## Tooling plan (done)
 
@@ -634,13 +643,17 @@ upload are both Done (above).
    Firefox on Android) a tap on any of the adventurer's slots or rows
    opened its tooltip and a tap elsewhere closed it. An open slot card
    covered the neighbouring slots, so reaching one took a second tap;
-   fixed (Done, above), not an API change, so the week stands. A beta.5
-   (owner, `/release-prep`) takes the fix to `/next/`, and the owner taps
-   a slot under an open card on the phone.
-3. **A packed release candidate in the site**, which the next demo doesn't
-   cover: `npm pack` here, `npm install <tarball>` in the site's
-   `frontend/` (not committed), server-rendered with the site's CSS
-   around the panel.
+   fixed (Done, above), not an API change, so the week stands. beta.5
+   (#71) took the fix to `/next/`, and the owner's check on the phone, a
+   tap on a slot under an open card, passed (2026-11-26). Soak complete. The CSS fixes
+   after beta.5 (#72, #73) ship in 2.0.0 without a beta.6 (the owner's
+   call, 2026-11-26).
+3. **The release candidate, checked here**
+   ([decision 0012](decisions/0012-developed-and-tested-on-its-own.md)),
+   not in a host: `scripts/check.sh` on the release commit (its two pack
+   smoke tests server-render the packed tarball in a fresh project, at
+   the newest and at the oldest peers), and `/static` in the playground
+   for the server render with no script.
 4. **2.0.0 (owner):** `/release-prep` with the API called settled (it
    proposes `2.0.0`; the schema's `$id` has named `@2` since beta.0),
    merge, tag. The demo's `latest` then shows 2.0.0, and `/next/` falls
@@ -649,25 +662,6 @@ upload are both Done (above).
    sentence under Config (check the `@2` `$schema` URL resolves once
    2.0.0 is out), and moves the README's badges off `next` (the exact
    values are in release-prep step 3).
-5. **The site's upgrade PR**, in its own repository and session (it
-   depends on `^1`, so nothing reaches it before then):
-   - bump to `^2` and run `npm run generate:character-schema` (the
-     backend's copy must accept the new keys before the admin can save
-     them);
-   - take the renames: `CharacterSheet` → `EquipmentPanel`, the config type
-     `CharacterPanelConfig`, `characterPanelConfigSchema`, the CSS and
-     schema paths (`character-panel.*`), and `parts` for
-     `showSockets`/`showToolbar`;
-   - restyle anything that assumed the job menu in the bar (it is in the
-     gear-set row now);
-   - handle every other break under "Changed (breaking)" in the
-     CHANGELOG's 2.0.0-beta.N sections (among them `intent: "tab"`, the
-     second Escape, `EquipmentPanelProps` and the default label);
-   - switch the home page to `CharacterWindow`, and extend the admin
-     editor for the new fields, with its own save button as `gearSetEnd`;
-   - point the saved config's `$schema` at the `@2` `$id`: it still names
-     `../components/character-sheet/character-sheet.schema.json`, from
-     before the extraction (an annotation only, so nothing fails on it).
 
 ## Later (candidates, unordered)
 
@@ -704,7 +698,7 @@ upload are both Done (above).
   strip's "Tabs", a detail window's "Close", "(opens in a new tab)", "No
   portrait yet"), for a host in another language. A minor whenever it
   comes; left out of 2.0.0 until a host needs it.
-- Backend code stays out (decided with the site's PR #54): the JSON
+- Backend code stays out (decided before the extraction): the JSON
   Schema is the contract, which any backend validates in its own language.
   A Python validator package (`find_issues` and its `oneOf` explanation)
   only if someone asks, and then in this repository, so it ships with the

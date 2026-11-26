@@ -17,12 +17,11 @@ character screen, driven by one JSON config with a published JSON Schema.
 Published to npm (public, MIT) from this repository; `solution-nine` is a
 free npm organization owned by the npm user `alexle08`.
 
-It started inside
-[the-portfolio-site](https://github.com/AlexLe08/the-portfolio-site)
-(`../the-portfolio-site` locally), which is still its main host: the home
-page renders it, the admin editor writes configs, and the site's backend
-validates saves against a copy of this package's JSON Schema. Changes here
-reach the site only through a release and an upgrade there.
+It is developed and tested on its own, against its examples, the
+playground and the packed tarball, with no particular host in mind
+([decision 0012](docs/decisions/0012-developed-and-tested-on-its-own.md)).
+Where it came from is in
+[decision 0001](docs/decisions/0001-own-package-and-repository.md).
 
 ## Decision records
 
@@ -106,10 +105,9 @@ or the workflow, indexed in its `README.md`.
 - `scripts/cleanup-merged.sh [--apply]`: after a merge, lists (or with
   `--apply` removes) worktrees and local branches whose PR merged.
 
-To try a change in the site before releasing it, install a packed copy
+To try a change in a host app before releasing it, install a packed copy
 there (`npm pack` here, then `npm install <path>/<tarball>.tgz` in the
-site's `frontend/`), never `npm link` (two copies of React). Don't commit
-that install in the site.
+host), never `npm link` (two copies of React). No check depends on one.
 
 ## Architecture rules
 
@@ -163,11 +161,11 @@ that install in the site.
   is a container query. Escape dismisses a tooltip (WCAG
   1.4.13). Keep `jsx-a11y` passing and every interactive element
   focusable with a visible `:focus-visible` ring.
-- Theming is `--cs-*` variables on `.cs`. The `document` theme (the one
-  the site uses) reads the host's `--paper`/`--ink`/`--signal` tokens and
-  follows the site's design rules: no gradients, rounded-and-shadowed
-  cards, or new accent colors. Inside `.cs[data-cs-theme="game"]` only,
-  gradients, rounded frames, shadows and its gold accent are allowed.
+- Theming is `--cs-*` variables on `.cs`. The `document` theme reads
+  the host's `--paper`/`--ink`/`--signal` tokens and stays plain: no
+  gradients, rounded-and-shadowed cards, or new accent colors. Inside
+  `.cs[data-cs-theme="game"]` only, gradients, rounded frames, shadows
+  and its gold accent are allowed.
 - Tests are Vitest, beside the code as `src/*.test.ts(x)`: unit tests for
   the data side (`parse`, `resolve`), and the panel server-rendered with
   `react-dom/server` in Node (`src/EquipmentPanel.test.tsx`; no DOM).
@@ -182,8 +180,11 @@ that install in the site.
   container query, axe (WCAG 2.2 A/AA) on every example in both themes and
   layouts, and `/static` with JavaScript off. Coverage doesn't see these
   (`SlotHover.tsx` and `JobMenuFocus.tsx` stay low in Vitest's numbers).
-  Still check a release candidate in the site with a packed copy, since it renders on the server
-  with its own CSS around the panel.
+  A release candidate is checked here, not in a host
+  ([decision 0012](docs/decisions/0012-developed-and-tested-on-its-own.md)):
+  `npm run test:pack` server-renders it from the packed tarball in a
+  fresh project, `/static` shows it server-rendered with no script, and a
+  beta is tried in the next demo.
 
 ## Versioning and releases
 
@@ -194,9 +195,8 @@ that install in the site.
     patch; the `$id` keeps its major.
   - Breaking (new required field, tighter limit, removed key or export,
     changed behaviour a host relies on): major bump, then
-    `npm run generate:schema` so the `$id` follows. The site depends on
-    `^1`, so a major reaches it only through an upgrade PR there that
-    handles the break. Say what breaks in the PR.
+    `npm run generate:schema` so the `$id` follows. A host on `^1` gets a
+    major only by upgrading on purpose. Say what breaks in the PR.
 - A PR that changes anything a host can see adds a line under Unreleased
   in `CHANGELOG.md`. A release is a version-bump PR (`release: X.Y.Z`)
   that turns Unreleased into the new version, merged, then the owner tags
@@ -208,11 +208,9 @@ that install in the site.
   then shows it under `/next/`. Never publish from a local machine. The owner
   starts that PR with `/release-prep` (`.claude/skills/`), which proposes
   the bump and waits for a yes; it never tags.
-- Betas are tried in the next demo, not the site, which stays on 1.x for
-  now ([decision 0007](docs/decisions/0007-next-demo-for-betas.md)).
-  After a stable release, the site upgrades in its own repository and session:
-  bump the dependency in its `frontend/`, run
-  `npm run generate:character-schema` there, and commit both.
+- Betas are tried in the next demo
+  ([decision 0007](docs/decisions/0007-next-demo-for-betas.md)).
+  Upgrading a host is that host's own work, in its own repository.
 
 ## Hard constraints
 
@@ -221,8 +219,8 @@ that install in the site.
 - CI's job id is `check` (`.github/workflows/ci.yml`). Don't add `paths:`
   filters to its `pull_request` trigger.
 - Node: `engines` says `>=22.12`, for hosts that load the ESM output
-  without a bundler (Vitest 5 needs it here too); CI runs Node 24, like
-  the site and Vercel. Output is ESM only, no CommonJS build.
+  without a bundler (Vitest 5 needs it here too); CI runs Node 24.
+  Output is ESM only, no CommonJS build.
 - Dependency ranges are open upward. When something breaks after a fresh
   install, check the library's changelog first.
 - No "Eorzea" or other Square Enix trademarks in names or published text.
