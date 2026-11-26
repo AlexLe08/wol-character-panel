@@ -161,10 +161,11 @@ host), never `npm link` (two copies of React). No check depends on one.
   is a container query. Escape dismisses a tooltip (WCAG
   1.4.13). Keep `jsx-a11y` passing and every interactive element
   focusable with a visible `:focus-visible` ring.
-- Theming is `--cs-*` variables on `.cs`. The `document` theme reads the host's
-  `--paper`/`--ink`/`--signal` tokens and stays plain: no gradients,
-  rounded-and-shadowed cards, or new accent colors. Inside `.cs[data-cs-theme="game"]` only,
-  gradients, rounded frames, shadows and its gold accent are allowed.
+- Theming is `--cs-*` variables on `.cs`. The `document` theme reads
+  the host's `--paper`/`--ink`/`--signal` tokens and stays plain: no
+  gradients, rounded-and-shadowed cards, or new accent colors. Inside
+  `.cs[data-cs-theme="game"]` only, gradients, rounded frames, shadows
+  and its gold accent are allowed.
 - Tests are Vitest, beside the code as `src/*.test.ts(x)`: unit tests for
   the data side (`parse`, `resolve`), and the panel server-rendered with
   `react-dom/server` in Node (`src/EquipmentPanel.test.tsx`; no DOM).

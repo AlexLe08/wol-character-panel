@@ -650,10 +650,10 @@ upload are both Done (above).
    call, 2026-11-26).
 3. **The release candidate, checked here**
    ([decision 0012](decisions/0012-developed-and-tested-on-its-own.md)),
-   not in a host: `scripts/check.sh` on the release commit (its
-   `test:pack` server-renders the packed tarball in a fresh project, at
-   the newest and oldest peers), and `/static` in the playground for the
-   server render with no script.
+   not in a host: `scripts/check.sh` on the release commit (its two pack
+   smoke tests server-render the packed tarball in a fresh project, at
+   the newest and at the oldest peers), and `/static` in the playground
+   for the server render with no script.
 4. **2.0.0 (owner):** `/release-prep` with the API called settled (it
    proposes `2.0.0`; the schema's `$id` has named `@2` since beta.0),
    merge, tag. The demo's `latest` then shows 2.0.0, and `/next/` falls
@@ -698,7 +698,7 @@ upload are both Done (above).
   strip's "Tabs", a detail window's "Close", "(opens in a new tab)", "No
   portrait yet"), for a host in another language. A minor whenever it
   comes; left out of 2.0.0 until a host needs it.
-- Backend code stays out (decided with the site's PR #54): the JSON
+- Backend code stays out (decided before the extraction): the JSON
   Schema is the contract, which any backend validates in its own language.
   A Python validator package (`find_issues` and its `oneOf` explanation)
   only if someone asks, and then in this repository, so it ships with the

@@ -23,14 +23,27 @@ a release is checked with runs in this repository, with no host:
 - `npm run test:pack` installs the packed tarball in a fresh project and
   uses it through the `exports` map in plain Node, with and without React,
   server-rendering `/react`, at the newest and oldest peers in range;
-- each beta is on npm's `next` and in the next demo (`/next/`), where it
-  was tried with Playwright scripts in Chromium and by hand on Android
-  phones.
+- each beta is on npm's `next` and in the next demo (`/next/`), where
+  betas were tried with Playwright scripts in Chromium (beta.1) and by
+  hand on Android phones (beta.3 to beta.5).
 
 On 2026-11-26, with the soak complete, the owner asked that 2.0.0 and
 what follows be developed and tested on the package's own setup rather
 than the site's, and that docs other than history stop referring to the
-site.
+site. 0007's Why had already put it as testing and building "without any
+particular project or site in mind".
+
+The options:
+
+- Keep the packed-copy check in the site before 2.0.0, as 0007 had it:
+  the only check of the panel in a real framework with a host's CSS,
+  but it ties each release to the site's install and build.
+- Add a small host app here (Next.js, say) that installs the tarball:
+  covers a real bundler and a host's CSS, but adds a framework to the dev
+  dependencies and CI, new tooling under [0006](0006-tooling-freeze.md)
+  with no bug to name yet.
+- Check here only, with what already runs, and name what it doesn't
+  cover.
 
 ## Decision
 
@@ -45,8 +58,9 @@ site to before 2.0.0.
 
 ## Consequences
 
-- A release needs nothing outside this repository: no second checkout,
-  no host's install or build, no change waiting on another project.
+- A release needs nothing outside this repository but the registry and
+  CI it already uses: no second checkout, no host's install or build, no
+  change waiting on another project.
 - The docs describe any host, not one. History (decision records, the
   CHANGELOG's past releases, the roadmap's Done entries, the character
   window plan) still names the site where it was part of what happened.

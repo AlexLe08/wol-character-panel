@@ -104,7 +104,9 @@ current controls (imports, `parseConfig`, the component and its props, from
 a chosen portrait). It renders on the client, while hosts render the panel on the server; `/static?fixture=portfolio&theme=document&width=22` shows the server-rendered panel
 with no script (view, fixture, theme, labels, width, `job`, `tab` and `page`
 from the query; with no theme, the example's own).
-Check a release candidate in a host too (below).
+A release candidate is checked here, not in a host
+([decision 0012](decisions/0012-developed-and-tested-on-its-own.md)); to
+try a change in a host anyway, see below.
 
 The demo site is this page built with Vite (`npm run build:demo`, into
 `playground/dist/`), served from `/wol-character-panel/`: the panel's links
