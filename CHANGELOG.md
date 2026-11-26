@@ -22,6 +22,12 @@ A PR that changes what's published adds its line under Unreleased; the
   and the job title) sits in the same darker, rounded inset box as the
   gauges, in place of its faint gradient and bottom line. The document
   theme is unchanged.
+- A filled slot's rail (the thin bar beside its square) is on the
+  square's right in every column. Before, the left column and the
+  header's start slots had theirs on the left. Their squares move to the
+  column's start, so the rail sits between the square and the portrait.
+  Below a 26rem width, where slots have no rails, each row's slots now
+  line up at the top in the left grid as well as the right.
 
 ## [2.0.0-beta.5] - 2026-11-24
 

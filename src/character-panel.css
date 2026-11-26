@@ -376,21 +376,13 @@ button.cs__gear-button:hover,
   padding-block: 0.85rem;
 }
 
+/* Squares sit at each column's start, with room after them for their
+   rails, which run along their right side in every column. */
 .cs__slots {
   display: flex;
   flex-direction: column;
-  gap: var(--cs-slot-gap);
-}
-
-/* Squares sit against the portrait; the rails run along the outer edge. */
-.cs__slots--left,
-.cs__slots--header-start {
-  align-items: flex-end;
-}
-
-.cs__slots--right,
-.cs__slots--header-end {
   align-items: flex-start;
+  gap: var(--cs-slot-gap);
 }
 
 .cs__portrait {
@@ -453,24 +445,15 @@ button.cs__gear-button:hover,
   position: relative;
 }
 
-/* The rail: a thin bar on the slot's outer side, lit when filled. */
+/* The rail: a thin bar on the slot's right side, lit when filled. */
 .cs-slot::before {
   content: "";
   position: absolute;
   top: 0;
+  right: calc(-1 * (var(--cs-rail-width) + 0.35rem));
   height: var(--cs-slot-size);
   width: var(--cs-rail-width);
   background: var(--cs-rail);
-}
-
-.cs__slots--left .cs-slot::before,
-.cs__slots--header-start .cs-slot::before {
-  left: calc(-1 * (var(--cs-rail-width) + 0.35rem));
-}
-
-.cs__slots--right .cs-slot::before,
-.cs__slots--header-end .cs-slot::before {
-  right: calc(-1 * (var(--cs-rail-width) + 0.35rem));
 }
 
 .cs-slot--empty::before {

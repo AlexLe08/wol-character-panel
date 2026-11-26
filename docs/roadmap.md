@@ -524,6 +524,14 @@
   slot columns. Game
   theme only, as the gauges' box is; CSS only, no API change. The
   README's game screenshot is retaken.
+- Rails on the right of every slot (2026-11-26, the owner's request):
+  the left column and the header's start slots had their rails on the
+  left, mirrored with the right column's. Now each column puts its
+  squares at its start and every rail runs along the square's right
+  side, one rule for each in place of a left and a right one. A browser
+  test checks each filled slot's rail is right of its square and inside
+  its column, in all four columns and both themes (it fails on the old
+  CSS). CSS only, no API change. Both README screenshots are retaken.
 
 ## Tooling plan (done)
 
