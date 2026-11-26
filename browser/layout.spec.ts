@@ -73,6 +73,40 @@ test("wide: the portrait sits between the columns, slot names hidden", async ({ 
   await expect(slot(page, "Skills")).toHaveAccessibleName("Skills");
 });
 
+for (const theme of ["document", "game"]) {
+  test(`wide, ${theme} theme: every filled slot's rail is on its right, inside its column`, async ({ page }) => {
+    await page.goto(`/?view=equipment&fixture=portfolio&theme=${theme}`);
+    const rails = await page.locator(".cs__slots .cs-slot").evaluateAll((slots) =>
+      slots.flatMap((item) => {
+        const rail = getComputedStyle(item, "::before");
+        if (rail.display === "none") return [];
+        // The rail is absolutely placed against the slot by its `right`.
+        const slotBox = item.getBoundingClientRect();
+        const railRight = slotBox.right - parseFloat(rail.right);
+        return [
+          {
+            column: item.closest(".cs__slots")!.className,
+            squareRight: item.querySelector(".cs-slot__square")!.getBoundingClientRect().right,
+            railLeft: railRight - parseFloat(rail.width),
+            railRight,
+            columnRight: item.closest(".cs__slots")!.getBoundingClientRect().right,
+          },
+        ];
+      }),
+    );
+    // Filled slots in all four columns, so each column's rule is checked.
+    for (const column of ["left", "right", "header-start", "header-end"]) {
+      expect(rails.some((rail) => rail.column.includes(`cs__slots--${column}`)), column).toBe(true);
+    }
+    for (const rail of rails) {
+      expect(rail.railLeft, rail.column).toBeGreaterThan(rail.squareRight);
+      // Beside its square, not adrift in the column.
+      expect(rail.railLeft - rail.squareRight, rail.column).toBeLessThan(16);
+      expect(rail.railRight, rail.column).toBeLessThanOrEqual(rail.columnRight + 0.5);
+    }
+  });
+}
+
 test("narrow (below 26rem): portrait on top, slots in rows of three with names", async ({ page }) => {
   await page.goto("/?view=equipment&fixture=portfolio&theme=document&width=22");
   const portrait = await box(page, ".cs__portrait");

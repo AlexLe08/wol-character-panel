@@ -508,6 +508,30 @@
   tighter slot column limit (at `parseConfig`). Not reported: a
   key-order-only change in `parseConfig`. A base without
   `CharacterWindow` exits 2.
+- No line between the window's panes (2026-11-25, the owner's request):
+  the wide layout drew a 1px rule on the equipment pane's left edge,
+  between it and the content pane. It's gone, with the two rules that only
+  turned it off (one pane, and stacked). Stacked panes keep the rule above
+  the equipment pane. CSS only; no API change. The README's two
+  screenshots in `docs/media/v2/` are retaken (decision 0011), since
+  both show the wide layout.
+- The header in an inset box, game theme (2026-11-26, the owner's
+  request): the equipment pane's header (`.cs__header`: its slots, level
+  and job title) takes the gauges' darker, rounded inset box, from the
+  same rule, so the two sides of the window match, in place of its faint
+  gradient and bottom line. Its margin, border and padding add up to the
+  body's 0.75rem, so in the wide layout the header's slots stay over the
+  slot columns. Game
+  theme only, as the gauges' box is; CSS only, no API change. The
+  README's game screenshot is retaken.
+- Rails on the right of every slot (2026-11-26, the owner's request):
+  the left column and the header's start slots had their rails on the
+  left, mirrored with the right column's. Now each column puts its
+  squares at its start and every rail runs along the square's right
+  side, one rule for each in place of a left and a right one. A browser
+  test checks each filled slot's rail is right of its square and inside
+  its column, in all four columns and both themes (it fails on the old
+  CSS). CSS only, no API change. Both README screenshots are retaken.
 
 ## Tooling plan (done)
 

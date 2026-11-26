@@ -376,21 +376,13 @@ button.cs__gear-button:hover,
   padding-block: 0.85rem;
 }
 
+/* Squares sit at each column's start, with room after them for their
+   rails, which run along their right side in every column. */
 .cs__slots {
   display: flex;
   flex-direction: column;
-  gap: var(--cs-slot-gap);
-}
-
-/* Squares sit against the portrait; the rails run along the outer edge. */
-.cs__slots--left,
-.cs__slots--header-start {
-  align-items: flex-end;
-}
-
-.cs__slots--right,
-.cs__slots--header-end {
   align-items: flex-start;
+  gap: var(--cs-slot-gap);
 }
 
 .cs__portrait {
@@ -453,24 +445,15 @@ button.cs__gear-button:hover,
   position: relative;
 }
 
-/* The rail: a thin bar on the slot's outer side, lit when filled. */
+/* The rail: a thin bar on the slot's right side, lit when filled. */
 .cs-slot::before {
   content: "";
   position: absolute;
   top: 0;
+  right: calc(-1 * (var(--cs-rail-width) + 0.35rem));
   height: var(--cs-slot-size);
   width: var(--cs-rail-width);
   background: var(--cs-rail);
-}
-
-.cs__slots--left .cs-slot::before,
-.cs__slots--header-start .cs-slot::before {
-  left: calc(-1 * (var(--cs-rail-width) + 0.35rem));
-}
-
-.cs__slots--right .cs-slot::before,
-.cs__slots--header-end .cs-slot::before {
-  right: calc(-1 * (var(--cs-rail-width) + 0.35rem));
 }
 
 .cs-slot--empty::before {
@@ -947,11 +930,6 @@ a.cs-slot__face:hover .cs-slot__square,
 
 .cs__panes > .cs__equipment {
   grid-area: equipment;
-  border-left: 1px solid var(--cs-rule-strong);
-}
-
-.cs--single .cs__panes > .cs__equipment {
-  border-left: 0;
 }
 
 @container cs-window (max-width: 46rem) {
@@ -968,7 +946,6 @@ a.cs-slot__face:hover .cs-slot__square,
   .cs__panes > .cs__equipment {
     padding-inline: max(0px, (100% - 30rem) / 2);
     border-top: 1px solid var(--cs-rule-strong);
-    border-left: 0;
   }
 
   .cs--single .cs__panes > .cs__equipment {
@@ -1766,7 +1743,8 @@ span.cs-track__face[tabindex] .cs-track__label {
 @media (hover: none) {
   .cs-slot__hover:not([data-dismissed]):has(> [tabindex="0"]:focus) .cs-tip {
     display: block;
-  }}
+  }
+}
 
 /* ---------------------------------------------------------------------
    Game theme
@@ -1844,10 +1822,6 @@ span.cs-track__face[tabindex] .cs-track__label {
 .cs[data-cs-theme="game"] .cs__jobs-emblem {
   border-color: var(--cs-accent);
   border-radius: 50%;
-}
-
-.cs[data-cs-theme="game"] .cs__header {
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.04), transparent);
 }
 
 /* The gear-set row's square bevelled buttons. */
@@ -2033,13 +2007,23 @@ span.cs-track__face[tabindex] .cs-track__label {
   font-weight: 500;
 }
 
-/* Gauges sit in a darker inset box. */
-.cs[data-cs-theme="game"] .cs-gauges {
+/* Gauges, and the equipment pane's header (its slots, level and job), sit
+   in a darker inset box. */
+.cs[data-cs-theme="game"] .cs-gauges,
+.cs[data-cs-theme="game"] .cs__header {
   padding: 0.6rem 0.75rem 0.5rem;
   border: 1px solid #0c0c10;
   border-radius: var(--cs-radius);
   background: linear-gradient(180deg, #17181d, #1f2026);
   box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.6);
+}
+
+/* The header's box stands off the pane's edges. Margin, border and
+   padding add up to the body's 0.75rem, so in the wide layout the
+   header's slots stay over the slot columns below. */
+.cs[data-cs-theme="game"] .cs__header {
+  margin: 0.75rem 0.35rem 0;
+  padding: 0.6rem calc(0.4rem - 1px);
 }
 
 .cs[data-cs-theme="game"] .cs-meter {

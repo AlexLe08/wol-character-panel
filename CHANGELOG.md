@@ -13,6 +13,22 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ## [Unreleased]
 
+### Changed
+
+- In the window's wide layout, the content pane and the equipment pane
+  beside it are no longer split by a vertical line. When the panes stack
+  (below a 46rem container width), the line between them is unchanged.
+- In the `game` theme, the equipment pane's header (its slots, the level
+  and the job title) sits in the same darker, rounded inset box as the
+  gauges, in place of its faint gradient and bottom line. The document
+  theme is unchanged.
+- A filled slot's rail (the thin bar beside its square) is on the
+  square's right in every column. Before, the left column and the
+  header's start slots had theirs on the left. Their squares move to the
+  column's start, so the rail sits between the square and the portrait.
+  Below a 26rem width, where slots have no rails, each row's slots now
+  line up at the top in the left grid as well as the right.
+
 ## [2.0.0-beta.5] - 2026-11-24
 
 ### Fixed
