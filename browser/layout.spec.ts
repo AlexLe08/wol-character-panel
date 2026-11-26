@@ -73,9 +73,14 @@ test("wide: the portrait sits between the columns, slot names hidden", async ({ 
   await expect(slot(page, "Skills")).toHaveAccessibleName("Skills");
 });
 
-for (const theme of ["document", "game"]) {
-  test(`wide, ${theme} theme: every filled slot's rail is on its right, inside its column`, async ({ page }) => {
-    await page.goto(`/?view=equipment&fixture=portfolio&theme=${theme}`);
+for (const [theme, labels] of [
+  ["document", "narrow"],
+  ["game", "narrow"],
+  ["document", "always"],
+  ["game", "always"],
+] as const) {
+  test(`wide, ${theme} theme, labels ${labels}: every filled slot's rail is on its right, inside its column`, async ({ page }) => {
+    await page.goto(`/?view=equipment&fixture=portfolio&theme=${theme}&labels=${labels}`);
     const rails = await page.locator(".cs__slots .cs-slot").evaluateAll((slots) =>
       slots.flatMap((item) => {
         const rail = getComputedStyle(item, "::before");
@@ -103,6 +108,40 @@ for (const theme of ["document", "game"]) {
       // Beside its square, not adrift in the column.
       expect(rail.railLeft - rail.squareRight, rail.column).toBeLessThan(16);
       expect(rail.railRight, rail.column).toBeLessThanOrEqual(rail.columnRight + 0.5);
+    }
+  });
+}
+
+// A name wider than its square ("Accessibility", "Experience") doesn't
+// widen its slot: the squares stay in line down each column, each name
+// centred under its square.
+for (const theme of ["document", "game"]) {
+  test(`wide, ${theme} theme, labels always: squares line up down each column, names centred under them`, async ({ page }) => {
+    await page.goto(`/?view=equipment&fixture=portfolio&theme=${theme}&labels=always`);
+    const columns = await page.locator(".cs__slots").evaluateAll((lists) =>
+      lists.map((list) => ({
+        column: list.className,
+        // The header or body row the column is in.
+        row: list.parentElement!.getBoundingClientRect().toJSON(),
+        slots: [...list.querySelectorAll(".cs-slot")].map((item) => {
+          const square = item.querySelector(".cs-slot__square")!.getBoundingClientRect();
+          const label = item.querySelector(".cs-slot__label")!.getBoundingClientRect();
+          return { squareLeft: square.left, squareCentre: square.left + square.width / 2, label: label.toJSON() };
+        }),
+      })),
+    );
+    // The case under test: a name wider than its square.
+    const squareWidth = await page.locator(".cs-slot__square").first().evaluate((el) => el.getBoundingClientRect().width);
+    expect(columns.some((c) => c.slots.some((s) => s.label.width > squareWidth + 1))).toBe(true);
+    for (const { column, row, slots } of columns) {
+      for (const slot of slots) {
+        expect(Math.abs(slot.squareLeft - slots[0].squareLeft), column).toBeLessThan(0.5);
+        expect(slot.label.width, `${column}: name shown`).toBeGreaterThan(1);
+        expect(Math.abs(slot.label.left + slot.label.width / 2 - slot.squareCentre), column).toBeLessThan(0.6);
+        // The overhang stays inside the row (its padding, at most).
+        expect(slot.label.left, `${column}: name inside its row`).toBeGreaterThanOrEqual(row.left - 0.5);
+        expect(slot.label.right, `${column}: name inside its row`).toBeLessThanOrEqual(row.right + 0.5);
+      }
     }
   });
 }

@@ -460,6 +460,58 @@ test.describe("layout", () => {
     }
   });
 
+  // Each gauge wraps its value on its own, so at some widths the longer
+  // value (HP's 152,836) wraps and the shorter (MP's 10,000) doesn't: the
+  // gauges on a line share rows, so their meters still line up.
+  for (const [theme, width] of [
+    ["game", "26.5"],
+    ["document", "25"],
+  ] as const) {
+    test(`gauges on a line keep their meters level when one head wraps (${theme}, ${width}rem)`, async ({ page }) => {
+      await page.goto(`/?view=window&fixture=adventurer&theme=${theme}&width=${width}`);
+      const gauges = await page.locator(".cs-gauge").evaluateAll((els) =>
+        els.map((el) => ({
+          head: el.querySelector(".cs-gauge__head")!.getBoundingClientRect().toJSON(),
+          label: el.querySelector(".cs-gauge__label")!.getBoundingClientRect().toJSON(),
+          value: el.querySelector(".cs-gauge__value")!.getBoundingClientRect().toJSON(),
+          meter: el.querySelector(".cs-meter")!.getBoundingClientRect().toJSON(),
+        })),
+      );
+      const [hp, mp] = gauges;
+      // The case under test: HP's value under its label, MP's beside it.
+      expect(hp.value.top, "HP's value wraps").toBeGreaterThan(hp.label.bottom - 1);
+      expect(Math.abs(mp.value.top - mp.label.top), "MP's value doesn't").toBeLessThan(8);
+      expect(Math.abs(hp.meter.top - mp.meter.top)).toBeLessThan(1);
+      // The shorter head sits on its meter, as the taller one does.
+      expect(Math.abs(hp.meter.top - hp.head.bottom - (mp.meter.top - mp.head.bottom))).toBeLessThan(1);
+    });
+  }
+
+  // A gauge's third row is its secondary line, empty for a gauge without
+  // one: with HP wrapped and a secondary line under it, MP's meter still
+  // shares HP's row, and its empty third row adds nothing above it.
+  test("gauges on a line keep their meters level when one head wraps and only it has a secondary line", async ({ page }) => {
+    await page.goto("/?view=window&fixture=adventurer&theme=document");
+    const before = await page.locator(".cs-gauge .cs-meter").evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
+    expect(Math.abs(before[0] - before[1])).toBeLessThan(1);
+    // A secondary line under HP only, and a longer value for HP than fits.
+    await page.locator(".cs-gauge__face").first().evaluate((face) => {
+      const secondary = document.createElement("span");
+      secondary.className = "cs-gauge__secondary";
+      secondary.textContent = "regenerating";
+      face.append(secondary);
+      face.querySelector(".cs-gauge__value")!.textContent = "152,836,000,000";
+    });
+    const after = await page.locator(".cs-gauge").evaluateAll((els) =>
+      els.map((el) => ({
+        meter: el.querySelector(".cs-meter")!.getBoundingClientRect().top,
+        secondary: el.querySelector(".cs-gauge__secondary")?.getBoundingClientRect().top,
+      })),
+    );
+    expect(Math.abs(after[0].meter - after[1].meter)).toBeLessThan(1);
+    expect(after[0].secondary).toBeGreaterThan(after[0].meter);
+  });
+
   test("levels line up down a group, at its widest level", async ({ page }) => {
     await page.goto(windowUrl("&tab=skills"));
     const group = page.locator(".cs-levels").first();

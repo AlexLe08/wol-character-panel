@@ -532,6 +532,27 @@
   test checks each filled slot's rail is right of its square and inside
   its column, in all four columns and both themes (it fails on the old
   CSS). CSS only, no API change. Both README screenshots are retaken.
+- Gauge bars level on a line (2026-11-26, the owner's report from the
+  demo): each gauge wrapped its value under its label on its own, so in
+  `adventurer` at some widths HP's (152,836) wrapped and MP's (10,000)
+  didn't, and HP's bar sat 18.8px lower (game theme 26.25-27.25rem,
+  document 24.5-25.75rem and 54.5-55.5rem). Each gauge now spans three
+  rows of the list (head, bar, secondary line) as a subgrid, through the
+  tooltip wrapper to its face, so gauges on a line share row heights; the
+  shorter head sits on its bar. The list's row gap became margins, since
+  a row gap would also fall inside each gauge. Every example, theme and
+  width from 20 to 60rem (486 layouts) compared with `main`: the 10
+  misaligned ones line up, and nothing else moves. Browser tests: both
+  wrap cases, and a wrapped gauge beside one with a secondary line (the
+  third row, empty for a gauge with none, adds no space).
+- Slot names with `labels="always"` (2026-11-26, from #72's review): a
+  name may be 1.5rem wider than its square, and a long one widened its
+  slot, so at full width its square and rail sat out of line with the
+  column's others. Negative margins of half that let the name overhang
+  without widening the slot. Browser tests check squares line up per
+  column with names centred, and rails stay beside squares, with
+  `labels="always"`. Below 26rem only the header slots change (body
+  slots are pixel-identical to `main`'s). CSS only, no API change.
 
 ## Tooling plan (done)
 

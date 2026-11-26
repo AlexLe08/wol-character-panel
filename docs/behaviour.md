@@ -35,7 +35,10 @@ rows, detail windows and the layouts. The
 - **Layout:** below a 26rem container width, the portrait moves on top. The
   columns become 3-column grids with the slot names showing, since touch
   screens get no tooltip on a linked slot. This is a container query, so
-  it follows the panel's width, not the viewport.
+  it follows the panel's width, not the viewport. With `labels="always"`
+  the names also show at full width, each centred under its square; a
+  name up to 1.5rem wider than the square overhangs it rather than
+  widening the slot, so squares and rails stay in line down a column.
 
 - **Tabs (`CharacterWindow`):** a navigation list of links (`?tab=<id>`),
   the current one `aria-current="page"`; a tab with pages gets a second list
@@ -56,7 +59,8 @@ rows, detail windows and the layouts. The
   and sit outside a row's link, so their number isn't read as part of its
   name. A gauge's or stat's label keeps at least 6rem; a longer value wraps
   under it, still right-aligned. Gauges are two per line, one per line in a
-  pane narrower than 22rem. Levels line up down a group, at its widest
+  pane narrower than 22rem. The gauges on a line share their rows, so
+  their bars stay level when one value wraps and the other doesn't. Levels line up down a group, at its widest
   level's width.
 - **Groups:** a two-column run is two stacks, each with its own row
   heights; when the pane is narrower than 22rem they become one column, the

@@ -29,6 +29,21 @@ A PR that changes what's published adds its line under Unreleased; the
   Below a 26rem width, where slots have no rails, each row's slots now
   line up at the top in the left grid as well as the right.
 
+### Fixed
+
+- Two gauges on a line keep their bars level when one value wraps under
+  its label and the other doesn't (in `adventurer`, HP's 152,836 beside
+  MP's 10,000, at some window widths). Before, the wrapped gauge's bar
+  sat a line lower. Where the bars were already level, nothing moves;
+  where they weren't, the shorter gauge's face (its focus ring and hover
+  area) now fills the line's height, as its neighbour's does.
+- With `labels="always"`, a slot name wider than its square no longer
+  widens the slot, so squares and rails stay in line down each column,
+  each name centred under its square. Before, a long name ("Accessibility")
+  pushed its square and rail out of line. Below a 26rem width only the
+  header's slots change: their names get the same width as the body's,
+  and their squares sit at their column's start as at full width.
+
 ## [2.0.0-beta.5] - 2026-11-24
 
 ### Fixed

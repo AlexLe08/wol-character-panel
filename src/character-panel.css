@@ -502,8 +502,12 @@ button.cs__gear-button:hover,
   object-fit: cover;
 }
 
+/* A name may be 1.5rem wider than its square. Negative margins of half
+   that keep it from widening the slot, so squares and rails stay in line
+   down a column, and centre it under its square. */
 .cs-slot__label {
   max-width: calc(var(--cs-slot-size) + 1.5rem);
+  margin-inline: -0.75rem;
   font-size: 0.75rem;
   line-height: 1.2;
   text-align: center;
@@ -1094,16 +1098,51 @@ a.cs-slot__face:hover .cs-slot__square,
   background: var(--cs-bar-fill);
 }
 
-/* Gauges: two per line. */
+/* Gauges: two per line. Each gauge spans three rows of the list (head,
+   meter, secondary line) and passes them down as a subgrid, through the
+   tooltip wrapper when there is one, to its face. The gauges on a line
+   share those rows, so when one head wraps and its neighbour's doesn't,
+   both meters still sit on the same row. The list has no row gap, which
+   would also fall between a gauge's own rows: the space inside a gauge
+   and between lines of gauges is margins, so a gauge with no secondary
+   line leaves an empty row with no space around it. */
 .cs-gauges {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem 1.25rem;
+  column-gap: 1.25rem;
 }
 
+/* Every line after the first; one per line below 22rem (see there). */
+.cs-gauge:nth-child(n + 3) {
+  margin-top: 0.75rem;
+}
+
+.cs-gauge,
+.cs-gauge > .cs-slot__hover,
 .cs-gauge__face {
   display: grid;
-  gap: 0.3rem;
+  grid-template-rows: subgrid;
+  row-gap: 0;
+}
+
+.cs-gauge {
+  grid-row: span 3;
+}
+
+.cs-gauge > .cs-slot__hover,
+.cs-gauge__face {
+  grid-row: 1 / -1;
+}
+
+/* A head shorter than its neighbour's sits at the bottom of the row, its
+   value just above its meter. */
+.cs-gauge__head {
+  align-self: end;
+}
+
+.cs-gauge .cs-meter,
+.cs-gauge__secondary {
+  margin-top: 0.3rem;
 }
 
 .cs-gauge__head {
@@ -1331,6 +1370,10 @@ a.cs-field__line[aria-current="true"] .cs-field__value {
   /* Gauges one per line, so a label has the pane's width. */
   .cs-gauges {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cs-gauge:nth-child(n + 2) {
+    margin-top: 0.75rem;
   }
 }
 
