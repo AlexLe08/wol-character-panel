@@ -54,7 +54,9 @@ the site. Upgrading a host is that host's own work, in its own
 repository. This supersedes the part of 0007 that moved a check in the
 site to before 2.0.0.
 
-**Why:** TODO(Alex)
+**Why:** 
+
+This component package should ideally be developed without influence from the portfolio site. This should help keep the focus on this component package as a "component for all" rather than one influenced by the state and specifications of the portfolio site or other hosts.
 
 ## Consequences
 
