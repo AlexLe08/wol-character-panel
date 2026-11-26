@@ -86,7 +86,7 @@ for (const theme of ["document", "game"]) {
         return [
           {
             column: item.closest(".cs__slots")!.className,
-            squareRight: item.querySelector(".cs-slot__face")!.getBoundingClientRect().right,
+            squareRight: item.querySelector(".cs-slot__square")!.getBoundingClientRect().right,
             railLeft: railRight - parseFloat(rail.width),
             railRight,
             columnRight: item.closest(".cs__slots")!.getBoundingClientRect().right,
@@ -100,6 +100,8 @@ for (const theme of ["document", "game"]) {
     }
     for (const rail of rails) {
       expect(rail.railLeft, rail.column).toBeGreaterThan(rail.squareRight);
+      // Beside its square, not adrift in the column.
+      expect(rail.railLeft - rail.squareRight, rail.column).toBeLessThan(16);
       expect(rail.railRight, rail.column).toBeLessThanOrEqual(rail.columnRight + 0.5);
     }
   });
