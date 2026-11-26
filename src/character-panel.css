@@ -947,11 +947,6 @@ a.cs-slot__face:hover .cs-slot__square,
 
 .cs__panes > .cs__equipment {
   grid-area: equipment;
-  border-left: 1px solid var(--cs-rule-strong);
-}
-
-.cs--single .cs__panes > .cs__equipment {
-  border-left: 0;
 }
 
 @container cs-window (max-width: 46rem) {
@@ -968,7 +963,6 @@ a.cs-slot__face:hover .cs-slot__square,
   .cs__panes > .cs__equipment {
     padding-inline: max(0px, (100% - 30rem) / 2);
     border-top: 1px solid var(--cs-rule-strong);
-    border-left: 0;
   }
 
   .cs--single .cs__panes > .cs__equipment {

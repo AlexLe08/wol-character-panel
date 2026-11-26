@@ -13,6 +13,12 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ## [Unreleased]
 
+### Changed
+
+- In the window's wide layout, the content pane and the equipment pane
+  beside it are no longer split by a vertical line. When the panes stack
+  (below a 46rem container width), the line between them is unchanged.
+
 ## [2.0.0-beta.5] - 2026-11-24
 
 ### Fixed

@@ -508,6 +508,11 @@
   tighter slot column limit (at `parseConfig`). Not reported: a
   key-order-only change in `parseConfig`. A base without
   `CharacterWindow` exits 2.
+- No line between the window's panes (2026-11-25, the owner's request):
+  the wide layout drew a 1px rule on the equipment pane's left edge,
+  between it and the content pane. It's gone, with the two rules that only
+  turned it off (one pane, and stacked). Stacked panes keep the rule above
+  the equipment pane. CSS only; no API change.
 
 ## Tooling plan (done)
 
