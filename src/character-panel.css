@@ -2036,8 +2036,8 @@ span.cs-track__face[tabindex] .cs-track__label {
 }
 
 /* The header's box stands off the pane's edges. Margin, border and
-   padding add up to the body's 0.75rem, so the header's slots stay over
-   the slot columns below. */
+   padding add up to the body's 0.75rem, so in the wide layout the
+   header's slots stay over the slot columns below. */
 .cs[data-cs-theme="game"] .cs__header {
   margin: 0.75rem 0.35rem 0;
   padding: 0.6rem calc(0.4rem - 1px);

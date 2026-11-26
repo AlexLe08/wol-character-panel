@@ -520,7 +520,8 @@
   and job title) takes the gauges' darker, rounded inset box, from the
   same rule, so the two sides of the window match, in place of its faint
   gradient and bottom line. Its margin, border and padding add up to the
-  body's 0.75rem, so the header's slots stay over the slot columns. Game
+  body's 0.75rem, so in the wide layout the header's slots stay over the
+  slot columns. Game
   theme only, as the gauges' box is; CSS only, no API change. The
   README's game screenshot is retaken.
 
