@@ -313,7 +313,4 @@ lists what each release changed for hosts.
   (with the development and releasing notes)
   and [security](https://github.com/AlexLe08/wol-character-panel/blob/main/SECURITY.md).
 
-It started in, and runs the home page of,
-[the-portfolio-site](https://github.com/AlexLe08/the-portfolio-site).
-
 MIT licensed.

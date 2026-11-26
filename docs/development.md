@@ -156,8 +156,8 @@ design. A refactor PR says how many renders it compared.
 Relative imports name the source file (`./parse.ts`): the build rewrites them
 to `.js`, and Node can run the schema generator straight from `src/`. After
 changing `src/schema.ts`, run `npm run generate:schema` and commit the JSON
-Schema with it. A host that keeps its own copy (like the portfolio site's
-backend) copies it from the installed package.
+Schema with it. A host that keeps its own copy (a backend that validates
+saves, say) copies it from the installed package.
 
 To try a change in a host before releasing it, install a packed copy rather
 than linking (`npm link` can load two copies of React):

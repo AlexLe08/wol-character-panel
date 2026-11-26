@@ -121,10 +121,6 @@ you'll use.
    - watch the Demo workflow it triggers, then open the demo it updated:
      <https://alexle08.github.io/wol-character-panel/next/> for a beta (try
      the beta there, decision 0007), the root otherwise;
-   - after a stable release, upgrade the site in its own repository and
-     session (bump the dependency in `frontend/`, `npm run
-     generate:character-schema`). Betas skip the site for now (decision
-     0007);
    - after a stable release that followed betas, `next` still points at
      the last beta: the owner may run `npm dist-tag rm
      @solution-nine/wol-character-panel next`.
