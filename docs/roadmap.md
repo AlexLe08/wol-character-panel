@@ -562,6 +562,12 @@
   line, `docs/development.md` and the release-prep skill no longer name
   the site; history (decision records, past CHANGELOG sections, Done
   entries, the character window plan) still does. Docs only.
+- 2.0.0 (#75, 2026-11-26): the first stable 2.0, to npm's `latest`, after
+  six betas on `next` and a soak counted from beta.1 (below). The release
+  PR also took the README off `next` (its version note, the `@next`
+  install and `$schema` notes, the badges) and brought the docs that
+  named 2.0 as unreleased up to date (`SECURITY.md` now supports 2.x,
+  `CLAUDE.md`, the release-prep skill, this roadmap).
 
 ## Tooling plan (done)
 
@@ -572,9 +578,23 @@ Agreed 2026-11-08 after a review of the repository as extracted.
 3. Repository hygiene: done (above).
 4. Claude Code: done (above).
 
-## Next up: 2.0 betas, then 2.0.0
+## Next up
 
-The one list of next tasks. The character window plan
+1. **After the 2.0.0 tag (owner):** the Release workflow publishes it with
+   provenance and `npm view @solution-nine/wol-character-panel dist-tags`
+   shows `latest` on 2.0.0; the demo's root shows 2.0.0 and `/next/`
+   falls back to it; the README's `@2` `$schema` URL resolves on jsDelivr;
+   optionally `npm dist-tag rm @solution-nine/wol-character-panel next`,
+   which still names beta.5.
+2. **The tooling freeze:** [decision 0006](decisions/0006-tooling-freeze.md)
+   says to revisit it after the 2.0 release.
+
+Nothing else is planned; candidates are under Later.
+
+## 2.0 betas, then 2.0.0 (done)
+
+Kept as the record of how 2.0 shipped (2.0.0 is under Done, above).
+The character window plan
 (`docs/character-window-plan.md`) is complete and kept as the design
 record; what it left open is here. Feature work toward a stable 2.0.0; no
 new tooling meanwhile ([decision 0006](decisions/0006-tooling-freeze.md)).

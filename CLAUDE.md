@@ -204,7 +204,7 @@ host), never `npm link` (two copies of React). No check depends on one.
   `.github/workflows/release.yml` checks the tag against `package.json`,
   runs the checks, and publishes with npm trusted publishing (no token,
   provenance from npm), to the `next` dist-tag when the version is a
-  prerelease (`2.0.0-beta.N`, while 2.0 is unreleased); the Demo deploy
+  prerelease (such as `3.0.0-beta.N`); the Demo deploy
   then shows it under `/next/`. Never publish from a local machine. The owner
   starts that PR with `/release-prep` (`.claude/skills/`), which proposes
   the bump and waits for a yes; it never tags.
