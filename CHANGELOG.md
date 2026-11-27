@@ -13,6 +13,12 @@ A PR that changes what's published adds its line under Unreleased; the
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-11-26
+
+The first stable 2.0 release. It includes everything in 2.0.0-beta.0 to
+2.0.0-beta.5 below; what breaks against 1.x is listed under "Changed
+(breaking)" in beta.0, beta.1 and beta.2. Since beta.5:
+
 ### Changed
 
 - In the window's wide layout, the content pane and the equipment pane
@@ -298,7 +304,8 @@ First release, extracted from
 - `character-sheet.css` and `character-sheet.schema.json`, its `$id` on
   `@1`.
 
-[Unreleased]: https://github.com/AlexLe08/wol-character-panel/compare/v2.0.0-beta.5...HEAD
+[Unreleased]: https://github.com/AlexLe08/wol-character-panel/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/AlexLe08/wol-character-panel/compare/v2.0.0-beta.5...v2.0.0
 [2.0.0-beta.5]: https://github.com/AlexLe08/wol-character-panel/compare/v2.0.0-beta.4...v2.0.0-beta.5
 [2.0.0-beta.4]: https://github.com/AlexLe08/wol-character-panel/compare/v2.0.0-beta.3...v2.0.0-beta.4
 [2.0.0-beta.3]: https://github.com/AlexLe08/wol-character-panel/compare/v2.0.0-beta.2...v2.0.0-beta.3

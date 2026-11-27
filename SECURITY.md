@@ -2,8 +2,9 @@
 
 ## Supported versions
 
-Fixes go into the latest 1.x release. Older versions don't get backports;
-upgrade within the major (`^1`) to pick them up.
+Fixes go into the latest 2.x release. Older versions, 1.x and the 2.0
+betas included, don't get backports; upgrade within the major (`^2`) to
+pick them up.
 
 ## Reporting a vulnerability
 

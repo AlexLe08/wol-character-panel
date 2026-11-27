@@ -49,7 +49,7 @@ release PR's squash commit and `release.yml` publishes.
 3. If nothing a host can see changed, say a release isn't needed and stop.
 
 4. Prereleases: a new major ships as betas first (`X.0.0-beta.0`, then
-   `X.0.0-beta.1` and so on; 2.0 as of 2026-11), which `release.yml`
+   `X.0.0-beta.1` and so on, as 2.0 did in 2026-11), which `release.yml`
    publishes to npm's `next` dist-tag while `latest` stays on the last
    stable. While `main` holds a major with no stable release yet, propose
    the next beta, whatever the size of the changes since the last one, and
